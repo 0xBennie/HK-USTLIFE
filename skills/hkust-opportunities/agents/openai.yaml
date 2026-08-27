@@ -1,0 +1,7 @@
+interface:
+  display_name: "HKUST Opportunities"
+  short_description: "Find source-linked HKUST opportunities for a student goal."
+  default_prompt: "Use $hkust-opportunities to find relevant official HKUST opportunities for me."
+
+policy:
+  allow_implicit_invocation: true
