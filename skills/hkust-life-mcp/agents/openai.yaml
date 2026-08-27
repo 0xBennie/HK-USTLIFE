@@ -1,0 +1,7 @@
+interface:
+  display_name: "HKUST Life MCP"
+  short_description: "Route broad HKUST campus requests to trusted tools."
+  default_prompt: "Use $hkust-life-mcp to help me figure out this HKUST campus-life question."
+
+policy:
+  allow_implicit_invocation: true
