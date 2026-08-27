@@ -89,7 +89,7 @@ export async function startHttpServer(options: HttpServerOptions = {}): Promise<
 
     try {
       const body = await readJsonBody(request);
-      const mcpServer = createMcpServer({ ...options, environment });
+      const mcpServer = createMcpServer({ ...options, environment, mode: 'public' });
       const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
       await mcpServer.connect(transport);
       response.once('close', () => {

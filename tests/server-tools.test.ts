@@ -8,8 +8,10 @@ const fixedNow = new Date('2026-08-27T08:00:00.000Z');
 
 async function withTestClient(
   run: (client: Client) => Promise<void>,
+  mode: 'local' | 'public' = 'local',
 ): Promise<void> {
   const server = createMcpServer({
+    mode,
     environment: {},
     now: () => fixedNow,
     weatherFetcher: async (url: string) =>
@@ -77,5 +79,26 @@ describe('HKUST Life MCP tool registration', () => {
       expect(JSON.stringify(update.structuredContent)).toContain('Library service update');
       expect(JSON.stringify(update.structuredContent)).toContain('library.hkust.edu.hk');
     });
+  });
+
+  it('exposes the student flows locally but omits private Outlook access from public mode', async () => {
+    await withTestClient(async (client) => {
+      const tools = await client.listTools();
+      const checklist = await client.callTool({
+        name: 'hkust_build_newcomer_checklist',
+        arguments: { level: 'ug', residency: 'non_local', housing: 'not_arranged', intakeTerm: 'fall' },
+      });
+
+      expect(tools.tools.map((tool) => tool.name)).toEqual(expect.arrayContaining([
+        'hkust_build_today',
+        'hkust_parse_ics_schedule',
+        'hkust_list_skills',
+      ]));
+      expect(JSON.stringify(checklist.structuredContent)).toContain('arrange-housing');
+    });
+
+    await withTestClient(async (client) => {
+      expect((await client.listTools()).tools.map((tool) => tool.name)).not.toContain('hkust_get_outlook_signals');
+    }, 'public');
   });
 });
