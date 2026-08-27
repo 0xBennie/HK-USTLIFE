@@ -20,9 +20,10 @@ For a student who has just arrived and knows nothing about HKUST:
 - HKUST Clear Water Bay main campus only.
 - Public website for Skill discovery, installation instructions, campus sources and first-week onboarding.
 - A public remote MCP endpoint for public read-only data.
-- Six versioned skill packages in the repository.
+- Seven versioned skill packages in the repository.
 - Official-source provenance, freshness and graceful degradation.
-- Local-only student profile and ICS schedule import as the no-credential personal path.
+- Local-only student profile, ICS schedule import and host-agent timetable screenshot interpretation as the no-credential personal path.
+- Source-attributed course-schedule planning that proposes combinations but never registers a class.
 - GitHub publication as a public repository after checks pass.
 
 **Out of scope for this release**
@@ -52,6 +53,7 @@ Skills Hub website
 ├─ Start at HKUST        newcomer task flow
 ├─ Campus now            transport, places, weather and disruption
 ├─ Academic              calendar, registration, deadlines and support
+├─ Plan my timetable     screenshot-to-events and course-section planning
 ├─ Opportunities         events, clubs, career, exchange and scholarships
 ├─ Skills catalogue      inspect, install and invoke a focused skill
 ├─ Sources               owners, source URLs, freshness and exclusions
@@ -74,6 +76,7 @@ All skills live under `skills/`, are independently installable, and include only
 | `hkust-campus-status` | “How do I get there / is it open / what does weather affect?” | Query public status and give official deep links. |
 | `hkust-academic` | “When do I register / what is due / where is the rule?” | Find official academic sources; never alter enrolment. |
 | `hkust-opportunities` | “What events, clubs, careers, exchange or scholarships are relevant?” | Return dated official opportunities and contact points. |
+| `hkust-course-planner` | “Here are the courses I want; make me a schedule” | Rank conflict-free, source-linked section combinations; never add, drop or submit a class. |
 | `hkust-life-mcp` | “Use HKUST campus tools” | Route a general campus request to MCP tools and preserve provenance. |
 
 ## Data model and source governance
@@ -99,9 +102,15 @@ The initial live adapters are HKO weather/warnings and allow-listed HTML source 
 2. Library hours and study-space notices.
 3. SHRLO application/deadline notices.
 4. University Calendar/ERMS event listings.
-5. Academic calendar/deadline sources.
+5. ARO Class Schedule & Quota, Course Catalog and academic calendar/deadline sources.
 
 No source is added by scraping pages that require a login or by reverse-engineering a private student system.
+
+### Timetable screenshots and course planning
+
+A timetable screenshot is personal data. The hosted Hub does not upload or retain it. Instead, the installed Skill instructs the student's current agent (Codex, ChatGPT or Claude Code) to read the image locally, state any ambiguous course code/time for confirmation, and turn confirmed events into the local Today/reminder flow.
+
+For future-term planning, the course-planner Skill consumes course sections normalized from the public ARO Class Schedule & Quota and Course Catalog. Every section records its official URL, fetch time and any quota/matching-rule notes. A student supplies the courses they need and preferences such as free days, earliest/latest time, target credits and times to avoid. The planner returns ranked valid combinations, conflicts, credit/load caveats and the official source link. It does **not** upload a plan to SIS, reserve a quota, or submit registration; the student must confirm the current official data and take the final action in SIS.
 
 ## Today and newcomer flows
 
@@ -161,9 +170,10 @@ GitHub issues and pull requests are used for source corrections and new Skills. 
 - `npm test`, `npm run build` and the stdio MCP smoke test pass.
 - A public HTTP smoke test verifies authentication, MCP initialization and public tool discovery.
 - Every skill passes the bundled skill validator and only references declared resources.
-- The Hub renders its six skills, each with an install command and source-boundary copy.
+- The Hub renders its seven skills, each with an install command and source-boundary copy.
 - The source registry test rejects HKUST(GZ) and arbitrary URLs.
 - An ICS fixture yields a deterministic Today brief and reminder plan.
+- Course-plan fixtures verify time conflicts, section matching rules, preference ranking and the explicit no-registration boundary.
 - A repository secret scan finds no credential-like values or local student files.
 - The release README explains local use, remote public use, private-data limitations and the contribution process.
 

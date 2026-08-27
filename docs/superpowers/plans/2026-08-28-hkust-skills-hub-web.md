@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a public, mobile-first website that helps an unfamiliar HKUST student discover skills, understand their next action, and connect to the public MCP safely.
+**Goal:** Build a public, mobile-first website that helps an unfamiliar HKUST student discover skills, understand their next action, plan a timetable safely, and connect to the public MCP safely.
 
 **Architecture:** Add an isolated Next.js app under `apps/hub` using the shared catalog and static source manifest as build input. Public pages are static where possible; a Node runtime MCP route creates a new public-mode server for each stateless request and never receives private credentials.
 
@@ -37,7 +37,7 @@
 - [ ] **Step 1: Write failing manifest test**
 
 ```ts
-expect(toHubSkillCards(listSkills())).toHaveLength(6);
+expect(toHubSkillCards(listSkills())).toHaveLength(7);
 expect(toHubSkillCards(listSkills())[0]).toHaveProperty('installCommand');
 ```
 
@@ -79,6 +79,7 @@ git commit -m "feat: scaffold HKUST Skills Hub"
 - Create: `apps/hub/app/start/page.tsx`
 - Create: `apps/hub/app/sources/page.tsx`
 - Create: `apps/hub/app/connect/page.tsx`
+- Create: `apps/hub/app/plan/page.tsx`
 - Create: `apps/hub/app/globals.css`
 - Create: `apps/hub/components/skill-card.tsx`
 - Create: `apps/hub/components/source-badge.tsx`
@@ -86,7 +87,7 @@ git commit -m "feat: scaffold HKUST Skills Hub"
 
 **Interfaces:**
 - `SkillCard` consumes `HubSkillCard`; `SourceBadge` consumes `Provenance`.
-- `/` provides the student’s first action; `/skills` lists six skills; `/start` asks newcomer context client-side; `/sources` explains official source governance; `/connect` states OAuth status accurately.
+- `/` provides the student’s first action; `/skills` lists seven skills; `/start` asks newcomer context client-side; `/plan` explains screenshot-first and course-planning workflows; `/sources` explains official source governance; `/connect` states OAuth status accurately.
 
 - [ ] **Step 1: Write failing content tests**
 
@@ -103,7 +104,7 @@ Expected: Hub view-model imports fail.
 
 - [ ] **Step 3: Implement view models and pages**
 
-The landing page must lead with “I just arrived”, “Plan today”, “Is it open?”, and “Find an opportunity”. Each route renders source cards or static copy from the manifest. The connect page explicitly lists Outlook as pending consent and Canvas/SIS as institutional approval required.
+The landing page must lead with “I just arrived”, “Plan today”, “Plan my timetable”, “Is it open?”, and “Find an opportunity”. The timetable page makes clear that screenshots are read in the student's current agent and are not uploaded to the Hub; course plans use official ARO inputs and cannot submit to SIS. Each route renders source cards or static copy from the manifest. The connect page explicitly lists Outlook as pending consent and Canvas/SIS as institutional approval required.
 
 - [ ] **Step 4: Verify green and production build**
 

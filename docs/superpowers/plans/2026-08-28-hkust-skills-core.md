@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a student-first Today engine, local ICS/newcomer workflows, source governance, public/local MCP modes, and six installable HKUST skills.
+**Goal:** Add a student-first Today engine, local ICS/newcomer and screenshot-first timetable workflows, source governance, public/local MCP modes, source-attributed course planning, and seven installable HKUST skills.
 
 **Architecture:** Preserve the existing TypeScript MCP core and add pure domain modules for newcomer checklist generation, calendar import, and Today briefs. The MCP server composes those modules in `local` or `public` mode; public mode never advertises private Outlook tools. Skills contain guidance only and invoke the MCP core for facts.
 
@@ -215,7 +215,7 @@ git add src/server.ts src/http.ts tests
 git commit -m "feat: add public student MCP flows"
 ```
 
-### Task 5: Create and validate six Skill packages
+### Task 5: Create and validate seven Skill packages
 
 **Files:**
 - Create: `skills/hkust-today/SKILL.md`
@@ -223,6 +223,7 @@ git commit -m "feat: add public student MCP flows"
 - Create: `skills/hkust-campus-status/SKILL.md`
 - Create: `skills/hkust-academic/SKILL.md`
 - Create: `skills/hkust-opportunities/SKILL.md`
+- Create: `skills/hkust-course-planner/SKILL.md`
 - Create: `skills/hkust-life-mcp/SKILL.md`
 - Create: `skills/*/agents/openai.yaml`
 - Test: `tests/skill-packages.test.ts`
@@ -246,7 +247,7 @@ Expected: required `skills/hkust-today/SKILL.md` is missing.
 
 - [ ] **Step 3: Initialize packages and write narrow instructions**
 
-Each `SKILL.md` must route only the intent in the catalogue, ask for missing student context one question at a time, call the MCP tool, identify official versus student-supplied information, and never request credentials. Generate matching `agents/openai.yaml` metadata with the Skill Creator helper.
+Each `SKILL.md` must route only the intent in the catalogue, ask for missing student context one question at a time, call the MCP tool, identify official versus student-supplied information, and never request credentials. The course-planner Skill must process timetable screenshots in the student's host agent, confirm uncertain extraction, and never upload images to the public MCP. Generate matching `agents/openai.yaml` metadata with the Skill Creator helper.
 
 - [ ] **Step 4: Validate packages**
 
@@ -259,4 +260,49 @@ Expected: every skill validates and package tests pass.
 ```bash
 git add skills src/data/skills-catalog.ts tests/skill-packages.test.ts
 git commit -m "feat: add installable HKUST student skills"
+```
+
+### Task 6: Source-attributed course planner
+
+**Files:**
+- Create: `src/domain/course-planner.ts`
+- Modify: `src/domain/types.ts`
+- Modify: `src/data/source-registry.ts`
+- Modify: `src/data/skills-catalog.ts`
+- Modify: `src/server.ts`
+- Test: `tests/course-planner.test.ts`
+- Test: `tests/server-tools.test.ts`
+
+**Interfaces:**
+- Produces `planCourseSchedule(request): CoursePlanResult` from caller-supplied, official-source-attributed course-section choices.
+- Adds public `hkust_plan_course_schedule`; it proposes schedules only and cannot call SIS or alter enrolment.
+
+- [ ] **Step 1: Write failing planner tests**
+
+```ts
+expect(planCourseSchedule(request).plans[0]?.courseCodes).toEqual(['COMP2012', 'MATH2011']);
+expect(planCourseSchedule(request).excluded).toEqual(expect.arrayContaining([expect.objectContaining({ reason: 'time_conflict' })]));
+```
+
+- [ ] **Step 2: Verify red**
+
+Run: `npm test -- tests/course-planner.test.ts`
+
+Expected: planner import fails.
+
+- [ ] **Step 3: Implement a deterministic local solver**
+
+Use only normalised choices supplied by the agent from public ARO material. Enforce meeting overlap and declared section matching rules, rank by student time/free-day preferences, preserve source provenance and append a `planningOnly` SIS confirmation warning. Do not scrape a private system, fetch arbitrary URLs or automate the ARO Timetable Planner/SIS shopping cart.
+
+- [ ] **Step 4: Register and verify the public tool**
+
+Run: `npm test -- tests/course-planner.test.ts tests/server-tools.test.ts && npm run build`
+
+Expected: deterministic candidates expose their sources and public MCP advertises `hkust_plan_course_schedule`.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/data src/domain src/server.ts tests
+git commit -m "feat: plan source-attributed HKUST course schedules"
 ```

@@ -32,7 +32,7 @@
 - Test: `tests/release-assets.test.ts`
 
 **Interfaces:**
-- `README.md` links each skill, Hub page, local usage, remote usage and privacy boundary.
+- `README.md` links each skill, Hub page, local usage, remote usage, screenshot/course-planning boundaries and privacy boundary.
 - Contribution template requires owner URL, observed date and Clear Water Bay scope for source changes.
 
 - [ ] **Step 1: Write failing release-asset test**
