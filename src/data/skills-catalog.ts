@@ -37,6 +37,13 @@ const skills: SkillDefinition[] = [
     tools: ['hkust_search_services', 'hkust_get_campus_updates'],
   },
   {
+    slug: 'hkust-course-planner',
+    title: 'HKUST Course Planner',
+    description: 'Turn official ARO course sections and student preferences into ranked, conflict-free timetable options without changing enrolment.',
+    path: 'skills/hkust-course-planner',
+    tools: ['hkust_plan_course_schedule', 'hkust_search_services'],
+  },
+  {
     slug: 'hkust-life-mcp',
     title: 'HKUST Life MCP',
     description: 'Route a broad HKUST Clear Water Bay request to the correct public campus tool with provenance.',

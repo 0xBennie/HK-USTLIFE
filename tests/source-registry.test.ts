@@ -11,6 +11,14 @@ describe('main-campus source registry', () => {
     });
   });
 
+  it('keeps the official ARO public class schedule in the main-campus allow-list', () => {
+    expect(findCampusService('aro-class-schedule')).toMatchObject({
+      campus: 'clear-water-bay',
+      owner: 'Academic Registry Office (ARO)',
+      url: 'https://registry.hkust.edu.hk/resource-library/course-offering-and-class-schedule-ug',
+    });
+  });
+
   it('rejects a source outside the declared main-campus allow-list', () => {
     expect(() => findCampusService('hkust-gz')).toThrow('Unknown main-campus source');
   });

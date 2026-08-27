@@ -8,8 +8,10 @@ import { type PublicSourceFetcher, getPublicCampusUpdate } from './adapters/publ
 import { listSkills } from './data/skills-catalog.js';
 import { findCampusService } from './data/source-registry.js';
 import { getAccountStatus, type TokenEnvironment } from './domain/account-status.js';
+import { planCourseSchedule, type CourseOffering, type CoursePlanningPreferences } from './domain/course-planner.js';
 import { buildDailyBrief } from './domain/daily-brief.js';
 import { buildNewcomerChecklist, type NewcomerProfile } from './domain/newcomer-checklist.js';
+import { sourceProvenance } from './domain/provenance.js';
 import { defaultReminderRules, planReminders } from './domain/reminder-plan.js';
 import { searchCampusServices } from './domain/source-search.js';
 import { buildToday } from './domain/today.js';
@@ -37,6 +39,53 @@ const newcomerInputSchema = {
 };
 const icsInputSchema = { content: z.string().min(1).max(1_000_000), timezone: z.literal('Asia/Hong_Kong').default('Asia/Hong_Kong') };
 const todayInputSchema = { events: z.array(plannableEventSchema).max(100).default([]), serviceIds: z.array(z.string().min(1)).max(20).default([]) };
+const weekdaySchema = z.enum(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']);
+const courseMeetingSchema = z.object({
+  day: weekdaySchema,
+  startsAt: z.string().regex(/^\d{2}:\d{2}$/),
+  endsAt: z.string().regex(/^\d{2}:\d{2}$/),
+  venue: z.string().max(120).optional(),
+});
+const courseSectionSchema = z.object({
+  id: z.string().min(1).max(80),
+  label: z.string().min(1).max(160),
+  meetings: z.array(courseMeetingSchema).max(12),
+});
+const courseChoiceSchema = z.object({
+  id: z.string().min(1).max(80),
+  sectionIds: z.array(z.string().min(1).max(80)).min(1).max(12),
+  quotaAvailable: z.number().int().min(0).optional(),
+  note: z.string().max(500).optional(),
+});
+const coursePlannerInputSchema = {
+  courses: z.array(z.object({
+    courseCode: z.string().min(2).max(40),
+    title: z.string().min(1).max(240),
+    credits: z.number().positive().max(30),
+    required: z.boolean().default(true),
+    sourceId: z.enum(['aro-class-schedule', 'aro-course-catalog']),
+    sections: z.array(courseSectionSchema).min(1).max(80),
+    choices: z.array(courseChoiceSchema).min(1).max(80),
+    matchingRules: z.array(z.object({
+      triggerSectionId: z.string().min(1).max(80),
+      requiresSectionIds: z.array(z.string().min(1).max(80)).min(1).max(12),
+      description: z.string().min(1).max(300),
+    })).max(40).optional(),
+  })).min(1).max(15),
+  preferences: z.object({
+    preferredFreeDays: z.array(weekdaySchema).max(7).optional(),
+    earliestStart: z.string().regex(/^\d{2}:\d{2}$/).optional(),
+    latestEnd: z.string().regex(/^\d{2}:\d{2}$/).optional(),
+    avoidTimes: z.array(courseMeetingSchema).max(30).optional(),
+    targetCredits: z.number().positive().max(100).optional(),
+    maxPlans: z.number().int().min(1).max(20).optional(),
+  }).optional(),
+};
+
+type CoursePlannerToolInput = {
+  courses: Array<Omit<CourseOffering, 'source'> & { sourceId: 'aro-class-schedule' | 'aro-course-catalog' }>;
+  preferences?: CoursePlanningPreferences;
+};
 
 export type McpMode = 'local' | 'public';
 
@@ -127,6 +176,27 @@ export function createMcpServer(dependencies: ServerDependencies = {}): McpServe
           weather: await getHongKongWeather(dependencies.weatherFetcher, requestNow),
           events,
           serviceFacts: serviceIds.map(findCampusService),
+        }),
+      });
+    },
+  );
+
+  server.registerTool(
+    'hkust_plan_course_schedule',
+    {
+      title: 'Plan a HKUST course schedule',
+      description: 'Rank conflict-free course-section combinations from official ARO material and student preferences. Planning only: it cannot reserve a place or change SIS enrolment.',
+      inputSchema: coursePlannerInputSchema as any,
+    },
+    ({ courses, preferences }: CoursePlannerToolInput) => {
+      const observedAt = now().toISOString();
+      return asToolResult({
+        coursePlan: planCourseSchedule({
+          courses: courses.map(({ sourceId, ...course }) => ({
+            ...course,
+            source: sourceProvenance(findCampusService(sourceId), observedAt, 'static-link'),
+          })),
+          preferences,
         }),
       });
     },

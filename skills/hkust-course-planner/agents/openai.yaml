@@ -1,0 +1,7 @@
+interface:
+  display_name: "HKUST Course Planner"
+  short_description: "Plan a source-linked, conflict-free HKUST timetable."
+  default_prompt: "Use $hkust-course-planner to turn my course choices and constraints into a safe HKUST timetable plan."
+
+policy:
+  allow_implicit_invocation: true

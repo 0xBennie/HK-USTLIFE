@@ -101,4 +101,29 @@ describe('HKUST Life MCP tool registration', () => {
       expect((await client.listTools()).tools.map((tool) => tool.name)).not.toContain('hkust_get_outlook_signals');
     }, 'public');
   });
+
+  it('offers source-attributed course planning in public mode without an enrollment action', async () => {
+    await withTestClient(async (client) => {
+      const tools = await client.listTools();
+      const result = await client.callTool({
+        name: 'hkust_plan_course_schedule',
+        arguments: {
+          courses: [{
+            courseCode: 'COMP2012',
+            title: 'Object-Oriented Programming',
+            credits: 3,
+            required: true,
+            sourceId: 'aro-class-schedule',
+            sections: [{ id: 'L1', label: 'Lecture 1', meetings: [{ day: 'mon', startsAt: '10:00', endsAt: '11:20' }] }],
+            choices: [{ id: 'L1', sectionIds: ['L1'] }],
+          }],
+        },
+      });
+
+      expect(tools.tools.map((tool) => tool.name)).toContain('hkust_plan_course_schedule');
+      expect(JSON.stringify(result.structuredContent)).toContain('planningOnly');
+      expect(JSON.stringify(result.structuredContent)).toContain('course-offering-and-class-schedule-ug');
+      expect(JSON.stringify(result.structuredContent)).toContain('submit any enrollment yourself in SIS');
+    }, 'public');
+  });
 });

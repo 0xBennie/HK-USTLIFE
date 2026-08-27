@@ -3,13 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { findSkill, listSkills } from '../src/data/skills-catalog.js';
 
 describe('HKUST Skills catalogue', () => {
-  it('publishes the six student-facing Skills', () => {
+  it('publishes the seven student-facing Skills', () => {
     expect(listSkills().map((skill) => skill.slug)).toEqual([
       'hkust-today',
       'hkust-newcomer',
       'hkust-campus-status',
       'hkust-academic',
       'hkust-opportunities',
+      'hkust-course-planner',
       'hkust-life-mcp',
     ]);
   });
