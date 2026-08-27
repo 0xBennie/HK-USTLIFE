@@ -11,6 +11,14 @@ export interface CampusService {
   updatePolicy: string;
 }
 
+export interface SkillDefinition {
+  slug: string;
+  title: string;
+  description: string;
+  path: string;
+  tools: string[];
+}
+
 export type PlannableEventKind = 'class' | 'deadline' | 'event';
 export type EventSource = 'manual' | 'student_calendar' | 'canvas' | 'outlook';
 

@@ -132,3 +132,12 @@ export const campusServices: CampusService[] = [
     updatePolicy: 'Application rounds and visa requirements should be verified with the Office of Global Learning.',
   },
 ];
+
+export function findCampusService(id: string): CampusService {
+  const service = campusServices.find((candidate) => candidate.id === id);
+  if (!service) {
+    throw new Error(`Unknown main-campus source: ${id}`);
+  }
+
+  return { ...service, keywords: [...service.keywords] };
+}
