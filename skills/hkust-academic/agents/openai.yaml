@@ -1,0 +1,7 @@
+interface:
+  display_name: "HKUST Academic"
+  short_description: "Find current HKUST academic rules and official contacts."
+  default_prompt: "Use $hkust-academic to help me find the official HKUST rule for my academic question."
+
+policy:
+  allow_implicit_invocation: true
