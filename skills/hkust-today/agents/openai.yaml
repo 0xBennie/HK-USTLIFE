@@ -1,0 +1,7 @@
+interface:
+  display_name: "HKUST Today"
+  short_description: "Build a source-linked plan for today at HKUST."
+  default_prompt: "Use $hkust-today to help me plan my day at HKUST Clear Water Bay."
+
+policy:
+  allow_implicit_invocation: true
