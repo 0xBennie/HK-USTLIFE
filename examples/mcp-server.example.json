@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "hkust-life": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/hkust-life-mcp/dist/index.js"
+      ]
+    }
+  }
+}

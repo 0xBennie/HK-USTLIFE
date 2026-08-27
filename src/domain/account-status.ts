@@ -6,6 +6,7 @@ export type ConnectorState =
 
 export interface TokenEnvironment {
   HKUST_GRAPH_ACCESS_TOKEN?: string;
+  HKUST_MCP_API_KEY?: string;
 }
 
 export interface AccountStatus {

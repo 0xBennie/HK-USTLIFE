@@ -14,6 +14,7 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/index.ts",
     "demo": "tsx src/index.ts",
+    "http": "tsx src/http.ts",
     "test": "vitest run",
     "smoke": "npm run build && node scripts/smoke-mcp.mjs"
   },
