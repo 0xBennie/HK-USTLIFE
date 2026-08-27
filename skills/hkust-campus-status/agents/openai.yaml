@@ -1,0 +1,7 @@
+interface:
+  display_name: "HKUST Campus Status"
+  short_description: "Check current campus services and official status links."
+  default_prompt: "Use $hkust-campus-status to check what is happening on HKUST Clear Water Bay campus."
+
+policy:
+  allow_implicit_invocation: true
