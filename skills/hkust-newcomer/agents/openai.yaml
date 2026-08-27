@@ -1,0 +1,7 @@
+interface:
+  display_name: "HKUST Newcomer"
+  short_description: "Make a first-week checklist for a new HKUST student."
+  default_prompt: "Use $hkust-newcomer to tell me what I need to set up at HKUST."
+
+policy:
+  allow_implicit_invocation: true
