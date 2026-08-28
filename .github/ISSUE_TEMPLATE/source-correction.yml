@@ -1,0 +1,58 @@
+name: Source correction
+description: Report an out-of-date, wrong, or missing official HKUST source
+title: "source: "
+labels: ["source-correction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for campus facts — offices, deadlines, opening hours, transport,
+        housing, money. Do **not** paste student data: no timetable screenshots,
+        student IDs, `@connect.ust.hk` addresses, mail contents, or tokens.
+        Security problems go through a private advisory instead — see SECURITY.md.
+
+  - type: input
+    id: owner-url
+    attributes:
+      label: Owner URL
+      description: The responsible HKUST office's own page. Not an aggregator, student wiki, or forum post.
+      placeholder: https://registry.hkust.edu.hk/...
+    validations:
+      required: true
+
+  - type: input
+    id: observed-date
+    attributes:
+      label: Observed date
+      description: The date you actually loaded that page (YYYY-MM-DD).
+      placeholder: "2026-08-28"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: clear-water-bay
+    attributes:
+      label: Clear Water Bay scope
+      description: This project covers the Clear Water Bay main campus only, not HKUST(GZ).
+      options:
+        - Applies to Clear Water Bay
+        - Page covers both campuses; the Clear Water Bay part is described below
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-behaviour
+    attributes:
+      label: What the project says now
+      description: The tool, skill, or Hub page involved, and the text it currently returns.
+    validations:
+      required: true
+
+  - type: textarea
+    id: correction
+    attributes:
+      label: What the official source says
+      description: Quote the relevant line from the owner URL and state what it should be instead.
+    validations:
+      required: true
