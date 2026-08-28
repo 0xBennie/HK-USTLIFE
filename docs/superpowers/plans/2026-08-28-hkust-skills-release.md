@@ -79,7 +79,7 @@ git commit -m "docs: prepare public Skills Hub release"
 - [ ] **Step 1: Write failing secret-guard test**
 
 ```ts
-await expect(scanTrackedText('DEMO_TOKEN=abc')).resolves.toContain('credential-like assignment');
+await expect(scanTrackedText('DEMO_TOKEN=abc')).resolves.toContain('credential-like assignment'); // release-check:allow
 await expect(scanTrackedText('sourceUrl=https://library.hkust.edu.hk')).resolves.toEqual([]);
 ```
 
