@@ -1,0 +1,1123 @@
+{
+  "observed_at": "2026-10-02T17:53:17.079Z",
+  "catalog": {
+    "routes": [
+      {
+        "id": "kmb:91:O:1",
+        "operator": "kmb",
+        "code": "91",
+        "direction": "O",
+        "service_type": "1",
+        "origin": {
+          "zh": "清水湾",
+          "en": "CLEAR WATER BAY"
+        },
+        "destination": {
+          "zh": "钻石山站",
+          "en": "DIAMOND HILL STATION"
+        },
+        "description": {
+          "zh": "服务类型 1",
+          "en": "Service type 1"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "kmb:91:I:1",
+        "operator": "kmb",
+        "code": "91",
+        "direction": "I",
+        "service_type": "1",
+        "origin": {
+          "zh": "钻石山站",
+          "en": "DIAMOND HILL STATION"
+        },
+        "destination": {
+          "zh": "清水湾",
+          "en": "CLEAR WATER BAY"
+        },
+        "description": {
+          "zh": "服务类型 1",
+          "en": "Service type 1"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "kmb:91:I:2",
+        "operator": "kmb",
+        "code": "91",
+        "direction": "I",
+        "service_type": "2",
+        "origin": {
+          "zh": "彩虹转车站- 碧海楼",
+          "en": "CHOI HUNG BBI - PIK HOI HOUSE"
+        },
+        "destination": {
+          "zh": "清水湾",
+          "en": "CLEAR WATER BAY"
+        },
+        "description": {
+          "zh": "服务类型 2",
+          "en": "Service type 2"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "kmb:91B:O:1",
+        "operator": "kmb",
+        "code": "91B",
+        "direction": "O",
+        "service_type": "1",
+        "origin": {
+          "zh": "坑口站",
+          "en": "HANG HAU STATION"
+        },
+        "destination": {
+          "zh": "香港科技大学",
+          "en": "HKUST"
+        },
+        "description": {
+          "zh": "服务类型 1",
+          "en": "Service type 1"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "kmb:91M:O:1",
+        "operator": "kmb",
+        "code": "91M",
+        "direction": "O",
+        "service_type": "1",
+        "origin": {
+          "zh": "宝林",
+          "en": "PO LAM"
+        },
+        "destination": {
+          "zh": "钻石山站",
+          "en": "DIAMOND HILL STATION"
+        },
+        "description": {
+          "zh": "服务类型 1",
+          "en": "Service type 1"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "kmb:91M:I:1",
+        "operator": "kmb",
+        "code": "91M",
+        "direction": "I",
+        "service_type": "1",
+        "origin": {
+          "zh": "钻石山站",
+          "en": "DIAMOND HILL STATION"
+        },
+        "destination": {
+          "zh": "宝林",
+          "en": "PO LAM"
+        },
+        "description": {
+          "zh": "服务类型 1",
+          "en": "Service type 1"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "kmb:91M:I:2",
+        "operator": "kmb",
+        "code": "91M",
+        "direction": "I",
+        "service_type": "2",
+        "origin": {
+          "zh": "香港科技大学(北)",
+          "en": "H.K.U.S.T (NORTH)"
+        },
+        "destination": {
+          "zh": "宝林",
+          "en": "PO LAM"
+        },
+        "description": {
+          "zh": "服务类型 2",
+          "en": "Service type 2"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "kmb:91P:O:1",
+        "operator": "kmb",
+        "code": "91P",
+        "direction": "O",
+        "service_type": "1",
+        "origin": {
+          "zh": "钻石山站",
+          "en": "DIAMOND HILL STATION"
+        },
+        "destination": {
+          "zh": "香港科技大学",
+          "en": "HONG KONG UNIVERSITY OF SCIENCE AND TEHNOLOGY"
+        },
+        "description": {
+          "zh": "服务类型 1",
+          "en": "Service type 1"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "kmb:91P:I:1",
+        "operator": "kmb",
+        "code": "91P",
+        "direction": "I",
+        "service_type": "1",
+        "origin": {
+          "zh": "香港科技大学(南)",
+          "en": "H.K.U.S.T. (SOUTH)"
+        },
+        "destination": {
+          "zh": "坪石 / 彩虹站",
+          "en": "PING SHEK / CHOI HUNG STATION"
+        },
+        "description": {
+          "zh": "服务类型 1",
+          "en": "Service type 1"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "kmb:291P:O:1",
+        "operator": "kmb",
+        "code": "291P",
+        "direction": "O",
+        "service_type": "1",
+        "origin": {
+          "zh": "香港科技大学(南)",
+          "en": "H.K.U.S.T. (SOUTH)"
+        },
+        "destination": {
+          "zh": "旺角",
+          "en": "MONG KOK"
+        },
+        "description": {
+          "zh": "服务类型 1",
+          "en": "Service type 1"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "retrieved_at": "2026-10-02T17:53:14.144Z",
+          "generated_at": "2026-10-03T01:52:54+08:00",
+          "expires_at": "2026-10-03T17:52:54.000Z"
+        }
+      },
+      {
+        "id": "gmb:NT:11:2004791:1",
+        "operator": "gmb",
+        "code": "11",
+        "direction": "1",
+        "service_type": "2004791",
+        "origin": {
+          "zh": "坑口村",
+          "en": "Hang Hau Village"
+        },
+        "destination": {
+          "zh": "彩虹站(龙翔道)",
+          "en": "Choi Hung Station (Lung Cheung Road)"
+        },
+        "description": {
+          "zh": "正常班次",
+          "en": " Normal Route"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/11",
+          "retrieved_at": "2026-10-02T17:53:14.209Z",
+          "generated_at": "2026-10-03T01:53:14.178+08:00",
+          "expires_at": "2026-10-03T17:53:14.178Z"
+        }
+      },
+      {
+        "id": "gmb:NT:11:2004791:2",
+        "operator": "gmb",
+        "code": "11",
+        "direction": "2",
+        "service_type": "2004791",
+        "origin": {
+          "zh": "彩虹站(龙翔道)",
+          "en": "Choi Hung Station (Lung Cheung Road)"
+        },
+        "destination": {
+          "zh": "坑口村",
+          "en": "Hang Hau Village"
+        },
+        "description": {
+          "zh": "正常班次",
+          "en": " Normal Route"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/11",
+          "retrieved_at": "2026-10-02T17:53:14.209Z",
+          "generated_at": "2026-10-03T01:53:14.178+08:00",
+          "expires_at": "2026-10-03T17:53:14.178Z"
+        }
+      },
+      {
+        "id": "gmb:NT:11B:2004827:1",
+        "operator": "gmb",
+        "code": "11B",
+        "direction": "1",
+        "service_type": "2004827",
+        "origin": {
+          "zh": "香港科技大学(北站)",
+          "en": "Hong Kong University of Science and Technology (North Station)"
+        },
+        "destination": {
+          "zh": "彩虹站(龙翔道)",
+          "en": "Choi Hung Station (Lung Cheung Road)"
+        },
+        "description": {
+          "zh": "日间特别班次",
+          "en": "Morning special trips Route "
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/11B",
+          "retrieved_at": "2026-10-02T17:53:15.173Z",
+          "generated_at": "2026-10-03T01:53:15.085+08:00",
+          "expires_at": "2026-10-03T17:53:15.085Z"
+        }
+      },
+      {
+        "id": "gmb:NT:11B:2004827:2",
+        "operator": "gmb",
+        "code": "11B",
+        "direction": "2",
+        "service_type": "2004827",
+        "origin": {
+          "zh": "彩虹站(龙翔道)",
+          "en": "Choi Hung Station (Lung Cheung Road)"
+        },
+        "destination": {
+          "zh": "香港科技大学(北站)",
+          "en": "Hong Kong University of Science and Technology (North Station)"
+        },
+        "description": {
+          "zh": "日间特别班次",
+          "en": "Morning special trips Route "
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/11B",
+          "retrieved_at": "2026-10-02T17:53:15.173Z",
+          "generated_at": "2026-10-03T01:53:15.085+08:00",
+          "expires_at": "2026-10-03T17:53:15.085Z"
+        }
+      },
+      {
+        "id": "gmb:NT:11B:2004828:1",
+        "operator": "gmb",
+        "code": "11B",
+        "direction": "1",
+        "service_type": "2004828",
+        "origin": {
+          "zh": "香港科技大学(南站)",
+          "en": "Hong Kong University of Science and Technology (South Station)"
+        },
+        "destination": {
+          "zh": "彩虹站(龙翔道)",
+          "en": "Choi Hung Station (Lung Cheung Road)"
+        },
+        "description": {
+          "zh": "黄昏特别班次",
+          "en": "Evening special trips Route "
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/11B",
+          "retrieved_at": "2026-10-02T17:53:15.173Z",
+          "generated_at": "2026-10-03T01:53:15.085+08:00",
+          "expires_at": "2026-10-03T17:53:15.085Z"
+        }
+      },
+      {
+        "id": "gmb:NT:11S:2004826:1",
+        "operator": "gmb",
+        "code": "11S",
+        "direction": "1",
+        "service_type": "2004826",
+        "origin": {
+          "zh": "宝琳",
+          "en": "Po Lam"
+        },
+        "destination": {
+          "zh": "彩虹站(龙翔道)",
+          "en": "Choi Hung Station (Lung Cheung Road)"
+        },
+        "description": {
+          "zh": "通宵班次",
+          "en": "Overnight Service Route"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/11S",
+          "retrieved_at": "2026-10-02T17:53:15.078Z",
+          "generated_at": "2026-10-03T01:53:15.053+08:00",
+          "expires_at": "2026-10-03T17:53:15.053Z"
+        }
+      },
+      {
+        "id": "gmb:NT:11S:2004826:2",
+        "operator": "gmb",
+        "code": "11S",
+        "direction": "2",
+        "service_type": "2004826",
+        "origin": {
+          "zh": "彩虹站(龙翔道)",
+          "en": "Choi Hung Station (Lung Cheung Road)"
+        },
+        "destination": {
+          "zh": "宝琳",
+          "en": "Po Lam"
+        },
+        "description": {
+          "zh": "通宵班次",
+          "en": "Overnight Service Route"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/11S",
+          "retrieved_at": "2026-10-02T17:53:15.078Z",
+          "generated_at": "2026-10-03T01:53:15.053+08:00",
+          "expires_at": "2026-10-03T17:53:15.053Z"
+        }
+      },
+      {
+        "id": "gmb:NT:104:2007200:1",
+        "operator": "gmb",
+        "code": "104",
+        "direction": "1",
+        "service_type": "2007200",
+        "origin": {
+          "zh": "香港科技大学(南站)",
+          "en": "Hong Kong University of Science and Technology (South Station)"
+        },
+        "destination": {
+          "zh": "观塘(循环线)",
+          "en": "Kwun Tong(Circular)"
+        },
+        "description": {
+          "zh": "正常班次",
+          "en": "Normal Departure"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/104",
+          "retrieved_at": "2026-10-02T17:53:15.175Z",
+          "generated_at": "2026-10-03T01:53:15.127+08:00",
+          "expires_at": "2026-10-03T17:53:15.127Z"
+        }
+      },
+      {
+        "id": "gmb:NT:11M:2004825:1",
+        "operator": "gmb",
+        "code": "11M",
+        "direction": "1",
+        "service_type": "2004825",
+        "origin": {
+          "zh": "坑口站公共运输交汇处",
+          "en": "Hang Hau Station Public Transport Interchange"
+        },
+        "destination": {
+          "zh": "香港科技大学(北站)",
+          "en": "Hong Kong University of Science and Technology (North Station)"
+        },
+        "description": {
+          "zh": "正常班次 ",
+          "en": "Normal Route"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/11M",
+          "retrieved_at": "2026-10-02T17:53:14.200Z",
+          "generated_at": "2026-10-03T01:53:14.176+08:00",
+          "expires_at": "2026-10-03T17:53:14.176Z"
+        }
+      },
+      {
+        "id": "gmb:NT:11M:2004825:2",
+        "operator": "gmb",
+        "code": "11M",
+        "direction": "2",
+        "service_type": "2004825",
+        "origin": {
+          "zh": "香港科技大学(北站)",
+          "en": "Hong Kong University of Science and Technology (North Station)"
+        },
+        "destination": {
+          "zh": "坑口站公共运输交汇处",
+          "en": "Hang Hau Station Public Transport Interchange"
+        },
+        "description": {
+          "zh": "正常班次 ",
+          "en": "Normal Route"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/11M",
+          "retrieved_at": "2026-10-02T17:53:14.200Z",
+          "generated_at": "2026-10-03T01:53:14.176+08:00",
+          "expires_at": "2026-10-03T17:53:14.176Z"
+        }
+      },
+      {
+        "id": "gmb:NT:12:2004763:1",
+        "operator": "gmb",
+        "code": "12",
+        "direction": "1",
+        "service_type": "2004763",
+        "origin": {
+          "zh": "宝琳",
+          "en": "Po Lam"
+        },
+        "destination": {
+          "zh": "顺利",
+          "en": "Shun Lee"
+        },
+        "description": {
+          "zh": "特别班次",
+          "en": "Special Departures"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/12",
+          "retrieved_at": "2026-10-02T17:53:14.923Z",
+          "generated_at": "2026-10-03T01:53:14.898+08:00",
+          "expires_at": "2026-10-03T17:53:14.898Z"
+        }
+      },
+      {
+        "id": "gmb:NT:12:2004764:1",
+        "operator": "gmb",
+        "code": "12",
+        "direction": "1",
+        "service_type": "2004764",
+        "origin": {
+          "zh": "西贡",
+          "en": "Sai Kung"
+        },
+        "destination": {
+          "zh": "宝琳",
+          "en": "Po Lam"
+        },
+        "description": {
+          "zh": "正常班次",
+          "en": "Normal Route"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/12",
+          "retrieved_at": "2026-10-02T17:53:14.923Z",
+          "generated_at": "2026-10-03T01:53:14.898+08:00",
+          "expires_at": "2026-10-03T17:53:14.898Z"
+        }
+      },
+      {
+        "id": "gmb:NT:12:2004764:2",
+        "operator": "gmb",
+        "code": "12",
+        "direction": "2",
+        "service_type": "2004764",
+        "origin": {
+          "zh": "宝琳",
+          "en": "Po Lam"
+        },
+        "destination": {
+          "zh": "西贡",
+          "en": "Sai Kung"
+        },
+        "description": {
+          "zh": "正常班次",
+          "en": "Normal Route"
+        },
+        "remark": {
+          "zh": "",
+          "en": ""
+        },
+        "source": {
+          "url": "https://data.etagmb.gov.hk/route/NT/12",
+          "retrieved_at": "2026-10-02T17:53:14.923Z",
+          "generated_at": "2026-10-03T01:53:14.898+08:00",
+          "expires_at": "2026-10-03T17:53:14.898Z"
+        }
+      }
+    ],
+    "issues": [],
+    "generated_at": "2026-10-02T17:53:15.175Z"
+  },
+  "queries": [
+    {
+      "id": "kmb:91M:O:1",
+      "mapping": {
+        "route": {
+          "id": "kmb:91M:O:1",
+          "operator": "kmb",
+          "code": "91M",
+          "direction": "O",
+          "service_type": "1",
+          "origin": {
+            "zh": "宝林",
+            "en": "PO LAM"
+          },
+          "destination": {
+            "zh": "钻石山站",
+            "en": "DIAMOND HILL STATION"
+          },
+          "description": {
+            "zh": "服务类型 1",
+            "en": "Service type 1"
+          },
+          "remark": {
+            "zh": "",
+            "en": ""
+          },
+          "source": {
+            "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+            "retrieved_at": "2026-10-02T17:53:14.144Z",
+            "generated_at": "2026-10-03T01:52:54+08:00",
+            "expires_at": "2026-10-03T17:52:54.000Z"
+          }
+        },
+        "stops": [
+          {
+            "id": "796CAA794D4DEBE8",
+            "sequence": 1,
+            "name": {
+              "zh": "宝林总站 (TK930)",
+              "en": "PO LAM BUS TERMINUS (TK930)"
+            }
+          },
+          {
+            "id": "FC42DCBDC3AB0B6F",
+            "sequence": 2,
+            "name": {
+              "zh": "欣景路 新都城 (TK145)",
+              "en": "YAN KING ROAD, METRO CITY (TK145)"
+            }
+          },
+          {
+            "id": "22E2678081E88368",
+            "sequence": 3,
+            "name": {
+              "zh": "景林邨 (TK206)",
+              "en": "KING LAM ESTATE (TK206)"
+            }
+          },
+          {
+            "id": "7613538D58A9C452",
+            "sequence": 4,
+            "name": {
+              "zh": "厚德邨 (TK215)",
+              "en": "HAU TAK ESTATE (TK215)"
+            }
+          },
+          {
+            "id": "9B0382206D441221",
+            "sequence": 5,
+            "name": {
+              "zh": "重华路 东港城 (TK232)",
+              "en": "CHUNG WA ROAD, EAST POINT CITY (TK232)"
+            }
+          },
+          {
+            "id": "29A07F043B4D5919",
+            "sequence": 6,
+            "name": {
+              "zh": "坑口站 (TK941)",
+              "en": "HANG HAU STATION (TK941)"
+            }
+          },
+          {
+            "id": "87CD68EAD90352E9",
+            "sequence": 7,
+            "name": {
+              "zh": "富宁花园 (TK218)",
+              "en": "FU NING GARDEN (TK218)"
+            }
+          },
+          {
+            "id": "78AE8E07840D1CF7",
+            "sequence": 8,
+            "name": {
+              "zh": "将军澳医院 (TK260)",
+              "en": "TSEUNG KWAN O HOSPITAL (TK260)"
+            }
+          },
+          {
+            "id": "5146FB43555E8310",
+            "sequence": 9,
+            "name": {
+              "zh": "圣云仙天主堂 (TK261)",
+              "en": "ST. VINCENT CATHOLIC CHURCH (TK261)"
+            }
+          },
+          {
+            "id": "7297BDBB8A758AD5",
+            "sequence": 10,
+            "name": {
+              "zh": "水边村 (TK262)",
+              "en": "SHUI BIN TSUEN (TK262)"
+            }
+          },
+          {
+            "id": "1D7BC9F560C3B0CC",
+            "sequence": 11,
+            "name": {
+              "zh": "影业路 (SK500)",
+              "en": "YING YIP ROAD (SK500)"
+            }
+          },
+          {
+            "id": "FDA55F46899FC5D0",
+            "sequence": 12,
+            "name": {
+              "zh": "银影路 (SK501)",
+              "en": "NGAN YING ROAD (SK501)"
+            }
+          },
+          {
+            "id": "B002CEF0DBC568F5",
+            "sequence": 13,
+            "name": {
+              "zh": "香港科技大学(南) (SK950)",
+              "en": "H.K.U.S.T. (SOUTH) (SK950)"
+            }
+          },
+          {
+            "id": "A79D111EB948F013",
+            "sequence": 14,
+            "name": {
+              "zh": "大埔仔 (SK502)",
+              "en": "TAI PO TSAI (SK502)"
+            }
+          },
+          {
+            "id": "298847E9FCC94FD9",
+            "sequence": 15,
+            "name": {
+              "zh": "大埔仔坳 (SK503)",
+              "en": "TAI PO TSAI KAU (SK503)"
+            }
+          },
+          {
+            "id": "86DF43320DF0F596",
+            "sequence": 16,
+            "name": {
+              "zh": "打鼓岭新村 (SK504)",
+              "en": "TA KU LING SAN TSUEN (SK504)"
+            }
+          },
+          {
+            "id": "36F2D783428B6307",
+            "sequence": 17,
+            "name": {
+              "zh": "壁屋 (SK505)",
+              "en": "PIK UK (SK505)"
+            }
+          },
+          {
+            "id": "EBA1C02EA9906C96",
+            "sequence": 18,
+            "name": {
+              "zh": "白石窝 (SK506)",
+              "en": "PAK SHEK WO (SK506)"
+            }
+          },
+          {
+            "id": "47B8E78BAB4FEB5D",
+            "sequence": 19,
+            "name": {
+              "zh": "井栏树 (SK507)",
+              "en": "TSENG LAN SHUE (SK507)"
+            }
+          },
+          {
+            "id": "0BE9DE9BA299E126",
+            "sequence": 20,
+            "name": {
+              "zh": "龙窝村　　　 (SK508)",
+              "en": "LUNG WO VILLAGE (SK508)"
+            }
+          },
+          {
+            "id": "4D55F6240E2AAFB8",
+            "sequence": 21,
+            "name": {
+              "zh": "安达臣道 (SK509)",
+              "en": "ANDERSON ROAD (SK509)"
+            }
+          },
+          {
+            "id": "C58FCEE9339E5319",
+            "sequence": 22,
+            "name": {
+              "zh": "德望学校 (WT610)",
+              "en": "GOOD HOPE SCHOOL (WT610)"
+            }
+          },
+          {
+            "id": "1EF5FAB9266BD6C8",
+            "sequence": 23,
+            "name": {
+              "zh": "彩云邨 (WT987)",
+              "en": "CHOI WAN ESTATE (WT987)"
+            }
+          },
+          {
+            "id": "5D77A5CBE41F2984",
+            "sequence": 24,
+            "name": {
+              "zh": "牛池湾转车站 - 彩虹站 (WT891)",
+              "en": "NGAU CHI WAN BBI - CHOI HUNG STATION (WT891)"
+            }
+          },
+          {
+            "id": "18F3C20116BFE83D",
+            "sequence": 25,
+            "name": {
+              "zh": "牛池湾转车站-红萼楼 (WT705)",
+              "en": "NGAU CHI WAN BBI-HUNG NGOK HOUSE (WT705)"
+            }
+          },
+          {
+            "id": "332F374B6CB17C57",
+            "sequence": 26,
+            "name": {
+              "zh": "彩虹转车站 - 锦云楼 (WT371)",
+              "en": "CHOI HUNG BBI - KAM WAN HOUSE (WT371)"
+            }
+          },
+          {
+            "id": "7ABFD50CAA98A9D1",
+            "sequence": 27,
+            "name": {
+              "zh": "新蒲岗大有街 (WT545)",
+              "en": "TAI YAU STREET, SAN PO KONG (WT545)"
+            }
+          },
+          {
+            "id": "A0FDF34B2D278750",
+            "sequence": 28,
+            "name": {
+              "zh": "凤德商场 (WT408)",
+              "en": "FUNG TAK SHOPPING CENTRE (WT408)"
+            }
+          },
+          {
+            "id": "53889000AA9C33E2",
+            "sequence": 29,
+            "name": {
+              "zh": "钻石山站巴士总站 (WT964)",
+              "en": "DIAMOND HILL STATION BUS TERMINUS (WT964)"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+            "retrieved_at": "2026-10-02T17:53:14.144Z",
+            "generated_at": "2026-10-03T01:52:54+08:00",
+            "expires_at": "2026-10-03T17:52:54.000Z"
+          },
+          {
+            "url": "https://data.etabus.gov.hk/v1/transport/kmb/route-stop/91M/outbound/1",
+            "retrieved_at": "2026-10-02T17:53:16.622Z",
+            "generated_at": "2026-10-03T01:53:15+08:00",
+            "expires_at": "2026-10-03T17:53:15.000Z"
+          },
+          {
+            "url": "https://data.etabus.gov.hk/v1/transport/kmb/stop",
+            "retrieved_at": "2026-10-02T17:53:15.860Z",
+            "generated_at": "2026-10-03T01:53:00+08:00",
+            "expires_at": "2026-10-03T17:53:00.000Z"
+          }
+        ],
+        "status": "available",
+        "generated_at": "2026-10-02T17:53:16.636Z"
+      },
+      "predictions": {
+        "route_id": "kmb:91M:O:1",
+        "stop_sequence": 13,
+        "stop": {
+          "id": "B002CEF0DBC568F5",
+          "sequence": 13,
+          "name": {
+            "zh": "香港科技大学(南) (SK950)",
+            "en": "H.K.U.S.T. (SOUTH) (SK950)"
+          }
+        },
+        "status": "no_predictions",
+        "arrivals": [],
+        "messages": [],
+        "source": {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/eta/B002CEF0DBC568F5/91M/1",
+          "retrieved_at": "2026-10-02T17:53:16.748Z",
+          "generated_at": "2026-10-03T01:53:03+08:00",
+          "expires_at": "2026-10-02T17:56:03.000Z"
+        },
+        "expires_at": "2026-10-02T17:55:40.000Z",
+        "generated_at": "2026-10-02T17:53:16.748Z"
+      }
+    },
+    {
+      "id": "gmb:NT:11M:2004825:2",
+      "mapping": {
+        "route": {
+          "id": "gmb:NT:11M:2004825:2",
+          "operator": "gmb",
+          "code": "11M",
+          "direction": "2",
+          "service_type": "2004825",
+          "origin": {
+            "zh": "香港科技大学(北站)",
+            "en": "Hong Kong University of Science and Technology (North Station)"
+          },
+          "destination": {
+            "zh": "坑口站公共运输交汇处",
+            "en": "Hang Hau Station Public Transport Interchange"
+          },
+          "description": {
+            "zh": "正常班次 ",
+            "en": "Normal Route"
+          },
+          "remark": {
+            "zh": "",
+            "en": ""
+          },
+          "source": {
+            "url": "https://data.etagmb.gov.hk/route/NT/11M",
+            "retrieved_at": "2026-10-02T17:53:14.200Z",
+            "generated_at": "2026-10-03T01:53:14.176+08:00",
+            "expires_at": "2026-10-03T17:53:14.176Z"
+          }
+        },
+        "stops": [
+          {
+            "id": "20012474",
+            "sequence": 1,
+            "name": {
+              "zh": "香港科技大学(北站)",
+              "en": "Hong Kong University of Science and Technology (North Station)"
+            }
+          },
+          {
+            "id": "20012496",
+            "sequence": 2,
+            "name": {
+              "zh": "清水湾道、大埔村对面",
+              "en": "Clear Water Bay Road, opposite Tai Po Tsai Tsuen"
+            }
+          },
+          {
+            "id": "20012497",
+            "sequence": 3,
+            "name": {
+              "zh": "水边村",
+              "en": "Shui Pin Tsuen"
+            }
+          },
+          {
+            "id": "20012498",
+            "sequence": 4,
+            "name": {
+              "zh": "半见村",
+              "en": "Boon Kin Village"
+            }
+          },
+          {
+            "id": "20001172",
+            "sequence": 5,
+            "name": {
+              "zh": "宝宁路, 将军澳医院对面",
+              "en": "Po Ning Road, opposite Tseung Kwan O Hospital"
+            }
+          },
+          {
+            "id": "20002563",
+            "sequence": 6,
+            "name": {
+              "zh": "重华路, 东港城第3座外",
+              "en": "Chung Wa Road, outside Block 3, East Point City"
+            }
+          },
+          {
+            "id": "20002597",
+            "sequence": 7,
+            "name": {
+              "zh": "坑口站公共运输交汇处",
+              "en": "Hang Hau Station Public Transport Interchange"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "url": "https://data.etagmb.gov.hk/route/NT/11M",
+            "retrieved_at": "2026-10-02T17:53:14.200Z",
+            "generated_at": "2026-10-03T01:53:14.176+08:00",
+            "expires_at": "2026-10-03T17:53:14.176Z"
+          },
+          {
+            "url": "https://data.etagmb.gov.hk/route-stop/2004825/2",
+            "retrieved_at": "2026-10-02T17:53:16.950Z",
+            "generated_at": "2026-10-03T01:53:16.896+08:00",
+            "expires_at": "2026-10-03T17:53:16.896Z"
+          }
+        ],
+        "status": "available",
+        "generated_at": "2026-10-02T17:53:16.950Z"
+      },
+      "predictions": {
+        "route_id": "gmb:NT:11M:2004825:2",
+        "stop_sequence": 1,
+        "stop": {
+          "id": "20012474",
+          "sequence": 1,
+          "name": {
+            "zh": "香港科技大学(北站)",
+            "en": "Hong Kong University of Science and Technology (North Station)"
+          }
+        },
+        "status": "no_predictions",
+        "arrivals": [],
+        "messages": [],
+        "source": {
+          "url": "https://data.etagmb.gov.hk/eta/route-stop/2004825/2/1",
+          "retrieved_at": "2026-10-02T17:53:17.078Z",
+          "generated_at": "2026-10-03T01:53:17.057+08:00",
+          "expires_at": "2026-10-02T17:56:17.057Z"
+        },
+        "expires_at": "2026-10-02T17:56:17.057Z",
+        "generated_at": "2026-10-02T17:53:17.079Z"
+      }
+    }
+  ],
+  "synthetic": false
+}

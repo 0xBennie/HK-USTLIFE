@@ -1,0 +1,28 @@
+{
+  "url": "https://data.etabus.gov.hk/v1/transport/kmb/eta/B002CEF0DBC568F5/91M/1",
+  "retrieved_at": "2026-10-02T17:43:51.363Z",
+  "status": 200,
+  "response": {
+    "type": "ETA",
+    "version": "1.0",
+    "generated_timestamp": "2026-10-03T01:43:32+08:00",
+    "data": [
+      {
+        "co": "KMB",
+        "route": "91M",
+        "dir": "O",
+        "service_type": 1,
+        "seq": 13,
+        "dest_tc": "鑽石山站",
+        "dest_sc": "钻石山站",
+        "dest_en": "DIAMOND HILL STATION",
+        "eta_seq": 1,
+        "eta": null,
+        "rmk_tc": "",
+        "rmk_sc": "",
+        "rmk_en": "",
+        "data_timestamp": "2026-10-03T01:43:10+08:00"
+      }
+    ]
+  }
+}

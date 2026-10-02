@@ -1,6 +1,6 @@
 # Campus API — implemented local MVP subset
 
-Public visitor access (no bearer required), local-development server restrictions still apply. Campus native screen currently offers school shuttle schedules only. KMB/GMB prediction adapters, place/service directory, bookmarks/corrections and admin updates remain pending E3/E5.
+Public visitor access (no bearer required), local-development server restrictions still apply. Campus native screen offers reviewed school-shuttle schedules, selected public KMB/GMB routes, reviewed places/services, private bookmarks and correction requests. Admin maintenance and real iOS runtime acceptance remain pending E5/E6.
 
 - GET `/api/v1/transport/routes`: reviewed school-shuttle catalog, version, provenance, review deadline, holiday provenance/coverage and explicit missing live/disruption status.
 - GET `/api/v1/transport/routes/:id/departures?at=<offset ISO instant>`: `at` defaults to server now; interpreted in Asia/Hong_Kong. Returns route, service_date, kind=planned, status, upcoming, published regular timetable, holiday, provenance and query/generated timestamps. Not real-time vehicle telemetry.
@@ -27,3 +27,24 @@ Holiday source: https://www.1823.gov.hk/common/ical/en.json
 - GET `/api/v1/me/export`: additive `campus:{bookmarks,corrections}`. Account deletion cascades these private rows; public directory remains.
 
 Migration 5 stores directory entries, private bookmarks and corrections. Reviewed seed inserts missing IDs only and does not overwrite persisted maintenance edits on restart. Source evidence: `docs/progress/evidence/e3/directory/` with seven retrieved official pages and hashes; reviewed factual entries in `directory-data.ts`. Native DirectoryScreen supports search/category, detail/source/map links and saved-only view. TargetActions supports both places and school-shuttle routes, retry-safe corrections and own request history. Parent native campus screen remounts on account changes to clear private state. Actual iOS runtime acceptance pending.
+
+## Public KMB / GMB queries (implemented)
+
+Public endpoints, no login; all outbound requests are server-side fixed HTTPS operator templates. Intended coverage is CSO-linked KMB 91/91M/91B/91P/291P and New Territories GMB 11/11B/11S/104/11M/12. Other operators/routes, fares, occupancy and GPS are not supplied. Route number alone is never a journey identity.
+
+- GET `/api/v1/transport/public/routes`: `{routes,issues,generated_at}`. IDs encode operator, route code, direction and service variant, e.g. `kmb:91M:O:1`, `gmb:NT:11M:2004825:2`. Bilingual origins/destinations, operator description/remarks and source timestamps returned. GMB numeric route IDs are discovered, not assumed stable. Partial upstream failures/expired sources and codes absent from the current catalog are listed in `issues`; no silent complete-coverage claim.
+- GET `/api/v1/transport/public/routes/:id/stops`: `{route,status,stops,sources,generated_at}`. Stop `{id,sequence,name}`; repeated stop ID can have multiple sequences. KMB joins route-stop records with official stop names and verifies route/bound/service type; GMB uses names specific to the selected route. Unknown/out-of-coverage variant 404; upstream failure/staleness is an explicit data status and empty stops.
+- GET `/api/v1/transport/public/routes/:id/arrivals?stop_sequence=13`: `{route_id,stop_sequence,stop,status,arrivals,messages,source,expires_at,generated_at}`. `arrivals` are absolute offset-aware timestamps and bilingual operator remarks. Sequence must be 1–300 and actually occur on that route; invalid 400, unknown 404. KMB ETA rows filter company, code, direction, service type and stop sequence. GMB ETA returned stop ID must match the selected route-stop.
+
+Prediction statuses: `available`, `no_predictions`, `disabled`, `stale`, `unavailable`. Empty/null/past predictions are `no_predictions`, not proof of no service or cancellation. GMB disabled ETA is not automatically bus suspension. Operator scheduled-departure remarks are preserved; predictions are not labeled GPS-derived. No headway-to-ETA or timetable fallback.
+
+Provenance includes operator endpoint, response retrieval/generation time and freshness deadline. Route/stop metadata cache at most 24 hours; source envelopes older than 24 hours suppressed. Metadata row modification timestamps may legitimately be old. ETA response cache 15 seconds, source envelope and matching KMB row timestamps must be younger than 180 seconds with at most 60 seconds forward clock skew. Expiry is the earliest matching ETA/metadata deadline. Past arrivals removed on every read. These are application freshness policies, not operator guarantees. GMB documents no per-prediction observation timestamp, so freshness uses its envelope. Refresh failure clears predictions; no stale-success fallback. HTTP failures/invalid JSON/unexpected schema/oversize payload all unavailable. Per-fetch timeout 3 seconds; max 5 MB body, 256 cached keys, 32 in-flight requests, identical requests coalesced and failures cooled down for 10 seconds. Cache is memory-only and carries no private user data.
+
+Native visitor flow: choose direction/variant, search boarding stop, query predictions as absolute Hong Kong dates/times, inspect remarks/source, refresh manually/on foreground/every foreground minute. Native presentation also hides expired/past predictions without relying on a successful network refresh, and clears predictions on backgrounding. School shuttle schedules remain a separate flow. No public-transit bookmarks yet (existing private bookmarks apply to reviewed places and school shuttles).
+
+Primary specifications:
+- https://data.gov.hk/en-data/dataset/hk-td-tis_21-etakmb
+- https://data.etagmb.gov.hk/static/GMB_ETA_API_Specification.pdf
+- https://cso.hkust.edu.hk/index.php/tran/pt
+
+Evidence: `docs/progress/evidence/e3/public-transit/` contains timestamped raw discovery/ETA responses plus normalized live adapter/local HTTP smoke reports. Live probe observed 23 direction/variant entries and verified 91M outbound South stop sequence 13 plus GMB 11M direction 2 North stop sequence 1; both returned no predictions at that query time. Synthetic positive-ETA fixtures test routing, remarks and failure boundaries independently; they are not live service records. Repeat explicitly with `npm run build:core` then `node scripts/smoke-public-transit.mjs <optional-report-path>`; ordinary tests never call operators. Actual iOS runtime acceptance remains open.

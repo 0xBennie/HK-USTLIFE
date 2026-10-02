@@ -1,0 +1,215 @@
+{
+  "url": "https://data.etabus.gov.hk/v1/transport/kmb/route-stop/91M/outbound/1",
+  "retrieved_at": "2026-10-02T17:39:27.749Z",
+  "status": 200,
+  "response": {
+    "type": "RouteStop",
+    "version": "1.0",
+    "generated_timestamp": "2026-10-03T01:39:27+08:00",
+    "data": [
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "1",
+        "stop": "796CAA794D4DEBE8"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "2",
+        "stop": "FC42DCBDC3AB0B6F"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "3",
+        "stop": "22E2678081E88368"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "4",
+        "stop": "7613538D58A9C452"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "5",
+        "stop": "9B0382206D441221"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "6",
+        "stop": "29A07F043B4D5919"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "7",
+        "stop": "87CD68EAD90352E9"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "8",
+        "stop": "78AE8E07840D1CF7"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "9",
+        "stop": "5146FB43555E8310"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "10",
+        "stop": "7297BDBB8A758AD5"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "11",
+        "stop": "1D7BC9F560C3B0CC"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "12",
+        "stop": "FDA55F46899FC5D0"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "13",
+        "stop": "B002CEF0DBC568F5"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "14",
+        "stop": "A79D111EB948F013"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "15",
+        "stop": "298847E9FCC94FD9"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "16",
+        "stop": "86DF43320DF0F596"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "17",
+        "stop": "36F2D783428B6307"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "18",
+        "stop": "EBA1C02EA9906C96"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "19",
+        "stop": "47B8E78BAB4FEB5D"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "20",
+        "stop": "0BE9DE9BA299E126"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "21",
+        "stop": "4D55F6240E2AAFB8"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "22",
+        "stop": "C58FCEE9339E5319"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "23",
+        "stop": "1EF5FAB9266BD6C8"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "24",
+        "stop": "5D77A5CBE41F2984"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "25",
+        "stop": "18F3C20116BFE83D"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "26",
+        "stop": "332F374B6CB17C57"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "27",
+        "stop": "7ABFD50CAA98A9D1"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "28",
+        "stop": "A0FDF34B2D278750"
+      },
+      {
+        "route": "91M",
+        "bound": "O",
+        "service_type": "1",
+        "seq": "29",
+        "stop": "53889000AA9C33E2"
+      }
+    ]
+  }
+}

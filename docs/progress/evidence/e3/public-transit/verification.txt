@@ -1,0 +1,100 @@
+E3 public transport verification, 2026-10-03
+No native iOS runtime/device acceptance has been performed. Live HTTP evidence is in live-http-smoke.json.
+
+Full suite and backend build
+
+> hkust-life-mcp@0.1.0 test
+> npm run build:core && vitest run
+
+
+> hkust-life-mcp@0.1.0 build:core
+> tsc -p tsconfig.json
+
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+(node:48696) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/hko-weather.test.ts (1 test) 5ms
+ ✓ tests/ics-calendar.test.ts (3 tests) 3ms
+ ✓ tests/course-planner.test.ts (4 tests) 5ms
+ ✓ tests/graph-outlook.test.ts (1 test) 6ms
+ ✓ tests/daily-brief.test.ts (1 test) 10ms
+(node:48697) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/release-assets.test.ts (3 tests) 10ms
+ ✓ tests/today.test.ts (1 test) 10ms
+(node:48701) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48699) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48705) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48702) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48698) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/source-registry.test.ts (4 tests) 2ms
+ ✓ tests/reminder-plan.test.ts (2 tests) 9ms
+ ✓ tests/skill-packages.test.ts (1 test) 14ms
+ ✓ tests/study-dates.test.ts (3 tests) 15ms
+ ✓ tests/browser-profile.test.ts (2 tests) 2ms
+ ✓ tests/http-transport.test.ts (1 test) 32ms
+ ✓ tests/server-tools.test.ts (4 tests) 36ms
+ ✓ tests/product-shuttle.test.ts (5 tests) 313ms
+   ✓ serves reviewed schedules to visitors and rejects unknown routes or invalid timestamps  306ms
+ ✓ tests/product-ics.test.ts (16 tests) 328ms
+ ✓ tests/product-public-transit.test.ts (13 tests) 406ms
+   ✓ serves visitors through real HTTP routes and rejects invalid stop sequence or unknown route  345ms
+ ✓ tests/hub-content.test.ts (3 tests) 3ms
+ ✓ tests/newcomer-checklist.test.ts (2 tests) 2ms
+ ✓ tests/account-status.test.ts (2 tests) 3ms
+ ✓ tests/hub-manifest.test.ts (1 test) 3ms
+ ✓ tests/skills-catalog.test.ts (2 tests) 3ms
+ ✓ tests/source-search.test.ts (2 tests) 2ms
+ ✓ tests/product-directory.test.ts (5 tests) 279ms
+ ✓ tests/public-mcp-route.test.ts (3 tests) 13ms
+ ✓ tests/calendar-store.test.ts (14 tests) 515ms
+ ✓ tests/release-check.test.ts (5 tests) 478ms
+   ✓ release secret guard > reports no findings across the tracked repository  474ms
+ ✓ tests/mobile-session.test.ts (6 tests) 366ms
+ ✓ tests/smoke-mcp.test.ts (1 test) 207ms
+ ✓ tests/product-auth.test.ts (11 tests) 437ms
+ ✓ tests/product-learning.test.ts (26 tests) 670ms
+
+ Test Files  31 passed (31)
+      Tests  148 passed (148)
+   Start at  01:57:33
+   Duration  1.50s (transform 2.47s, setup 0ms, collect 6.48s, tests 4.18s, environment 4ms, prepare 2.00s)
+
+
+Native TypeScript
+
+> @campus/mobile@0.1.0 typecheck
+> tsc --noEmit
+
+
+iOS Hermes export (not native runtime)
+
+> @campus/mobile@0.1.0 bundle:ios
+> expo export --platform ios --output-dir dist
+
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:48694) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:48694) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundled 4072ms apps/mobile/index.ts (1586 modules)
+
+› ios bundles (1):
+_expo/static/js/ios/index-4ed331b8c49f46495bd81de5037e55c1.hbc (4MB)
+
+› web bundles (1):
+_expo/static/css/global-d41d8cd98f00b204e9800998ecf8427e.css (0B)
+
+› Files (1):
+metadata.json (142B)
+
+Exported: dist

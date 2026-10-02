@@ -11,7 +11,7 @@ beforeEach(async()=>{
  alice=await login('alice@example.test');bob=await login('bob@example.test');
 });
 afterEach(async()=>{await app.close();rmSync(dir,{recursive:true,force:true});});
-function call(method:'GET'|'POST'|'PUT'|'DELETE',url:string,body?:object,token=alice,key=randomUUID()){return app.inject({method,url:'/api/v1'+url,headers:{...(token?{authorization:'Bearer '+token}:{}),'idempotency-key':key},payload:body});}
+function call(method:'GET'|'POST'|'PUT'|'DELETE',url:string,body?:object,token = alice,key=randomUUID()){return app.inject({method,url:'/api/v1'+url,headers:{...(token?{authorization:'Bearer '+token}:{}),'idempotency-key':key},payload:body});}
 const target={target_kind:'place',target_id:'postal-counter'};
 it('offers reviewed bilingual public directory search and explicit unknown operating status',async()=>{
  const list=await call('GET','/campus/places',undefined,'');expect(list.statusCode).toBe(200);expect(list.json().data).toHaveLength(9);

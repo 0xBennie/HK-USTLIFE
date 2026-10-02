@@ -1,3 +1,4 @@
+import { PublicTransitScreen } from './PublicTransitScreen';
 import { DirectoryScreen } from './DirectoryScreen';
 import { TargetActions } from './TargetActions';
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
@@ -13,11 +14,11 @@ type Catalog={routes:ShuttleRoute[];freshness:string;refresh_due_at:string};
 export function CampusScreen({language,dark,onLogin}:{language:Language;dark:boolean;onLogin:()=>void}) {
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [onlySaved,setOnlySaved]=useState(false),[savedRoutes,setSavedRoutes]=useState<string[]>([]);
- const [directory,setDirectory]=useState(false);
+ const [directory,setDirectory]=useState(false),[publicTransit,setPublicTransit]=useState(false);
  const zh=language==='zh',c=palette[dark?'dark':'light'];
  const [catalog,setCatalog]=useState<Catalog|null>(null),[route,setRoute]=useState<string|null>(null),[detail,setDetail]=useState<ShuttleDepartures|null>(null),[search,setSearch]=useState('');
  const [busy,setBusy]=useState(false),[error,setError]=useState(false);const epoch=useRef(0);
- useEffect(()=>{let active=true;
+ useEffect(()=>{if(directory||publicTransit)return;let active=true;
    const load=async()=>{const current=++epoch.current;setBusy(true);setError(false);try{
      const [list,result,bookmarks]=await Promise.all([api.request<Catalog>('/transport/routes'),route?api.request<ShuttleDepartures>(`/transport/routes/${route}/departures`):Promise.resolve(null),profile?session.request<{target_kind:string;target_id:string}[]>('/me/campus/bookmarks'):Promise.resolve([])]);
      if(active&&current===epoch.current){setCatalog(list);setDetail(result);setSavedRoutes(bookmarks.filter(b=>b.target_kind==='shuttle').map(b=>b.target_id));}
@@ -25,13 +26,15 @@ export function CampusScreen({language,dark,onLogin}:{language:Language;dark:boo
    void load();const timer=setInterval(()=>{if(AppState.currentState==='active')void load();},60000);
    const subscription=AppState.addEventListener('change',state=>{if(state==='active')void load();});
    refresh.current=load;return()=>{active=false;epoch.current++;clearInterval(timer);subscription.remove();};
- },[route,profile?.id]);
+ },[route,profile?.id,directory,publicTransit]);
  const refresh=useRef<()=>Promise<void>>(async()=>{});
  const open=async(url:string)=>{try{await Linking.openURL(url);}catch{setError(true);}};
  const labels:Record<string,string>={scheduled:zh?'当日计划班次':'Scheduled service',finished_for_day:zh?'当日计划班次已结束':'Scheduled service finished',public_holiday:zh?'公众假期：无常规班次':'Public holiday: no regular service',non_operating_day:zh?'非运行日':'Non-operating day',outside_service_period:zh?'超出公布服务期':'Outside published service period',stale:zh?'资料待更新，请核对官方页面':'Timetable needs review; check official source',holiday_coverage_unknown:zh?'该年份假期资料未核验':'Holiday calendar not verified for this year'};
+ if(publicTransit)return <PublicTransitScreen language={language} dark={dark} onBack={()=>setPublicTransit(false)}/>;
  if(directory)return <DirectoryScreen language={language} dark={dark} onBack={()=>setDirectory(false)} onLogin={onLogin}/>;
  return <View style={styles.stack}>
    <Button variant="secondary" onPress={()=>setDirectory(true)}>{zh?'校园地点与服务':'Campus places and services'}</Button>
+   <Button variant="secondary" onPress={()=>setPublicTransit(true)}>{zh?'九巴与绿色小巴到站查询':'KMB and green minibus arrivals'}</Button>
    <Text style={[styles.title,{color:c.text}]}>{zh?'校园交通':'Campus transport'}</Text>
    <Text style={[styles.caption,{color:c.muted}]}>{zh?'校巴计划时刻表 · 没有实时车辆定位或空位数据':'Shuttle schedules · no live vehicle location or seat availability'}</Text>
    <Button variant="secondary" isDisabled={busy} onPress={()=>refresh.current()}>{busy?(zh?'更新中…':'Refreshing…'):(zh?'刷新班次':'Refresh schedules')}</Button>

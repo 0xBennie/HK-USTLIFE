@@ -1,0 +1,15 @@
+{
+  "url": "https://data.etagmb.gov.hk/eta/route-stop/2004825/2/1",
+  "retrieved_at": "2026-10-02T17:39:27.628Z",
+  "status": 200,
+  "response": {
+    "type": "ETA-Route-Stop",
+    "version": "1.0",
+    "generated_timestamp": "2026-10-03T01:39:27.599+08:00",
+    "data": {
+      "stop_id": 20012474,
+      "enabled": true,
+      "eta": []
+    }
+  }
+}

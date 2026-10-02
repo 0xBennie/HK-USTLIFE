@@ -1,3 +1,5 @@
+import {createPublicTransit} from './campus/public-transit.js';
+import {registerPublicTransitRoutes} from './campus/public-transit-routes.js';
 import { createDirectoryStore } from './campus/directory.js';
 import { registerDirectoryRoutes } from './campus/directory-routes.js';
 import { registerCampusRoutes } from './campus/routes.js';
@@ -12,7 +14,7 @@ import { createCalendarStore } from './calendar/store.js';
 import { registerCalendarRoutes } from './calendar/routes.js';
 import { registerLearningRoutes } from './learning/routes.js';
 
-export function createProductApp(options: { dataDir: string; now?: () => number }) {
+export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch }) {
   if (process.env.NODE_ENV === 'production') throw new Error('Local development mail is forbidden in production.');
   const now = options.now ?? Date.now;
   const db = openDatabase(options.dataDir);
@@ -32,6 +34,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number 
   });
   const ok = (data: unknown, requestId: string) => ({ data, meta: { request_id: requestId, generated_at: new Date(now()).toISOString(), mode: 'local-development' } });
   registerCampusRoutes(app,ok,now);
+  registerPublicTransitRoutes(app,createPublicTransit({now,fetch:options.transitFetch}),ok);
   registerDirectoryRoutes(app,directory,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerLearningRoutes(app,learning,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerCalendarRoutes(app,calendars,request=>auth.requireUser(request.headers.authorization).id,ok);

@@ -65,3 +65,12 @@ SecureStore stores only the opaque session token with device-only keychain acces
 - Cookie-based web login/admin UI, ICS import, campus data, activities/community and notifications are subsequent units. Manual learning uses `/study/*` and `/me/calendar`, documented in `api/learning-api.md`.
 - The prototype contains no real external email, private school connection, remote push or public hosting.
 - Current dependency audit findings are tracked in `progress/e1-dependency-review.md`; development dependency resolution does not imply a clean security audit or public-release readiness.
+
+Public transport live smoke (explicit network use, unlike ordinary tests):
+
+```sh
+npm run build:core
+node scripts/smoke-public-transit.mjs /tmp/hkust-public-transit-smoke.json
+```
+
+This starts a temporary local HTTP server/database, discovers live KMB/GMB route variants and checks selected HKUST stops/ETA envelopes, then closes/removes only its temporary resources. A valid empty prediction list is expected outside service hours; it does not establish suspension. Operator failures cause this live acceptance probe to fail with a report, while the native UI displays an unavailable state. See `docs/api/campus-api.md` for coverage and freshness policy.
