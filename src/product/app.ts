@@ -1,3 +1,4 @@
+import { registerCampusRoutes } from './campus/routes.js';
 import { calendarQuerySchema } from './learning/schemas.js';
 import Fastify from 'fastify';
 import { z, ZodError } from 'zod';
@@ -27,6 +28,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number 
     if (request.headers.origin && request.headers.origin !== `http://${request.headers.host}`) throw new ApiError(403, 'ORIGIN_FORBIDDEN', 'Origin is not allowed.');
   });
   const ok = (data: unknown, requestId: string) => ({ data, meta: { request_id: requestId, generated_at: new Date(now()).toISOString(), mode: 'local-development' } });
+  registerCampusRoutes(app,ok,now);
   registerLearningRoutes(app,learning,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerCalendarRoutes(app,calendars,request=>auth.requireUser(request.headers.authorization).id,ok);
   app.get('/api/v1/me/calendar',async request=>{
