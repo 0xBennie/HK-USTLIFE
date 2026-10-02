@@ -2,6 +2,8 @@
 
 日期：2026-10-02。已确认：先做 iOS，安卓客户端暂不做。其余范围和技术选型为建议；本轮只评估，没有创建移动项目或外部账户。
 
+后续范围决定：用户已要求将参考网站全部功能放入[长期路线图](2026-10-02-bnbu-full-feature-roadmap.md)。iPad/Mac/Watch 与 AI/深度校园功能已保留，Android/Windows 为暂缓平台；下文首版建议不等于删除这些长期能力。完整能力增加后，React Native/Expo 对 Widget/Live Activities/Watch 的原生扩展成本需在选型验证中检查，不能按复用网页的工作量估算。
+
 ## 当前基础
 
 本轮检查的 package.json 显示，仓库已有 TypeScript MCP/core 与 Next.js/React Hub；没有发现现成的 Swift 或 Expo 客户端工程。已完成的数据核查、API 合同和参考规则测试可复用，但不能等同于已实现的用户后端或移动 App。

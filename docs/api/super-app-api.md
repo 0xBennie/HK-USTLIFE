@@ -5,6 +5,7 @@
 - 机器可读合同：[OpenAPI 3.1](super-app.openapi.json)。所有产品操作均标记 `x-implementation-status: planned`，不能拿本文件当作现有服务器地址。
 - 数据源完整调查：[来源、字段与权限](../research/2026-10-02-super-app-data-and-api-feasibility.md)。
 - 本轮测试：[结果与限制](test-report-2026-10-02.md)。测试结果文件与复跑方式见该报告。
+- 范围更新：用户已将参考网站全部功能纳入[长期路线图](../superpowers/specs/2026-10-02-bnbu-full-feature-roadmap.md)。该文件第 5 节登记原生身份、邮件读写、作业提交、成绩/信息卡、跨端及 AI 的合同增补；当前 OpenAPI 0.1 尚未覆盖，原测试结果不适用于这些新增能力。
 
 ## 1. 边界与通用约定
 
