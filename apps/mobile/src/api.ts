@@ -1,7 +1,7 @@
 export class ApiFailure extends Error {
   constructor(public status: number, public code: string, message: string, public retryAfter?: number) { super(message); }
 }
-type RequestOptions = { method?: string; body?: unknown; token?: string };
+export type RequestOptions = { method?: string; body?: unknown; token?: string; idempotencyKey?: string };
 
 export class ApiClient {
   constructor(private baseUrl: string) {
@@ -16,7 +16,7 @@ export class ApiClient {
     try {
       const response = await fetch(`${this.baseUrl}${path}`, {
         method: options.method ?? 'GET', signal: controller.signal,
-        headers: { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}) },
+        headers: { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}), ...(options.idempotencyKey ? { 'Idempotency-Key': options.idempotencyKey } : {}) },
         body: options.body ? JSON.stringify(options.body) : undefined,
       });
       const payload = await response.json();

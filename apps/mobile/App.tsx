@@ -11,6 +11,7 @@ import { session } from './src/runtime';
 import { LoginScreen, ProfileScreen } from './src/screens/AccountScreen';
 import { strings, type Language } from './src/strings';
 import { palette, styles } from './src/theme';
+import { StudyScreen } from './src/study/StudyScreen';
 
 function CampusApp() {
   const state = useSyncExternalStore(session.subscribe, session.snapshot);
@@ -35,6 +36,8 @@ function CampusApp() {
           : state.status === 'error' ? <View style={styles.stack}><Text accessibilityRole="alert" style={[styles.body, { color: colors.danger }]}>{t.errors[state.error ?? ''] ?? t.network}</Text><Button onPress={() => session.restore()}>{t.retry}</Button></View>
           : state.profile ? <ProfileScreen key={state.profile.id} profile={state.profile} language={language} dark={dark} />
           : <LoginScreen language={language} dark={dark} />
+          : tab === 0 ? state.profile ? <StudyScreen key={state.profile.id} language={language} dark={dark} />
+          : <View style={styles.stack}><Text style={[styles.heading,{color:colors.text}]}>{t.loginBody}</Text><Button onPress={()=>setTab(4)}>{t.signIn}</Button></View>
           : <View style={styles.stack}>
             <Text style={[styles.title, { color: colors.text }]}>{[t.todayTitle, t.campusTitle, t.discoverTitle, t.inboxTitle][tab]}</Text>
             <Card style={[styles.card, { backgroundColor: colors.surface }]}><Text style={[styles.heading, { color: colors.text }]}>{t.phase}</Text><Text style={[styles.body, { color: colors.muted }]}>{t.pending}</Text></Card>

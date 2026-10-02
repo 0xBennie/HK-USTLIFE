@@ -1,0 +1,49 @@
+
+> hkust-life-mcp@0.1.0 test
+> npm run build:core && vitest run
+
+
+> hkust-life-mcp@0.1.0 build:core
+> tsc -p tsconfig.json
+
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+(node:27546) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/hko-weather.test.ts (1 test) 2ms
+ ✓ tests/ics-calendar.test.ts (3 tests) 2ms
+ ✓ tests/graph-outlook.test.ts (1 test) 5ms
+ ✓ tests/release-assets.test.ts (3 tests) 5ms
+ ✓ tests/reminder-plan.test.ts (2 tests) 8ms
+ ✓ tests/daily-brief.test.ts (1 test) 7ms
+ ✓ tests/source-registry.test.ts (4 tests) 3ms
+ ✓ tests/course-planner.test.ts (4 tests) 4ms
+ ✓ tests/today.test.ts (1 test) 8ms
+ ✓ tests/study-dates.test.ts (3 tests) 14ms
+(node:27547) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27548) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/account-status.test.ts (2 tests) 4ms
+ ✓ tests/newcomer-checklist.test.ts (2 tests) 3ms
+ ✓ tests/hub-content.test.ts (3 tests) 2ms
+ ✓ tests/browser-profile.test.ts (2 tests) 3ms
+ ✓ tests/skill-packages.test.ts (1 test) 9ms
+ ✓ tests/skills-catalog.test.ts (2 tests) 2ms
+ ✓ tests/server-tools.test.ts (4 tests) 28ms
+ ✓ tests/hub-manifest.test.ts (1 test) 2ms
+ ✓ tests/source-search.test.ts (2 tests) 2ms
+ ✓ tests/http-transport.test.ts (1 test) 41ms
+ ✓ tests/release-check.test.ts (5 tests) 203ms
+ ✓ tests/public-mcp-route.test.ts (3 tests) 11ms
+ ✓ tests/smoke-mcp.test.ts (1 test) 135ms
+ ✓ tests/mobile-session.test.ts (6 tests) 195ms
+ ✓ tests/product-auth.test.ts (11 tests) 216ms
+ ✓ tests/product-learning.test.ts (23 tests) 321ms
+
+ Test Files  26 passed (26)
+      Tests  92 passed (92)
+   Start at  00:28:28
+   Duration  764ms (transform 803ms, setup 0ms, collect 2.30s, tests 1.23s, environment 3ms, prepare 1.49s)
+

@@ -1,4 +1,4 @@
-import { ApiClient, ApiFailure } from './api';
+import { ApiClient, ApiFailure, type RequestOptions } from './api';
 
 export type Profile = { id: string; email: string; display_name: string; language: 'zh' | 'en'; role: 'member' | 'admin'; membership: 'unknown'; is_demo: boolean; connections: Record<string, string> };
 export type TokenStorage = { get(): Promise<string | null>; set(token: string): Promise<void>; clear(): Promise<void> };
@@ -52,7 +52,7 @@ export class SessionController {
     }
   }
 
-  async request<T>(path: string, options: { method?: string; body?: unknown } = {}) {
+  async request<T>(path: string, options: Omit<RequestOptions,'token'> = {}) {
     const epoch = this.epoch;
     try {
       const result = await this.api.request<T>(path, { ...options, token: this.token ?? undefined });

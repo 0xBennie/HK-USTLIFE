@@ -93,4 +93,15 @@ describe('native session contract against HTTP backend', () => {
     await expectation;
     expect(session.snapshot().profile?.email).toBe('second@example.test');
   });
+
+  it('passes a stable create key through the native client so network retries do not duplicate tasks', async () => {
+    const session = new SessionController(api, storage);
+    await session.signIn(await token());
+    const options = { method:'POST',body:{kind:'task',title:'From native client'},idempotencyKey:'native-retry-key-001' };
+    const first = await session.request<{id:string}>('/study/items',options);
+    const retry = await session.request<{id:string}>('/study/items',options);
+    expect(retry.id).toBe(first.id);
+    const list = await session.request<{items:unknown[]}>('/study/items');
+    expect(list.items).toHaveLength(1);
+  });
 });

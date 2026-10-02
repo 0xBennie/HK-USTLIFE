@@ -1,0 +1,1 @@
+PASS: real HTTP process start → local challenge → login → profile/course/event/task/note writes → process restart → persisted calendar/profile → task completed/versioned → private export → logout revoked

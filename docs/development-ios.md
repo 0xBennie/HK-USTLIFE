@@ -1,6 +1,6 @@
 # Run the local iOS development MVP
 
-Current unit: accounts and native shell. Learning/campus/social modules still require implementation. The current development shell labels them accordingly.
+Current units: accounts and manual learning. Today connects to private courses, day/week schedules, tasks, notes and material links. ICS/campus/social modules still require implementation; campus/discovery/inbox remain explicitly labeled development placeholders.
 
 ## Requirements
 
@@ -62,6 +62,6 @@ SecureStore stores only the opaque session token with device-only keychain acces
 
 - No simulator/device runtime evidence yet: Xcode is absent from the inspected environment.
 - Keychain persistence, keyboard/safe-area/font-size behavior and HeroUI rendering remain to be checked on actual iOS.
-- Cookie-based web login/admin UI, learning/ICS, campus data, activities/community and notifications are subsequent units.
+- Cookie-based web login/admin UI, ICS import, campus data, activities/community and notifications are subsequent units. Manual learning uses `/study/*` and `/me/calendar`, documented in `api/learning-api.md`.
 - The prototype contains no real external email, private school connection, remote push or public hosting.
 - Current dependency audit findings are tracked in `progress/e1-dependency-review.md`; development dependency resolution does not imply a clean security audit or public-release readiness.
