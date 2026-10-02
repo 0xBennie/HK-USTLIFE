@@ -32,6 +32,20 @@ describe('private learning API', () => {
     const r = await call('POST', '/study/items', body);
     expect(r.statusCode, r.body).toBe(201); return r.json().data;
   }
+  it('edits an imported occurrence through its dedicated endpoint and requires explicit source conflict resolution',async()=>{
+    const content='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:personal\r\nDTSTART:20261005T010000Z\r\nSUMMARY:Source title\r\nEND:VEVENT\r\nEND:VCALENDAR';
+    const preview=(await call('POST','/calendar/imports/preview',{source_name:'Test',content})).json().data;
+    await call('POST',`/calendar/imports/${preview.id}/confirm`,{uids:['personal']});
+    const original=(await call('GET','/me/calendar?from=2026-10-05&to=2026-10-06')).json().data.days[0].events[0];
+    const path=`/calendar/series/${original.import_origin.series_id}/occurrence`,body={version:original.version,recurrence_id:original.recurrence_id,event:{kind:'event',title:'My date',starts_at:'2026-10-06T04:00:00Z'}};
+    expect((await call('PATCH',path,body,bob)).statusCode).toBe(404);expect((await call('PATCH',path,body)).statusCode).toBe(200);expect((await call('PATCH',path,body)).statusCode).toBe(409);
+    expect((await call('GET','/me/calendar?from=2026-10-05&to=2026-10-06')).json().data.days[0].events).toEqual([]);
+    expect((await call('GET','/me/calendar?from=2026-10-06&to=2026-10-07')).json().data.days[0].events[0]).toMatchObject({title:'My date',locally_modified:true});
+    const update=(await call('POST','/calendar/imports/preview',{source_id:original.import_origin.source_id,content:content.replace('Source title','New source')})).json().data;
+    expect((await call('POST',`/calendar/imports/${update.id}/confirm`,{uids:['personal']})).statusCode).toBe(409);
+    expect((await call('POST',`/calendar/imports/${update.id}/confirm`,{uids:['personal'],resolutions:{personal:'use_source'}})).statusCode).toBe(200);
+    expect((await call('GET','/me/calendar?from=2026-10-05&to=2026-10-06')).json().data.days[0].events[0]).toMatchObject({title:'New source',locally_modified:false});
+  });
   it('renders imported recurrence exceptions with manual items, stable identity and display timezone', async () => {
     const lines=['BEGIN:VCALENDAR','VERSION:2.0',
       'BEGIN:VEVENT','UID:weekly','DTSTART:20261005T010000Z','DTEND:20261005T020000Z','RRULE:FREQ=WEEKLY;COUNT=4','EXDATE:20261012T010000Z','SUMMARY:Weekly','END:VEVENT',

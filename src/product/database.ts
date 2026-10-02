@@ -63,6 +63,14 @@ const migrations = [{ version: 1, sql: `
     confirmation TEXT, result TEXT
   );
   CREATE INDEX calendar_previews_owner ON calendar_previews(owner_id,expires_at);
+` }, { version: 4, sql: `
+  CREATE UNIQUE INDEX calendar_series_owner_id ON calendar_series(owner_id,id);
+  CREATE TABLE calendar_overrides (
+    owner_id TEXT NOT NULL, series_id TEXT NOT NULL, recurrence_id TEXT NOT NULL,
+    payload TEXT NOT NULL CHECK(json_valid(payload)),
+    FOREIGN KEY(owner_id,series_id) REFERENCES calendar_series(owner_id,id) ON DELETE CASCADE,
+    PRIMARY KEY(owner_id,series_id,recurrence_id)
+  );
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

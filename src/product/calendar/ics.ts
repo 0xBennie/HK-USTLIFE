@@ -176,7 +176,7 @@ export function parseCalendar(content:string,floatingTimezone?:string) {
   return {series,issues};
 }
 
-export function expandSeries(series:CalendarSeries,range:{from:string;to:string}):Occurrence[] {
+function expand(series:CalendarSeries,range:{from:string;to:string},wanted?:string):Occurrence[] {
   calendarQuerySchema.parse({...range,timezone:'UTC'});
   const root=new ICAL.Component(ICAL.parse(series.ical));prepare(root,series.floating_timezone);
   const components=root.getAllSubcomponents('vevent'),master=components.find(c=>!c.hasProperty('recurrence-id'))!;
@@ -187,6 +187,7 @@ export function expandSeries(series:CalendarSeries,range:{from:string;to:string}
   const result:Occurrence[]=[],seen=new Set<string>();
   const from=Date.parse(range.from)-86400_000,to=Date.parse(range.to)+86400_000;
   const append=(time:Time)=>{
+    if(wanted&&time.toString()!==wanted)return;
     if(isExcluded(master,time))return;
     const detail=event.getOccurrenceDetails(time),c=detail.item.component,start=detail.startDate;
     if(stringValue(c,'status').toUpperCase()==='CANCELLED')return;
@@ -195,7 +196,7 @@ export function expandSeries(series:CalendarSeries,range:{from:string;to:string}
     const end=explicitEnd?detail.endDate:null;
     const stamp=start.isDate?Date.parse(start.toString()):start.toUnixTime()*1000;
     const endStamp=end?(end.isDate?Date.parse(end.toString()):end.toUnixTime()*1000):stamp;
-    if(start.isDate?(start.toString()>=range.to||(end?end.toString()<=range.from:start.toString()<range.from)):(stamp>=to||endStamp<from))return;
+    if(!wanted&&(start.isDate?(start.toString()>=range.to||(end?end.toString()<=range.from:start.toString()<range.from)):(stamp>=to||endStamp<from)))return;
     const sourceStatus=stringValue(c,'status').toUpperCase();
     result.push({recurrence_id,title:stringValue(c,'summary')||stringValue(master,'summary')||'Untitled event',body:stringValue(c,'description'),location:stringValue(c,'location'),timezone:start.zone.tzid,all_day:start.isDate,starts_at:start.isDate?null:new Date(stamp).toISOString(),ends_at:start.isDate||!end?null:new Date(endStamp).toISOString(),start_date:start.isDate?start.toString():null,end_date:start.isDate&&end?end.toString():null,status:'active',source_status:sourceStatus==='TENTATIVE'?'tentative':sourceStatus==='CONFIRMED'?'confirmed':'unspecified',participation:'unknown'});
   };
@@ -208,4 +209,11 @@ export function expandSeries(series:CalendarSeries,range:{from:string;to:string}
     append(next);if(result.length>2000)fail('EXPANSION_LIMIT','Too many occurrences in this date range.');
   }
   return result.sort((a,b)=>(a.starts_at??a.start_date!).localeCompare(b.starts_at??b.start_date!)||a.recurrence_id.localeCompare(b.recurrence_id));
+}
+
+export function expandSeries(series:CalendarSeries,range:{from:string;to:string}):Occurrence[] {return expand(series,range);}
+export function occurrenceAt(series:CalendarSeries,recurrenceId:string):Occurrence|null {
+  const date=calendarDate.parse(recurrenceId.slice(0,10));
+  const to=new Date(Date.parse(date)+86400_000).toISOString().slice(0,10);
+  return expand(series,{from:date,to},recurrenceId)[0]??null;
 }

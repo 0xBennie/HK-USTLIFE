@@ -47,3 +47,33 @@ it('reports failed expansion explicitly while preserving independently expandabl
  const result=store.occurrences('a',{from:'2026-10-05',to:'2026-10-06'});
  expect(result.items.map(i=>i.title)).toEqual(['valid']);expect(result.issues).toHaveLength(1);expect(result.issues[0]).toMatchObject({title:'old',code:'EXPANSION_UNAVAILABLE'});
 });
+it('moves one occurrence without changing its siblings and resolves reimport conflicts explicitly',()=>{
+ const p=initial(),r=store.confirm('a',p.id,{uids:['one']});let s=store.exportAll('a')[0].series[0];
+ const input={kind:'event',title:'My room change',starts_at:'2026-11-10T09:00:00Z',location:'Library'};
+ store.editOccurrence('a',s.id,{version:s.version,recurrence_id:'2026-10-05T01:00:00Z',event:input});
+ const occurrences=store.occurrences('a',{from:'2026-10-05',to:'2026-10-06'}).items;
+ expect(occurrences.some(o=>o.starts_at==='2026-10-05T01:00:00.000Z')).toBe(false);
+ expect(store.occurrences('a',{from:'2026-11-10',to:'2026-11-11'}).items.find(o=>o.title==='My room change')).toMatchObject({locally_modified:true,starts_at:'2026-11-10T09:00:00.000Z',source_occurrence_missing:false});
+ expect(()=>store.editOccurrence('a',s.id,{version:s.version,recurrence_id:'2026-10-12T01:00:00Z',event:input})).toThrow(/changed/);
+ const update=store.preview('a',{source_id:r.source_id,content:calendar(event('one','School update'))});expect(update.entries[0]).toMatchObject({action:'conflict',local_changes:1});
+ expect(()=>store.confirm('a',update.id,{uids:['one']})).toThrow(/keep local/);
+ store.confirm('a',update.id,{uids:['one'],resolutions:{one:'keep_local'}});
+ expect(store.exportAll('a')[0].series[0].overrides).toHaveLength(1);
+ const next=store.preview('a',{source_id:r.source_id,content:calendar(event('one','Final source'))});store.confirm('a',next.id,{uids:['one'],resolutions:{one:'use_source'}});
+ expect(store.exportAll('a')[0].series[0].overrides).toEqual([]);expect(store.occurrences('a',{from:'2026-10-05',to:'2026-10-06'}).items[0].title).toBe('Final source');
+});
+it('validates occurrence membership and owner; local edits invalidate pending preview and cascade on deletion',()=>{
+ const p=initial(),r=store.confirm('a',p.id,{uids:['one']}),s=store.exportAll('a')[0].series[0];const eventInput={kind:'event',title:'Private',starts_at:'2026-10-05T04:00:00Z'};
+ const pending=store.preview('a',{source_id:r.source_id,content:calendar(event('one','New'))});
+ for(const owner of ['b','a'])expect(()=>store.editOccurrence(owner,s.id,{version:1,recurrence_id:'2026-10-06T01:00:00Z',event:eventInput})).toThrow(/not found/);
+ store.editOccurrence('a',s.id,{version:1,recurrence_id:'2026-10-05T01:00:00Z',event:eventInput});expect(()=>store.confirm('a',pending.id,{uids:['one']})).toThrow(/changed/);
+ db.close();db=openDatabase(dir);store=createCalendarStore(db,()=>clock);expect(store.exportAll('a')[0].series[0].overrides[0].payload.title).toBe('Private');
+ const source=store.exportAll('a')[0];store.remove('a',source.id,source.version);expect(db.prepare('SELECT COUNT(*) AS n FROM calendar_overrides').get()?.n).toBe(0);
+});
+it('keeps a locally modified occurrence explicitly when a new source removes it',()=>{
+ const p=initial(),r=store.confirm('a',p.id,{uids:['one']}),s=store.exportAll('a')[0].series[0];
+ store.editOccurrence('a',s.id,{version:1,recurrence_id:'2026-10-05T01:00:00Z',event:{kind:'event',title:'Keep private appointment',starts_at:'2026-10-05T01:00:00Z'}});
+ const changed=store.preview('a',{source_id:r.source_id,content:calendar(event('one').replace('SUMMARY:one','EXDATE:20261005T010000Z\r\nSUMMARY:one'))});
+ store.confirm('a',changed.id,{uids:['one'],resolutions:{one:'keep_local'}});
+ expect(store.occurrences('a',{from:'2026-10-05',to:'2026-10-06'}).items[0]).toMatchObject({title:'Keep private appointment',locally_modified:true,source_occurrence_missing:true});
+});

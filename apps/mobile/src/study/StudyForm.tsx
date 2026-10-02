@@ -6,13 +6,14 @@ import { ApiFailure } from '../api';
 import { session } from '../runtime';
 import { palette,styles } from '../theme';
 import type { Language } from '../strings';
-import type { Course,StudyItem } from './types';
+import type { Course,StudyItem,CalendarItem } from './types';
 import { studyStrings } from './strings';
 import { hongKongInput,newWriteKey,editedInstant } from './dates';
 
-export type Editor = {kind:'course'|StudyItem['kind'];record?:Course|StudyItem;courseId?:string|null};
+export type Editor = {kind:'course'|StudyItem['kind'];record?:Course|CalendarItem;courseId?:string|null};
 export function StudyForm({editor,courses,language,dark,onSaved,onBack}:{editor:Editor;courses:Course[];language:Language;dark:boolean;onSaved:()=>void;onBack:()=>void}) {
   const t=studyStrings[language],colors=palette[dark?'dark':'light'],existing=editor.record;
+  const imported=existing&&'import_origin' in existing?existing:undefined;
   const initial=existing && 'kind' in existing?existing:undefined;
   const [title,setTitle]=useState(existing?.title ?? '');
   const [body,setBody]=useState(existing && 'description' in existing?existing.description:initial?.body ?? '');
@@ -40,13 +41,17 @@ export function StudyForm({editor,courses,language,dark,onSaved,onBack}:{editor:
       if(editor.kind==='note') payload={...payload,kind:'note',body};
       if(editor.kind==='material') payload={...payload,kind:'material',body,url};
       if(editor.kind==='event') payload={...payload,kind:'event',body,location,all_day:allDay,
-        timezone:initial?.kind==='event'?initial.timezone:'Asia/Hong_Kong',
+        timezone:!imported&&initial?.kind==='event'?initial.timezone:'Asia/Hong_Kong',
         starts_at:allDay?null:editedInstant(start,initial?.kind==='event'?initial.starts_at:null),ends_at:allDay?null:editedInstant(end,initial?.kind==='event'?initial.ends_at:null),start_date:allDay?start:null,end_date:allDay?(end||null):null,
         status:initial?.kind==='event'?initial.status:'active',remind_minutes:!allDay && initial?.kind==='event'?initial.remind_minutes:null};
       if(editor.kind==='task') payload={...payload,kind:'task',body,status:initial?.kind==='task'?initial.status:'open',
         due_at:dueMode==='time'?editedInstant(due,initial?.kind==='task'?initial.due_at:null):null,due_date:dueMode==='date'?(due||null):null,
         remind_minutes:dueMode==='time' && initial?.kind==='task'?initial.remind_minutes:null,subtasks:initial?.kind==='task'?initial.subtasks:[]};
       const path=`/study/${editor.kind==='course'?'courses':'items'}`;
+      if(imported) {
+        await session.request(`/calendar/series/${imported.import_origin.series_id}/occurrence`,{method:'PATCH',body:{version:imported.version,recurrence_id:imported.recurrence_id,event:payload}});
+        onSaved();return;
+      }
       if(existing) { delete payload.kind;payload.version=existing.version; }
       await session.request(existing?`${path}/${existing.id}`:path,{method:existing?'PATCH':'POST',body:payload,idempotencyKey:key.current});
       onSaved();
@@ -57,7 +62,7 @@ export function StudyForm({editor,courses,language,dark,onSaved,onBack}:{editor:
     <Button variant="ghost" isDisabled={busy} onPress={onBack}>{t.back}</Button>
     <Text style={[styles.heading,{color:colors.text}]}>{existing?t.edit:t.add} · {t[editor.kind]}</Text>
     {field(t.name,title,setTitle)}
-    {editor.kind==='course'?field(t.code,code,setCode):<View style={styles.smallStack}>
+    {editor.kind==='course'?field(t.code,code,setCode):imported?<Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'仅修改这一次日程，不影响其他周次。':'Edit this occurrence only; other dates stay unchanged.'}</Text>:<View style={styles.smallStack}>
       <Text style={[styles.body,{color:colors.text}]}>{t.courseChoice}</Text>
       <ScrollView horizontal><View style={styles.row}>
         <Button variant={courseId===null?'primary':'secondary'} isDisabled={busy} onPress={()=>change(setCourseId,null)}>{courseId===null?'✓ ':''}{t.noCourse}</Button>
