@@ -3,8 +3,8 @@ import type { DatabaseSync } from 'node:sqlite';
 import { z } from 'zod';
 import { transaction } from '../database.js';
 import { ApiError } from '../errors.js';
-import { parseCalendar, expandSeries, occurrenceAt, type CalendarSeries, type ImportIssue } from './ics.js';
-import type { ImportedEvent } from './types.js';
+import { parseCalendar, expandSeries, occurrenceAt, summarizeSeries, type CalendarSeries, type ImportIssue } from './ics.js';
+import type { ImportedEvent,ImportPreview } from './types.js';
 import { timezone, itemSchema } from '../learning/schemas.js';
 
 const previewInput=z.object({source_id:z.string().uuid().optional(),source_name:z.string().trim().min(1).max(120).optional(),content:z.string().max(256*1024),floating_timezone:timezone.optional()}).strict()
@@ -13,7 +13,7 @@ const confirmationInput=z.object({uids:z.array(z.string().min(1)).min(1).max(500
   .refine(v=>new Set(v.uids).size===v.uids.length,'Duplicate selection.');
 type Source={id:string;name:string;version:number;created_at:number};
 type Row={id:string;uid:string;definition:string;version:number};
-type Entry={series:CalendarSeries;expected_version:number|null;action:'new'|'unchanged'|'update'|'conflict';local_changes:number;previous_title:string|null};
+type Entry={summary:ReturnType<typeof summarizeSeries>;previous_summary:ReturnType<typeof summarizeSeries>|null;series:CalendarSeries;expected_version:number|null;action:'new'|'unchanged'|'update'|'conflict';local_changes:number;previous_title:string|null};
 type Snapshot={source:Source;existing:boolean;entries:Entry[];issues:ImportIssue[]};
 const absent=()=>new ApiError(404,'NOT_FOUND','Calendar resource not found.');
 const stale=()=>new ApiError(409,'STALE_PREVIEW','Calendar changed. Generate and review a new preview.');
@@ -59,7 +59,7 @@ export function createCalendarStore(db:DatabaseSync,now:()=>number=Date.now) {
     const snapshot:Snapshot={source:target,existing:Boolean(value.source_id),issues:parsed.issues,entries:parsed.series.map(series=>{
       const row=previous.get(series.uid),old=row?JSON.parse(row.definition) as CalendarSeries:null;
       const local_changes=row?overrides(owner,row.id).length:0;
-      return {series,local_changes,expected_version:row?.version??null,action:!row?'new':old!.fingerprint===series.fingerprint?'unchanged':local_changes?'conflict':'update',previous_title:old?.title??null};
+      return {summary:summarizeSeries(series),previous_summary:old?summarizeSeries(old):null,series,local_changes,expected_version:row?.version??null,action:!row?'new':old!.fingerprint===series.fingerprint?'unchanged':local_changes?'conflict':'update',previous_title:old?.title??null};
     })};
     const id=randomUUID(),expires_at=now()+30*60_000;
     transaction(db,()=>{
@@ -68,7 +68,7 @@ export function createCalendarStore(db:DatabaseSync,now:()=>number=Date.now) {
       if(count.n>=20)throw new ApiError(429,'PREVIEW_LIMIT','Too many pending previews. Wait for older previews to expire.');
       db.prepare('INSERT INTO calendar_previews(id,owner_id,snapshot,expires_at) VALUES(?,?,?,?)').run(id,owner,JSON.stringify(snapshot),expires_at);
     });
-    return {id,expires_at,...snapshot};
+    return {id,expires_at,...snapshot} satisfies ImportPreview;
   }
   function confirm(owner:string,id:string,input:unknown) {
     const value=confirmationInput.parse(input),signature=JSON.stringify({...value,uids:[...value.uids].sort(),resolutions:Object.fromEntries(Object.entries(value.resolutions).sort(([a],[b])=>a.localeCompare(b)))});

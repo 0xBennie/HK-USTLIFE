@@ -217,3 +217,17 @@ export function occurrenceAt(series:CalendarSeries,recurrenceId:string):Occurren
   const to=new Date(Date.parse(date)+86400_000).toISOString().slice(0,10);
   return expand(series,{from:date,to},recurrenceId)[0]??null;
 }
+
+export function summarizeSeries(series:CalendarSeries) {
+  const root=new ICAL.Component(ICAL.parse(series.ical));
+  const events=root.getAllSubcomponents('vevent'),master=events.find(c=>!c.hasProperty('recurrence-id'))!;
+  const start=master.getFirstProperty('dtstart');
+  return {
+    title:series.title,start:stringValue(master,'dtstart'),end:stringValue(master,'dtend'),duration:stringValue(master,'duration'),
+    timezone:String(start?.getParameter('tzid')??(stringValue(master,'dtstart').endsWith('Z')?'UTC':series.floating_timezone??'date / unspecified')),
+    recurrence:master.getAllProperties('rrule').map(p=>String(p.getFirstValue())).join('; '),
+    excluded:master.getAllProperties('exdate').flatMap(p=>p.getValues().map(String)).join(', '),
+    exceptions:events.filter(c=>c.hasProperty('recurrence-id')).map(c=>`${stringValue(c,'recurrence-id')} → ${stringValue(c,'status')||stringValue(c,'dtstart')} ${stringValue(c,'summary')}`).join('\n'),
+    location:stringValue(master,'location'),description:stringValue(master,'description'),status:stringValue(master,'status'),
+  };
+}

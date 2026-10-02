@@ -77,3 +77,9 @@ it('keeps a locally modified occurrence explicitly when a new source removes it'
  store.confirm('a',changed.id,{uids:['one'],resolutions:{one:'keep_local'}});
  expect(store.occurrences('a',{from:'2026-10-05',to:'2026-10-06'}).items[0]).toMatchObject({title:'Keep private appointment',locally_modified:true,source_occurrence_missing:true});
 });
+it('previews readable before/after time and recurrence details without changing stored data',()=>{
+ const p=initial(),r=store.confirm('a',p.id,{uids:['one']});
+ const changed=store.preview('a',{source_id:r.source_id,content:calendar(event('one','New name').replace('20261005T010000Z','20261005T020000Z'))});
+ expect(changed.entries[0]).toMatchObject({summary:{title:'New name',start:'2026-10-05T02:00:00Z',timezone:'UTC',recurrence:'FREQ=WEEKLY;COUNT=12'},previous_summary:{title:'one',start:'2026-10-05T01:00:00Z'}});
+ expect(store.exportAll('a')[0].series[0].title).toBe('one');
+});
