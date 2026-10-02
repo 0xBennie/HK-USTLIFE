@@ -121,6 +121,17 @@ function validateComponent(c:Component,isException:boolean) {
     if(duration.toSeconds()<=0||(start!.isDate&&duration.toSeconds()%86400!==0))fail('INVALID_END','Duration must be positive and match date precision.');
   }
 }
+function isMember(master:Component,target:Time) {
+  const start=master.getFirstPropertyValue('dtstart') as Time;
+  const rule=master.getFirstPropertyValue('rrule') as InstanceType<typeof ICAL.Recur>|null;
+  if(!rule)return start.compare(target)===0;
+  const iterator=rule.iterator(start);
+  for(let steps=0;steps<10000;steps++) {
+    const next=iterator.next();if(!next||next.compare(target)>0)return false;if(next.compare(target)===0)return true;
+  }
+  return fail('EXPANSION_LIMIT','Exception membership needs too many expansion steps.');
+}
+const isExcluded=(master:Component,target:Time)=>master.getAllProperties('exdate').some(p=>(p.getValues() as Time[]).some(t=>t.compare(target)===0));
 
 export function parseCalendar(content:string,floatingTimezone?:string) {
   if(Buffer.byteLength(content,'utf8')>262144)fail('FILE_TOO_LARGE','Calendar must be at most 256 KiB.');
@@ -155,6 +166,10 @@ export function parseCalendar(content:string,floatingTimezone?:string) {
         validateComponent(c,c.hasProperty('recurrence-id'));
         if(c.hasProperty('recurrence-id')) {const id=String(c.getFirstPropertyValue('recurrence-id'));if(ids.has(id))fail('DUPLICATE_EXCEPTION','An occurrence has multiple exceptions.');ids.add(id);}
       }
+      const preparedMaster=copy.getAllSubcomponents('vevent').find(c=>!c.hasProperty('recurrence-id'))!;
+      for(const c of copy.getAllSubcomponents('vevent').filter(c=>c.hasProperty('recurrence-id'))) {
+        if(!isMember(preparedMaster,c.getFirstPropertyValue('recurrence-id') as Time))fail('INVALID_EXCEPTION','Exception does not identify an occurrence of the master rule.');
+      }
       series.push({uid,identity:group.identity,title:stringValue(masters[0],'summary')||'Untitled event',ical:raw,floating_timezone:floatingTimezone??null,fingerprint:hash(raw)});
     }catch(error){issues.push({uid,code:error instanceof ImportError?error.code:'INVALID_EVENT',message:error instanceof ImportError?error.message:'This event could not be safely interpreted.'});}
   }
@@ -172,6 +187,7 @@ export function expandSeries(series:CalendarSeries,range:{from:string;to:string}
   const result:Occurrence[]=[],seen=new Set<string>();
   const from=Date.parse(range.from)-86400_000,to=Date.parse(range.to)+86400_000;
   const append=(time:Time)=>{
+    if(isExcluded(master,time))return;
     const detail=event.getOccurrenceDetails(time),c=detail.item.component,start=detail.startDate;
     if(stringValue(c,'status').toUpperCase()==='CANCELLED')return;
     const recurrence_id=time.toString();if(seen.has(recurrence_id))return;seen.add(recurrence_id);

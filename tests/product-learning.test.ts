@@ -32,6 +32,22 @@ describe('private learning API', () => {
     const r = await call('POST', '/study/items', body);
     expect(r.statusCode, r.body).toBe(201); return r.json().data;
   }
+  it('previews and confirms owner-scoped ICS through HTTP, exports and deletes persisted sources', async () => {
+    const content='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:lecture-1\r\nDTSTART:20261005T010000Z\r\nSUMMARY:Imported lecture\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+    expect((await call('POST','/calendar/imports/preview',{source_name:'School',content:'bad'})).statusCode).toBe(400);
+    const response=await call('POST','/calendar/imports/preview',{source_name:'School',content});
+    expect(response.statusCode,response.body).toBe(201);const p=response.json().data;
+    expect((await call('GET','/calendar/sources')).json().data).toEqual([]);
+    expect((await call('POST',`/calendar/imports/${p.id}/confirm`,{uids:['lecture-1']},bob)).statusCode).toBe(404);
+    const result=await call('POST',`/calendar/imports/${p.id}/confirm`,{uids:['lecture-1']});expect(result.statusCode,result.body).toBe(200);
+    await app.close();app=createProductApp({dataDir:dir});
+    const exported=(await call('GET','/me/export')).json().data;expect(exported.version).toBe(3);expect(exported.calendars[0].series[0].title).toBe('Imported lecture');
+    expect((await call('GET','/me/export',undefined,bob)).json().data.calendars).toEqual([]);
+    const source=(await call('GET','/calendar/sources')).json().data[0];expect(source.series_count).toBe(1);
+    expect((await call('DELETE',`/calendar/sources/${source.id}`,{version:source.version},bob)).statusCode).toBe(404);
+    expect((await call('DELETE',`/calendar/sources/${source.id}`,{version:source.version})).statusCode).toBe(200);
+    expect((await call('GET','/me/export')).json().data.calendars).toEqual([]);
+  });
   it('persists all four learning kinds and includes only the owner data in export after restart', async () => {
     const c = await course();
     await item({ kind: 'event', title: 'Class', course_id: c.id, starts_at: '2026-10-05T09:00:00+08:00' });

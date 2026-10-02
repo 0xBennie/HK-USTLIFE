@@ -4,6 +4,8 @@ import { openDatabase } from './database.js';
 import { createAuth } from './auth.js';
 import { ApiError } from './errors.js';
 import { createLearningStore } from './learning/store.js';
+import { createCalendarStore } from './calendar/store.js';
+import { registerCalendarRoutes } from './calendar/routes.js';
 import { registerLearningRoutes } from './learning/routes.js';
 
 export function createProductApp(options: { dataDir: string; now?: () => number }) {
@@ -12,6 +14,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number 
   const db = openDatabase(options.dataDir);
   const auth = createAuth(db, options.dataDir, now);
   const learning = createLearningStore(db,now);
+  const calendars = createCalendarStore(db,now);
   const app = Fastify({ logger: false, bodyLimit: 32_768, trustProxy: false });
   app.addHook('onClose', async () => { db.close(); });
   const localHost = (host: string | undefined) => /^((localhost)|(127\.0\.0\.1)|(\[::1\]))(:\d+)?$/.test(host ?? '');
@@ -24,6 +27,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number 
   });
   const ok = (data: unknown, requestId: string) => ({ data, meta: { request_id: requestId, generated_at: new Date(now()).toISOString(), mode: 'local-development' } });
   registerLearningRoutes(app,learning,request=>auth.requireUser(request.headers.authorization).id,ok);
+  registerCalendarRoutes(app,calendars,request=>auth.requireUser(request.headers.authorization).id,ok);
   app.setErrorHandler((error, request, reply) => {
     const status = typeof error === 'object' && error !== null && 'statusCode' in error && typeof error.statusCode === 'number' ? error.statusCode : 500;
     const e = error instanceof ApiError ? error : error instanceof ZodError
@@ -52,7 +56,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number 
   });
   app.get('/api/v1/me/export', async request => {
     const user = auth.requireUser(request.headers.authorization);
-    return ok({ version: 2, profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
+    return ok({ version: 3, calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
   });
   app.delete('/api/v1/me', async request => {
     const user = auth.requireUser(request.headers.authorization);

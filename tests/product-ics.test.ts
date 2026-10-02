@@ -4,6 +4,22 @@ const calendar=(...events:string[])=>['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-/
 const event=(...properties:string[])=>['BEGIN:VEVENT',...properties,'END:VEVENT'].join('\r\n');
 const range={from:'2026-10-01',to:'2026-11-01'};
 describe('recurrence-aware import parser',()=>{
+  it('honors UTC UNTIL and explicitly resolved floating UNTIL boundaries',()=>{
+    for(const [start,until,tz] of [
+      ['DTSTART;TZID=Asia/Hong_Kong:20261005T090000','20261019T010000Z',undefined],
+      ['DTSTART:20261005T090000','20261019T090000','Asia/Hong_Kong'],
+    ] as const) {
+      const p=parseCalendar(calendar(event('UID:until',start,`RRULE:FREQ=WEEKLY;UNTIL=${until}`)),tz);
+      expect(expandSeries(p.series[0],range).map(x=>x.starts_at)).toEqual(['2026-10-05T01:00:00.000Z','2026-10-12T01:00:00.000Z','2026-10-19T01:00:00.000Z']);
+    }
+  });
+  it('does not invent an occurrence from a nonmember exception or revive an EXDATE',()=>{
+    const master=event('UID:membership','DTSTART:20261005T090000Z','RRULE:FREQ=WEEKLY;COUNT=2','EXDATE:20261012T090000Z');
+    const excluded=parseCalendar(calendar(master,event('UID:membership','RECURRENCE-ID:20261012T090000Z','DTSTART:20261013T090000Z')));
+    expect(expandSeries(excluded.series[0],range).map(x=>x.starts_at)).toEqual(['2026-10-05T09:00:00.000Z']);
+    const invalid=parseCalendar(calendar(master,event('UID:membership','RECURRENCE-ID:20261006T090000Z','DTSTART:20261007T090000Z')));
+    expect(invalid.series).toHaveLength(0);expect(invalid.issues[0].code).toBe('INVALID_EXCEPTION');
+  });
   it('retains rules and stable recurrence identities across excluded, moved and cancelled classes',()=>{
     const parsed=parseCalendar(calendar(
       event('UID:class-1','SUMMARY:Weekly class','DTSTART;TZID=Asia/Hong_Kong:20261005T090000','DTEND;TZID=Asia/Hong_Kong:20261005T100000','RRULE:FREQ=WEEKLY;COUNT=5','EXDATE;TZID=Asia/Hong_Kong:20261012T090000'),

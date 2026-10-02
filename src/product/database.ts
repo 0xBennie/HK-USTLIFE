@@ -44,6 +44,25 @@ const migrations = [{ version: 1, sql: `
     resource_id TEXT NOT NULL, expires_at INTEGER NOT NULL,
     PRIMARY KEY(owner_id,scope,key)
   );
+` }, { version: 3, sql: `
+  CREATE TABLE calendar_sources (
+    id TEXT PRIMARY KEY, owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name TEXT NOT NULL, version INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL,
+    UNIQUE(owner_id,id)
+  );
+  CREATE TABLE calendar_series (
+    id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, source_id TEXT NOT NULL,
+    uid TEXT NOT NULL, definition TEXT NOT NULL CHECK(json_valid(definition)),
+    version INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY(owner_id,source_id) REFERENCES calendar_sources(owner_id,id) ON DELETE CASCADE,
+    UNIQUE(owner_id,source_id,uid)
+  );
+  CREATE TABLE calendar_previews (
+    id TEXT PRIMARY KEY, owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    snapshot TEXT NOT NULL CHECK(json_valid(snapshot)), expires_at INTEGER NOT NULL,
+    confirmation TEXT, result TEXT
+  );
+  CREATE INDEX calendar_previews_owner ON calendar_previews(owner_id,expires_at);
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {
