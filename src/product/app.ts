@@ -1,3 +1,7 @@
+import {createGovernanceStore} from './social/governance.js';
+import {registerGovernanceRoutes} from './social/governance-routes.js';
+import {createWallStore} from './social/wall.js';
+import {registerWallRoutes} from './social/wall-routes.js';
 import {createSocialStore} from './social/store.js';
 import {registerSocialRoutes} from './social/routes.js';
 import {createPublicTransit} from './campus/public-transit.js';
@@ -24,7 +28,9 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   const learning = createLearningStore(db,now);
   const calendars = createCalendarStore(db,now);
   const directory = createDirectoryStore(db,now);
+  const wall=createWallStore(db,now);
   const social=createSocialStore(db,now);
+  const governance=createGovernanceStore(db,now,wall,social);
   const app = Fastify({ logger: false, bodyLimit: 32_768, trustProxy: false });
   app.addHook('onClose', async () => { db.close(); });
   const localHost = (host: string | undefined) => /^((localhost)|(127\.0\.0\.1)|(\[::1\]))(:\d+)?$/.test(host ?? '');
@@ -36,6 +42,8 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
     if (request.headers.origin && request.headers.origin !== `http://${request.headers.host}`) throw new ApiError(403, 'ORIGIN_FORBIDDEN', 'Origin is not allowed.');
   });
   const ok = (data: unknown, requestId: string) => ({ data, meta: { request_id: requestId, generated_at: new Date(now()).toISOString(), mode: 'local-development' } });
+  registerGovernanceRoutes(app,governance,request=>auth.requireUser(request.headers.authorization).id,request=>{const user=auth.requireUser(request.headers.authorization);if(user.role!=='admin')throw new ApiError(403,'ADMIN_REQUIRED','Administrator access required.');return user.id;},ok);
+  registerWallRoutes(app,wall,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerSocialRoutes(app,social,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerCampusRoutes(app,ok,now);
   registerPublicTransitRoutes(app,createPublicTransit({now,fetch:options.transitFetch}),ok);
@@ -75,7 +83,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   });
   app.get('/api/v1/me/export', async request => {
     const user = auth.requireUser(request.headers.authorization);
-    return ok({ version: 4, social:social.exportAll(user.id), campus:directory.exportAll(user.id), calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
+    return ok({ version: 5, governance:governance.exportAll(user.id), wall:wall.exportAll(user.id), social:social.exportAll(user.id), campus:directory.exportAll(user.id), calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
   });
   app.delete('/api/v1/me', async request => {
     const user = auth.requireUser(request.headers.authorization);

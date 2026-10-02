@@ -1,0 +1,15 @@
+{
+  "verified_at": "2026-10-02T19:07:07.832Z",
+  "mode": "local-development",
+  "transport": "real local HTTP",
+  "database": "temporary SQLite, closed/reopened",
+  "checks": [
+    "signed-in visibility and guest denial",
+    "reply deduplication, solve state and private inbox",
+    "server/database restart persistence",
+    "private report, admin denial and audited reply hiding",
+    "blocking withdraws, clears calendar and promotes waitlist",
+    "unblocking never rejoins; deletion removes notification previews"
+  ],
+  "ios_runtime_verified": false
+}

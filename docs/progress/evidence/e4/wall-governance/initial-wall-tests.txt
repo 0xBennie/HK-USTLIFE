@@ -1,0 +1,132 @@
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+(node:80717) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/product-wall.test.ts (7 tests | 7 failed) 142ms
+   × persists public and signed-in posts with owner-only exports and no implied school verification 62ms
+     → {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-7"}}: expected 404 to be 201 // Object.is equality
+   × binds create and reply retry keys, rejects forged authors and isolates mutations 14ms
+     → expected 404 to be 201 // Object.is equality
+   × resolves and reopens help, closes wall discussions, and persists private notification reads 10ms
+     → {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-7"}}: expected 404 to be 201 // Object.is equality
+   × deletes replies and posts, clears notification previews and rejects replay of removed content 12ms
+     → Cannot read properties of undefined (reading 'id')
+   × filters hidden, banned and bilaterally blocked authors before pagination and hides previews 10ms
+     → {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-7"}}: expected 404 to be 201 // Object.is equality
+   × uses stable tied-timestamp pagination, validates cursors and searches only visible posts 23ms
+     → Cannot read properties of undefined (reading 'items')
+   × account deletion cascades authored posts and replies without retaining content in other inboxes 10ms
+     → {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-7"}}: expected 404 to be 201 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/product-wall.test.ts > persists public and signed-in posts with owner-only exports and no implied school verification
+AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-7"}}: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ create tests/product-wall.test.ts:18:143
+
+ ❯ tests/product-wall.test.ts:21:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  tests/product-wall.test.ts > binds create and reply retry keys, rejects forged authors and isolates mutations
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/product-wall.test.ts:32:132
+     30| });
+     31| it('binds create and reply retry keys, rejects forged authors and isol…
+     32|  const key=randomUUID();const result=await call('POST','/posts',draft,…
+       |                                                                                                                                    ^
+     33|  expect((await call('POST','/posts',draft,owner,key)).json().data.id).…
+     34|  expect((await call('POST','/posts',{...draft,title:'changed'},owner,k…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  tests/product-wall.test.ts > resolves and reopens help, closes wall discussions, and persists private notification reads
+AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-7"}}: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ create tests/product-wall.test.ts:18:143
+
+ ❯ tests/product-wall.test.ts:45:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  tests/product-wall.test.ts > deletes replies and posts, clears notification previews and rejects replay of removed content
+TypeError: Cannot read properties of undefined (reading 'id')
+ ❯ tests/product-wall.test.ts:60:108
+     58| });
+     59| it('deletes replies and posts, clears notification previews and reject…
+     60|  const key=randomUUID(),post=(await call('POST','/posts',draft,owner,k…
+       |                                                                                                            ^
+     61|  const r=(await call('POST',path,{body:'My reply'},alice)).json().data;
+     62|  expect((await call('DELETE',path+'/'+r.id,{version:2},alice)).statusC…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  tests/product-wall.test.ts > filters hidden, banned and bilaterally blocked authors before pagination and hides previews
+AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-7"}}: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ create tests/product-wall.test.ts:18:143
+
+ ❯ tests/product-wall.test.ts:74:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  tests/product-wall.test.ts > uses stable tied-timestamp pagination, validates cursors and searches only visible posts
+TypeError: Cannot read properties of undefined (reading 'items')
+ ❯ tests/product-wall.test.ts:96:68
+     94|  const uid=(await call('GET','/me')).json().data.id,db=openDatabase(di…
+     95|  try{const wall=createWallStore(db,()=>time);for(let i=0;i<25;i++){if(…
+     96|  const first=(await call('GET','/posts')).json().data;expect(first.ite…
+       |                                                                    ^
+     97|  const second=(await call('GET','/posts?cursor='+first.next_cursor)).j…
+     98|  expect(new Set([...first.items,...second.items].map(p=>p.id)).size).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  tests/product-wall.test.ts > account deletion cascades authored posts and replies without retaining content in other inboxes
+AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-7"}}: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ create tests/product-wall.test.ts:18:143
+
+ ❯ tests/product-wall.test.ts:103:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed (7)
+   Start at  02:50:33
+   Duration  542ms (transform 119ms, setup 0ms, collect 181ms, tests 142ms, environment 0ms, prepare 48ms)
+

@@ -13,13 +13,14 @@ import {socialError,participationLabel} from './shared';
 import {ActivityForm} from './ActivityForm';
 import {ActivityDetail} from './ActivityDetail';
 type Filters={q:string;kind:string;interaction:string;language:string;mine:string;from:string;to:string};
-export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,onNavigate}:{language:Language;dark:boolean;onLogin:()=>void;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void}){
+export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,onNavigate,onDepthChange}:{language:Language;dark:boolean;onLogin:()=>void;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void;onDepthChange?:(nested:boolean)=>void}){
  const zh=language==='zh',c=palette[dark?'dark':'light'],profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [selected,setSelected]=useState<string|null>(initialId),[creating,setCreating]=useState(false),[filtersOpen,setFiltersOpen]=useState(false);
  const [filters,setFilters]=useState<Filters>({q:'',kind:'',interaction:'',language:'',mine:'',from:'',to:''}),[applied,setApplied]=useState(filters);
  const [items,setItems]=useState<Activity[]>([]),[cursor,setCursor]=useState<string|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');const epoch=useRef(0),lock=useRef(false);
  useEffect(()=>{if(initialId)setSelected(initialId);},[initialId]);
  useEffect(onNavigate,[selected,creating,onNavigate]);
+ useEffect(()=>{onDepthChange?.(selected!==null||creating);},[selected,creating,onDepthChange]);
  const load=useCallback(async(next?:string)=>{if(lock.current&&next)return;lock.current=true;const generation=++epoch.current;setBusy(true);setError('');try{
   const query=new URLSearchParams({limit:'20'});for(const [key,value]of Object.entries(applied))if(value)query.set(key,key==='from'||key==='to'?parseHongKongInput(value)!:value);if(next)query.set('cursor',next);
   const page=await session.request<{items:Activity[];next_cursor:string|null}>('/activities?'+query.toString());

@@ -1,12 +1,12 @@
 # Activities, participation and inbox — implemented local MVP API
 
-Base `/api/v1`. Real SQLite migration 6. Native Discover, activity editor/detail, calendar link and Inbox are connected. Every activity is `is_demo:true` under the same enforced local-development boundary as accounts. This is not a real public event supply or school-certified community. Campus wall/help threads, reports/blocks/admin handling, website share pages and device notification scheduling remain later E4/E5 work.
+Base `/api/v1`. Real SQLite migration 6. Native Discover, activity editor/detail, calendar link and Inbox are connected. Every activity is `is_demo:true` under the same enforced local-development boundary as accounts. This is not a real public event supply or school-certified community. Campus wall/help and report/block/admin APIs are now implemented in [wall and governance API](wall-governance-api.md). Restricted web administration, website share pages and device notification scheduling remain E5 work.
 
 ## Content and visibility
 
 Create payload: `kind:activity|study`, `title` (1–120), `description` (0–5,000), `location` (1–300), `starts_at` / `ends_at` (offset-aware ISO instants), `timezone` (valid IANA, defaults Hong Kong), `capacity` (1–50 participants, organizer excluded), `languages` (unique nonempty subset of zh/en/yue), `interaction:quiet|casual|active`, `cost_minor` (0–100,000 HK cents, informational only), `requirements` (0–2,000), `visibility:public|members`. Start must be future; end is later, at most seven days after start. Times normalize to UTC. No payments or uploads are implemented.
 
-`public` permits visitor read of activity, organizer display name and comments; `members` requires a valid app session. Members does **not** mean verified HKUST enrollment. Client-supplied organizer, membership or `visibility:campus` is rejected. Kind/visibility are fixed after publication so changing an event cannot expose previously restricted comments. No email, private timetable or participant roster is exposed publicly. Banned-organizer/hidden content is unavailable in reads, calendar projection and notification previews; governance mutation endpoints still need E5.
+`public` permits visitor read of activity, organizer display name and comments; `members` requires a valid app session. Members does **not** mean verified HKUST enrollment. Client-supplied organizer, membership or `visibility:campus` is rejected. Kind/visibility are fixed after publication so changing an event cannot expose previously restricted comments. No email, private timetable or participant roster is exposed publicly. Banned-organizer/hidden content is unavailable in reads, calendar projection and notification previews; governance mutations follow the wall/governance API.
 
 ## Endpoints
 
@@ -47,9 +47,9 @@ Activity response includes content, version/status, derived started/ended flags,
 
 Withdrawal clears the user's calendar save/reminder preference; cancellation clears all such preferences. Deletion removes projection by cascade. Bookmarks can remain after cancellation. Reminder preference storage is not native scheduling or notification delivery; E5 still must reconcile/cancel local OS notifications after synchronization. Offline devices cannot be claimed to have learned remote changes immediately.
 
-Inbox kinds: joined, waitlisted, promoted, withdrawn, activity_updated, activity_cancelled, activity_removed, comment. Only generic kinds and activity references persist; titles are visibility-checked at read time. Deleted/hidden/inaccessible activity produces `activity:null`, without stale title/body snapshots. Read status persists per recipient. Notifications currently refresh on entry/foreground/manual request; no APNs or remote push.
+Inbox kinds: joined, waitlisted, promoted, withdrawn, activity_updated, activity_cancelled, activity_removed, comment. Post reply/resolved kinds and a nullable post preview are now also available (see wall/governance API). Only generic kinds and content references persist; titles are visibility-checked at read time. Deleted/hidden/inaccessible activity produces `activity:null`, without stale title/body snapshots. Read status persists per recipient. Notifications currently refresh on entry/foreground/manual request; no APNs or remote push.
 
-Account deletion invokes social cleanup in the same deletion transaction: remove owned content with generic notices, withdraw other participations and promote eligible waitlists, then cascade the account's private rows/comments/receipts. Other recipients' generic notices retain a null reference for deleted activities. Export version 4 adds the owner's activities, participation/preferences, comments and notification records; it does not include others' roster, email or private calendar.
+Account deletion invokes social cleanup in the same deletion transaction: remove owned content with generic notices, withdraw other participations and promote eligible waitlists, then cascade the account's private rows/comments/receipts. Other recipients' generic notices retain a null reference for deleted activities. Export version 5 includes the owner's activities, participation/preferences, comments and notification records; it does not include others' roster, email or private calendar.
 
 ## Evidence
 

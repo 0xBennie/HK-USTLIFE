@@ -1,0 +1,153 @@
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+(node:84898) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/product-governance.test.ts (7 tests | 7 failed) 271ms
+   × blocks both signed-in directions, atomically withdraws organizer-participant pairs and promotes waiting members 155ms
+     → expected 404 to be 200 // Object.is equality
+   × hides blocked replies and comments while preserving shared activity participation and suppressing new reply notices 37ms
+     → expected [ { id: 1, body: 'One', …(4) } ] to deeply equal []
+   × keeps reports private and retry-safe and requires admin role for review and resolution 17ms
+     → {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-c"}}: expected 404 to be 201 // Object.is equality
+   × hiding reported activities cancels participation, clears calendars and suppresses previews 16ms
+     → {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-d"}}: expected 404 to be 201 // Object.is equality
+   × banning an author revokes sessions, hides authored content and releases their other seats atomically 16ms
+     → {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-f"}}: expected 404 to be 201 // Object.is equality
+   × handles deleted report targets without retaining content snapshots; admins can dismiss and exports stay private 14ms
+     → {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-c"}}: expected 404 to be 201 // Object.is equality
+   × enforces parent visibility on reply reports and hides only the reported reply 16ms
+     → {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-d"}}: expected 404 to be 201 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/product-governance.test.ts > blocks both signed-in directions, atomically withdraws organizer-participant pairs and promotes waiting members
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/product-governance.test.ts:25:70
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  tests/product-governance.test.ts > hides blocked replies and comments while preserving shared activity participation and suppressing new reply notices
+AssertionError: expected [ { id: 1, body: 'One', …(4) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "author": {
++       "display_name": "Campus member",
++       "id": "a72500ee-eb00-434e-99dd-e790e1b9aaf6",
++     },
++     "body": "One",
++     "can_delete": false,
++     "created_at": "2026-10-03T00:00:00.000Z",
++     "id": 1,
++     "version": 1,
++   },
++ ]
+
+ ❯ tests/product-governance.test.ts:43:91
+     41|  const comment=(await call('POST',`/activities/${x.id}/comments`,{body…
+     42|  await call('PUT',`/me/blocks/${aid}`,{},b);
+     43|  expect((await call('GET',`/activities/${x.id}/comments`,undefined,b))…
+       |                                                                                           ^
+     44|  const before=(await call('GET','/me/notifications',undefined,b)).json…
+     45|  await call('POST',`/activities/${x.id}/comments`,{body:'Two'},a);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  tests/product-governance.test.ts > keeps reports private and retry-safe and requires admin role for review and resolution
+AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-c"}}: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/product-governance.test.ts:52:79
+     50| it('keeps reports private and retry-safe and requires admin role for r…
+     51|  const p=await post(),body={target:{kind:'post',id:p.id},reason:'priva…
+     52|  const r=await call('POST','/reports',body,a,key);expect(r.statusCode,…
+       |                                                                               ^
+     53|  expect((await call('POST','/reports',body,a,key)).json().data.id).toB…
+     54|  expect((await call('POST','/reports',{...body,reason:'spam'},a,key)).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  tests/product-governance.test.ts > hiding reported activities cancels participation, clears calendars and suppresses previews
+AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-d"}}: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ report tests/product-governance.test.ts:21:210
+
+ ❯ tests/product-governance.test.ts:66:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  tests/product-governance.test.ts > banning an author revokes sessions, hides authored content and releases their other seats atomically
+AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-f"}}: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ report tests/product-governance.test.ts:21:210
+
+ ❯ tests/product-governance.test.ts:74:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  tests/product-governance.test.ts > handles deleted report targets without retaining content snapshots; admins can dismiss and exports stay private
+AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-c"}}: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ report tests/product-governance.test.ts:21:210
+
+ ❯ tests/product-governance.test.ts:83:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  tests/product-governance.test.ts > enforces parent visibility on reply reports and hides only the reported reply
+AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","retryable":false,"request_id":"req-d"}}: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ report tests/product-governance.test.ts:21:210
+
+ ❯ tests/product-governance.test.ts:91:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed (7)
+   Start at  02:58:57
+   Duration  747ms (transform 125ms, setup 0ms, collect 232ms, tests 271ms, environment 0ms, prepare 39ms)
+

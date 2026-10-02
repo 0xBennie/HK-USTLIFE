@@ -1,6 +1,6 @@
 # MVP API — implemented endpoints
 
-Updated 2026-10-03. This document describes running account code, separate from the broader proposed `super-app.openapi.json`. Manual learning endpoints are now implemented and documented in [learning API](learning-api.md). ICS import/source management, campus queries/private saves and activity writes are also implemented; see [calendar import API](calendar-import-api.md), [campus API](campus-api.md), and [social API](social-api.md). Campus wall and administration remain pending.
+Updated 2026-10-03. This document describes running account code, separate from the broader proposed `super-app.openapi.json`. Manual learning endpoints are now implemented and documented in [learning API](learning-api.md). ICS import/source management, campus queries/private saves and activity writes are also implemented; see [calendar import API](calendar-import-api.md), [campus API](campus-api.md), and [social API](social-api.md). Campus wall, reports, blocks and restricted moderation APIs are implemented in [wall/governance API](wall-governance-api.md); the restricted web UI remains pending.
 
 ## Local transport and account state
 
@@ -20,7 +20,7 @@ Every account is `is_demo:true`; `membership:"unknown"` is immutable from the cl
 | POST `/auth/logout` | Revoke this bearer session → `{signed_out:true}` | Account |
 | GET `/me` | Own profile and connection states | Account |
 | PATCH `/me` | Non-empty subset of `{display_name,language:"zh"|"en"}` → updated profile | Account |
-| GET `/me/export` | `{version:4,profile,learning,calendars,campus,social,exported_at}` | Account |
+| GET `/me/export` | `{version:5,profile,learning,calendars,campus,social,wall,governance,exported_at}` | Account |
 | DELETE `/me` | `{confirmation:"DELETE"}` → `{deleted:true}` | Account; signed in within 10 minutes |
 | GET `/admin/status` | Local admin database readiness | Seeded admin only |
 

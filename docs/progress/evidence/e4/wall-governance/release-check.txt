@@ -1,0 +1,7 @@
+
+> hkust-life-mcp@0.1.0 release:check
+> node scripts/release-check.mjs
+
+release-check: scanned 272 tracked text files
+release-check: npm audit --omit=dev reported 16 vulnerabilities
+release-check: FAILED

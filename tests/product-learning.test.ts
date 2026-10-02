@@ -83,7 +83,7 @@ describe('private learning API', () => {
     expect((await call('POST',`/calendar/imports/${p.id}/confirm`,{uids:['lecture-1']},bob)).statusCode).toBe(404);
     const result=await call('POST',`/calendar/imports/${p.id}/confirm`,{uids:['lecture-1']});expect(result.statusCode,result.body).toBe(200);
     await app.close();app=createProductApp({dataDir:dir});
-    const exported=(await call('GET','/me/export')).json().data;expect(exported.version).toBe(4);expect(exported.calendars[0].series[0].title).toBe('Imported lecture');
+    const exported=(await call('GET','/me/export')).json().data;expect(exported.version).toBe(5);expect(exported.calendars[0].series[0].title).toBe('Imported lecture');
     expect((await call('GET','/me/export',undefined,bob)).json().data.calendars).toEqual([]);
     const source=(await call('GET','/calendar/sources')).json().data[0];expect(source.series_count).toBe(1);
     expect((await call('DELETE',`/calendar/sources/${source.id}`,{version:source.version},bob)).statusCode).toBe(404);

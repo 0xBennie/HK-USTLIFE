@@ -1,6 +1,6 @@
 # Run the local iOS development MVP
 
-Current units: accounts and manual learning. Today connects to private courses, day/week schedules, tasks, notes and material links. ICS/campus/social modules still require implementation; campus/discovery/inbox remain explicitly labeled development placeholders.
+Implemented code: local accounts, private courses/day-week schedules/tasks/notes/material links and ICS import; reviewed campus shuttle/directory and public KMB/GMB queries; activities/study groups and wall/help/replies; private inbox and report/block/moderation APIs. Native screens connect to these real stores. Device reminders, restricted admin website/source maintenance, public website/share and actual iOS runtime acceptance remain incomplete.
 
 ## Requirements
 
@@ -62,7 +62,7 @@ SecureStore stores only the opaque session token with device-only keychain acces
 
 - No simulator/device runtime evidence yet: Xcode is absent from the inspected environment.
 - Keychain persistence, keyboard/safe-area/font-size behavior and HeroUI rendering remain to be checked on actual iOS.
-- Cookie-based web login/admin UI, ICS import, campus data, activities/community and notifications are subsequent units. Manual learning uses `/study/*` and `/me/calendar`, documented in `api/learning-api.md`.
+- Web login/admin UI, content/source maintenance, native reminders and public website/share remain subsequent units. Native visual polish, transitions, keyboard/accessibility and draft recovery across top-level tabs remain unverified or incomplete.
 - The prototype contains no real external email, private school connection, remote push or public hosting.
 - Current dependency audit findings are tracked in `progress/e1-dependency-review.md`; development dependency resolution does not imply a clean security audit or public-release readiness.
 
@@ -82,4 +82,13 @@ npm run build:core
 node scripts/smoke-social.mjs /tmp/hkust-social-smoke.json
 ```
 
-The native Discover tab now supports publishing/editing activities and study groups, condition filters, private participation/saves, comments and organizer management. Inbox displays persistent in-app notices/read state; Today links saved activity projections to their participation page. All activity content is explicitly local/demo. Campus wall, report/block moderation, device reminders and public share website are not yet delivered. See `docs/api/social-api.md` for precise state/visibility and retry rules.
+The native Discover tab now supports publishing/editing activities and study groups, condition filters, private participation/saves, comments and organizer management. Inbox displays persistent in-app notices/read state; Today links saved activity projections to their participation page. All activity content is explicitly local/demo. Campus wall/help/replies and report/block/moderation APIs are connected; native My account includes own reports and blocked users. Device reminders, restricted admin web UI and public share website are not yet delivered. See `docs/api/social-api.md` for precise state/visibility and retry rules.
+
+Wall and governance smoke (real local HTTP, no external network/mail):
+
+```sh
+npm run build:core
+node scripts/smoke-wall-governance.mjs /tmp/hkust-wall-smoke.json
+```
+
+This uses temporary demo accounts, including a test admin role, and checks restart persistence, wall/reply/resolve messages, admin report review, block-induced withdrawal/promotion and deletion. API details are in `docs/api/wall-governance-api.md`. Latest unit: 175 tests passed, mobile TypeScript and iOS export passed; these do not demonstrate an installed/running iOS app. Full Xcode and an iOS Simulator runtime are still needed to produce native execution evidence.

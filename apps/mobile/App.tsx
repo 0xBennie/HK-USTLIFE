@@ -1,4 +1,5 @@
-import {DiscoverScreen} from './src/social/DiscoverScreen';
+import {GovernanceScreen} from './src/social/GovernanceScreen';
+import {CommunityScreen,type DiscoveryTarget} from './src/social/CommunityScreen';
 import {InboxScreen} from './src/social/InboxScreen';
 import { CampusScreen } from './src/campus/CampusScreen';
 import './global.css';
@@ -19,15 +20,17 @@ function CampusApp() {
   const state = useSyncExternalStore(session.subscribe, session.snapshot);
   const [language, setLanguage] = useState<Language>('zh');
   const [tab, setTab] = useState(4);
-  const [activityTarget,setActivityTarget]=useState<{id:string;owner:string|null}|null>(null);
+  const [safetyOpen,setSafetyOpen]=useState(false);
+  const [activityTarget,setActivityTarget]=useState<(DiscoveryTarget&{owner:string|null})|null>(null);
   const page=useRef<ScrollView>(null);
   const scrollToTop=useCallback(()=>{requestAnimationFrame(()=>page.current?.scrollTo({y:0,animated:false}));},[]);
-  useEffect(scrollToTop,[tab,activityTarget,scrollToTop]);
-  const openActivity=(id:string)=>{setActivityTarget({id,owner:state.profile?.id??null});setTab(2);};
+  useEffect(scrollToTop,[tab,activityTarget,safetyOpen,scrollToTop]);
+  const openActivity=(id:string)=>{setActivityTarget({id,kind:'activity',owner:state.profile?.id??null});setTab(2);};
+  const openPost=(id:string)=>{setActivityTarget({id,kind:'post',owner:state.profile?.id??null});setTab(2);};
   const dark = useColorScheme() === 'dark';
   const colors = palette[dark ? 'dark' : 'light'], t = strings[language];
   useEffect(() => { void session.restore(); }, []);
-  useEffect(()=>{setActivityTarget(null);},[state.profile?.id]);
+  useEffect(()=>{setActivityTarget(null);setSafetyOpen(false);},[state.profile?.id]);
   useEffect(() => { if (state.profile) setLanguage(state.profile.language); }, [state.profile?.id]);
   return <SafeAreaView style={[styles.flex, { backgroundColor: colors.background }]}>
     <StatusBar style={dark ? 'light' : 'dark'} />
@@ -42,13 +45,13 @@ function CampusApp() {
       <ScrollView ref={page} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.page}>
         {tab === 4 ? state.status === 'loading' ? <View style={styles.stack}><ActivityIndicator color={colors.accent} /><Text style={{ color: colors.text }}>{t.loading}</Text></View>
           : state.status === 'error' ? <View style={styles.stack}><Text accessibilityRole="alert" style={[styles.body, { color: colors.danger }]}>{t.errors[state.error ?? ''] ?? t.network}</Text><Button onPress={() => session.restore()}>{t.retry}</Button></View>
-          : state.profile ? <ProfileScreen key={state.profile.id} profile={state.profile} language={language} dark={dark} />
+          : state.profile ? safetyOpen?<GovernanceScreen key={state.profile.id} language={language} dark={dark} onBack={()=>setSafetyOpen(false)}/>:<View style={styles.stack}><Button variant="secondary" onPress={()=>setSafetyOpen(true)}>{language==='zh'?'举报记录与屏蔽管理':'My reports and blocked users'}</Button><ProfileScreen key={state.profile.id} profile={state.profile} language={language} dark={dark} /></View>
           : <LoginScreen language={language} dark={dark} />
           : tab === 0 ? state.profile ? <StudyScreen key={state.profile.id} language={language} dark={dark} onActivity={openActivity} />
           : <View style={styles.stack}><Text style={[styles.heading,{color:colors.text}]}>{t.loginBody}</Text><Button onPress={()=>setTab(4)}>{t.signIn}</Button></View>
           : tab === 1 ? <CampusScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)}/>
-          : tab === 2 ? <DiscoverScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)} initialId={activityTarget?.owner===(state.profile?.id??null)?activityTarget?.id??null:null} onDismissTarget={()=>setActivityTarget(null)} onNavigate={scrollToTop}/>
-          : state.profile ? <InboxScreen key={state.profile.id} language={language} dark={dark} onActivity={openActivity}/>
+          : tab === 2 ? <CommunityScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} onDismissTarget={()=>setActivityTarget(null)} onNavigate={scrollToTop}/>
+          : state.profile ? <InboxScreen key={state.profile.id} language={language} dark={dark} onActivity={openActivity} onPost={openPost}/>
           : <View style={styles.stack}><Text style={[styles.body,{color:colors.text}]}>{t.loginBody}</Text><Button onPress={()=>setTab(4)}>{t.signIn}</Button></View>}
       </ScrollView>
     </KeyboardAvoidingView>

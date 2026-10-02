@@ -122,6 +122,43 @@ const migrations = [{ version: 1, sql: `
   );
   CREATE INDEX notifications_owner_feed ON notifications(owner_id,id);
 
+` }, { version: 7, sql: `
+  CREATE TABLE wall_posts (
+    id TEXT PRIMARY KEY, author_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    kind TEXT NOT NULL CHECK(kind IN ('wall','help')), title TEXT NOT NULL, body TEXT NOT NULL,
+    visibility TEXT NOT NULL CHECK(visibility IN ('public','members')),
+    status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','resolved','closed')),
+    moderation_state TEXT NOT NULL DEFAULT 'visible' CHECK(moderation_state IN ('visible','hidden')),
+    version INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL,
+    is_demo INTEGER NOT NULL DEFAULT 1 CHECK(is_demo=1)
+  );
+  CREATE TABLE wall_replies (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, post_id TEXT NOT NULL REFERENCES wall_posts(id) ON DELETE CASCADE,
+    author_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, body TEXT NOT NULL,
+    moderation_state TEXT NOT NULL DEFAULT 'visible' CHECK(moderation_state IN ('visible','hidden')),
+    version INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL
+  );
+  CREATE INDEX wall_replies_feed ON wall_replies(post_id,id);
+  ALTER TABLE notifications ADD COLUMN post_id TEXT REFERENCES wall_posts(id) ON DELETE SET NULL;
+  CREATE TABLE user_blocks (
+    owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    target_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, created_at INTEGER NOT NULL,
+    PRIMARY KEY(owner_id,target_id), CHECK(owner_id!=target_id)
+  );
+  CREATE TABLE content_reports (
+    id TEXT PRIMARY KEY, owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    target_kind TEXT NOT NULL CHECK(target_kind IN ('post','reply','activity','activity_comment')),
+    target_id TEXT NOT NULL, target_author_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+    reason TEXT NOT NULL, details TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','dismissed','action_taken')),
+    version INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL,
+    resolution TEXT NOT NULL DEFAULT '', reviewed_at INTEGER, reviewer_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+    request_key TEXT NOT NULL, fingerprint TEXT NOT NULL, UNIQUE(owner_id,request_key)
+  );
+  CREATE TABLE moderation_audit (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, report_id TEXT REFERENCES content_reports(id) ON DELETE SET NULL,
+    actor_id TEXT REFERENCES users(id) ON DELETE SET NULL, action TEXT NOT NULL, reason TEXT NOT NULL, created_at INTEGER NOT NULL
+  );
+
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

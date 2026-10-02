@@ -1,3 +1,5 @@
+import {blocked,unblockedSql} from './access.js';
+import {createWallStore} from './wall.js';
 import {createHash,randomUUID} from 'node:crypto';
 import type {DatabaseSync} from 'node:sqlite';
 import {z} from 'zod';
@@ -10,11 +12,12 @@ type Row={id:string;organizer_id:string;payload:string;visibility:string;status:
 type Part={activity_id:string;user_id:string;status:Participation['status'];queue_order:number;version:number;joined_at:number;updated_at:number};
 const canonical=(v:unknown):string=>Array.isArray(v)?`[${v.map(canonical).join(',')}]`:v&&typeof v==='object'?`{${Object.entries(v).sort(([a],[b])=>a.localeCompare(b)).map(([k,val])=>JSON.stringify(k)+':'+canonical(val)).join(',')}}`:JSON.stringify(v);
 export function createSocialStore(db:DatabaseSync,now:()=>number){
+ const wall=createWallStore(db,now);
  const stamp=(n:number)=>new Date(n).toISOString();
  const select='SELECT a.*,u.display_name,u.banned_at FROM activities a JOIN users u ON u.id=a.organizer_id';
  function raw(id:string,viewer:string|null):Row{
   const row=db.prepare(select+' WHERE a.id=?').get(id) as Row|undefined;
-  if(!row||row.moderation_state!=='visible'||row.banned_at!==null||(row.visibility==='members'&&!viewer))throw new ApiError(404,'ACTIVITY_NOT_FOUND','Activity is not available.');
+  if(!row||row.moderation_state!=='visible'||row.banned_at!==null||blocked(db,viewer,row.organizer_id)||(row.visibility==='members'&&!viewer))throw new ApiError(404,'ACTIVITY_NOT_FOUND','Activity is not available.');
   return row;
  }
  const part=(id:string,user:string)=>db.prepare('SELECT * FROM activity_participations WHERE activity_id=? AND user_id=?').get(id,user) as Part|undefined;
@@ -52,6 +55,7 @@ export function createSocialStore(db:DatabaseSync,now:()=>number){
   if(query.mine&&!viewer)throw new ApiError(401,'AUTH_REQUIRED','Sign in to see your activities.');
   const clauses=["a.moderation_state='visible'",'u.banned_at IS NULL'],args:(string|number)[]=[];
   if(!viewer)clauses.push("a.visibility='public'");
+  else{clauses.push(unblockedSql('a.organizer_id'));args.push(viewer,viewer);}
   if(!query.mine){clauses.push("a.status!='cancelled'",'a.starts_at>=?');args.push(now());}
   if(query.mine==='organized'){clauses.push('a.organizer_id=?');args.push(viewer!);}
   if(query.mine==='participating'){clauses.push('EXISTS(SELECT 1 FROM activity_participations p WHERE p.activity_id=a.id AND p.user_id=?)');args.push(viewer!);}
@@ -73,7 +77,7 @@ export function createSocialStore(db:DatabaseSync,now:()=>number){
  function promote(row:Row){
   if(row.status==='cancelled'||row.starts_at<=now()||row.moderation_state!=='visible'||row.banned_at!==null)return;
   const room=counts(row.id,JSON.parse(row.payload).capacity).remaining;
-  const waiting=db.prepare("SELECT p.user_id FROM activity_participations p JOIN users u ON u.id=p.user_id WHERE p.activity_id=? AND p.status='waitlisted' AND u.banned_at IS NULL ORDER BY p.queue_order LIMIT ?").all(row.id,room);
+  const waiting=db.prepare("SELECT p.user_id FROM activity_participations p JOIN users u ON u.id=p.user_id WHERE p.activity_id=? AND p.status='waitlisted' AND u.banned_at IS NULL AND "+unblockedSql('p.user_id')+" ORDER BY p.queue_order LIMIT ?").all(row.id,row.organizer_id,row.organizer_id,room);
   for(const p of waiting){db.prepare("UPDATE activity_participations SET status='confirmed',version=version+1,updated_at=? WHERE activity_id=? AND user_id=?").run(now(),row.id,String(p.user_id));notify(String(p.user_id),row.id,'promoted');}
  }
  function join(user:string,id:string,body:unknown,key:unknown){const value=joinSchema.parse(body);return receipt(user,'activity:join:'+id,value,key,()=>{
@@ -109,19 +113,19 @@ export function createSocialStore(db:DatabaseSync,now:()=>number){
  function cancel(user:string,id:string,body:unknown){const value=z.object({version}).strict().parse(body);return transaction(db,()=>{const row=own(id,user);if(row.status==='cancelled')return get(id,user);checkVersion(row,value.version);broadcast(row,'activity_cancelled');db.prepare("UPDATE activities SET status='cancelled',version=version+1,updated_at=? WHERE id=?").run(now(),id);db.prepare("UPDATE activity_participations SET status='cancelled',version=version+1,updated_at=? WHERE activity_id=? AND status IN ('confirmed','waitlisted')").run(now(),id);db.prepare('UPDATE activity_preferences SET calendar_saved=0,remind_minutes=NULL WHERE activity_id=?').run(id);return get(id,user);});}
  function remove(user:string,id:string,body:unknown){const value=z.object({version}).strict().parse(body);return transaction(db,()=>{const row=own(id,user);checkVersion(row,value.version);broadcast(row,'activity_removed');db.prepare('DELETE FROM activities WHERE id=?').run(id);return {deleted:true};});}
  function roster(user:string,id:string){own(id,user);return (db.prepare('SELECT p.*,u.display_name FROM activity_participations p JOIN users u ON u.id=p.user_id WHERE p.activity_id=? ORDER BY p.queue_order').all(id) as (Part&{display_name:string})[]).map(r=>({...participation(r),user:{id:r.user_id,display_name:r.display_name||'Campus member'}}));}
- function comment(user:string|null,id:string,commentId:number):ActivityComment{raw(id,user);const r=db.prepare("SELECT c.*,u.display_name FROM activity_comments c JOIN users u ON u.id=c.author_id WHERE c.id=? AND c.activity_id=? AND c.moderation_state='visible' AND u.banned_at IS NULL").get(commentId,id);if(!r)throw new ApiError(404,'COMMENT_NOT_FOUND','Comment not available.');return {id:Number(r.id),body:String(r.body),version:Number(r.version),created_at:stamp(Number(r.created_at)),author:{id:String(r.author_id),display_name:String(r.display_name)||'Campus member'},can_delete:r.author_id===user};}
- function comments(user:string|null,id:string,before?:number){raw(id,user);const rows=db.prepare("SELECT c.id FROM activity_comments c JOIN users u ON u.id=c.author_id WHERE c.activity_id=? AND c.id<? AND c.moderation_state='visible' AND u.banned_at IS NULL ORDER BY c.id DESC LIMIT 51").all(id,before??Number.MAX_SAFE_INTEGER);return {items:rows.slice(0,50).map(r=>comment(user,id,Number(r.id))),next_cursor:rows.length>50?Number(rows[49].id):null};}
+ function comment(user:string|null,id:string,commentId:number):ActivityComment{raw(id,user);const r=db.prepare("SELECT c.*,u.display_name FROM activity_comments c JOIN users u ON u.id=c.author_id WHERE c.id=? AND c.activity_id=? AND c.moderation_state='visible' AND u.banned_at IS NULL").get(commentId,id);if(!r||blocked(db,user,String(r.author_id)))throw new ApiError(404,'COMMENT_NOT_FOUND','Comment not available.');return {id:Number(r.id),body:String(r.body),version:Number(r.version),created_at:stamp(Number(r.created_at)),author:{id:String(r.author_id),display_name:String(r.display_name)||'Campus member'},can_delete:r.author_id===user};}
+ function comments(user:string|null,id:string,before?:number){raw(id,user);const rows=db.prepare("SELECT c.id FROM activity_comments c JOIN users u ON u.id=c.author_id WHERE c.activity_id=? AND c.id<? AND c.moderation_state='visible' AND u.banned_at IS NULL"+(user?' AND '+unblockedSql('c.author_id'):'')+' ORDER BY c.id DESC LIMIT 51').all(id,before??Number.MAX_SAFE_INTEGER,...(user?[user,user]:[]));return {items:rows.slice(0,50).map(r=>comment(user,id,Number(r.id))),next_cursor:rows.length>50?Number(rows[49].id):null};}
  function addComment(user:string,id:string,body:unknown,key:unknown){const value=z.object({body:z.string().trim().min(1).max(2000)}).strict().parse(body);return receipt(user,'activity:comment:'+id,value,key,()=>{
   const row=raw(id,user);if(row.status==='cancelled'||row.ends_at<=now())throw new ApiError(409,'COMMENTS_CLOSED','Comments are closed for this activity.');
   if(Number(db.prepare('SELECT COUNT(*) AS n FROM activity_comments WHERE author_id=? AND created_at>?').get(user,now()-86400000)!.n)>=40)throw new ApiError(429,'COMMENT_LIMIT','Comment limit reached.');
   const result=db.prepare('INSERT INTO activity_comments(activity_id,author_id,body,created_at) VALUES (?,?,?,?)').run(id,user,value.body,now());
-  const recipients=new Set([row.organizer_id,...audience(id)]);for(const recipient of recipients)if(recipient!==user)notify(recipient,id,'comment');return String(result.lastInsertRowid);
+  const recipients=new Set([row.organizer_id,...audience(id)]);for(const recipient of recipients)if(recipient!==user&&!blocked(db,recipient,user))notify(recipient,id,'comment');return String(result.lastInsertRowid);
  },cid=>comment(user,id,Number(cid)));}
  function deleteComment(user:string,id:string,cid:number,body:unknown){const value=z.object({version}).strict().parse(body);return transaction(db,()=>{const c=comment(user,id,cid);if(!c.can_delete)throw new ApiError(404,'COMMENT_NOT_FOUND','Comment not available.');checkVersion(c,value.version);db.prepare('DELETE FROM activity_comments WHERE id=?').run(cid);return {deleted:true};});}
- function notifications(user:string,before?:number){const rows=db.prepare('SELECT * FROM notifications WHERE owner_id=? AND id<? ORDER BY id DESC LIMIT 51').all(user,before??Number.MAX_SAFE_INTEGER);const items=rows.slice(0,50).map(r=>{let activity:ActivityNotification['activity']=null;if(r.activity_id){try{const a=get(String(r.activity_id),user);activity={id:a.id,title:a.title};}catch(e){if(!(e instanceof ApiError))throw e;}}return {id:Number(r.id),kind:r.kind as ActivityNotification['kind'],activity,created_at:stamp(Number(r.created_at)),read_at:r.read_at==null?null:stamp(Number(r.read_at))};});return {items,next_cursor:rows.length>50?Number(rows[49].id):null,unread:Number(db.prepare('SELECT COUNT(*) AS n FROM notifications WHERE owner_id=? AND read_at IS NULL').get(user)!.n)};}
+ function notifications(user:string,before?:number){const rows=db.prepare('SELECT * FROM notifications WHERE owner_id=? AND id<? ORDER BY id DESC LIMIT 51').all(user,before??Number.MAX_SAFE_INTEGER);const items=rows.slice(0,50).map(r=>{let activity:ActivityNotification['activity']=null;if(r.activity_id){try{const a=get(String(r.activity_id),user);activity={id:a.id,title:a.title};}catch(e){if(!(e instanceof ApiError))throw e;}}let post:ActivityNotification['post']=null;if(r.post_id){try{const p=wall.get(String(r.post_id),user);post={id:p.id,title:p.title};}catch(e){if(!(e instanceof ApiError))throw e;}}return {id:Number(r.id),kind:r.kind as ActivityNotification['kind'],activity,post,created_at:stamp(Number(r.created_at)),read_at:r.read_at==null?null:stamp(Number(r.read_at))};});return {items,next_cursor:rows.length>50?Number(rows[49].id):null,unread:Number(db.prepare('SELECT COUNT(*) AS n FROM notifications WHERE owner_id=? AND read_at IS NULL').get(user)!.n)};}
  function markRead(user:string,id:number){const r=db.prepare('UPDATE notifications SET read_at=COALESCE(read_at,?) WHERE id=? AND owner_id=?').run(now(),id,user);if(!r.changes)throw new ApiError(404,'NOTIFICATION_NOT_FOUND','Notification not found.');return {read:true};}
  function calendar(user:string):ActivityCalendarEvent[]{
-  const rows=db.prepare(select+" JOIN activity_preferences p ON p.activity_id=a.id WHERE p.user_id=? AND p.calendar_saved=1 AND a.status!='cancelled' AND a.moderation_state='visible' AND u.banned_at IS NULL").all(user) as Row[];
+  const rows=db.prepare(select+" JOIN activity_preferences p ON p.activity_id=a.id WHERE p.user_id=? AND p.calendar_saved=1 AND a.status!='cancelled' AND a.moderation_state='visible' AND u.banned_at IS NULL AND "+unblockedSql('a.organizer_id')).all(user,user,user) as Row[];
   return rows.map(row=>{const a=get(row.id,user),state=a.mine!.is_organizer?'organizer':a.mine!.participation?.status??'not_joined';return {id:'activity:'+a.id,kind:'event',title:a.title,body:a.description,location:a.location,timezone:a.timezone,starts_at:a.starts_at,ends_at:a.ends_at,start_date:null,end_date:null,all_day:false,status:'active',course_id:null,remind_minutes:a.mine!.remind_minutes,version:a.version,created_at:a.created_at,updated_at:a.updated_at,activity_origin:{id:a.id,participation:state}};});
  }
  // Called inside the account-deletion transaction, before the user cascade.
@@ -129,6 +133,28 @@ export function createSocialStore(db:DatabaseSync,now:()=>number){
   const owned=db.prepare(select+' WHERE a.organizer_id=?').all(user) as Row[];for(const row of owned){broadcast(row,'activity_removed');db.prepare('DELETE FROM activities WHERE id=?').run(row.id);}
   const joined=db.prepare(select+" JOIN activity_participations p ON p.activity_id=a.id WHERE p.user_id=? AND p.status IN ('confirmed','waitlisted')").all(user) as Row[];for(const row of joined)withdrawInternal(row,user);
  }
- function exportAll(user:string){return {activities:(db.prepare(select+' WHERE a.organizer_id=?').all(user) as Row[]).map(r=>({id:r.id,...JSON.parse(r.payload),status:r.status,version:r.version,is_demo:true})),participations:db.prepare('SELECT activity_id,status,queue_order,version,joined_at,updated_at FROM activity_participations WHERE user_id=?').all(user),preferences:db.prepare('SELECT activity_id,bookmarked,calendar_saved,remind_minutes FROM activity_preferences WHERE user_id=?').all(user),comments:db.prepare('SELECT id,activity_id,body,created_at FROM activity_comments WHERE author_id=?').all(user),notifications:db.prepare('SELECT id,activity_id,kind,created_at,read_at FROM notifications WHERE owner_id=?').all(user)};}
- return {create,get,list,join,withdraw,update,cancel,remove,setPreferences,roster,comments,addComment,deleteComment,notifications,markRead,calendar,deleteAccount,exportAll};
+ // Governance calls these inside its transaction; never start a nested transaction.
+ function disconnectUsers(first:string,second:string){
+  for(const [organizer,participant] of [[first,second],[second,first]]){
+   const rows=db.prepare(select+' WHERE a.organizer_id=?').all(organizer) as Row[];
+   for(const row of rows){withdrawInternal(row,participant);db.prepare('DELETE FROM activity_preferences WHERE activity_id=? AND user_id=?').run(row.id,participant);}
+  }
+ }
+ function restrictActivity(id:string){
+  const row=db.prepare(select+' WHERE a.id=?').get(id) as Row|undefined;if(!row)return;
+  if(row.status!=='cancelled'){
+   broadcast(row,'activity_cancelled');
+   db.prepare("UPDATE activities SET status='cancelled',version=version+1,updated_at=? WHERE id=?").run(now(),id);
+   db.prepare("UPDATE activity_participations SET status='cancelled',version=version+1,updated_at=? WHERE activity_id=? AND status IN ('confirmed','waitlisted')").run(now(),id);
+  }
+  db.prepare('UPDATE activity_preferences SET calendar_saved=0,remind_minutes=NULL WHERE activity_id=?').run(id);
+ }
+ function restrictUser(user:string){
+  for(const row of db.prepare('SELECT id FROM activities WHERE organizer_id=?').all(user))restrictActivity(String(row.id));
+  const joined=db.prepare(select+" JOIN activity_participations p ON p.activity_id=a.id WHERE p.user_id=? AND p.status IN ('confirmed','waitlisted')").all(user) as Row[];
+  for(const row of joined)withdrawInternal(row,user);
+  db.prepare('UPDATE activity_preferences SET calendar_saved=0,remind_minutes=NULL WHERE user_id=?').run(user);
+ }
+ function exportAll(user:string){return {activities:(db.prepare(select+' WHERE a.organizer_id=?').all(user) as Row[]).map(r=>({id:r.id,...JSON.parse(r.payload),status:r.status,version:r.version,is_demo:true})),participations:db.prepare('SELECT activity_id,status,queue_order,version,joined_at,updated_at FROM activity_participations WHERE user_id=?').all(user),preferences:db.prepare('SELECT activity_id,bookmarked,calendar_saved,remind_minutes FROM activity_preferences WHERE user_id=?').all(user),comments:db.prepare('SELECT id,activity_id,body,created_at FROM activity_comments WHERE author_id=?').all(user),notifications:db.prepare('SELECT id,activity_id,post_id,kind,created_at,read_at FROM notifications WHERE owner_id=?').all(user)};}
+ return {create,get,list,join,withdraw,update,cancel,remove,setPreferences,roster,comment,comments,addComment,deleteComment,notifications,markRead,calendar,deleteAccount,disconnectUsers,restrictActivity,restrictUser,exportAll};
 }
