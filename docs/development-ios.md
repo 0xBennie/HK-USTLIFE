@@ -74,3 +74,12 @@ node scripts/smoke-public-transit.mjs /tmp/hkust-public-transit-smoke.json
 ```
 
 This starts a temporary local HTTP server/database, discovers live KMB/GMB route variants and checks selected HKUST stops/ETA envelopes, then closes/removes only its temporary resources. A valid empty prediction list is expected outside service hours; it does not establish suspension. Operator failures cause this live acceptance probe to fail with a report, while the native UI displays an unavailable state. See `docs/api/campus-api.md` for coverage and freshness policy.
+
+Activity lifecycle smoke (local HTTP and persisted SQLite; no external network or mail):
+
+```sh
+npm run build:core
+node scripts/smoke-social.mjs /tmp/hkust-social-smoke.json
+```
+
+The native Discover tab now supports publishing/editing activities and study groups, condition filters, private participation/saves, comments and organizer management. Inbox displays persistent in-app notices/read state; Today links saved activity projections to their participation page. All activity content is explicitly local/demo. Campus wall, report/block moderation, device reminders and public share website are not yet delivered. See `docs/api/social-api.md` for precise state/visibility and retry rules.

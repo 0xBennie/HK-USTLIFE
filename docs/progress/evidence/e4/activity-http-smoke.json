@@ -1,0 +1,15 @@
+{
+  "observed_at": "2026-10-02T18:29:20.696Z",
+  "mode": "local-development",
+  "real_http": true,
+  "external_messages_sent": false,
+  "checks": [
+    "Concurrent HTTP joins: one confirmed, one waitlisted",
+    "Participation and sessions persisted across server restart",
+    "Withdrawal promoted the waiting account",
+    "Organizer reschedule changed the saved private calendar",
+    "Comment persisted and notification read state saved",
+    "Cancellation removed saved calendar and updated participation"
+  ],
+  "passed": true
+}

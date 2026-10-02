@@ -1,0 +1,43 @@
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+ ❯ tests/release-check.test.ts (5 tests | 1 failed) 80ms
+   ✓ release secret guard > flags a credential-like assignment but not an ordinary URL setting 2ms
+   ✓ release secret guard > matches multi-segment credential names 0ms
+   ✓ release secret guard > accepts documented placeholder values 0ms
+   ✓ release secret guard > never echoes the matched value, only the rule name 0ms
+   × release secret guard > reports no findings across the tracked repository 78ms
+     → expected [ { …(3) } ] to deeply equal []
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/release-check.test.ts > release secret guard > reports no findings across the tracked repository
+AssertionError: expected [ { …(3) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "file": "tests/product-social.test.ts",
++     "line": 106,
++     "rule": "credential-like assignment",
++   },
++ ]
+
+ ❯ tests/release-check.test.ts:32:29
+     30|     const result = await runReleaseCheck({ cwd: process.cwd(), audit: …
+     31|
+     32|     expect(result.findings).toEqual([]);
+       |                             ^
+     33|     expect(result.ok).toBe(true);
+     34|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  02:36:06
+   Duration  288ms (transform 23ms, setup 0ms, collect 23ms, tests 80ms, environment 0ms, prepare 30ms)

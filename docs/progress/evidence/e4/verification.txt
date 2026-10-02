@@ -1,0 +1,106 @@
+E4 activity lifecycle verification — 2026-10-03
+Actual local HTTP flow: activity-http-smoke.json. Native runtime not executed.
+Developer environment recheck: /Library/Developer/CommandLineTools; xcrun could not find simctl; Spotlight Xcode bundle search returned no results.
+
+Full test suite / backend build
+
+> hkust-life-mcp@0.1.0 test
+> npm run build:core && vitest run
+
+
+> hkust-life-mcp@0.1.0 build:core
+> tsc -p tsconfig.json
+
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+(node:72401) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/hko-weather.test.ts (1 test) 2ms
+ ✓ tests/ics-calendar.test.ts (3 tests) 2ms
+ ✓ tests/course-planner.test.ts (4 tests) 3ms
+ ✓ tests/release-assets.test.ts (3 tests) 3ms
+(node:72403) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/graph-outlook.test.ts (1 test) 5ms
+ ✓ tests/today.test.ts (1 test) 8ms
+(node:72402) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72405) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72407) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72408) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72411) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72404) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/reminder-plan.test.ts (2 tests) 7ms
+ ✓ tests/daily-brief.test.ts (1 test) 7ms
+ ✓ tests/server-tools.test.ts (4 tests) 38ms
+ ✓ tests/http-transport.test.ts (1 test) 40ms
+ ✓ tests/source-registry.test.ts (4 tests) 2ms
+ ✓ tests/product-shuttle.test.ts (5 tests) 169ms
+ ✓ tests/study-dates.test.ts (3 tests) 12ms
+ ✓ tests/product-public-transit.test.ts (13 tests) 198ms
+ ✓ tests/product-ics.test.ts (16 tests) 256ms
+ ✓ tests/product-directory.test.ts (5 tests) 243ms
+ ✓ tests/skill-packages.test.ts (1 test) 8ms
+ ✓ tests/hub-content.test.ts (3 tests) 2ms
+ ✓ tests/browser-profile.test.ts (2 tests) 11ms
+ ✓ tests/account-status.test.ts (2 tests) 2ms
+ ✓ tests/newcomer-checklist.test.ts (2 tests) 2ms
+ ✓ tests/skills-catalog.test.ts (2 tests) 4ms
+ ✓ tests/source-search.test.ts (2 tests) 2ms
+ ✓ tests/hub-manifest.test.ts (1 test) 2ms
+ ✓ tests/public-mcp-route.test.ts (3 tests) 13ms
+ ✓ tests/mobile-session.test.ts (6 tests) 345ms
+ ✓ tests/calendar-store.test.ts (14 tests) 523ms
+ ✓ tests/release-check.test.ts (5 tests) 457ms
+   ✓ release secret guard > reports no findings across the tracked repository  454ms
+ ✓ tests/product-auth.test.ts (11 tests) 458ms
+ ✓ tests/smoke-mcp.test.ts (1 test) 123ms
+(node:72402) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72402) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/product-social.test.ts (12 tests) 584ms
+ ✓ tests/product-learning.test.ts (26 tests) 653ms
+
+ Test Files  32 passed (32)
+      Tests  160 passed (160)
+   Start at  02:36:50
+   Duration  1.09s (transform 1.07s, setup 0ms, collect 3.24s, tests 4.18s, environment 3ms, prepare 1.75s)
+
+
+Native TypeScript
+
+> @campus/mobile@0.1.0 typecheck
+> tsc --noEmit
+
+
+iOS Hermes export — not native execution
+
+> @campus/mobile@0.1.0 bundle:ios
+> expo export --platform ios --output-dir dist
+
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:71104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:71104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundled 3823ms apps/mobile/index.ts (1591 modules)
+
+› ios bundles (1):
+_expo/static/js/ios/index-7f68843d878e309d1578fcc5b759d7b6.hbc (4MB)
+
+› web bundles (1):
+_expo/static/css/global-d41d8cd98f00b204e9800998ecf8427e.css (0B)
+
+› Files (1):
+metadata.json (142B)
+
+Exported: dist

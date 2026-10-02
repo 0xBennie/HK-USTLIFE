@@ -100,10 +100,11 @@ export function createAuth(db: DatabaseSync, dataDir: string, now: () => number)
       connections: { school_sso: 'approval_required', canvas: 'approval_required', outlook: 'approval_required' } };
   }
   function logout(authorization: string) { db.prepare('DELETE FROM sessions WHERE token_hash=?').run(digest(authorization.slice(7))); }
-  function deleteAccount(user: Principal) {
+  function deleteAccount(user: Principal, beforeDelete?: () => void) {
     if (now() - user.signedInAt > 600_000) throw new ApiError(403, 'REAUTH_REQUIRED', 'Sign in again before deleting your account.');
     const mails = db.prepare('SELECT id FROM challenges WHERE email=?').all(user.email);
     transaction(db, () => {
+      beforeDelete?.();
       db.prepare('DELETE FROM challenges WHERE email=?').run(user.email);
       db.prepare('DELETE FROM users WHERE id=?').run(user.id);
     });

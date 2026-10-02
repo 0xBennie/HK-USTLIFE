@@ -7,7 +7,8 @@ export type ImportedEvent=Omit<Extract<StudyItem,{kind:'event'}>,'created_at'|'u
   participation:'unknown';
   import_origin:{source_id:string;source_name:string;series_id:string;recurrence_id:string};
 };
-export type CalendarItem=StudyItem|ImportedEvent;
+export type ActivityCalendarEvent=Extract<StudyItem,{kind:'event'}>&{activity_origin:{id:string;participation:'organizer'|'not_joined'|'confirmed'|'waitlisted'|'withdrawn'|'cancelled'}};
+export type CalendarItem=StudyItem|ImportedEvent|ActivityCalendarEvent;
 export type SeriesSummary=Record<'title'|'start'|'end'|'duration'|'timezone'|'recurrence'|'excluded'|'exceptions'|'location'|'description'|'status',string>;
 export type ImportPreview={
   id:string;expires_at:number;

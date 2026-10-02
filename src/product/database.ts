@@ -85,6 +85,43 @@ const migrations = [{ version: 1, sql: `
     resolution TEXT NOT NULL DEFAULT '', created_at INTEGER NOT NULL,
     request_key TEXT NOT NULL, UNIQUE(owner_id,request_key)
   );
+` }, { version: 6, sql: `
+  CREATE TABLE activities (
+    id TEXT PRIMARY KEY, organizer_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    payload TEXT NOT NULL CHECK(json_valid(payload)), visibility TEXT NOT NULL CHECK(visibility IN ('public','members')),
+    status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','closed','cancelled')),
+    moderation_state TEXT NOT NULL DEFAULT 'visible' CHECK(moderation_state IN ('visible','hidden')),
+    starts_at INTEGER NOT NULL, ends_at INTEGER NOT NULL, version INTEGER NOT NULL DEFAULT 1,
+    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, is_demo INTEGER NOT NULL DEFAULT 1 CHECK(is_demo=1)
+  );
+  CREATE INDEX activities_start ON activities(starts_at,id);
+  CREATE TABLE activity_participations (
+    activity_id TEXT NOT NULL REFERENCES activities(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    status TEXT NOT NULL CHECK(status IN ('confirmed','waitlisted','withdrawn','cancelled')),
+    queue_order INTEGER NOT NULL, version INTEGER NOT NULL DEFAULT 1, joined_at INTEGER NOT NULL, updated_at INTEGER NOT NULL,
+    PRIMARY KEY(activity_id,user_id), UNIQUE(activity_id,queue_order)
+  );
+  CREATE TABLE activity_preferences (
+    activity_id TEXT NOT NULL REFERENCES activities(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    bookmarked INTEGER NOT NULL DEFAULT 0, calendar_saved INTEGER NOT NULL DEFAULT 0, remind_minutes INTEGER,
+    PRIMARY KEY(activity_id,user_id)
+  );
+  CREATE TABLE activity_comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, activity_id TEXT NOT NULL REFERENCES activities(id) ON DELETE CASCADE,
+    author_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, body TEXT NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL,
+    moderation_state TEXT NOT NULL DEFAULT 'visible' CHECK(moderation_state IN ('visible','hidden'))
+  );
+  CREATE INDEX activity_comments_feed ON activity_comments(activity_id,id);
+  CREATE TABLE notifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    activity_id TEXT REFERENCES activities(id) ON DELETE SET NULL,
+    kind TEXT NOT NULL, created_at INTEGER NOT NULL, read_at INTEGER
+  );
+  CREATE INDEX notifications_owner_feed ON notifications(owner_id,id);
+
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {
