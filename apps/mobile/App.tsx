@@ -39,7 +39,7 @@ function CampusApp() {
           : <LoginScreen language={language} dark={dark} />
           : tab === 0 ? state.profile ? <StudyScreen key={state.profile.id} language={language} dark={dark} />
           : <View style={styles.stack}><Text style={[styles.heading,{color:colors.text}]}>{t.loginBody}</Text><Button onPress={()=>setTab(4)}>{t.signIn}</Button></View>
-          : tab === 1 ? <CampusScreen language={language} dark={dark}/>
+          : tab === 1 ? <CampusScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)}/>
           : <View style={styles.stack}>
             <Text style={[styles.title, { color: colors.text }]}>{[t.todayTitle, t.campusTitle, t.discoverTitle, t.inboxTitle][tab]}</Text>
             <Card style={[styles.card, { backgroundColor: colors.surface }]}><Text style={[styles.heading, { color: colors.text }]}>{t.phase}</Text><Text style={[styles.body, { color: colors.muted }]}>{t.pending}</Text></Card>

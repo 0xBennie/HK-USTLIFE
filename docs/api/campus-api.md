@@ -15,3 +15,15 @@ Snapshot review deadline is seven days after retrieval (product freshness policy
 
 Source: https://cso.hkust.edu.hk/index.php/tran/stud_sh_b
 Holiday source: https://www.1823.gov.hk/common/ical/en.json
+
+## Directory, bookmarks and corrections (implemented)
+
+- GET `/api/v1/campus/places?q=&category=study|shop|service`: public bilingual name/location/description search, optional category. Reviewed seed coverage is nine entries: postal counter, EF Locker, Fusion, 7-Eleven LG5/iVillage, photo booth, coin kiosk, Information Commons and Learning Commons.
+- GET `/api/v1/campus/places/:id`: public detail with location, description, published-hours text, source/retrieval/hash, review deadline, version, official map/action URLs where verified. `open_now` and `availability` remain `unknown`. Thirty-day review period is an app policy; past it, `freshness=stale`. Published schedules are not current operating status.
+- GET `/api/v1/me/campus/bookmarks`: owner's `{target_kind,target_id,created_at}[]`.
+- PUT / DELETE `/api/v1/me/campus/bookmarks`: `{target_kind:place|shuttle,target_id}`. Save/remove idempotently; new saves require a known reviewed target. No owner ID accepted in body.
+- POST `/api/v1/campus/corrections`: authenticated `{target_kind,target_id,message}` (5–2,000 characters) with Idempotency-Key (8–128 safe identifier characters). Returns private pending record; same owner/key/content retries return it, changed content 409. Maximum 20 new requests per rolling day. Does not change directory, send external email or represent official acknowledgment.
+- GET `/api/v1/me/campus/corrections`: owner's requests/status/resolution. Admin review/update implementation belongs to E5; requests remain pending until reviewed.
+- GET `/api/v1/me/export`: additive `campus:{bookmarks,corrections}`. Account deletion cascades these private rows; public directory remains.
+
+Migration 5 stores directory entries, private bookmarks and corrections. Reviewed seed inserts missing IDs only and does not overwrite persisted maintenance edits on restart. Source evidence: `docs/progress/evidence/e3/directory/` with seven retrieved official pages and hashes; reviewed factual entries in `directory-data.ts`. Native DirectoryScreen supports search/category, detail/source/map links and saved-only view. TargetActions supports both places and school-shuttle routes, retry-safe corrections and own request history. Parent native campus screen remounts on account changes to clear private state. Actual iOS runtime acceptance pending.

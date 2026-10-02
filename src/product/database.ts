@@ -71,6 +71,20 @@ const migrations = [{ version: 1, sql: `
     FOREIGN KEY(owner_id,series_id) REFERENCES calendar_series(owner_id,id) ON DELETE CASCADE,
     PRIMARY KEY(owner_id,series_id,recurrence_id)
   );
+` }, { version: 5, sql: `
+  CREATE TABLE campus_entries (id TEXT PRIMARY KEY, payload TEXT NOT NULL CHECK(json_valid(payload)), version INTEGER NOT NULL DEFAULT 1);
+  CREATE TABLE campus_bookmarks (
+    owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    target_kind TEXT NOT NULL CHECK(target_kind IN ('place','shuttle')), target_id TEXT NOT NULL,
+    created_at INTEGER NOT NULL, PRIMARY KEY(owner_id,target_kind,target_id)
+  );
+  CREATE TABLE campus_corrections (
+    id TEXT PRIMARY KEY, owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    target_kind TEXT NOT NULL CHECK(target_kind IN ('place','shuttle')), target_id TEXT NOT NULL,
+    message TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','resolved','rejected')),
+    resolution TEXT NOT NULL DEFAULT '', created_at INTEGER NOT NULL,
+    request_key TEXT NOT NULL, UNIQUE(owner_id,request_key)
+  );
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

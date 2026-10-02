@@ -1,3 +1,5 @@
+import { createDirectoryStore } from './campus/directory.js';
+import { registerDirectoryRoutes } from './campus/directory-routes.js';
 import { registerCampusRoutes } from './campus/routes.js';
 import { calendarQuerySchema } from './learning/schemas.js';
 import Fastify from 'fastify';
@@ -17,6 +19,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number 
   const auth = createAuth(db, options.dataDir, now);
   const learning = createLearningStore(db,now);
   const calendars = createCalendarStore(db,now);
+  const directory = createDirectoryStore(db,now);
   const app = Fastify({ logger: false, bodyLimit: 32_768, trustProxy: false });
   app.addHook('onClose', async () => { db.close(); });
   const localHost = (host: string | undefined) => /^((localhost)|(127\.0\.0\.1)|(\[::1\]))(:\d+)?$/.test(host ?? '');
@@ -29,6 +32,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number 
   });
   const ok = (data: unknown, requestId: string) => ({ data, meta: { request_id: requestId, generated_at: new Date(now()).toISOString(), mode: 'local-development' } });
   registerCampusRoutes(app,ok,now);
+  registerDirectoryRoutes(app,directory,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerLearningRoutes(app,learning,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerCalendarRoutes(app,calendars,request=>auth.requireUser(request.headers.authorization).id,ok);
   app.get('/api/v1/me/calendar',async request=>{
@@ -64,7 +68,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number 
   });
   app.get('/api/v1/me/export', async request => {
     const user = auth.requireUser(request.headers.authorization);
-    return ok({ version: 3, calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
+    return ok({ version: 3, campus:directory.exportAll(user.id), calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
   });
   app.delete('/api/v1/me', async request => {
     const user = auth.requireUser(request.headers.authorization);

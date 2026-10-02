@@ -1,0 +1,44 @@
+[
+  {
+    "id": "postal",
+    "url": "https://cso.hkust.edu.hk/index.php/mail/pos_ctr",
+    "retrieved_at": "2026-10-02T17:28:44.022Z",
+    "sha256": "d090741758fd874bbb29a3939e1abebc9c6751d1f1b39553644480c115661ba4"
+  },
+  {
+    "id": "locker",
+    "url": "https://cso.hkust.edu.hk/index.php/mail/ef-locker",
+    "retrieved_at": "2026-10-02T17:28:44.020Z",
+    "sha256": "743622092206088e71ca6d46f514d71f5ddeefe7480ed4550e39a1f933fc4848"
+  },
+  {
+    "id": "fusion",
+    "url": "https://cso.hkust.edu.hk/index.php/shp/spmk",
+    "retrieved_at": "2026-10-02T17:28:44.021Z",
+    "sha256": "bff68dda87b4fc1d1c967d65f0738e241582b72df9d5871510324339e390597b"
+  },
+  {
+    "id": "convenience",
+    "url": "https://cso.hkust.edu.hk/index.php/shp/7Eleven",
+    "retrieved_at": "2026-10-02T17:28:44.021Z",
+    "sha256": "52cf6661d3bcbf255ad159d30095dba9cfffddfd8ef769ec69e7b2c52ac1276a"
+  },
+  {
+    "id": "photo",
+    "url": "https://cso.hkust.edu.hk/index.php/fac/instant_photo",
+    "retrieved_at": "2026-10-02T17:28:44.021Z",
+    "sha256": "2697c2349bece7f19eb62394156e35fd7e71b33af62de731fabdb84597cc8195"
+  },
+  {
+    "id": "coin",
+    "url": "https://cso.hkust.edu.hk/index.php/fac/coin",
+    "retrieved_at": "2026-10-02T17:28:44.020Z",
+    "sha256": "b21c81e7822bddf37fa5bb09177e7c978c65caf190381e675e2067d751b2f9c4"
+  },
+  {
+    "id": "commons",
+    "url": "https://library.hkust.edu.hk/facilities-space/space/places-study/information-commons-learning-commons",
+    "retrieved_at": "2026-10-02T17:28:43.502Z",
+    "sha256": "520aac2acbef3e3d054b189acbf27062802552bcfc772a8492b736c5e9fb72dc"
+  }
+]
