@@ -150,4 +150,3 @@ AssertionError: {"error":{"code":"NOT_FOUND","message":"Resource not found.","re
       Tests  7 failed (7)
    Start at  02:58:57
    Duration  747ms (transform 125ms, setup 0ms, collect 232ms, tests 271ms, environment 0ms, prepare 39ms)
-
