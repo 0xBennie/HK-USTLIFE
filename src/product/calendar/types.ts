@@ -15,3 +15,4 @@ export type ImportPreview={
   issues:{uid:string|null;code:string;message:string}[];
   entries:{series:{uid:string;identity:'uid'|'fingerprint';title:string};summary:SeriesSummary;previous_summary:SeriesSummary|null;expected_version:number|null;action:'new'|'unchanged'|'update'|'conflict';local_changes:number;previous_title:string|null}[];
 };
+export type ImportSourceDetail={id:string;name:string;version:number;created_at:number;series:{id:string;version:number;summary:SeriesSummary;overrides:{recurrence_id:string;payload:Omit<Extract<StudyItem,{kind:'event'}>,'id'|'version'|'created_at'|'updated_at'>}[]}[]};

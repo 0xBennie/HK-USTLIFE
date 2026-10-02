@@ -1,3 +1,4 @@
+import { SourceScreen } from './SourceScreen';
 import { ImportScreen } from './ImportScreen';
 import { useCallback,useEffect,useRef,useState } from 'react';
 import { ActivityIndicator,Alert,Linking,ScrollView,Text,View } from 'react-native';
@@ -22,6 +23,7 @@ async function allPages<T>(path:string) {
 }
 export function StudyScreen({language,dark}:{language:Language;dark:boolean}) {
   const t=studyStrings[language],colors=palette[dark?'dark':'light'];
+  const [managingSources,setManagingSources]=useState(false);
   const [importing,setImporting]=useState(false);
   const [view,setView]=useState<'day'|'week'|'courses'|'all'>('day');
   const [date,setDate]=useState(()=>dateInZone(new Date().toISOString()));
@@ -68,12 +70,14 @@ export function StudyScreen({language,dark}:{language:Language;dark:boolean}) {
       {item.kind==='event'&&!('import_origin' in item)?<Button variant="secondary" isDisabled={busy} onPress={()=>mutate(()=>session.request(`/study/items/${item.id}`,{method:'PATCH',body:{version:item.version,status:item.status==='active'?'cancelled':'active'}}))}>{item.status==='active'?t.cancelEvent:t.restoreEvent}</Button>:null}
       {item.kind==='material'?<Button variant="secondary" onPress={()=>mutate(()=>Linking.openURL(item.url))}>{t.viewLink}</Button>:null}
       {!('import_origin' in item)?<><Button variant="ghost" isDisabled={busy} onPress={()=>setEditor({kind:item.kind,record:item})}>{t.edit}</Button>
-      <Button variant="ghost" isDisabled={busy} onPress={()=>remove(item)}>{t.remove}</Button></>:<><Button variant="ghost" isDisabled={busy} onPress={()=>setEditor({kind:'event',record:item})}>{language==='zh'?'修改这一次':'Edit this occurrence'}</Button><Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?`导入来源：${item.import_origin.source_name}${item.source_status==='tentative'?' · 源日程暂定':''} · 尚未确认参与`:`Imported from ${item.import_origin.source_name}${item.source_status==='tentative'?' · tentative source event':''} · participation unconfirmed`}</Text>{item.source_occurrence_missing?<Text style={[styles.caption,{color:colors.danger}]}>{language==='zh'?'来源已无此日程；按你的选择保留个人安排。':'This occurrence is no longer in the source; your private change was retained.'}</Text>:null}</>}
+      <Button variant="ghost" isDisabled={busy} onPress={()=>remove(item)}>{t.remove}</Button></>:<><Button variant="ghost" isDisabled={busy} onPress={()=>setEditor({kind:'event',record:item})}>{language==='zh'?'修改这一次':'Edit this occurrence'}</Button><Button variant="secondary" isDisabled={busy} onPress={()=>mutate(()=>session.request(`/calendar/series/${item.import_origin.series_id}/occurrence/status`,{method:'PATCH',body:{version:item.version,recurrence_id:item.recurrence_id,status:'cancelled'}}))}>{language==='zh'?'取消这一次':'Cancel this occurrence'}</Button><Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?`导入来源：${item.import_origin.source_name}${item.source_status==='tentative'?' · 源日程暂定':''} · 尚未确认参与`:`Imported from ${item.import_origin.source_name}${item.source_status==='tentative'?' · tentative source event':''} · participation unconfirmed`}</Text>{item.source_occurrence_missing?<Text style={[styles.caption,{color:colors.danger}]}>{language==='zh'?'来源已无此日程；按你的选择保留个人安排。':'This occurrence is no longer in the source; your private change was retained.'}</Text>:null}</>}
     </Card>;
   }
+  if(managingSources)return <SourceScreen language={language} dark={dark} onBack={()=>{setManagingSources(false);void load();}}/>;
   if(importing)return <ImportScreen language={language} dark={dark} onBack={()=>setImporting(false)} onSaved={()=>{setImporting(false);void load();}}/>;
   if(editor)return <StudyForm editor={editor} courses={courses} language={language} dark={dark} onBack={()=>setEditor(null)} onSaved={()=>{setEditor(null);void load();}} />;
   return <View style={styles.stack}>
+    <Button variant="ghost" onPress={()=>setManagingSources(true)}>{language==='zh'?'管理导入来源':'Manage imported sources'}</Button>
     <Button variant="secondary" onPress={()=>setImporting(true)}>{language==='zh'?'导入 ICS 日历':'Import ICS calendar'}</Button>
     <Text style={[styles.title,{color:colors.text}]}>{t.title}</Text><Text style={[styles.caption,{color:colors.muted}]}>{t.private}</Text>
     <Button variant="ghost" onPress={()=>setChoosingZone(!choosingZone)}>{t.zone}: {zone}</Button>

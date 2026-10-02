@@ -9,3 +9,7 @@ Verification: actual temporary SQLite, reopen persistence, owner isolation, expi
 ## Occurrence overrides
 
 Persist a full private event snapshot per original recurrence ID, with series-version optimistic concurrency. Moving one occurrence must remove its old projection and insert its new projection even outside the original query window. Source refresh with any local overrides requires explicit per-series keep_local/use_source; keeping a removed source occurrence remains a clearly marked private retained event. Reject unsupported/out-of-rule recurrence IDs. Source/account deletion cascades overrides; exported private data includes them. Dedicated endpoint, never manual study-item IDs.
+
+## Source management completion
+
+Expose owner-scoped source detail, reset one private override with series version guard, and cancel/restore via the dedicated occurrence endpoint. Native management must show cancelled overrides so users can recover them. Source removal warns that overrides are also removed and independent notes survive. Keep preview raw data at most until confirmation/expiry, replay receipts for 24 hours, and bound per-owner source/series/override counts. Verify database effects, stale and other-owner requests; no schema-only acceptance.

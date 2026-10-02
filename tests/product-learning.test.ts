@@ -41,6 +41,12 @@ describe('private learning API', () => {
     expect((await call('PATCH',path,body,bob)).statusCode).toBe(404);expect((await call('PATCH',path,body)).statusCode).toBe(200);expect((await call('PATCH',path,body)).statusCode).toBe(409);
     expect((await call('GET','/me/calendar?from=2026-10-05&to=2026-10-06')).json().data.days[0].events).toEqual([]);
     expect((await call('GET','/me/calendar?from=2026-10-06&to=2026-10-07')).json().data.days[0].events[0]).toMatchObject({title:'My date',locally_modified:true});
+    const importedId=original.import_origin.series_id,recurrence_id=original.recurrence_id;
+    const cancel=await call('PATCH',`/calendar/series/${importedId}/occurrence/status`,{version:2,recurrence_id,status:'cancelled'});expect(cancel.statusCode,cancel.body).toBe(200);
+    expect((await call('GET','/me/calendar?from=2026-10-06&to=2026-10-07')).json().data.days[0].events).toEqual([]);
+    const details=await call('GET',`/calendar/sources/${original.import_origin.source_id}`);expect(details.json().data.series[0].overrides[0].payload.status).toBe('cancelled');
+    expect((await call('GET',`/calendar/sources/${original.import_origin.source_id}`,undefined,bob)).statusCode).toBe(404);
+    expect((await call('PATCH',`/calendar/series/${importedId}/occurrence/status`,{version:3,recurrence_id,status:'active'})).statusCode).toBe(200);
     const update=(await call('POST','/calendar/imports/preview',{source_id:original.import_origin.source_id,content:content.replace('Source title','New source')})).json().data;
     expect((await call('POST',`/calendar/imports/${update.id}/confirm`,{uids:['personal']})).statusCode).toBe(409);
     expect((await call('POST',`/calendar/imports/${update.id}/confirm`,{uids:['personal'],resolutions:{personal:'use_source'}})).statusCode).toBe(200);

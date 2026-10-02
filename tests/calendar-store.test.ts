@@ -83,3 +83,28 @@ it('previews readable before/after time and recurrence details without changing 
  expect(changed.entries[0]).toMatchObject({summary:{title:'New name',start:'2026-10-05T02:00:00Z',timezone:'UTC',recurrence:'FREQ=WEEKLY;COUNT=12'},previous_summary:{title:'one',start:'2026-10-05T01:00:00Z'}});
  expect(store.exportAll('a')[0].series[0].title).toBe('one');
 });
+it('cancel/restore and reset are versioned, owner-scoped and recoverable from source detail',()=>{
+ const p=initial(),r=store.confirm('a',p.id,{uids:['one']}),s=store.exportAll('a')[0].series[0],rid='2026-10-05T01:00:00Z';
+ expect(()=>store.detail('b',r.source_id)).toThrow(/not found/);
+ store.setOccurrenceStatus('a',s.id,{version:1,recurrence_id:rid,status:'cancelled'});
+ expect(store.detail('a',r.source_id).series[0].overrides[0].payload.status).toBe('cancelled');
+ expect(()=>store.resetOccurrence('a',s.id,{version:1,recurrence_id:rid})).toThrow(/Refresh/);
+ expect(()=>store.setOccurrenceStatus('b',s.id,{version:2,recurrence_id:rid,status:'active'})).toThrow(/not found/);
+ store.setOccurrenceStatus('a',s.id,{version:2,recurrence_id:rid,status:'active'});
+ expect(store.detail('a',r.source_id).series[0].overrides[0].payload.status).toBe('active');
+ store.resetOccurrence('a',s.id,{version:3,recurrence_id:rid});
+ expect(store.detail('a',r.source_id).series[0]).toMatchObject({version:4,overrides:[]});
+ expect(store.occurrences('a',{from:'2026-10-05',to:'2026-10-06'}).items[0]).toMatchObject({locally_modified:false,status:'active'});
+});
+it('drops raw preview content after confirmation, bounds replay to 24 hours and removes pending source snapshots on deletion',()=>{
+ const p=initial();expect(store.getPreview('a',p.id)).toMatchObject({state:'pending'});expect(()=>store.getPreview('b',p.id)).toThrow(/not found/);
+ const r=store.confirm('a',p.id,{uids:['one']});expect(store.getPreview('a',p.id)).toMatchObject({state:'confirmed',result:r});
+ expect(String(db.prepare('SELECT snapshot FROM calendar_previews WHERE id=?').get(p.id)?.snapshot)).not.toContain('VEVENT');
+ const pending=store.preview('a',{source_id:r.source_id,content:calendar(event('one','Pending private title'))});
+ store.remove('a',r.source_id,2);expect(()=>store.getPreview('a',pending.id)).toThrow(/not found/);
+ clock+=86400_001;expect(()=>store.getPreview('a',p.id)).toThrow(/new preview/);expect(db.prepare('SELECT COUNT(*) AS n FROM calendar_previews').get()?.n).toBe(0);
+});
+it('limits number of imported sources without partially writing an over-limit confirmation',()=>{
+ for(let i=0;i<20;i++){const p=store.preview('a',{source_name:'Source '+i,content:calendar(event('a'+i))});store.confirm('a',p.id,{uids:['a'+i]});}
+ const p=initial();expect(()=>store.confirm('a',p.id,{uids:['one']})).toThrow(/20 sources/);expect(store.exportAll('a')).toHaveLength(20);
+});
