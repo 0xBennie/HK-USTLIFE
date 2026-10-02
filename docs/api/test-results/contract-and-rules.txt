@@ -1,0 +1,43 @@
+test_all_local_references_resolve (__main__.ContractTests.test_all_local_references_resolve) ... ok
+test_anonymous_session_cannot_contain_a_profile (__main__.ContractTests.test_anonymous_session_cannot_contain_a_profile) ... ok
+test_contract_is_explicitly_planned (__main__.ContractTests.test_contract_is_explicitly_planned) ... ok
+test_email_control_cannot_be_active_membership (__main__.ContractTests.test_email_control_cannot_be_active_membership) ... ok
+test_external_activity_requires_url (__main__.ContractTests.test_external_activity_requires_url) ... ok
+test_invalid_calendar_date_rejected (__main__.ContractTests.test_invalid_calendar_date_rejected) ... ok
+test_no_password_field_in_login_request (__main__.ContractTests.test_no_password_field_in_login_request) ... ok
+test_no_service_cannot_return_departures (__main__.ContractTests.test_no_service_cannot_return_departures) ... ok
+test_official_handoff_cannot_claim_booking_success (__main__.ContractTests.test_official_handoff_cannot_claim_booking_success) ... ok
+test_operation_ids_and_path_parameters (__main__.ContractTests.test_operation_ids_and_path_parameters) ... ok
+test_plan_does_not_allow_live_prediction (__main__.ContractTests.test_plan_does_not_allow_live_prediction) ... ok
+test_private_operations_require_session_in_contract (__main__.ContractTests.test_private_operations_require_session_in_contract) ... ok
+test_return_path_rejects_external_and_protocol_relative_urls (__main__.ContractTests.test_return_path_rejects_external_and_protocol_relative_urls) ... ok
+test_schema_definitions_and_examples (__main__.ContractTests.test_schema_definitions_and_examples) ... ok
+test_school_activity_requires_institution (__main__.ContractTests.test_school_activity_requires_institution) ... ok
+test_school_password_not_accepted_in_connection_request (__main__.ContractTests.test_school_password_not_accepted_in_connection_request) ... ok
+test_stale_source_cannot_claim_scheduled (__main__.ContractTests.test_stale_source_cannot_claim_scheduled) ... ok
+test_task_cannot_have_two_conflicting_deadline_representations (__main__.ContractTests.test_task_cannot_have_two_conflicting_deadline_representations) ... ok
+test_upstream_revocation_not_assumed (__main__.ContractTests.test_upstream_revocation_not_assumed) ... ok
+test_writes_document_csrf_and_creates_idempotency (__main__.ContractTests.test_writes_document_csrf_and_creates_idempotency) ... ok
+test_after_term (__main__.ShuttleSpecificationTests.test_after_term) ... ok
+test_before_term (__main__.ShuttleSpecificationTests.test_before_term) ... ok
+test_between_departures (__main__.ShuttleSpecificationTests.test_between_departures) ... ok
+test_end_of_day_does_not_relabel_tomorrow (__main__.ShuttleSpecificationTests.test_end_of_day_does_not_relabel_tomorrow) ... ok
+test_evening_service_is_not_lost (__main__.ShuttleSpecificationTests.test_evening_service_is_not_lost) ... ok
+test_exact_departure_is_not_promised_catchable (__main__.ShuttleSpecificationTests.test_exact_departure_is_not_promised_catchable) ... ok
+test_last_service_date_remains_valid (__main__.ShuttleSpecificationTests.test_last_service_date_remains_valid) ... ok
+test_missing_holiday_coverage_is_unknown (__main__.ShuttleSpecificationTests.test_missing_holiday_coverage_is_unknown) ... ok
+test_naive_timestamp_rejected (__main__.ShuttleSpecificationTests.test_naive_timestamp_rejected) ... ok
+test_no_future_service_after_last_bus_of_term (__main__.ShuttleSpecificationTests.test_no_future_service_after_last_bus_of_term) ... ok
+test_official_holiday (__main__.ShuttleSpecificationTests.test_official_holiday) ... ok
+test_sample_eligibility_and_zero_fare_are_distinct (__main__.ShuttleSpecificationTests.test_sample_eligibility_and_zero_fare_are_distinct) ... ok
+test_stale_source (__main__.ShuttleSpecificationTests.test_stale_source) ... ok
+test_synthetic_conflicting_notices (__main__.ShuttleSpecificationTests.test_synthetic_conflicting_notices) ... ok
+test_synthetic_verified_cancellation (__main__.ShuttleSpecificationTests.test_synthetic_verified_cancellation) ... ok
+test_utc_is_converted_to_hong_kong_day (__main__.ShuttleSpecificationTests.test_utc_is_converted_to_hong_kong_day) ... ok
+test_weekday_before_first_bus (__main__.ShuttleSpecificationTests.test_weekday_before_first_bus) ... ok
+test_weekend (__main__.ShuttleSpecificationTests.test_weekend) ... ok
+
+----------------------------------------------------------------------
+Ran 38 tests in 0.046s
+
+OK

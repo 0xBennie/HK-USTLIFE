@@ -1,0 +1,350 @@
+{
+  "checked_at": "2026-10-02T14:43:12.421626+00:00",
+  "scope": "Read-only public source probes, not product HTTP endpoint tests or authorized personal integrations.",
+  "passed": 14,
+  "failed": 0,
+  "results": [
+    {
+      "name": "school_sso_documentation",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://itso.hkust.edu.hk/services/cyber-security/authentication-service/sso-integration",
+          "checked_at": "2026-10-02T14:42:53.564884+00:00",
+          "http_status": 200,
+          "content_type": "text/html; charset=UTF-8",
+          "final_url": "https://itso.hkust.edu.hk/services/cyber-security/authentication-service/sso-integration",
+          "bytes": 60224,
+          "sha256": "a3436cf944ab21c739ed1f825d5ae91d5b7c20e3586094d4bf4ed5b300bbc8a9"
+        }
+      ],
+      "observation": {
+        "documented": "OIDC and application registration",
+        "auth_e2e": "not_tested"
+      }
+    },
+    {
+      "name": "cso_shuttle_schedule",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://cso.hkust.edu.hk/index.php/tran/stud_sh_b",
+          "checked_at": "2026-10-02T14:42:53.565137+00:00",
+          "http_status": 200,
+          "content_type": "text/html; charset=UTF-8",
+          "final_url": "https://cso.hkust.edu.hk/index.php/tran/stud_sh_b",
+          "bytes": 77043,
+          "sha256": "3f82e0889accc114e712c585f7812949da9ccd3709d54bc299de958b7d57d7ff"
+        }
+      ],
+      "observation": {
+        "service_period": [
+          "2026-09-01",
+          "2026-12-18"
+        ],
+        "reviewed_morning_blocks": 2,
+        "gps_page_link_present": true,
+        "gps_api_authorization": "not_established",
+        "coverage": "reviewed sample blocks, not all routes"
+      }
+    },
+    {
+      "name": "public_holidays",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://www.1823.gov.hk/common/ical/en.json",
+          "checked_at": "2026-10-02T14:42:53.565194+00:00",
+          "http_status": 200,
+          "content_type": "application/json",
+          "final_url": "https://www.1823.gov.hk/common/ical/en.json",
+          "bytes": 15520,
+          "sha256": "8d797fb380825eec3f53fe456cc85ad30e2f91635675081abb671eca3bfd757d"
+        }
+      ],
+      "observation": {
+        "count": 51,
+        "coverage_years": [
+          2025,
+          2026,
+          2027
+        ]
+      }
+    },
+    {
+      "name": "kmb_routes",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "checked_at": "2026-10-02T14:42:53.565250+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+          "bytes": 350950,
+          "sha256": "4f860f9f5e7df1a4676767ae7d25756abf9aa4ff6a733c5002e606f7f7d38627"
+        }
+      ],
+      "observation": {
+        "route_91m_variants": 3
+      }
+    },
+    {
+      "name": "kmb_eta",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://data.etabus.gov.hk/v1/transport/kmb/route-eta/91M/1",
+          "checked_at": "2026-10-02T14:42:54.442243+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://data.etabus.gov.hk/v1/transport/kmb/route-eta/91M/1",
+          "bytes": 38657,
+          "sha256": "caf2c50cc59833ceffed8b283771828913e6f6b2078ec10f9e04c88809db8714"
+        }
+      ],
+      "observation": {
+        "records": 138,
+        "with_eta": 138,
+        "remarks": [
+          "",
+          "Scheduled Bus"
+        ],
+        "source_generated_at": "2026-10-02T22:42:26+08:00",
+        "empty_is_no_data_not_prediction": true
+      }
+    },
+    {
+      "name": "gmb_11m_route_stop_eta",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://data.etagmb.gov.hk/route/NT/11M",
+          "checked_at": "2026-10-02T14:42:54.576001+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://data.etagmb.gov.hk/route/NT/11M",
+          "bytes": 2877,
+          "sha256": "01e3b5956ce833cb7ef255e7bdd1d7ea1f4eedf59a93e6723d47455d37d10b84"
+        },
+        {
+          "url": "https://data.etagmb.gov.hk/route-stop/2004825/1",
+          "checked_at": "2026-10-02T14:42:57.516801+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://data.etagmb.gov.hk/route-stop/2004825/1",
+          "bytes": 708,
+          "sha256": "1b510fc2d8436c4fe062b547ac82f2da9c87d16227fd9a7383ef2b918bc6d813"
+        },
+        {
+          "url": "https://data.etagmb.gov.hk/eta/route-stop/2004825/1/1",
+          "checked_at": "2026-10-02T14:43:00.959627+00:00",
+          "http_status": 200,
+          "content_type": "application/json",
+          "final_url": "https://data.etagmb.gov.hk/eta/route-stop/2004825/1/1",
+          "bytes": 574,
+          "sha256": "ee0b53f5805ab5743b867aea8c139d8b7e0c9a80ca98d4343b9b8b9cc9780104"
+        }
+      ],
+      "observation": {
+        "route_id": 2004825,
+        "stop_count": 3,
+        "eta_enabled": true,
+        "eta_count": 3,
+        "remarks": [
+          "Scheduled"
+        ]
+      }
+    },
+    {
+      "name": "citybus_route_stop_eta",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://rt.data.gov.hk/v2/transport/citybus/route/CTB",
+          "checked_at": "2026-10-02T14:42:54.590676+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://rt.data.gov.hk/v2/transport/citybus/route/CTB",
+          "bytes": 112270,
+          "sha256": "9929d45e49a4b9f7d3368064ba89d3ee966a9f90cb5c9d442c6bd70b98539e12"
+        },
+        {
+          "url": "https://rt.data.gov.hk/v2/transport/citybus/route-stop/CTB/1/outbound",
+          "checked_at": "2026-10-02T14:43:09.647738+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://rt.data.gov.hk/v2/transport/citybus/route-stop/CTB/1/outbound",
+          "bytes": 2432,
+          "sha256": "3f4668546284096aef4c6daee1348d99b15da443f6c9e9a6a52175f5b8be7cec"
+        },
+        {
+          "url": "https://rt.data.gov.hk/v2/transport/citybus/eta/CTB/001027/1",
+          "checked_at": "2026-10-02T14:43:11.584533+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://rt.data.gov.hk/v2/transport/citybus/eta/CTB/001027/1",
+          "bytes": 1628,
+          "sha256": "6c752f3b5431431a66328dfb20d9254824c9389db70d3358413f65258914b4b5"
+        }
+      ],
+      "observation": {
+        "catalogue_count": 407,
+        "sample_route": "1",
+        "stop_count": 20,
+        "eta_count": 5,
+        "coverage": "one route/stop sample"
+      }
+    },
+    {
+      "name": "mtr_next_train",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=TKO&lang=en",
+          "checked_at": "2026-10-02T14:42:54.862822+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=TKO&lang=en",
+          "bytes": 1031,
+          "sha256": "02c16d255a0f7462e0ce575ab4ba168e6649d4bd958ac0dc7f4e291627d8e7ad"
+        }
+      ],
+      "observation": {
+        "service_status": 1,
+        "station_present": true
+      }
+    },
+    {
+      "name": "hko_weather",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en",
+          "checked_at": "2026-10-02T14:42:55.574577+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en",
+          "bytes": 3217,
+          "sha256": "d8745256701749353b5771c41f308da44f8da8b7ed044c41db297f42b96bccf6"
+        }
+      ],
+      "observation": {
+        "station_count": 27,
+        "updated_at": "2026-10-02T22:02:00+08:00"
+      }
+    },
+    {
+      "name": "hko_warnings",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en",
+          "checked_at": "2026-10-02T14:42:56.129357+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en",
+          "bytes": 196,
+          "sha256": "0fca3ae0886119f3844686d4b0d5eea5348794ea9785114e3cc90c3c81864b1f"
+        }
+      ],
+      "observation": {
+        "entries": 1,
+        "empty_means_no_warning": true
+      }
+    },
+    {
+      "name": "academic_ics",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://calendar.hkust.edu.hk/events/ics?ics_mode=academic_calendar",
+          "checked_at": "2026-10-02T14:42:56.309478+00:00",
+          "http_status": 200,
+          "content_type": "text/calendar; charset=UTF-8",
+          "final_url": "https://calendar.hkust.edu.hk/events/ics?ics_mode=academic_calendar",
+          "bytes": 10192,
+          "sha256": "e12c3be1ba0bc85d453780bfc994b55fa4d93079d175903c29040c03771e768f"
+        }
+      ],
+      "observation": {
+        "events": 45,
+        "scope": "academic calendar, not personal enrolment"
+      }
+    },
+    {
+      "name": "university_rss",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://calendar.hkust.edu.hk/events/rss?ics_mode=academic_calendar",
+          "checked_at": "2026-10-02T14:42:56.835346+00:00",
+          "http_status": 200,
+          "content_type": "text/xml; charset=UTF-8",
+          "final_url": "https://calendar.hkust.edu.hk/events/rss?ics_mode=academic_calendar",
+          "bytes": 45469,
+          "sha256": "bdf32b2115e6667f5d089ba8d1781788e0363c16392990ee50a0cfb781eeb535"
+        }
+      ],
+      "observation": {
+        "items": 73,
+        "scope": "general events observed; query name does not imply academic-only"
+      }
+    },
+    {
+      "name": "address_lookup",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://www.als.gov.hk/lookup?q=central%20government%20offices",
+          "checked_at": "2026-10-02T14:42:58.200409+00:00",
+          "http_status": 200,
+          "content_type": "application/json;charset=UTF-8",
+          "final_url": "https://www.als.gov.hk/lookup?q=central%20government%20offices",
+          "bytes": 682,
+          "sha256": "bf0248edec5919a8fca39faadf247bcdd26a239ccad7fd83b2a1c1d9a7709a5b"
+        }
+      ],
+      "observation": {
+        "candidates": 1
+      }
+    },
+    {
+      "name": "luma_public_schema",
+      "status": "pass",
+      "requests": [
+        {
+          "url": "https://public-api.luma.com/openapi.json",
+          "checked_at": "2026-10-02T14:42:58.653983+00:00",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "final_url": "https://public-api.luma.com/openapi.json",
+          "bytes": 223487,
+          "sha256": "dbf817c75cec8f6b03020df936ed14a804ed19b1fecd30b806c37dcbca63f6b1"
+        }
+      ],
+      "observation": {
+        "public_schema": true,
+        "authorized_business_api_tested": false
+      }
+    }
+  ],
+  "blocked": [
+    {
+      "area": "School OIDC/email login and session security",
+      "reason": "New auth server not implemented; institutional client/issuer/claims approval and email provider absent."
+    },
+    {
+      "area": "Canvas/SIS/Graph private data",
+      "reason": "No approved per-user integration exercised; no credentials accessed."
+    },
+    {
+      "area": "Shuttle GPS API",
+      "reason": "Official external viewer link is not an approved reusable API."
+    },
+    {
+      "area": "Facilities/Luma/Meetup private APIs",
+      "reason": "Institutional/organizer permission and applicable subscription not configured."
+    }
+  ]
+}

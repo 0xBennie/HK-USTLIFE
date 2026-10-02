@@ -1,0 +1,6751 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "HK Campus Super App API — Proposed Contract",
+    "version": "0.1.0",
+    "description": "接口设计，未部署。公开来源测试和合同验证不是产品端点验收。"
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "拟议相对路径，无已部署主机"
+    }
+  ],
+  "security": [
+    {
+      "cookieSession": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Account"
+    },
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Campus"
+    },
+    {
+      "name": "Community"
+    },
+    {
+      "name": "Connections"
+    },
+    {
+      "name": "Learning"
+    },
+    {
+      "name": "Sources"
+    },
+    {
+      "name": "Transport"
+    }
+  ],
+  "paths": {
+    "/auth/methods": {
+      "get": {
+        "operationId": "listAuthMethods",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "listAuthMethods",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AuthMethod"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/auth/session": {
+      "get": {
+        "operationId": "getSession",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "getSession",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Session"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/email/challenges": {
+      "post": {
+        "operationId": "createEmailChallenge",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "createEmailChallenge",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/EmailChallenge"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailChallengeRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/email/verify": {
+      "post": {
+        "operationId": "verifyEmailChallenge",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "verifyEmailChallenge",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Session"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailVerifyRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/oidc/start": {
+      "post": {
+        "operationId": "startSchoolLogin",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "startSchoolLogin",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AuthorizationStart"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OidcStartRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/oidc/callback": {
+      "get": {
+        "operationId": "schoolLoginCallback",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "需要且只允许 code 或 error 之一；一次性 state 必须绑定匿名/登录会话。",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "303": {
+            "description": "回调验证成功后跳到允许的站内页面，不在 URL 返回 Token。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "logout",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "成功，无响应体"
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ]
+      }
+    },
+    "/me": {
+      "get": {
+        "operationId": "getMe",
+        "tags": [
+          "Account"
+        ],
+        "summary": "getMe",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Profile"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/memberships": {
+      "get": {
+        "operationId": "listMemberships",
+        "tags": [
+          "Account"
+        ],
+        "summary": "listMemberships",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Membership"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/connections": {
+      "get": {
+        "operationId": "listConnections",
+        "tags": [
+          "Connections"
+        ],
+        "summary": "listConnections",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Connection"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/connections/{provider}/authorize": {
+      "post": {
+        "operationId": "authorizeConnection",
+        "tags": [
+          "Connections"
+        ],
+        "summary": "provider 只允许 outlook/canvas；capability 映射固定权限，不接受任意 scope。",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AuthorizationStart"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "outlook",
+                "canvas"
+              ]
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthorizeConnectionRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/connections/{provider}/callback": {
+      "get": {
+        "operationId": "connectionCallback",
+        "tags": [
+          "Connections"
+        ],
+        "summary": "必须验证一次性 state 与原发起账户/用途绑定；无有效绑定拒绝。",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "303": {
+            "description": "回调验证成功后跳到允许的站内页面，不在 URL 返回 Token。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "outlook",
+                "canvas"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/connections/{connection_id}": {
+      "delete": {
+        "operationId": "disconnect",
+        "tags": [
+          "Connections"
+        ],
+        "summary": "disconnect",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/DisconnectResult"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ]
+      }
+    },
+    "/sources": {
+      "get": {
+        "operationId": "listSources",
+        "tags": [
+          "Sources"
+        ],
+        "summary": "listSources",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SourceCapability"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/institutions": {
+      "get": {
+        "operationId": "listInstitutions",
+        "tags": [
+          "Sources"
+        ],
+        "summary": "listInstitutions",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Institution"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/academic-calendar": {
+      "get": {
+        "operationId": "listAcademicCalendar",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "listAcademicCalendar",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CalendarEvent"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "institution_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/courses": {
+      "get": {
+        "operationId": "listCourses",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "listCourses",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Course"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "institution_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "term_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/me/enrolments": {
+      "get": {
+        "operationId": "listMyEnrolments",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "listMyEnrolments",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Enrolment"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/me/assignments": {
+      "get": {
+        "operationId": "listMyAssignments",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "listMyAssignments",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Assignment"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/me/mail-signals": {
+      "get": {
+        "operationId": "listMyMailSignals",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "listMyMailSignals",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MailSignal"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/me/calendar": {
+      "get": {
+        "operationId": "listMyCalendar",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "listMyCalendar",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CalendarEvent"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/calendar/imports/preview": {
+      "post": {
+        "operationId": "previewCalendarImport",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "previewCalendarImport",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ImportPreview"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendar/imports/{import_id}/confirm": {
+      "post": {
+        "operationId": "confirmCalendarImport",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "confirmCalendarImport",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ImportResult"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "import_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportConfirmRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "operationId": "listTasks",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "listTasks",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Task"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createTask",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "createTask",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Task"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{task_id}": {
+      "patch": {
+        "operationId": "updateTask",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "updateTask",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Task"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskPatch"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTask",
+        "tags": [
+          "Learning"
+        ],
+        "summary": "deleteTask",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "成功，无响应体"
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ]
+      }
+    },
+    "/places": {
+      "get": {
+        "operationId": "listPlaces",
+        "tags": [
+          "Campus"
+        ],
+        "summary": "listPlaces",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Place"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "campus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/services": {
+      "get": {
+        "operationId": "listServices",
+        "tags": [
+          "Campus"
+        ],
+        "summary": "listServices",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Service"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "campus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/services/{service_id}/handoff": {
+      "get": {
+        "operationId": "getServiceHandoff",
+        "tags": [
+          "Campus"
+        ],
+        "summary": "getServiceHandoff",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Handoff"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        ]
+      }
+    },
+    "/transport/routes": {
+      "get": {
+        "operationId": "listRoutes",
+        "tags": [
+          "Transport"
+        ],
+        "summary": "listRoutes",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TransportRoute"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "campus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "operator",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "hkust-shuttle",
+                "kmb",
+                "gmb",
+                "citybus",
+                "mtr"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/transport/routes/{route_id}/timetable": {
+      "get": {
+        "operationId": "getTimetable",
+        "tags": [
+          "Transport"
+        ],
+        "summary": "getTimetable",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Timetable"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "route_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        ]
+      }
+    },
+    "/transport/routes/{route_id}/departures": {
+      "get": {
+        "operationId": "getDepartures",
+        "tags": [
+          "Transport"
+        ],
+        "summary": "getDepartures",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Departures"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "stop_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "route_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        ]
+      }
+    },
+    "/transport/arrivals": {
+      "get": {
+        "operationId": "getArrivals",
+        "tags": [
+          "Transport"
+        ],
+        "summary": "getArrivals",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Arrivals"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "route_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "stop_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        ],
+        "description": "route_id 来自本平台线路目录，服务端映射运营方、方向、服务类型、route_id/route_seq 或 MTR 站码。不得仅按相同线路号混合不同分支。"
+      }
+    },
+    "/transport/alerts": {
+      "get": {
+        "operationId": "listTransportAlerts",
+        "tags": [
+          "Transport"
+        ],
+        "summary": "listTransportAlerts",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TransportAlert"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "campus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/weather": {
+      "get": {
+        "operationId": "getWeather",
+        "tags": [
+          "Campus"
+        ],
+        "summary": "getWeather",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Weather"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/activities": {
+      "get": {
+        "operationId": "listActivities",
+        "tags": [
+          "Community"
+        ],
+        "summary": "访客仅公开；有会话按受众服务端过滤。个性化响应不得公共缓存。",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Activity"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "same_school",
+                "cross_school",
+                "hong_kong"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "area",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "budget_minor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createActivity",
+        "tags": [
+          "Community"
+        ],
+        "summary": "createActivity",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Activity"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityCreate"
+              }
+            }
+          }
+        },
+        "description": "验证时间先后、场地/资格、受众与机构/圈子关系；external 必須有正式报名 URL。跨字段和权限需运行时验证。"
+      }
+    },
+    "/activities/{activity_id}": {
+      "get": {
+        "operationId": "getActivity",
+        "tags": [
+          "Community"
+        ],
+        "summary": "按受众验证；私人资源不向无权用户泄露存在。",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Activity"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "activity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        ],
+        "description": "验证时间先后、场地/资格、受众与机构/圈子关系；external 必須有正式报名 URL。跨字段和权限需运行时验证。"
+      }
+    },
+    "/activities/{activity_id}/participations": {
+      "post": {
+        "operationId": "joinActivity",
+        "tags": [
+          "Community"
+        ],
+        "summary": "事务内检查资格/版本/名额；外部主系统仅返回 external_unknown，不自行占外部名额。",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Participation"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "activity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParticipationRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/participations": {
+      "get": {
+        "operationId": "listMyParticipations",
+        "tags": [
+          "Community"
+        ],
+        "summary": "listMyParticipations",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Participation"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/participations/{participation_id}": {
+      "delete": {
+        "operationId": "cancelParticipation",
+        "tags": [
+          "Community"
+        ],
+        "summary": "仅本人或明确授权的处理流程；释放原子名额，取消相关提醒。",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Participation"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "participation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ]
+      }
+    },
+    "/posts": {
+      "get": {
+        "operationId": "listPosts",
+        "tags": [
+          "Community"
+        ],
+        "summary": "listPosts",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Post"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "same_school",
+                "cross_school",
+                "hong_kong"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/circles": {
+      "get": {
+        "operationId": "listCircles",
+        "tags": [
+          "Community"
+        ],
+        "summary": "只返回公开或当前账户有权读取的圈子。",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Circle"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/demand-intents": {
+      "get": {
+        "operationId": "listMyIntents",
+        "tags": [
+          "Community"
+        ],
+        "summary": "listMyIntents",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DemandIntent"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createIntent",
+        "tags": [
+          "Community"
+        ],
+        "summary": "createIntent",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/DemandIntent"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemandIntentCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demand-intents/{intent_id}": {
+      "delete": {
+        "operationId": "withdrawIntent",
+        "tags": [
+          "Community"
+        ],
+        "summary": "withdrawIntent",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/DemandIntent"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "intent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          }
+        ]
+      }
+    },
+    "/reports": {
+      "post": {
+        "operationId": "createReport",
+        "tags": [
+          "Community"
+        ],
+        "summary": "createReport",
+        "x-implementation-status": "planned",
+        "responses": {
+          "default": {
+            "description": "标准错误；状态与错误码按主文档。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "成功；来源与覆盖不代表全量。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ReportReceipt"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "无有效平台会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportCreate"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "cookieSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "__Host-campus_session"
+      }
+    },
+    "schemas": {
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "coverage": {
+            "type": "string",
+            "enum": [
+              "complete_for_query",
+              "partial",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "request_id",
+          "generated_at"
+        ],
+        "additionalProperties": false
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "INVALID_ARGUMENT",
+                  "UNAUTHENTICATED",
+                  "FORBIDDEN",
+                  "NOT_FOUND",
+                  "CONFLICT",
+                  "FLOW_EXPIRED",
+                  "UNPROCESSABLE",
+                  "RATE_LIMITED",
+                  "SOURCE_UNAVAILABLE",
+                  "CONNECTOR_NOT_APPROVED",
+                  "CONSENT_REQUIRED"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "retryable": {
+                "type": "boolean"
+              },
+              "request_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "retryable",
+              "request_id"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false
+      },
+      "Source": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "public_api",
+              "official_page",
+              "file_import",
+              "authorized_sync",
+              "user_input"
+            ]
+          },
+          "source_updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "fetched_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "fresh",
+              "stale",
+              "partial",
+              "unknown"
+            ]
+          },
+          "valid_until": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "source_id",
+          "url",
+          "mode",
+          "source_updated_at",
+          "fetched_at",
+          "status",
+          "valid_until"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "enum": [
+                    "public_api",
+                    "official_page",
+                    "authorized_sync"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Membership": {
+        "type": "object",
+        "properties": {
+          "institution_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "pending",
+              "active",
+              "expired",
+              "revoked"
+            ]
+          },
+          "verification": {
+            "type": "string",
+            "enum": [
+              "self_declared",
+              "email_control",
+              "institutional_identity",
+              "approved_membership"
+            ]
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "student",
+              "staff",
+              "alumni"
+            ]
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "institution_id",
+          "status",
+          "verification",
+          "role",
+          "expires_at"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "active"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "verification": {
+                  "const": "approved_membership"
+                },
+                "role": {
+                  "enum": [
+                    "student",
+                    "staff",
+                    "alumni"
+                  ]
+                },
+                "expires_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        ],
+        "examples": [
+          {
+            "institution_id": "hkust-cwb",
+            "status": "pending",
+            "verification": "email_control",
+            "role": "unknown",
+            "expires_at": null
+          }
+        ]
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "email_verified": {
+            "type": "boolean"
+          },
+          "memberships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Membership"
+            }
+          }
+        },
+        "required": [
+          "account_id",
+          "display_name",
+          "email_verified",
+          "memberships"
+        ],
+        "additionalProperties": false
+      },
+      "Session": {
+        "type": "object",
+        "properties": {
+          "authenticated": {
+            "type": "boolean"
+          },
+          "profile": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "csrf_token": {
+            "type": "string",
+            "minLength": 16
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "authenticated",
+          "profile",
+          "csrf_token",
+          "expires_at"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "authenticated": {
+                  "const": false
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "profile": {
+                  "type": "null"
+                },
+                "expires_at": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "authenticated": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "profile": {
+                  "$ref": "#/components/schemas/Profile"
+                },
+                "expires_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        ],
+        "examples": [
+          {
+            "authenticated": false,
+            "profile": null,
+            "csrf_token": "EXAMPLE_ONLY_CSRF_1234",
+            "expires_at": null
+          }
+        ]
+      },
+      "AuthMethod": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "email",
+              "hkust"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "approval_required",
+              "disabled"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "provider",
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "EmailChallengeRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "purpose": {
+            "const": "sign_in"
+          }
+        },
+        "required": [
+          "email",
+          "purpose"
+        ],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "email": "student@example.com",
+            "purpose": "sign_in"
+          }
+        ]
+      },
+      "EmailChallenge": {
+        "type": "object",
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resend_after_seconds": {
+            "type": "integer",
+            "minimum": 60
+          }
+        },
+        "required": [
+          "challenge_id",
+          "expires_at",
+          "resend_after_seconds"
+        ],
+        "additionalProperties": false
+      },
+      "EmailVerifyRequest": {
+        "type": "object",
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          }
+        },
+        "required": [
+          "challenge_id",
+          "code"
+        ],
+        "additionalProperties": false
+      },
+      "OidcStartRequest": {
+        "type": "object",
+        "properties": {
+          "institution_id": {
+            "const": "hkust-cwb"
+          },
+          "return_path": {
+            "type": "string",
+            "pattern": "^/(?!/)[A-Za-z0-9/_-]*$",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "institution_id",
+          "return_path"
+        ],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "institution_id": "hkust-cwb",
+            "return_path": "/today"
+          }
+        ]
+      },
+      "AuthorizationStart": {
+        "type": "object",
+        "properties": {
+          "authorization_url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "authorization_url",
+          "expires_at"
+        ],
+        "additionalProperties": false
+      },
+      "Connection": {
+        "type": "object",
+        "properties": {
+          "connection_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "outlook",
+              "canvas",
+              "sis"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "approval_required",
+              "consent_required",
+              "connected",
+              "sync_failed",
+              "revoked"
+            ]
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "calendar_basic",
+                "mail_basic",
+                "course_read",
+                "assignment_read",
+                "enrolment_read"
+              ]
+            }
+          },
+          "last_success_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "coverage": {
+            "type": "string",
+            "enum": [
+              "partial",
+              "complete_for_query",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "connection_id",
+          "provider",
+          "status",
+          "capabilities",
+          "last_success_at",
+          "coverage"
+        ],
+        "additionalProperties": false
+      },
+      "AuthorizeConnectionRequest": {
+        "type": "object",
+        "properties": {
+          "capability": {
+            "type": "string",
+            "enum": [
+              "calendar_basic",
+              "mail_basic",
+              "course_read",
+              "assignment_read"
+            ]
+          },
+          "return_path": {
+            "type": "string",
+            "pattern": "^/(?!/)[A-Za-z0-9/_-]*$",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "capability",
+          "return_path"
+        ],
+        "additionalProperties": false
+      },
+      "DisconnectResult": {
+        "type": "object",
+        "properties": {
+          "local_access_revoked": {
+            "const": true
+          },
+          "upstream_grant_revoked": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "not_supported",
+              "unknown"
+            ]
+          },
+          "cached_data_action": {
+            "type": "string",
+            "enum": [
+              "deleted",
+              "deletion_scheduled"
+            ]
+          },
+          "upstream_management_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          }
+        },
+        "required": [
+          "local_access_revoked",
+          "upstream_grant_revoked",
+          "cached_data_action",
+          "upstream_management_url"
+        ],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "local_access_revoked": true,
+            "upstream_grant_revoked": "unknown",
+            "cached_data_action": "deletion_scheduled",
+            "upstream_management_url": null
+          }
+        ]
+      },
+      "Institution": {
+        "type": "object",
+        "properties": {
+          "institution_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "name": {
+            "type": "string"
+          },
+          "campus": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "membership_integration": {
+            "type": "string",
+            "enum": [
+              "available",
+              "approval_required",
+              "unavailable"
+            ]
+          }
+        },
+        "required": [
+          "institution_id",
+          "name",
+          "campus",
+          "timezone",
+          "membership_integration"
+        ],
+        "additionalProperties": false
+      },
+      "SourceCapability": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "name": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "public_available",
+              "approval_required",
+              "not_covered",
+              "degraded"
+            ]
+          },
+          "last_success_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "source_id",
+          "name",
+          "capabilities",
+          "state",
+          "last_success_at"
+        ],
+        "additionalProperties": false
+      },
+      "CalendarEvent": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "title": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "academic",
+              "planned_class",
+              "official_class",
+              "personal",
+              "external_activity"
+            ]
+          },
+          "starts_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "ends_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "all_day": {
+            "type": "boolean"
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "end_date_exclusive": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "cancelled",
+              "tentative"
+            ]
+          },
+          "participation_status": {
+            "type": "string",
+            "enum": [
+              "not_applicable",
+              "unknown",
+              "pending",
+              "waitlisted",
+              "confirmed",
+              "cancelled"
+            ]
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "event_id",
+          "title",
+          "kind",
+          "starts_at",
+          "ends_at",
+          "all_day",
+          "start_date",
+          "end_date_exclusive",
+          "timezone",
+          "status",
+          "participation_status",
+          "source"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "all_day": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "start_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "end_date_exclusive": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "starts_at": {
+                  "type": "null"
+                },
+                "ends_at": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "all_day": {
+                  "const": false
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "starts_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "start_date": {
+                  "type": "null"
+                },
+                "end_date_exclusive": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Course": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "term_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "credits": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "institution_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "course_id",
+          "code",
+          "name",
+          "term_id",
+          "credits",
+          "institution_id",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "Enrolment": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "section_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "enrolled",
+              "waitlisted",
+              "dropped",
+              "unknown"
+            ]
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "course_id",
+          "section_id",
+          "status",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "Assignment": {
+        "type": "object",
+        "properties": {
+          "assignment_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "title": {
+            "type": "string"
+          },
+          "due_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "date_precision": {
+            "type": "string",
+            "enum": [
+              "instant",
+              "date_only",
+              "unknown"
+            ]
+          },
+          "due_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "submission_status": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "submitted",
+              "not_submitted",
+              "excused"
+            ]
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "assignment_id",
+          "course_id",
+          "title",
+          "due_at",
+          "date_precision",
+          "due_date",
+          "url",
+          "submission_status",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "MailSignal": {
+        "type": "object",
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "subject": {
+            "type": "string"
+          },
+          "from_display": {
+            "type": "string"
+          },
+          "received_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "is_read": {
+            "type": "boolean"
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "message_id",
+          "subject",
+          "from_display",
+          "received_at",
+          "is_read",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "ImportRequest": {
+        "type": "object",
+        "properties": {
+          "ics_text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2097152
+          },
+          "calendar_kind": {
+            "type": "string",
+            "enum": [
+              "planned_courses",
+              "personal",
+              "external_events"
+            ]
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 80
+          }
+        },
+        "required": [
+          "ics_text",
+          "calendar_kind",
+          "timezone",
+          "label"
+        ],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "ics_text": "BEGIN:VCALENDAR\r\nEND:VCALENDAR",
+            "calendar_kind": "planned_courses",
+            "timezone": "Asia/Hong_Kong",
+            "label": "Example file"
+          }
+        ]
+      },
+      "ImportIssue": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "UNSUPPORTED_RULE",
+              "INVALID_DATE",
+              "TIMEZONE_REQUIRED",
+              "CONFLICT",
+              "POSSIBLE_DUPLICATE"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_id",
+          "code",
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "ImportPreview": {
+        "type": "object",
+        "properties": {
+          "import_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CalendarEvent"
+            }
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportIssue"
+            }
+          },
+          "coverage": {
+            "type": "string",
+            "enum": [
+              "partial",
+              "complete_for_file"
+            ]
+          },
+          "destructive_replace": {
+            "const": false
+          }
+        },
+        "required": [
+          "import_id",
+          "version",
+          "expires_at",
+          "events",
+          "issues",
+          "coverage",
+          "destructive_replace"
+        ],
+        "additionalProperties": false
+      },
+      "ImportConfirmRequest": {
+        "type": "object",
+        "properties": {
+          "preview_version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "selected_item_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "acknowledged_issue_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        },
+        "required": [
+          "preview_version",
+          "selected_item_ids",
+          "acknowledged_issue_ids"
+        ],
+        "additionalProperties": false
+      },
+      "ImportResult": {
+        "type": "object",
+        "properties": {
+          "import_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "saved_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "skipped_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "saved",
+              "partial"
+            ]
+          }
+        },
+        "required": [
+          "import_id",
+          "saved_count",
+          "skipped_count",
+          "state"
+        ],
+        "additionalProperties": false
+      },
+      "TaskCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "course_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "due_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "due_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "source_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "material_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://"
+            }
+          },
+          "private_note": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "done"
+            ]
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "due_at"
+              ],
+              "properties": {
+                "due_at": {
+                  "type": "string"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "due_date": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "due_date"
+              ],
+              "properties": {
+                "due_date": {
+                  "type": "string"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "due_at": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ],
+        "examples": [
+          {
+            "title": "Read course requirements",
+            "due_date": "2026-10-05",
+            "due_at": null
+          }
+        ]
+      },
+      "TaskPatch": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "course_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "due_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "due_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "source_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "material_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://"
+            }
+          },
+          "private_note": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "done"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "minProperties": 1,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "due_at"
+              ],
+              "properties": {
+                "due_at": {
+                  "type": "string"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "due_date": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "due_date"
+              ],
+              "properties": {
+                "due_date": {
+                  "type": "string"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "due_at": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "course_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "due_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "due_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "source_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "material_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://"
+            }
+          },
+          "private_note": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "done"
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "task_id",
+          "version",
+          "title",
+          "status",
+          "updated_at"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "due_at"
+              ],
+              "properties": {
+                "due_at": {
+                  "type": "string"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "due_date": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "due_date"
+              ],
+              "properties": {
+                "due_date": {
+                  "type": "string"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "due_at": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Place": {
+        "type": "object",
+        "properties": {
+          "place_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "name": {
+            "type": "string"
+          },
+          "campus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "floor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "latitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -180,
+            "maximum": 180
+          },
+          "directions_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "place_id",
+          "name",
+          "campus",
+          "floor",
+          "latitude",
+          "longitude",
+          "directions_url",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "Service": {
+        "type": "object",
+        "properties": {
+          "service_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "dining",
+              "library",
+              "sports",
+              "housing",
+              "laundry",
+              "repair",
+              "career",
+              "support",
+              "other"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "place_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "capability": {
+            "type": "string",
+            "enum": [
+              "information",
+              "official_handoff",
+              "authorized_live"
+            ]
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "service_id",
+          "category",
+          "name",
+          "place_id",
+          "description",
+          "capability",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "Handoff": {
+        "type": "object",
+        "properties": {
+          "service_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "official_url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "result": {
+            "const": "external_action_required"
+          },
+          "booking_status": {
+            "const": "unknown"
+          }
+        },
+        "required": [
+          "service_id",
+          "official_url",
+          "result",
+          "booking_status"
+        ],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "service_id": "library-booking",
+            "official_url": "https://lbbooking.hkust.edu.hk/",
+            "result": "external_action_required",
+            "booking_status": "unknown"
+          }
+        ]
+      },
+      "TransportRoute": {
+        "type": "object",
+        "properties": {
+          "route_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "hkust-shuttle",
+              "kmb",
+              "gmb",
+              "citybus",
+              "mtr"
+            ]
+          },
+          "campus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "stop_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "eligibility": {
+            "type": "string",
+            "enum": [
+              "public",
+              "student_only",
+              "student_or_staff",
+              "unknown"
+            ]
+          },
+          "fare_minor": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "currency": {
+            "const": "HKD"
+          },
+          "live_eta_supported": {
+            "type": "boolean"
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "route_id",
+          "operator",
+          "campus",
+          "name",
+          "direction",
+          "stop_ids",
+          "eligibility",
+          "fare_minor",
+          "currency",
+          "live_eta_supported",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "StopTime": {
+        "type": "object",
+        "properties": {
+          "stop_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "departure_local": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+          },
+          "service_day_offset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "stop_id",
+          "departure_local",
+          "service_day_offset"
+        ],
+        "additionalProperties": false
+      },
+      "Trip": {
+        "type": "object",
+        "properties": {
+          "trip_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "stop_times": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StopTime"
+            }
+          }
+        },
+        "required": [
+          "trip_id",
+          "stop_times"
+        ],
+        "additionalProperties": false
+      },
+      "Timetable": {
+        "type": "object",
+        "properties": {
+          "route_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "timezone": {
+            "const": "Asia/Hong_Kong"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date"
+          },
+          "weekdays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 7
+            },
+            "uniqueItems": true
+          },
+          "exclude_public_holidays": {
+            "type": "boolean"
+          },
+          "holiday_years": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "review_due_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trips": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trip"
+            }
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "route_id",
+          "version",
+          "timezone",
+          "valid_from",
+          "valid_to",
+          "weekdays",
+          "exclude_public_holidays",
+          "holiday_years",
+          "review_due_at",
+          "trips",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "Departure": {
+        "type": "object",
+        "properties": {
+          "trip_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "scheduled_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "prediction_at": {
+            "type": "null"
+          },
+          "basis": {
+            "const": "scheduled"
+          }
+        },
+        "required": [
+          "trip_id",
+          "scheduled_at",
+          "prediction_at",
+          "basis"
+        ],
+        "additionalProperties": false
+      },
+      "Departures": {
+        "type": "object",
+        "properties": {
+          "route_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "stop_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "service_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "no_service",
+              "ended_for_day",
+              "not_started",
+              "expired",
+              "unknown",
+              "stale",
+              "suspended"
+            ]
+          },
+          "departures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Departure"
+            }
+          },
+          "next_service_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "route_id",
+          "stop_id",
+          "service_date",
+          "status",
+          "departures",
+          "next_service_date",
+          "source"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "not": {
+                    "const": "scheduled"
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "departures": {
+                  "maxItems": 0
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "scheduled"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "departures": {
+                  "minItems": 1
+                },
+                "source": {
+                  "properties": {
+                    "status": {
+                      "const": "fresh"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "examples": [
+          {
+            "route_id": "hkust-diamond-hill-to-campus",
+            "stop_id": "diamond-hill-sheung-yuen-street",
+            "service_date": "2026-10-02",
+            "status": "scheduled",
+            "departures": [
+              {
+                "trip_id": "dh-0820",
+                "scheduled_at": "2026-10-02T08:20:00+08:00",
+                "prediction_at": null,
+                "basis": "scheduled"
+              }
+            ],
+            "next_service_date": "2026-10-02",
+            "source": {
+              "source_id": "cso-shuttle",
+              "url": "https://cso.hkust.edu.hk/index.php/tran/stud_sh_b",
+              "mode": "official_page",
+              "source_updated_at": null,
+              "fetched_at": "2026-10-02T22:00:00+08:00",
+              "status": "fresh",
+              "valid_until": "2026-12-18T23:59:59+08:00"
+            }
+          }
+        ]
+      },
+      "Arrival": {
+        "type": "object",
+        "properties": {
+          "route": {
+            "type": "string"
+          },
+          "stop_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "destination": {
+            "type": "string"
+          },
+          "arrival_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "live_prediction",
+              "scheduled",
+              "unknown"
+            ]
+          },
+          "remark": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source_updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "route",
+          "stop_id",
+          "destination",
+          "arrival_at",
+          "basis",
+          "remark",
+          "source_updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "Arrivals": {
+        "type": "object",
+        "properties": {
+          "operator": {
+            "type": "string",
+            "enum": [
+              "kmb",
+              "gmb",
+              "citybus",
+              "mtr"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "no_data",
+              "stale",
+              "service_disrupted"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Arrival"
+            }
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "operator",
+          "status",
+          "items",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "TransportAlert": {
+        "type": "object",
+        "properties": {
+          "alert_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "route_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "effective_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effective_to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "cancel",
+              "replace",
+              "add",
+              "information"
+            ]
+          },
+          "verification": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "pending"
+            ]
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "alert_id",
+          "route_ids",
+          "title",
+          "effective_from",
+          "effective_to",
+          "effect",
+          "verification",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "Weather": {
+        "type": "object",
+        "properties": {
+          "station": {
+            "type": "string"
+          },
+          "temperature_c": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          }
+        },
+        "required": [
+          "station",
+          "temperature_c",
+          "warnings",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "place_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "language": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fee_minor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "audience": {
+            "type": "string",
+            "enum": [
+              "public",
+              "school_members",
+              "circle_members"
+            ]
+          },
+          "institution_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "circle_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "newcomer_instructions": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "cancellation_policy": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "registration_system": {
+            "type": "string",
+            "enum": [
+              "native",
+              "external"
+            ]
+          },
+          "external_registration_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          }
+        },
+        "required": [
+          "title",
+          "starts_at",
+          "ends_at",
+          "place_id",
+          "language",
+          "fee_minor",
+          "capacity",
+          "audience",
+          "institution_id",
+          "circle_id",
+          "newcomer_instructions",
+          "cancellation_policy",
+          "registration_system",
+          "external_registration_url"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "registration_system": {
+                  "const": "external"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "external_registration_url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "audience": {
+                  "const": "school_members"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "institution_id": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "audience": {
+                  "const": "circle_members"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "circle_id": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        ],
+        "examples": [
+          {
+            "title": "Example study session",
+            "starts_at": "2026-10-05T18:00:00+08:00",
+            "ends_at": "2026-10-05T19:00:00+08:00",
+            "place_id": "example-public-place",
+            "language": [
+              "en"
+            ],
+            "fee_minor": 0,
+            "capacity": 4,
+            "audience": "public",
+            "institution_id": null,
+            "circle_id": null,
+            "newcomer_instructions": "Meet the host at the entrance.",
+            "cancellation_policy": "Notify participants if cancelled.",
+            "registration_system": "native",
+            "external_registration_url": null
+          }
+        ]
+      },
+      "Activity": {
+        "type": "object",
+        "properties": {
+          "activity_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "place_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "language": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fee_minor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "audience": {
+            "type": "string",
+            "enum": [
+              "public",
+              "school_members",
+              "circle_members"
+            ]
+          },
+          "institution_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "circle_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "newcomer_instructions": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "cancellation_policy": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "registration_system": {
+            "type": "string",
+            "enum": [
+              "native",
+              "external"
+            ]
+          },
+          "external_registration_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "full",
+              "cancelled",
+              "ended"
+            ]
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "activity_id",
+          "title",
+          "starts_at",
+          "ends_at",
+          "place_id",
+          "language",
+          "fee_minor",
+          "capacity",
+          "audience",
+          "institution_id",
+          "circle_id",
+          "newcomer_instructions",
+          "cancellation_policy",
+          "registration_system",
+          "external_registration_url",
+          "status",
+          "source",
+          "version"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "registration_system": {
+                  "const": "external"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "external_registration_url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "audience": {
+                  "const": "school_members"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "institution_id": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "audience": {
+                  "const": "circle_members"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "circle_id": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ParticipationRequest": {
+        "type": "object",
+        "properties": {
+          "choice": {
+            "type": "string",
+            "enum": [
+              "join",
+              "apply",
+              "waitlist"
+            ]
+          },
+          "accepted_activity_version": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "choice",
+          "accepted_activity_version"
+        ],
+        "additionalProperties": false
+      },
+      "Participation": {
+        "type": "object",
+        "properties": {
+          "participation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "activity_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "confirmed",
+              "waitlisted",
+              "cancelled",
+              "external_unknown"
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "participation_id",
+          "activity_id",
+          "status",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "post_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "question",
+              "lost_found",
+              "secondhand",
+              "recruitment"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "audience": {
+            "type": "string",
+            "enum": [
+              "public",
+              "platform_members",
+              "school_members",
+              "circle_members"
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "post_id",
+          "type",
+          "title",
+          "body",
+          "audience",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "Circle": {
+        "type": "object",
+        "properties": {
+          "circle_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "language": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "audience": {
+            "type": "string",
+            "enum": [
+              "public",
+              "school_members",
+              "members"
+            ]
+          },
+          "next_activity_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "circle_id",
+          "name",
+          "description",
+          "language",
+          "audience",
+          "next_activity_id"
+        ],
+        "additionalProperties": false
+      },
+      "DemandIntentCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "window_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "window_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "budget_minor": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "share_anonymous_summary": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "title",
+          "window_start",
+          "window_end",
+          "areas",
+          "languages",
+          "budget_minor",
+          "share_anonymous_summary",
+          "expires_at"
+        ],
+        "additionalProperties": false
+      },
+      "DemandIntent": {
+        "type": "object",
+        "properties": {
+          "intent_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "window_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "window_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "budget_minor": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "share_anonymous_summary": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "withdrawn",
+              "expired"
+            ]
+          }
+        },
+        "required": [
+          "intent_id",
+          "title",
+          "window_start",
+          "window_end",
+          "areas",
+          "languages",
+          "budget_minor",
+          "share_anonymous_summary",
+          "expires_at",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "ReportCreate": {
+        "type": "object",
+        "properties": {
+          "target_type": {
+            "type": "string",
+            "enum": [
+              "source",
+              "activity",
+              "post",
+              "circle",
+              "user"
+            ]
+          },
+          "target_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "target_type",
+          "target_id",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "ReportReceipt": {
+        "type": "object",
+        "properties": {
+          "report_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "status": {
+            "const": "received"
+          }
+        },
+        "required": [
+          "report_id",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "Acknowledgement": {
+        "type": "object",
+        "properties": {
+          "accepted": {
+            "const": true
+          }
+        },
+        "required": [
+          "accepted"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-02T14:48:28.699012+00:00",
+  "scope": "Proposed schema contract and independent specification examples only. No implemented product HTTP or authentication tested.",
+  "tests": 38,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": 38,
+  "product_auth_e2e": "blocked_not_implemented_and_no_approved_institutional_config"
+}

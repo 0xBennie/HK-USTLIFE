@@ -1,0 +1,16 @@
+{
+  "observed_date": "2026-10-02",
+  "scope": "Two earlier read-only probes in this audit. Not retried after repeated upstream failure.",
+  "issue": "Shuttle usage/adverse-weather policy could not be read. Do not infer operational suspension rules.",
+  "observations": [
+    {
+      "url": "https://cso.hkust.edu.hk/policy/g_shb",
+      "http_status": 404
+    },
+    {
+      "url": "https://cso.hkust.edu.hk/index.php/policy/g_shb",
+      "http_status": 500
+    }
+  ],
+  "resolution": "Keep official CSO entry and ask source owner to confirm policy when arranging integration; no contact sent."
+}

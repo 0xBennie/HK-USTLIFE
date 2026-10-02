@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-10-02T14:48:48.615850+00:00",
+  "schema_url": "https://spec.openapis.org/oas/3.1/schema/2022-10-07",
+  "schema_sha256": "da01ba28852cac0de53893797cb8d1942bc3b05084f526dcc216717dec314ed0",
+  "scope": "OpenAPI document structure; component JSON Schema values separately checked by verify-api-contract.py",
+  "passed": true,
+  "errors": []
+}
