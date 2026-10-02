@@ -3,7 +3,8 @@ import type { DatabaseSync } from 'node:sqlite';
 import { z } from 'zod';
 import { transaction } from '../database.js';
 import { ApiError } from '../errors.js';
-import { parseCalendar, type CalendarSeries, type ImportIssue } from './ics.js';
+import { parseCalendar, expandSeries, type CalendarSeries, type ImportIssue } from './ics.js';
+import type { ImportedEvent } from './types.js';
 import { timezone } from '../learning/schemas.js';
 
 const previewInput=z.object({source_id:z.string().uuid().optional(),source_name:z.string().trim().min(1).max(120).optional(),content:z.string().max(256*1024),floating_timezone:timezone.optional()}).strict()
@@ -82,8 +83,20 @@ export function createCalendarStore(db:DatabaseSync,now:()=>number=Date.now) {
     const sources=db.prepare('SELECT id,name,version,created_at FROM calendar_sources WHERE owner_id=? ORDER BY created_at,id').all(owner) as Source[];
     return sources.map(s=>({...s,series:rows(owner,s.id).map(r=>({id:r.id,version:r.version,...JSON.parse(r.definition) as CalendarSeries}))}));
   }
+  function occurrences(owner:string,range:{from:string;to:string}) {
+    const items:ImportedEvent[]=[],issues:{source_id:string;series_id:string;title:string;code:string}[]=[];
+    for(const source of exportAll(owner))for(const series of source.series) {
+      try {
+        const expanded=expandSeries(series,range);
+        if(items.length+expanded.length>5000)throw new Error('Calendar range exceeds occurrence limit.');
+        for(const occurrence of expanded)items.push({...occurrence,kind:'event',id:`ics:${series.id}:${occurrence.recurrence_id}`,version:series.version,course_id:null,remind_minutes:null,
+          import_origin:{source_id:source.id,source_name:source.name,series_id:series.id,recurrence_id:occurrence.recurrence_id}});
+      } catch {issues.push({source_id:source.id,series_id:series.id,title:series.title,code:'EXPANSION_UNAVAILABLE'});}
+    }
+    return {items,issues};
+  }
   function remove(owner:string,id:string,version:number) {
     return transaction(db,()=>{if(source(owner,id).version!==version)throw stale();db.prepare('DELETE FROM calendar_sources WHERE owner_id=? AND id=?').run(owner,id);return {deleted:true};});
   }
-  return {preview,confirm,exportAll,remove};
+  return {preview,confirm,exportAll,remove,occurrences};
 }

@@ -6,7 +6,7 @@ import { session } from '../runtime';
 import { ApiFailure } from '../api';
 import { palette,styles } from '../theme';
 import type { Language } from '../strings';
-import type { Calendar,Course,StudyItem } from './types';
+import type { Calendar,CalendarItem,Course,StudyItem } from './types';
 import { dateInZone,dateTimeInZone,shiftDate } from './dates';
 import { studyStrings } from './strings';
 import { StudyForm,type Editor } from './StudyForm';
@@ -52,7 +52,7 @@ export function StudyScreen({language,dark}:{language:Language;dark:boolean}) {
       if(collection==='courses')setCourseId(null);
     })}]);
   }
-  function renderItem(item:StudyItem) {
+  function renderItem(item:CalendarItem) {
     const linked=courses.find(c=>c.id===item.course_id);
     const detail=item.kind==='event'?(item.all_day?`${item.start_date} · ${t.allDayLabel}${item.end_date?` → ${item.end_date}`:''}`:`${dateTimeInZone(item.starts_at!,zone)} → ${item.ends_at?dateTimeInZone(item.ends_at,zone):t.unknownEnd}`)
       :item.kind==='task'?(item.due_date??(item.due_at?dateTimeInZone(item.due_at,zone):t.undated)):item.kind==='material'?item.url:'';
@@ -63,10 +63,10 @@ export function StudyScreen({language,dark}:{language:Language;dark:boolean}) {
       {item.kind==='event'&&item.location?<Text style={[styles.body,{color:colors.muted}]}>{item.location}</Text>:null}
       {item.body?<Text selectable style={[styles.body,{color:colors.text}]}>{item.body}</Text>:null}
       {item.kind==='task'?<Button variant="secondary" isDisabled={busy} onPress={()=>mutate(()=>session.request(`/study/items/${item.id}`,{method:'PATCH',body:{version:item.version,status:item.status==='open'?'done':'open'}}))}>{item.status==='open'?t.complete:t.reopen}</Button>:null}
-      {item.kind==='event'?<Button variant="secondary" isDisabled={busy} onPress={()=>mutate(()=>session.request(`/study/items/${item.id}`,{method:'PATCH',body:{version:item.version,status:item.status==='active'?'cancelled':'active'}}))}>{item.status==='active'?t.cancelEvent:t.restoreEvent}</Button>:null}
+      {item.kind==='event'&&!('import_origin' in item)?<Button variant="secondary" isDisabled={busy} onPress={()=>mutate(()=>session.request(`/study/items/${item.id}`,{method:'PATCH',body:{version:item.version,status:item.status==='active'?'cancelled':'active'}}))}>{item.status==='active'?t.cancelEvent:t.restoreEvent}</Button>:null}
       {item.kind==='material'?<Button variant="secondary" onPress={()=>mutate(()=>Linking.openURL(item.url))}>{t.viewLink}</Button>:null}
-      <Button variant="ghost" isDisabled={busy} onPress={()=>setEditor({kind:item.kind,record:item})}>{t.edit}</Button>
-      <Button variant="ghost" isDisabled={busy} onPress={()=>remove(item)}>{t.remove}</Button>
+      {!('import_origin' in item)?<><Button variant="ghost" isDisabled={busy} onPress={()=>setEditor({kind:item.kind,record:item})}>{t.edit}</Button>
+      <Button variant="ghost" isDisabled={busy} onPress={()=>remove(item)}>{t.remove}</Button></>:<Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?`导入来源：${item.import_origin.source_name}${item.source_status==='tentative'?' · 源日程暂定':''} · 尚未确认参与`:`Imported from ${item.import_origin.source_name}${item.source_status==='tentative'?' · tentative source event':''} · participation unconfirmed`}</Text>}
     </Card>;
   }
   if(editor)return <StudyForm editor={editor} courses={courses} language={language} dark={dark} onBack={()=>setEditor(null)} onSaved={()=>{setEditor(null);void load();}} />;
@@ -83,6 +83,7 @@ export function StudyScreen({language,dark}:{language:Language;dark:boolean}) {
       <Text style={[styles.heading,{color:colors.text}]}>{date}{view==='week'?` — ${shiftDate(date,6)}`:''}</Text>
       <View style={styles.row}><Button variant="secondary" onPress={()=>setDate(shiftDate(date,view==='week'?-7:-1))}>{t.previous}</Button><Button variant="secondary" onPress={()=>setDate(shiftDate(date,view==='week'?7:1))}>{t.next}</Button></View>
       <Button variant="ghost" onPress={()=>setDate(dateInZone(new Date().toISOString(),zone))}>{t.today}</Button>
+      {!loading&&calendar?.import_issues.length?<Text accessibilityRole="alert" style={[styles.body,{color:colors.danger}]}>{language==='zh'?'部分导入日程无法在此范围展开，请检查来源。':'Some imported schedules could not be expanded for this range. Review their sources.'}</Text>:null}
       {!loading&&calendar&&calendar.from===date&&calendar.to===shiftDate(date,view==='week'?7:1)&&calendar.timezone===zone?calendar.days.map(day=><View key={day.date} style={styles.stack}>
         {view==='week'?<Text style={[styles.heading,{color:colors.text}]}>{day.date}</Text>:null}
         {!day.events.length&&!day.tasks.length?<Text style={[styles.body,{color:colors.muted}]}>{t.empty}</Text>:null}

@@ -1,3 +1,4 @@
+import type { CalendarItem } from '../calendar/types.js';
 import { createHash, randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
 import { z } from 'zod';
@@ -91,14 +92,14 @@ export function createLearningStore(db:DatabaseSync, now:()=>number) {
       items:(db.prepare('SELECT * FROM study_items WHERE owner_id=? ORDER BY id').all(owner) as Row[]).map(row=>serialize<ItemInput>(row)),
     };
   }
-  function calendar(owner:string, query:{from:string;to:string;timezone:string}) {
-    const items = exportAll(owner).items;
+  function calendar(owner:string, query:{from:string;to:string;timezone:string}, imported:CalendarItem[] = []) {
+    const items:CalendarItem[] = [...exportAll(owner).items,...imported];
     const formatter = new Intl.DateTimeFormat('en-CA',{timeZone:query.timezone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
     const local = (timestamp:string) => {
       const p = Object.fromEntries(formatter.formatToParts(new Date(timestamp)).map(p=>[p.type,p.value]));
       return {date:`${p.year}-${p.month}-${p.day}`,midnight:p.hour === '00' && p.minute === '00' && p.second === '00' && new Date(timestamp).getUTCMilliseconds() === 0};
     };
-    const days:{date:string;events:StudyItem[];tasks:StudyItem[]}[] = [];
+    const days:{date:string;events:CalendarItem[];tasks:CalendarItem[]}[] = [];
     for(let timestamp=Date.parse(query.from);timestamp<Date.parse(query.to);timestamp+=86400_000) {
       const date = new Date(timestamp).toISOString().slice(0,10);
       const events = items.filter(item=>{

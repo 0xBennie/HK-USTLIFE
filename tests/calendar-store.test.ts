@@ -40,3 +40,10 @@ it('source deletion guards versions, removes series and prevents replay resurrec
  const p=initial(),r=store.confirm('a',p.id,{uids:['one']});expect(()=>store.remove('a',r.source_id,1)).toThrow(/changed/);store.remove('a',r.source_id,2);expect(store.exportAll('a')).toEqual([]);expect(()=>store.confirm('a',p.id,{uids:['one']})).toThrow(/deleted/);
  expect(db.prepare('SELECT COUNT(*) AS n FROM calendar_series').get()?.n).toBe(0);db.prepare('DELETE FROM users WHERE id=?').run('a');expect(db.prepare('SELECT COUNT(*) AS n FROM calendar_previews').get()?.n).toBe(0);
 });
+it('reports failed expansion explicitly while preserving independently expandable series',()=>{
+ const old=event('old').replace('20261005T010000Z','19000101T010000Z').replace('FREQ=WEEKLY;COUNT=12','FREQ=DAILY');
+ const p=store.preview('a',{source_name:'Mixed',content:calendar(old,event('valid'))});
+ expect(p.issues).toEqual([]);store.confirm('a',p.id,{uids:['old','valid']});
+ const result=store.occurrences('a',{from:'2026-10-05',to:'2026-10-06'});
+ expect(result.items.map(i=>i.title)).toEqual(['valid']);expect(result.issues).toHaveLength(1);expect(result.issues[0]).toMatchObject({title:'old',code:'EXPANSION_UNAVAILABLE'});
+});

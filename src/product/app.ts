@@ -1,3 +1,4 @@
+import { calendarQuerySchema } from './learning/schemas.js';
 import Fastify from 'fastify';
 import { z, ZodError } from 'zod';
 import { openDatabase } from './database.js';
@@ -28,6 +29,11 @@ export function createProductApp(options: { dataDir: string; now?: () => number 
   const ok = (data: unknown, requestId: string) => ({ data, meta: { request_id: requestId, generated_at: new Date(now()).toISOString(), mode: 'local-development' } });
   registerLearningRoutes(app,learning,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerCalendarRoutes(app,calendars,request=>auth.requireUser(request.headers.authorization).id,ok);
+  app.get('/api/v1/me/calendar',async request=>{
+    const user=auth.requireUser(request.headers.authorization).id,query=calendarQuerySchema.parse(request.query);
+    const imported=calendars.occurrences(user,query);
+    return ok({...learning.calendar(user,query,imported.items),import_issues:imported.issues},request.id);
+  });
   app.setErrorHandler((error, request, reply) => {
     const status = typeof error === 'object' && error !== null && 'statusCode' in error && typeof error.statusCode === 'number' ? error.statusCode : 500;
     const e = error instanceof ApiError ? error : error instanceof ZodError

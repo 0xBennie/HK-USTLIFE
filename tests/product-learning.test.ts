@@ -32,6 +32,28 @@ describe('private learning API', () => {
     const r = await call('POST', '/study/items', body);
     expect(r.statusCode, r.body).toBe(201); return r.json().data;
   }
+  it('renders imported recurrence exceptions with manual items, stable identity and display timezone', async () => {
+    const lines=['BEGIN:VCALENDAR','VERSION:2.0',
+      'BEGIN:VEVENT','UID:weekly','DTSTART:20261005T010000Z','DTEND:20261005T020000Z','RRULE:FREQ=WEEKLY;COUNT=4','EXDATE:20261012T010000Z','SUMMARY:Weekly','END:VEVENT',
+      'BEGIN:VEVENT','UID:weekly','RECURRENCE-ID:20261019T010000Z','DTSTART:20261020T010000Z','DTEND:20261020T020000Z','SUMMARY:Moved','END:VEVENT',
+      'BEGIN:VEVENT','UID:weekly','RECURRENCE-ID:20261026T010000Z','STATUS:CANCELLED','END:VEVENT',
+      'BEGIN:VEVENT','UID:all-day','DTSTART;VALUE=DATE:20261006','DTEND;VALUE=DATE:20261008','SUMMARY:Two days','END:VEVENT',
+      'BEGIN:VEVENT','UID:unknown-end','DTSTART:20261005T233000Z','SUMMARY:Unknown end','END:VEVENT','END:VCALENDAR'];
+    const preview=(await call('POST','/calendar/imports/preview',{source_name:'Calendar',content:lines.join('\r\n')})).json().data;
+    expect(preview.issues).toEqual([]);
+    expect((await call('POST',`/calendar/imports/${preview.id}/confirm`,{uids:['weekly','all-day','unknown-end']})).statusCode).toBe(200);
+    await item({kind:'event',title:'Manual',starts_at:'2026-10-05T04:00:00Z'});
+    const result=await call('GET','/me/calendar?from=2026-10-05&to=2026-11-02&timezone=Asia%2FHong_Kong');expect(result.statusCode,result.body).toBe(200);
+    const data=result.json().data,day=(d:string)=>data.days.find((x:any)=>x.date===d).events;
+    expect(data.import_issues).toEqual([]);expect(day('2026-10-05').map((x:any)=>x.title)).toEqual(['Weekly','Manual']);
+    expect(day('2026-10-06').map((x:any)=>x.title)).toEqual(['Two days','Unknown end']);expect(day('2026-10-07')).toHaveLength(1);expect(day('2026-10-08')).toEqual([]);
+    expect(day('2026-10-12')).toEqual([]);expect(day('2026-10-19')).toEqual([]);expect(day('2026-10-20')[0]).toMatchObject({title:'Moved',participation:'unknown',recurrence_id:'2026-10-19T01:00:00Z'});expect(day('2026-10-26')).toEqual([]);
+    const single=(await call('GET','/me/calendar?from=2026-10-20&to=2026-10-21')).json().data.days[0].events[0];expect(single.id).toBe(day('2026-10-20')[0].id);
+    const utc=(await call('GET','/me/calendar?from=2026-10-05&to=2026-10-06&timezone=UTC')).json().data.days[0].events;expect(utc.find((x:any)=>x.title==='Unknown end').ends_at).toBeNull();
+    const other=(await call('GET','/me/calendar?from=2026-10-05&to=2026-11-02',undefined,bob)).json().data;expect(other.days.every((d:any)=>d.events.length===0)).toBe(true);
+    const source=(await call('GET','/calendar/sources')).json().data[0];await call('DELETE',`/calendar/sources/${source.id}`,{version:source.version});
+    expect((await call('GET','/me/calendar?from=2026-10-05&to=2026-10-06')).json().data.days[0].events.map((x:any)=>x.title)).toEqual(['Manual']);
+  });
   it('previews and confirms owner-scoped ICS through HTTP, exports and deletes persisted sources', async () => {
     const content='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:lecture-1\r\nDTSTART:20261005T010000Z\r\nSUMMARY:Imported lecture\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
     expect((await call('POST','/calendar/imports/preview',{source_name:'School',content:'bad'})).statusCode).toBe(400);

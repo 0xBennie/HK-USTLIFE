@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import { z } from 'zod';
-import { calendarQuerySchema, listSchema, versionSchema } from './schemas.js';
+import { listSchema, versionSchema } from './schemas.js';
 import type { createLearningStore } from './store.js';
 
 export function registerLearningRoutes(app:FastifyInstance, store:ReturnType<typeof createLearningStore>, owner:(request:FastifyRequest)=>string, ok:(data:unknown,id:string)=>unknown) {
@@ -21,5 +21,4 @@ export function registerLearningRoutes(app:FastifyInstance, store:ReturnType<typ
       return ok(store.remove(user,collection,recordId,version),request.id);
     });
   }
-  app.get('/api/v1/me/calendar',async request=>ok(store.calendar(owner(request),calendarQuerySchema.parse(request.query)),request.id));
 }
