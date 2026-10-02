@@ -14,6 +14,7 @@
 - [首个交付单元：身份与我的一天](2026-10-02-super-app-day-and-identity-design.md)：可单独审阅的首个模块设计。
 - [校园与温和社交案例](../../research/2026-10-02-campus-social-product-cross-validation.md)。
 - [香港活动平台市场核查](../../research/2026-10-02-hong-kong-social-events-landscape.md)。
+- [数据需求与 API 可行性核查](../../research/2026-10-02-super-app-data-and-api-feasibility.md)：数据字段、官方接口、公开读取证据、个人授权及机构合作门槛。
 
 ## 1. 共同理解与决定状态
 

@@ -1,0 +1,276 @@
+{
+  "audit_date": "2026-10-02",
+  "timezone": "Asia/Hong_Kong",
+  "method": "Unauthenticated read-only HTTP GET with TLS certificate validation; JSON, ICS, RSS and relevant HTML content checked. No private accounts, API keys, writes or subscriptions used.",
+  "limitation": "Point-in-time samples do not prove complete coverage, stable production operation, licensing permission or institutional approval.",
+  "checks": [
+    {
+      "id": "kmb_routes",
+      "url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+      "checked_at": "2026-10-02T14:05:47.508316+00:00",
+      "status": 200,
+      "final_url": "https://data.etabus.gov.hk/v1/transport/kmb/route/",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 350950,
+      "keys": [
+        "type",
+        "version",
+        "generated_timestamp",
+        "data"
+      ]
+    },
+    {
+      "id": "gmb_routes",
+      "url": "https://data.etagmb.gov.hk/route/NT/11M",
+      "checked_at": "2026-10-02T14:05:47.508392+00:00",
+      "status": 200,
+      "final_url": "https://data.etagmb.gov.hk/route/NT/11M",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 2877,
+      "keys": [
+        "type",
+        "version",
+        "generated_timestamp",
+        "data"
+      ],
+      "interpretation": "Route 11M returned route_id 2004825 and Hang Hau / HKUST North Station directions. IDs and coverage require refresh."
+    },
+    {
+      "id": "citybus_routes",
+      "url": "https://rt.data.gov.hk/v2/transport/citybus/route/CTB",
+      "checked_at": "2026-10-02T14:05:47.508473+00:00",
+      "status": 200,
+      "final_url": "https://rt.data.gov.hk/v2/transport/citybus/route/CTB",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 112270,
+      "keys": [
+        "type",
+        "version",
+        "generated_timestamp",
+        "data"
+      ],
+      "records": 407,
+      "interpretation": "Route catalogue checked only; station ETA endpoint was not live-tested in this audit."
+    },
+    {
+      "id": "hko_current",
+      "url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en",
+      "checked_at": "2026-10-02T14:05:47.508566+00:00",
+      "status": 200,
+      "final_url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 3217,
+      "keys": [
+        "lightning",
+        "rainfall",
+        "icon",
+        "iconUpdateTime",
+        "uvindex",
+        "updateTime",
+        "temperature",
+        "warningMessage",
+        "mintempFrom00To09",
+        "rainfallFrom00To12",
+        "rainfallLastMonth",
+        "rainfallJanuaryToLastMonth",
+        "tcmessage",
+        "humidity"
+      ],
+      "updateTime": "2026-10-02T22:02:00+08:00"
+    },
+    {
+      "id": "hko_warnings",
+      "url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en",
+      "checked_at": "2026-10-02T14:05:48.227696+00:00",
+      "status": 200,
+      "final_url": "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 196,
+      "keys": [
+        "WTS"
+      ]
+    },
+    {
+      "id": "luma_openapi",
+      "url": "https://public-api.luma.com/openapi.json",
+      "checked_at": "2026-10-02T14:05:48.471045+00:00",
+      "status": 200,
+      "final_url": "https://public-api.luma.com/openapi.json",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 223487,
+      "keys": [
+        "openapi",
+        "info",
+        "servers",
+        "tags",
+        "paths",
+        "security",
+        "components",
+        "webhooks"
+      ],
+      "interpretation": "Public API schema fetched without credentials; no authorized calendar or guest data accessed."
+    },
+    {
+      "id": "shuttle",
+      "url": "https://cso.hkust.edu.hk/index.php/tran/stud_sh_b",
+      "checked_at": "2026-10-02T14:05:48.907966+00:00",
+      "status": 200,
+      "final_url": "https://cso.hkust.edu.hk/index.php/tran/stud_sh_b",
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 77043
+    },
+    {
+      "id": "calendar",
+      "url": "https://calendar.hkust.edu.hk/",
+      "checked_at": "2026-10-02T14:05:49.107587+00:00",
+      "status": 200,
+      "final_url": "https://calendar.hkust.edu.hk/",
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 160908
+    },
+    {
+      "id": "library",
+      "url": "https://library.hkust.edu.hk/facilities-space/booking",
+      "checked_at": "2026-10-02T14:05:49.115480+00:00",
+      "status": 200,
+      "final_url": "https://library.hkust.edu.hk/facilities-space/booking",
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 326886
+    },
+    {
+      "id": "courses",
+      "url": "https://registry.hkust.edu.hk/resource-library/course-offering-and-class-schedule-ug",
+      "checked_at": "2026-10-02T14:05:49.369781+00:00",
+      "status": 200,
+      "final_url": "https://registry.hkust.edu.hk/resource-library/course-offering-and-class-schedule-ug",
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 54550,
+      "interpretation": "Official UG guidance includes planned timetable iCalendar export; personal export not exercised."
+    },
+    {
+      "id": "catalog",
+      "url": "https://registry.hkust.edu.hk/resource-library/course-catalog",
+      "checked_at": "2026-10-02T14:05:49.970009+00:00",
+      "status": 200,
+      "final_url": "https://registry.hkust.edu.hk/resource-library/course-catalog",
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 44507
+    },
+    {
+      "id": "kmb_eta",
+      "url": "https://data.etabus.gov.hk/v1/transport/kmb/route-eta/91M/1",
+      "checked_at": "2026-10-02T14:08:09.934939+00:00",
+      "status": 200,
+      "final_url": "https://data.etabus.gov.hk/v1/transport/kmb/route-eta/91M/1",
+      "content_type": "application/json; charset=utf-8",
+      "keys": [
+        "type",
+        "version",
+        "generated_timestamp",
+        "data"
+      ],
+      "data_count": 159,
+      "generated_timestamp": "2026-10-02T22:07:45+08:00",
+      "nonempty_eta": 159,
+      "interpretation": "HTTP 200 and nonempty ETA records. Sample rmk_en was Scheduled Bus; do not label every record as a live vehicle prediction."
+    },
+    {
+      "id": "gmb_stops",
+      "url": "https://data.etagmb.gov.hk/route-stop/2004825/1",
+      "checked_at": "2026-10-02T14:08:09.935277+00:00",
+      "status": 200,
+      "final_url": "https://data.etagmb.gov.hk/route-stop/2004825/1",
+      "content_type": "application/json; charset=utf-8",
+      "keys": [
+        "type",
+        "version",
+        "generated_timestamp",
+        "data"
+      ],
+      "data_count": 2,
+      "generated_timestamp": "2026-10-02T22:08:10.648+08:00"
+    },
+    {
+      "id": "gmb_eta",
+      "url": "https://data.etagmb.gov.hk/eta/route-stop/2004825/1/1",
+      "checked_at": "2026-10-02T14:08:09.935354+00:00",
+      "status": 200,
+      "final_url": "https://data.etagmb.gov.hk/eta/route-stop/2004825/1/1",
+      "content_type": "application/json",
+      "keys": [
+        "type",
+        "version",
+        "generated_timestamp",
+        "data"
+      ],
+      "data_count": 3,
+      "generated_timestamp": "2026-10-02T22:08:10.634+08:00",
+      "interpretation": "HTTP 200, enabled=true, ETA list present. Sample remarks_en was Scheduled."
+    },
+    {
+      "id": "mtr_eta",
+      "url": "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=TKO&lang=en",
+      "checked_at": "2026-10-02T14:08:09.935408+00:00",
+      "status": 200,
+      "final_url": "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=TKO&lang=en",
+      "content_type": "application/json; charset=utf-8",
+      "keys": [
+        "sys_time",
+        "curr_time",
+        "data",
+        "isdelay",
+        "status",
+        "message"
+      ],
+      "data_count": 1,
+      "generated_timestamp": "2026-10-02 22:07:54",
+      "service_status": 1,
+      "station_present": true
+    },
+    {
+      "id": "als_lookup",
+      "url": "https://www.als.gov.hk/lookup?q=central%20government%20offices",
+      "checked_at": "2026-10-02T14:08:09.935451+00:00",
+      "status": 200,
+      "final_url": "https://www.als.gov.hk/lookup?q=central%20government%20offices",
+      "content_type": "application/json;charset=UTF-8",
+      "keys": [
+        "RequestAddress",
+        "SuggestedAddress"
+      ],
+      "data_count": null,
+      "generated_timestamp": null
+    },
+    {
+      "id": "academic_ics",
+      "url": "https://calendar.hkust.edu.hk/events/ics?ics_mode=academic_calendar",
+      "checked_at": "2026-10-02T14:08:10.654916+00:00",
+      "status": 200,
+      "final_url": "https://calendar.hkust.edu.hk/events/ics?ics_mode=academic_calendar",
+      "content_type": "text/calendar; charset=UTF-8",
+      "is_ics": true,
+      "events": 45,
+      "interpretation": "45 VEVENT records, not personal course enrolment or all university events."
+    },
+    {
+      "id": "academic_rss",
+      "url": "https://calendar.hkust.edu.hk/events/rss?ics_mode=academic_calendar",
+      "checked_at": "2026-10-02T14:08:10.673912+00:00",
+      "status": 200,
+      "final_url": "https://calendar.hkust.edu.hk/events/rss?ics_mode=academic_calendar",
+      "content_type": "text/xml; charset=UTF-8",
+      "items": 73,
+      "interpretation": "73 items, including general university activities. Content differs from the academic ICS despite the query parameter name."
+    },
+    {
+      "id": "class_schedule",
+      "url": "https://w5.ab.ust.hk/wcq/cgi-bin/",
+      "checked_at": "2026-10-02T14:08:10.717305+00:00",
+      "status": 200,
+      "final_url": "https://w5.ab.ust.hk/wcq/cgi-bin/2610/",
+      "content_type": "text/html; charset=UTF-8",
+      "contains_schedule": true,
+      "interpretation": "HTML class schedule landing page returned, not a verified public JSON API."
+    }
+  ]
+}
