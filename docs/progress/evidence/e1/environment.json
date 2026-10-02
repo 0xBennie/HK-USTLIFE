@@ -1,0 +1,13 @@
+{
+  "recorded_at": "2026-10-02T16:05:46.689Z",
+  "node": "v22.23.1",
+  "platform": "darwin",
+  "arch": "arm64",
+  "native_runtime_verified": false,
+  "xcode_developer_directory": "/Library/Developer/CommandLineTools",
+  "simctl": "unavailable",
+  "expo": "57.0.26",
+  "react_native": "0.86.3",
+  "heroui_native": "1.0.10",
+  "typescript_mobile": "6.0.3"
+}

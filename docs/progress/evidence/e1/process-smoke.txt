@@ -1,0 +1,1 @@
+PASS: real HTTP process start → local challenge → login → edit → process restart → persisted session/profile → logout revoked

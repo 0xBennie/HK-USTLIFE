@@ -82,4 +82,4 @@ School OIDC、Canvas/SIS、私人 Graph 邮件、校巴 GPS、设施写入等未
 
 每单元更新 docs/progress/ios-mvp-v1-handoff.md（执行时创建）：目标、已确认决定、改动路径、完成/未完成、测试证据、阻塞、下一步。模型与速度尊重当前用户设置；不自行升级、不设置 token 硬上限。
 
-本轮状态：第一版范围与 Goal 提示词已编写；产品开发尚未开始。执行入口见[手动 Goal 提示词](../../goals/2026-10-02-ios-mvp-v1-goal.md)。
+原始规划状态：第一版范围与 Goal 提示词已编写。2026-10-03 起已实现 E1 账户基础及原生壳；最新完成范围、测试和阻塞以[阶段交接](../../progress/ios-mvp-v1-handoff.md)为准，完整 MVP 尚未验收。执行目标见[手动 Goal 提示词](../../goals/2026-10-02-ios-mvp-v1-goal.md)。

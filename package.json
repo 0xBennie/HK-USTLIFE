@@ -5,7 +5,8 @@
   "description": "Source-grounded HKUST Clear Water Bay student-life MCP server",
   "type": "module",
   "workspaces": [
-    "apps/hub"
+    "apps/hub",
+    "apps/mobile"
   ],
   "engines": {
     "node": ">=22"
@@ -14,6 +15,9 @@
     "hkust-life-mcp": "dist/index.js"
   },
   "scripts": {
+    "api": "CAMPUS_MODE=local-development tsx src/product/main.ts",
+    "api:seed": "CAMPUS_MODE=local-development tsx src/product/seed-cli.ts",
+    "mobile": "npm --workspace @campus/mobile run start",
     "build": "npm run build:hub",
     "build:core": "tsc -p tsconfig.json",
     "build:hub": "npm run build:core && npm --prefix apps/hub run build",
@@ -27,6 +31,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.30.0",
+    "fastify": "5.12.5",
     "zod": "3.24.2"
   },
   "devDependencies": {

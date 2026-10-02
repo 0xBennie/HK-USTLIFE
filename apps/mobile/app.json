@@ -1,0 +1,8 @@
+{
+  "expo": {
+    "name": "Campus · 开发版", "slug": "hkust-campus-local", "version": "0.1.0",
+    "orientation": "portrait", "userInterfaceStyle": "automatic", "platforms": ["ios"],
+    "ios": { "supportsTablet": false, "bundleIdentifier": "local.hkustcampus.development", "infoPlist": { "NSAppTransportSecurity": { "NSAllowsLocalNetworking": true } } },
+    "plugins": ["expo-secure-store"]
+  }
+}

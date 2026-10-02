@@ -1,5 +1,7 @@
 # 香港校园与社交 Super App：API 文档
 
+> 实现状态更新（2026-10-03）：本文及 OpenAPI 是完整拟议合同。当前已运行的原生账户 API、Bearer 会话和本地开发限制见 [实际 MVP API](implemented-mvp-api.md)，不能把下文全部端点视为已实现。
+
 版本：0.1，2026-10-02。本文是统一接口设计及接入说明，重点展开学生登录和校巴时间。**本产品 `/api/v1` 接口尚未实施；外部接口可读取、文档合同通过、规则样例通过、真实产品通过，是四种不同结果。**
 
 - 机器可读合同：[OpenAPI 3.1](super-app.openapi.json)。所有产品操作均标记 `x-implementation-status: planned`，不能拿本文件当作现有服务器地址。
