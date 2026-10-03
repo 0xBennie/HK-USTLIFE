@@ -61,3 +61,31 @@ it('confirms school personal completion against its personal version, never the 
  const wrong=new StudyActionController(async()=>({id:'school-id',version:99,personal:{version:3,completed:false}}),async()=>true);
  expect(await wrong.submit(action)).toBe(false);expect(wrong.snapshot().phase).toBe('uncertain');
 });
+
+it('confirms only the school personal fields submitted, including notes and disabled reminders',async()=>{
+ const body={version:3,notes:'Private revision',remind_minutes:null};
+ const action={path:'/school/records/school-id/personal',method:'PATCH' as const,body,label:'Essay'};
+ const success=new StudyActionController(async()=>({id:'school-id',personal:{version:4,notes:body.notes,remind_minutes:null,completed:false}}),async()=>true);
+ expect(await success.submit(action)).toBe(true);
+ for(const personal of [
+  {version:4,notes:'Old text',remind_minutes:null},
+  {version:4,notes:body.notes,remind_minutes:15},
+  {version:4,notes:body.notes},
+ ]) {
+  const c=new StudyActionController(async()=>({id:'school-id',personal}),async()=>true);
+  expect(await c.submit(action)).toBe(false);expect(c.snapshot().phase).toBe('uncertain');
+ }
+});
+it('verifies the exact provider and cache choice on school revocation, never replays an uncertain response',async()=>{
+ const action={path:'/school/connections/sis',method:'DELETE' as const,body:{version:2,delete_cached_data:false},label:'SIS'};
+ const receipt={connection:{provider:'sis',state:'revoked',version:3},cache:'retained',upstream_revocation:'not_attempted'};
+ const success=new StudyActionController(async()=>receipt,async()=>true);
+ expect(await success.submit(action)).toBe(true);
+ for(const result of [{...receipt,cache:'deleted'},{...receipt,connection:{...receipt.connection,provider:'canvas'}},{...receipt,connection:{...receipt.connection,version:2}}]) {
+  let writes=0;
+  const c=new StudyActionController(async()=>{writes++;return result;},async()=>true);
+  expect(await c.submit(action)).toBe(false);expect(c.snapshot().phase).toBe('uncertain');
+  expect(await c.submit(action)).toBe(false);expect(await c.check()).toBe(true);
+  expect(c.snapshot().phase).toBe('reviewed');expect(writes).toBe(1);
+ }
+});

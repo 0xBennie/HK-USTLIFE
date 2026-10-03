@@ -80,3 +80,7 @@ Native Today/Week uses PATCH personal for a school checkbox; acknowledgement che
 `createProductApp({schoolContracts})` is trusted server configuration only. Default registry stays empty. API projection tests inject a synthetic approved registry and normalized fixtures; this does not constitute school approval.
 
 Tests: school-projection (eligibility/staleness/stable IDs/completion), product-school (real authenticated calendar/reminder routes, owner isolation and revoke), native-study-actions (personal acknowledgement), native-reminders (school target). Full regression recorded 53 files / 312 tests; mobile TypeScript passed. No actual school transport or iOS runtime acceptance is claimed.
+
+### Native write acknowledgement coverage
+
+StudyActionController now verifies every submitted private field (`notes`, `completed`, `remind_minutes`), including an explicit null reminder offset, against a newer personal version. Unsubmitted fields do not prevent acknowledgement. Revocation verifies provider, newer connection version, revoked state, and the exact retained/deleted cache choice. The current server contract explicitly reports upstream revocation not attempted. Malformed/mismatched results remain uncertain and lock further mutation until a read-only review; they are never replayed automatically. These controller capabilities are tested, but school note/reminder/revoke screens are not yet wired to them.
