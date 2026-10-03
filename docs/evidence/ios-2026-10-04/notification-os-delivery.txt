@@ -1,0 +1,3 @@
+2026-10-04 01:40:14.376 Df SpringBoard[49517:265245] [com.apple.UserNotifications:DataProvider] [local.hkustcampus.development] Requesting authorization status: 2 options: 4 scheduledDelivery: NO
+2026-10-04 01:43:00.070 Df SpringBoard[49517:273857] [com.apple.UserNotifications:LocalNotifications] [local.hkustcampus.development] Persistent timer fired at 2026-10-04 01:43:00.011 +0800
+2026-10-04 01:43:00.073 Df SpringBoard[49517:273857] [com.apple.UserNotifications:LocalNotifications] [local.hkustcampus.development] Deliver local notification 6A88-5D1B at 2026-10-04 01:43:00.013 +0800
