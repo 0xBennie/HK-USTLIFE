@@ -1,18 +1,21 @@
-import {useEffect,useLayoutEffect,useMemo,useSyncExternalStore} from 'react';
+import {useEffect,useLayoutEffect,useMemo,useState,useSyncExternalStore} from 'react';
 import {Alert,AppState,Text,View} from 'react-native';
 import {Button,Input} from '../ui/Primitives';
-import {useNavigationProtection} from '../navigation/InputProtection';
+import {useNavigationProtection,useSceneNavigation} from '../navigation/InputProtection';
 import {session} from '../runtime';
 import {palette,styles} from '../theme';
 import type {Language} from '../strings';
 import {useSceneFocus} from '../navigation/TabScene';
+import {SafetyActions} from './SafetyActions';
 import {ContactCardController} from './contact-card-controller';
 export function ContactCardScreen({activityId,peer,language,dark,onBack}:{activityId:string;peer:{id:string;display_name:string};language:Language;dark:boolean;onBack:()=>void}){
  const focused=useSceneFocus();
+ const [safetyPending,setSafetyPending]=useState(false);
  const zh=language==='zh',c=palette[dark?'dark':'light'];
  const controller=useMemo(()=>new ContactCardController(activityId,peer.id,(p,o)=>session.request(p,o)),[activityId,peer.id]);
  const s=useSyncExternalStore(controller.subscribe,controller.snapshot),busy=s.phase==='loading'||s.phase==='saving';
- const protect=useNavigationProtection(busy?'busy':s.phase==='uncertain'?'uncertain':s.dirty?'draft':'clear',zh);
+ useNavigationProtection(busy?'busy':s.phase==='uncertain'?'uncertain':s.dirty?'draft':'clear',zh);
+ const protect=useSceneNavigation(zh);
  useLayoutEffect(()=>{if(focused&&AppState.currentState==='active')void controller.show();else controller.hide();},[controller,focused]);
  useEffect(()=>{const sub=AppState.addEventListener('change',state=>{if(state==='active'&&focused)void controller.show();else controller.hide();});return()=>sub.remove();},[controller,focused]);
  useEffect(()=>()=>controller.hide(),[controller]);
@@ -29,10 +32,11 @@ export function ContactCardScreen({activityId,peer,language,dark,onBack}:{activi
   </View>
   {busy?<Text accessibilityLiveRegion="polite" style={{color:c.muted}}>{zh?'正在核对…':'Checking…'}</Text>:null}
   {s.phase==='uncertain'||s.phase==='error'?<Text accessibilityRole="alert" style={{color:c.danger}}>{s.phase==='uncertain'?(zh?'保存结果待确认。草稿仍在，请先读取当前分享。':'Save result unconfirmed. Your draft is kept; read the current card first.'):(zh?'无法核对。请重试；双方意愿或活动状态可能已变化。':'Unable to check. Retry; consent or activity eligibility may have changed.')}</Text>:null}
-  <Button isDisabled={s.phase!=='ready'||!s.dirty} onPress={preview}>{s.draft.trim()?(zh?'预览并确认分享':'Preview and confirm sharing'):(zh?'确认清空分享':'Confirm clearing')}</Button>
+  <Button isDisabled={safetyPending||s.phase!=='ready'||!s.dirty} onPress={preview}>{s.draft.trim()?(zh?'预览并确认分享':'Preview and confirm sharing'):(zh?'确认清空分享':'Confirm clearing')}</Button>
   <Button variant="secondary" isDisabled={busy} onPress={()=>void controller.refresh()}>{zh?'读取当前分享':'Read current card'}</Button>
   {s.dirty&&s.value?<Button variant="ghost" isDisabled={busy} onPress={()=>Alert.alert(zh?'使用已保存内容？':'Use saved content?',zh?'这会放弃当前草稿。':'This discards your current draft.',[{text:zh?'保留草稿':'Keep draft',style:'cancel'},{text:zh?'使用已保存内容':'Use saved content',onPress:()=>controller.useSaved()}])}>{zh?'使用已保存内容':'Use saved content'}</Button>:null}
   {focused&&s.phase==='ready'?<View style={[styles.card,{backgroundColor:c.surface}]}><Text style={[styles.heading,{color:c.text}]}>{zh?'本次读取的对方分享':'Their card from this check'}</Text><Text selectable style={[styles.body,{color:c.text}]}>{s.value?.peer?.text??(zh?'当前没有可查看的联系方式。':'No contact details are currently available.')}</Text></View>:null}
+  <SafetyActions target={s.value?.peer?.report_id?{kind:'contact_card',id:s.value.peer.report_id}:null} author={peer} language={language} dark={dark} disabled={busy} onPendingChange={setSafetyPending} onChanged={()=>{controller.hide();onBack();}}/>
   <Text style={[styles.caption,{color:c.muted}]}>{zh?'撤回意愿、屏蔽或到期后，旧卡片不会恢复。你也可以只参加活动，不交换联系方式。':'Withdrawal, blocking or expiry will not restore old cards. You can take part without exchanging contact details.'}</Text>
  </View>;
 }

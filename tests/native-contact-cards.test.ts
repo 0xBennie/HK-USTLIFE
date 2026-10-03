@@ -1,6 +1,6 @@
 import {it,expect,vi} from 'vitest';
 import {ContactCardController} from '../apps/mobile/src/social/contact-card-controller.js';
-const value=(text='',version=0)=>({activity_id:'event',target_id:'peer',mine:{text,version},peer:{text:'Peer contact'}});
+const value=(text='',version=0)=>({activity_id:'event',target_id:'peer',mine:{text,version},peer:{text:'Peer contact',report_id:'a'.repeat(32)+'.1'}});
 it('requires a read and exact preview before sharing, then confirms persisted text',async()=>{
  const request=vi.fn().mockResolvedValueOnce(value()).mockResolvedValueOnce(value('Chosen contact',1));const c=new ContactCardController('event','peer',request);
  c.edit('Chosen contact');expect(await c.save('Chosen contact')).toBe(false);await c.refresh();expect(await c.save('Other preview')).toBe(false);
@@ -22,4 +22,9 @@ it('does not restore contact data from a request completed after backgrounding',
 it('rejects wrong target and mismatched write confirmation',async()=>{
  const request=vi.fn().mockResolvedValueOnce({...value(),target_id:'other'}).mockResolvedValueOnce(value()).mockResolvedValueOnce(value('Wrong content',1));const c=new ContactCardController('event','peer',request);
  expect(await c.refresh()).toBe(false);await c.refresh();c.edit('Mine');expect(await c.save('Mine')).toBe(false);expect(c.snapshot().phase).toBe('uncertain');
+});
+it('does not expose cards with a missing or malformed report identifier',async()=>{
+ const request=vi.fn().mockResolvedValueOnce({...value(),peer:{text:'Peer contact'}}).mockResolvedValueOnce({...value(),peer:{text:'Peer contact',report_id:'invalid'}});
+ const c=new ContactCardController('event','peer',request);
+ expect(await c.refresh()).toBe(false);expect(c.snapshot().value).toBeNull();expect(await c.refresh()).toBe(false);
 });

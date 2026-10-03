@@ -18,3 +18,7 @@ Native: ActivityDetail → existing visible organizer/comment author → Reconne
 - API: GET/PUT `/activities/:id/reconnections/:target/contact-card`; backend validates current consent on every write/read.
 - Native interactions: preview Alert, clear by empty input and confirmation, refresh without draft loss, explicit saved-content replacement, protected Back, background/tab hiding. Existing Button component honors reduced motion. No extra animation added to sensitive text.
 - Three exported boards visually checked and canvas saved. These are design states, not an iOS runtime recording. Keyboard, font scaling, VoiceOver and actual motion require native acceptance.
+
+## Contact-card safety entry
+
+`wLxKM` adds report/block state. Native `ContactCardScreen` uses the shared `SafetyActions` with exact `peer.report_id`; absence of a card leaves block available. Report drafts and unknown writes participate in navigation guards; retry retains the original payload and idempotency key. Validated receipts, not HTTP success alone, trigger success feedback. Card editor Back checks child safety guards. Pen screenshot reviewed and saved; rendered/native gesture acceptance remains pending.

@@ -1,5 +1,5 @@
 import {ApiFailure,type RequestOptions} from '../api';
-export type ContactCards={activity_id:string;target_id:string;mine:{text:string;version:number};peer:{text:string}|null};
+export type ContactCards={activity_id:string;target_id:string;mine:{text:string;version:number};peer:{text:string;report_id:string}|null};
 type State={phase:'idle'|'loading'|'ready'|'saving'|'uncertain'|'error';value:ContactCards|null;draft:string;dirty:boolean};
 export class ContactCardController{
  private state:State={phase:'idle',value:null,draft:'',dirty:false};private listeners=new Set<()=>void>();private locked=false;private visibility=0;private hidden=false;
@@ -7,7 +7,7 @@ export class ContactCardController{
  snapshot=()=>this.state;subscribe=(fn:()=>void)=>{this.listeners.add(fn);return()=>{this.listeners.delete(fn);};};
  private publish(next:Partial<State>){this.state={...this.state,...next};this.listeners.forEach(fn=>fn());}
  private path(){return `/activities/${this.activity}/reconnections/${this.target}/contact-card`;}
- private valid(raw:unknown):raw is ContactCards{const v=raw as ContactCards|undefined;return !!v&&v.activity_id===this.activity&&v.target_id===this.target&&!!v.mine&&typeof v.mine.text==='string'&&v.mine.text.length<=300&&Number.isInteger(v.mine.version)&&v.mine.version>=0&&(v.peer===null||!!v.peer&&typeof v.peer.text==='string'&&v.peer.text.length<=300);}
+ private valid(raw:unknown):raw is ContactCards{const v=raw as ContactCards|undefined;return !!v&&v.activity_id===this.activity&&v.target_id===this.target&&!!v.mine&&typeof v.mine.text==='string'&&v.mine.text.length<=300&&Number.isInteger(v.mine.version)&&v.mine.version>=0&&(v.peer===null||!!v.peer&&typeof v.peer.text==='string'&&v.peer.text.length<=300&&typeof v.peer.report_id==='string'&&/^[a-f0-9]{32}\.[1-9]\d{0,14}$/.test(v.peer.report_id));}
  private withoutPeer(){return this.state.value?{...this.state.value,peer:null}:null;}
  edit(text:string){if(this.locked||text.length>300)return;this.publish({draft:text,dirty:text!==(this.state.value?.mine.text??'')});}
  useSaved(){if(this.locked||!this.state.value)return;this.publish({draft:this.state.value.mine.text,dirty:false});}
