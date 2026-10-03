@@ -1,0 +1,13 @@
+{
+  "mechanism": "Two concurrent HTTP requests against running isolated SQLite backend",
+  "id": "e1bdad9e-45ac-42ca-8190-16dd10f9c0c2",
+  "statuses": [
+    "confirmed",
+    "waitlisted"
+  ],
+  "counts": {
+    "confirmed": 1,
+    "waitlisted": 1,
+    "remaining": 0
+  }
+}
