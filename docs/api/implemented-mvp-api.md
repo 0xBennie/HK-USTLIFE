@@ -47,3 +47,7 @@ Development accounts: `student-a@example.test`, `student-b@example.test`, `admin
 `tests/product-auth.test.ts`: real file-backed SQLite, account separation, role escalation denial, code replay/expiry/guessing/resend/throttle, session expiry/logout, deletion and restart. `tests/mobile-session.test.ts`: real HTTP API with platform-independent native session controller; SecureStore adapter is replaced by in-memory storage because native runtime is unavailable. This is not an iOS UI test.
 
 `scripts/smoke-product-account.mjs`: two actual server process launches against one temporary database, persistence and revoked-token check. See `../progress/2026-10-03-e1-verification.md` for results and limitations.
+
+## 2026-10-04 Important affairs foundation
+
+See [implemented affairs API](affairs-api.md). Adds private persisted progress, owner-scoped routes, explicit revision acceptance and additive account export. No live templates, official result adapter, date/reminder projection or native affair flow yet.

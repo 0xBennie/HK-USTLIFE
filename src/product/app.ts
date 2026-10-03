@@ -1,3 +1,5 @@
+import {createAffairsStore} from './affairs/store.js';
+import {registerAffairsRoutes} from './affairs/routes.js';
 import {createReconnections} from './social/reconnections.js';
 import {registerReconnectionRoutes} from './social/reconnection-routes.js';
 import {projectSchoolCalendar} from './school/projection.js';
@@ -43,6 +45,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
     return {sis:connections[0].state,canvas:connections[1].state};
   });
   const learning = createLearningStore(db,now);
+  const affairs = createAffairsStore(db,now);
   const calendars = createCalendarStore(db,now);
   const directory = createDirectoryStore(db,now);
   const wall=createWallStore(db,now);
@@ -79,6 +82,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   registerMaintenanceRoutes(app,maintenance,directory,requireAdmin,ok);
   registerDirectoryRoutes(app,directory,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerSchoolRoutes(app,school,request=>auth.requireUser(request.headers.authorization).id,ok);
+  registerAffairsRoutes(app,affairs,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerLearningRoutes(app,learning,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerCalendarRoutes(app,calendars,request=>auth.requireUser(request.headers.authorization).id,ok);
   app.get('/api/v1/me/calendar',async request=>{
@@ -122,7 +126,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   });
   app.get('/api/v1/me/export', async request => {
     const user = auth.requireUser(request.headers.authorization);
-    return ok({ version: 5, reconnections:reconnections.list(user.id), reconnection_cards:reconnections.exportCards(user.id), school:school.exportAll(user.id), governance:governance.exportAll(user.id), wall:wall.exportAll(user.id), social:social.exportAll(user.id), campus:directory.exportAll(user.id), calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
+    return ok({ version: 5, affairs:affairs.exportAll(user.id), reconnections:reconnections.list(user.id), reconnection_cards:reconnections.exportCards(user.id), school:school.exportAll(user.id), governance:governance.exportAll(user.id), wall:wall.exportAll(user.id), social:social.exportAll(user.id), campus:directory.exportAll(user.id), calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
   });
   app.delete('/api/v1/me', async request => {
     const user = auth.requireUser(request.headers.authorization);

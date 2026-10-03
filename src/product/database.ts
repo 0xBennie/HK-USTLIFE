@@ -268,6 +268,33 @@ const migrations = [{ version: 1, sql: `
   DELETE FROM notifications WHERE kind='reconnection_mutual' AND activity_id=NEW.activity_id
   AND ((owner_id=NEW.owner_id AND reconnection_target=NEW.target_id) OR (owner_id=NEW.target_id AND reconnection_target=NEW.owner_id));
  END;
+` }, { version: 16, sql: `
+ CREATE TABLE affair_templates (
+  id TEXT PRIMARY KEY, current_revision INTEGER NOT NULL, retired_at INTEGER, retired_by TEXT
+ );
+ CREATE TABLE affair_revisions (
+  template_id TEXT NOT NULL REFERENCES affair_templates(id), revision INTEGER NOT NULL,
+  payload TEXT NOT NULL CHECK(json_valid(payload)), reviewer TEXT NOT NULL, published_at INTEGER NOT NULL,
+  PRIMARY KEY(template_id,revision)
+ );
+ CREATE TABLE affair_instances (
+  id TEXT PRIMARY KEY, owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  template_id TEXT NOT NULL, accepted_revision INTEGER NOT NULL,
+  payload TEXT NOT NULL CHECK(json_valid(payload)), version INTEGER NOT NULL DEFAULT 1,
+  archived INTEGER NOT NULL DEFAULT 0 CHECK(archived IN (0,1)), created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL,
+  FOREIGN KEY(template_id,accepted_revision) REFERENCES affair_revisions(template_id,revision)
+ );
+ CREATE INDEX affair_owner_list ON affair_instances(owner_id,archived,created_at,id);
+ CREATE TABLE affair_acknowledgements (
+  instance_id TEXT NOT NULL REFERENCES affair_instances(id) ON DELETE CASCADE,
+  version INTEGER NOT NULL, payload TEXT NOT NULL CHECK(json_valid(payload)), created_at INTEGER NOT NULL,
+  PRIMARY KEY(instance_id,version)
+ );
+ CREATE TABLE affair_receipts (
+  owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, scope TEXT NOT NULL, key TEXT NOT NULL,
+  fingerprint TEXT NOT NULL, instance_id TEXT NOT NULL, result_version INTEGER NOT NULL, created_at INTEGER NOT NULL,
+  PRIMARY KEY(owner_id,scope,key)
+ );
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {
