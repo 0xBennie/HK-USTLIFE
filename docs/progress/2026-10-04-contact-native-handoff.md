@@ -1,0 +1,9 @@
+# X04 voluntary contact cards — native implementation
+
+- Workspace `/Users/bennie/.codex/worktrees/campus-school-sync/All in one HKUST`; branch `codex/campus-school-sync`; PMO base `b036e577a9d2769dcd0dbe4bd20e27a3e8c6881c`; previous HEAD `b51832d`.
+- Pen: added and saved Y1V0gg / Ee7DV / whbTA; checked screenshots and clipping. Exports and mapping under design/reconnections.
+- Native: mutual-consent entry opens a separate editor with recipient, 300-character voluntary content, exact preview confirmation, clear, saved-content recovery and guarded return. Returning remounts/reloads consent. No automatic school-email extraction, link opening or contact transmission.
+- Controller: serial read/write; validates recipient and persisted response; unknown/conflicting writes require GET before another PUT; preserves divergent draft until user chooses saved text; hides peer on refresh/error/background/tab exit, ignores visibility-stale peer responses. No peer persistence/offline cache.
+- Validation: mobile TypeScript check passed. Full core build + 56 files / 336 tests passed, log `.local/school-sync/contact-native-regression.log`. Five new controller tests cover preview mismatch, unknown write/no replay, draft divergence, background response and wrong-target/mismatched response. These are network-port unit tests, not rendered/native interaction acceptance.
+- Limits: X04 still needs discoverability/notification and contact-content governance integration, plus actual iOS runtime checks. Screen has not run on an iOS simulator. Pen designs do not prove native appearance or motion. School registration/permissions and other R1.1 modules remain unfinished.
+- Next: complete X04 access/report/block/notification lifecycle without exposing unilateral intent; resolve local CocoaPods/Ruby prerequisite and keep existing simulator download session 57095 rather than restarting it.

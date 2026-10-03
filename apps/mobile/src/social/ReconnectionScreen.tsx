@@ -1,12 +1,13 @@
-import {useEffect,useMemo,useSyncExternalStore} from 'react';
+import {useEffect,useMemo,useState,useSyncExternalStore} from 'react';
 import {Alert,Text,View} from 'react-native';
 import {Button} from '../ui/Primitives';
 import {useNavigationProtection} from '../navigation/InputProtection';
 import {session} from '../runtime';
 import {palette,styles} from '../theme';
 import type {Language} from '../strings';
+import {ContactCardScreen} from './ContactCardScreen';
 import {ReconnectionController} from './reconnection-controller';
-export function ReconnectionScreen({activityId,peer,language,dark,onBack}:{activityId:string;peer:{id:string;display_name:string};language:Language;dark:boolean;onBack:()=>void}){
+function ReconnectionChoice({activityId,peer,language,dark,onBack,onContact}:{activityId:string;peer:{id:string;display_name:string};language:Language;dark:boolean;onBack:()=>void;onContact:()=>void}){
  const zh=language==='zh',c=palette[dark?'dark':'light'];
  const controller=useMemo(()=>new ReconnectionController(activityId,peer.id,(p,o)=>session.request(p,o)),[activityId,peer.id]);
  const state=useSyncExternalStore(controller.subscribe,controller.snapshot),v=state.value,busy=state.phase==='saving'||state.phase==='loading';
@@ -25,6 +26,12 @@ export function ReconnectionScreen({activityId,peer,language,dark,onBack}:{activ
   <Button variant="secondary" isDisabled={busy} onPress={()=>void controller.refresh()}>{zh?'读取当前选择':'Read current choice'}</Button>
   {state.phase==='ready'&&v&&!v.willing&&!v.expired?<Button onPress={consent}>{zh?'我愿意再次同行':'I would like to meet again'}</Button>:null}
   {state.phase==='ready'&&v?.willing?<Button variant="ghost" onPress={()=>void controller.choose(false)}>{zh?'撤回我的意愿':'Withdraw my choice'}</Button>:null}
-  <Text style={[styles.caption,{color:c.muted}]}>{zh?'当前版本尚未开放私聊，不会公开联系方式、自动拉群或自动报名。':'Private messaging is not available yet. Contact details remain private; no automatic groups or signups.'}</Text>
+  {state.phase==='ready'&&v?.mutual?<Button onPress={onContact}>{zh?'自愿分享联系方式':'Choose to share contact details'}</Button>:null}
+  <Text style={[styles.caption,{color:c.muted}]}>{zh?'双方同意后，你可以自愿分享联系方式。不会自动公开学校邮箱、拉群或报名。':'After mutual consent you may choose to share contact details. No automatic school email sharing, groups or signups.'}</Text>
  </View>;
+}
+
+export function ReconnectionScreen(props:{activityId:string;peer:{id:string;display_name:string};language:Language;dark:boolean;onBack:()=>void}){
+ const [contact,setContact]=useState(false);
+ return contact?<ContactCardScreen {...props} onBack={()=>setContact(false)}/>:<ReconnectionChoice {...props} onContact={()=>setContact(true)}/>;
 }
