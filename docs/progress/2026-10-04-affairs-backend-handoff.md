@@ -11,7 +11,7 @@
 
 - TDD initial store run failed due missing module; initial HTTP run failed due missing routes. Subsequent implementation passed 10 store tests and2 HTTP integration tests.
 - Targeted store/API/learning regression:38 passed. Core TypeScript build passed.
-- Full repository run:358 passed,1 release-guard failure across60 files. Cause was compact test-helper parameter token=a, matched by conservative credential-like assignment regex; no literal secret existed. Changed to spaced assignment (same semantics); targeted release guard and API rerun9 passed. Did not disable/allowlist the scanner. Full test log .local/school-sync/affairs-full-tests.log retains original evidence; no claim of a fresh all-green full rerun.
+- Full repository run:358 passed,1 release-guard failure across60 files. Cause was compact test-helper default parameter assignment, matched by conservative credential-like assignment regex; no literal secret existed. Changed to spaced assignment (same semantics); targeted release guard and API rerun9 passed. Did not disable/allowlist the scanner. Full test log .local/school-sync/affairs-full-tests.log retains original evidence; no claim of a fresh all-green full rerun.
 - Store tests exercise two owners, unknown official status despite self-reported completion, stale writes, duplicate requests, revision choices, removed/new steps, atomic rollback via SQLite failure trigger, persistence after close/reopen, account cascade, and same-timestamp pagination. HTTP tests exercise sessions, strict input rejection, other-owner404, export, archive and removed-record retry410.
 - git diff --check passed. No iOS affair flow exercised; no external school action, deployment or messages.
 

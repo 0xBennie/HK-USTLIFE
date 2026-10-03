@@ -5,7 +5,7 @@ import {transaction} from '../database.js';
 import {ApiError} from '../errors.js';
 import {templateSchema,createSchema,patchSchema,acceptSchema,type Template,type PrivateFields} from './schemas.js';
 
-type Row={id:string;owner_id:string;template_id:string;accepted_revision:number;payload:string;version:number;archived:number;created_at:number;updated_at:number};
+type Row={id:string;owner_id:string;template_id:string;accepted_revision:number;payload:string;version:number;archived:number;created_at:number;updated_at:number;reported_at:number|null;outcome_recorded_at:number|null};
 type Header={id:string;current_revision:number;retired_at:number|null};
 const canonical=(v:unknown):string=>Array.isArray(v)?`[${v.map(canonical).join(',')}]`:v!==null&&typeof v==='object'?`{${Object.entries(v).sort(([a],[b])=>a.localeCompare(b)).map(([k,x])=>`${JSON.stringify(k)}:${canonical(x)}`).join(',')}}`:JSON.stringify(v);
 const fail=(status:number,code:string,message:string):never=>{throw new ApiError(status,code,message);};
@@ -44,7 +44,7 @@ export function createAffairsStore(db:DatabaseSync,now:()=>number){
  function get(owner:string,id:string){
   const r=raw(owner,id),h=header(r.template_id)!,old=revision(r.template_id,r.accepted_revision),latest=revision(r.template_id,h.current_revision);
   return {...JSON.parse(r.payload) as PrivateFields,id:r.id,version:r.version,template_id:r.template_id,accepted_revision:r.accepted_revision,current_revision:h.current_revision,
-   created_at:new Date(r.created_at).toISOString(),updated_at:new Date(r.updated_at).toISOString(),template:display(old),current_template:display(latest),retired:h.retired_at!==null,
+   reported_at:r.reported_at===null?null:new Date(r.reported_at).toISOString(),outcome_recorded_at:r.outcome_recorded_at===null?null:new Date(r.outcome_recorded_at).toISOString(),created_at:new Date(r.created_at).toISOString(),updated_at:new Date(r.updated_at).toISOString(),template:display(old),current_template:display(latest),retired:h.retired_at!==null,
    requires_review:r.accepted_revision!==h.current_revision,change_summary:diff(old,latest),official_status:{status:'unknown' as const,reason:'not_connected' as const}};
  }
  function receipt(owner:string,scope:string,key:unknown,input:unknown,action:()=>ReturnType<typeof get>){
@@ -71,6 +71,9 @@ export function createAffairsStore(db:DatabaseSync,now:()=>number){
   const old=JSON.parse(r.payload) as PrivateFields;
   if(changes.step_checks){const ids=new Set(revision(r.template_id,r.accepted_revision).steps.map(s=>s.id));if(Object.keys(changes.step_checks).some(k=>!ids.has(k)))fail(400,'INVALID_INPUT','Unknown step.');}
   if(old.archived&&changes.archived===false&&Number(db.prepare('SELECT COUNT(*) AS n FROM affair_instances WHERE owner_id=? AND archived=0').get(owner)!.n)>=100)fail(409,'ACTIVE_LIMIT','Active affair limit reached.');
+  const reported=changes.submission===undefined||changes.submission===old.submission?r.reported_at:changes.submission==='self_reported'?now():null;
+  const outcome=changes.self_reported_outcome===undefined||changes.self_reported_outcome===old.self_reported_outcome?r.outcome_recorded_at:changes.self_reported_outcome==='unknown'?null:now();
+  db.prepare('UPDATE affair_instances SET reported_at=?,outcome_recorded_at=? WHERE owner_id=? AND id=?').run(reported,outcome,owner,id);
   write(r,{...old,...changes,step_checks:{...old.step_checks,...changes.step_checks}});return get(owner,id);
  });}
  function acceptRevision(owner:string,id:string,body:unknown,key:unknown){const input=acceptSchema.parse(body);return receipt(owner,'accept:'+id,key,input,()=>{
@@ -97,6 +100,14 @@ export function createAffairsStore(db:DatabaseSync,now:()=>number){
  }
  function template(id:string){const h=header(id);if(!h)return fail(404,'NOT_FOUND','Template not found.');if(h.retired_at!==null)fail(410,'TEMPLATE_RETIRED','Template retired.');return display(revision(id,h.current_revision));}
  function catalog(query:{limit:number;cursor?:string}){const q=z.object({limit:z.number().int().min(1).max(50),cursor:z.string().max(120).optional()}).parse(query);const rows=db.prepare('SELECT * FROM affair_templates WHERE retired_at IS NULL AND id>? ORDER BY id LIMIT ?').all(q.cursor??'',q.limit+1) as Header[];return {items:rows.slice(0,q.limit).map(h=>display(revision(h.id,h.current_revision))),next_cursor:rows.length>q.limit?rows[q.limit-1].id:null};}
- function exportAll(owner:string){return (db.prepare('SELECT id FROM affair_instances WHERE owner_id=? ORDER BY created_at,id').all(owner)).map(r=>({...get(owner,String(r.id)),history:db.prepare('SELECT payload,created_at FROM affair_acknowledgements WHERE instance_id=? ORDER BY version').all(String(r.id)).map(h=>({...JSON.parse(String(h.payload)),acknowledged_at:new Date(Number(h.created_at)).toISOString()}))}));}
+ function exportAll(owner:string){
+  return db.prepare('SELECT id FROM affair_instances WHERE owner_id=? ORDER BY created_at,id').all(owner).map(row=>{
+   const item=get(owner,String(row.id));
+   const history=db.prepare('SELECT payload,created_at FROM affair_acknowledgements WHERE instance_id=? ORDER BY version').all(item.id).map(h=>({...JSON.parse(String(h.payload)),acknowledged_at:new Date(Number(h.created_at)).toISOString()}));
+   const revisions=new Set<number>([item.accepted_revision]);
+   for(const h of history){revisions.add(h.from_revision);revisions.add(h.to_revision);}
+   return {...item,history,accepted_templates:[...revisions].sort((a,b)=>a-b).map(rev=>revision(item.template_id,rev))};
+  });
+ }
  return {publish,retire,catalog,template,list,get,create,update,acceptRevision,remove,exportAll};
 }

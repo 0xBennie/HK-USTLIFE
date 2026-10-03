@@ -1,0 +1,10 @@
+# X05 recording times and full historical export
+
+- Goal active/incomplete. Prior turn delivered persisted foundation; this unit fills two explicit lifecycle gaps, without modifying the running simulator fixture or shared checkout.
+- Worktree /Users/bennie/.codex/worktrees/campus-school-sync/All in one HKUST; codex/campus-school-sync; PMO base b036e577a9d2769dcd0dbe4bd20e27a3e8c6881c.
+- Migration17 adds reported_at/outcome_recorded_at nullable columns. Server controls recording time; private note edits and revision acceptance do not alter it. Revoking/resetting the corresponding personal report clears its timestamp. Legacy rows remain null (unknown), never backfilled from unrelated updated_at.
+- Account export now contains complete immutable accepted_templates for every version the owner actually accepted, including original prior versions. Current unaccepted template remains separate. No other owner's records exposed.
+- Added four regression tests after observing missing-field failures: report/edit/revoke semantics, independent outcome clock through acceptance, complete historical snapshots, pre17 migration with existing self-reported progress. Existing store/API coverage remains applicable.
+- Remaining X05 work: dates/reminders with correct native target, reviewed publication tooling/content, filters, input/error Pen states, native forms and actual iOS acceptance. No new UI or school result adapter delivered here.
+- Validation: core TypeScript build passed. Full suite362 passed and1 release-scanner failure; it found the previous handoff quoting the compact default-parameter expression that had already been fixed in code. Reworded that explanation, preserving the scanner and historical diagnosis. Targeted scanner/store/API rerun recorded below; no new secret or runtime credential was introduced.
+- Final targeted verification:23 tests passed across release guard/store/API; git diff --check passed. Full-suite original log retained at .local/school-sync/affairs-lifecycle-tests.log.

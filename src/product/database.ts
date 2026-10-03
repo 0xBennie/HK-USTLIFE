@@ -295,6 +295,9 @@ const migrations = [{ version: 1, sql: `
   fingerprint TEXT NOT NULL, instance_id TEXT NOT NULL, result_version INTEGER NOT NULL, created_at INTEGER NOT NULL,
   PRIMARY KEY(owner_id,scope,key)
  );
+` }, { version: 17, sql: `
+ ALTER TABLE affair_instances ADD COLUMN reported_at INTEGER;
+ ALTER TABLE affair_instances ADD COLUMN outcome_recorded_at INTEGER;
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

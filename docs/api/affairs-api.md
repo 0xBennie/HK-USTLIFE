@@ -16,9 +16,9 @@ Base `/api/v1`; standard `data/meta` and structured errors. Private routes deriv
 | PATCH | /me/affairs/:id | Required version plus editable fields below. Unknown fields400; stale version409. |
 | POST | /me/affairs/:id/accept-revision | instance_version,from_revision,to_revision,changed_step_choices (step ID→retain/reset); required Idempotency-Key. |
 | DELETE | /me/affairs/:id | Body {version}; deletes instance and acceptance history. Does not withdraw anything at school. |
-| GET | /me/export | Existing v5 additive `affairs` array: private instances plus acceptance history; other owners excluded. |
+| GET | /me/export | Existing v5 additive `affairs` array: private instances, acceptance history and full accepted_templates snapshots; other owners excluded. |
 
-Editable fields: label(max120), note(max2000), step_checks(known step IDs→boolean), submission(not_reported/self_reported), self_reported_outcome(unknown/received/approved/rejected/completed), archived(boolean). Step updates merge with existing checks. Empty patch and unknown step rejected. Currently no personal_due, reminder or reported_at fields; do not infer these from updated_at.
+Editable fields: label(max120), note(max2000), step_checks(known step IDs→boolean), submission(not_reported/self_reported), self_reported_outcome(unknown/received/approved/rejected/completed), archived(boolean). Step updates merge with existing checks. Empty patch and unknown step rejected. Read-only `reported_at` records the server time when submission changes to self_reported; `outcome_recorded_at` records when a nonunknown personal outcome changes. Unrelated edits or repeated same-state patches preserve these times. Clearing submission/outcome clears its respective timestamp. These are App recording times, never official submission/approval times. Migration17 leaves legacy timestamps null rather than inventing them. Client timestamp overrides are rejected. personal_due and reminder fields remain unimplemented.
 
 `official_status` is always `{status:"unknown",reason:"not_connected"}`. There is no member-writable official field. A self_reported_outcome of approved/completed remains personal input, not evidence of approval. It never changes official_status.
 
@@ -38,6 +38,6 @@ Receipts are owner/scope/key bound, with canonical input hash. Same key and cont
 
 Store-level `publish`/`retire` functions are trusted internal functions, not member HTTP endpoints or generic administrator routes. Publication validates bilingual text, source references, source HTTPS HKUST domain, review dates, unique step/source IDs and sequential revisions. No external fetch occurs. Separate reviewer UI/CLI and source-change detection remain to be implemented before live content operations.
 
-Migration16 creates public immutable revisions, private owner-cascaded instances, acceptance history and receipts. Account deletion removes private data while retaining public templates. No school credentials, card numbers or receipt uploads are supported.
+Migration17 adds nullable recording timestamps. Migration16 creates public immutable revisions, private owner-cascaded instances, acceptance history and receipts. Account deletion removes private data while retaining public templates. No school credentials, card numbers or receipt uploads are supported.
 
-Next: source filters, personal dates/reminders, complete old-version export snapshots, timestamped self-report semantics, reviewed templates, maintenance audit controls, native UI and iOS acceptance. Current foundation is not full X05 completion.
+Next: source filters, personal dates/reminders, reviewed templates, maintenance audit controls, native UI and iOS acceptance. Current foundation is not full X05 completion.

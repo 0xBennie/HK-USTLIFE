@@ -77,3 +77,32 @@ it('paginates same-timestamp instances with stable IDs and keeps archive filters
  expect(new Set([...first.items,...second.items].map(i=>i.id)).size).toBe(4);expect(second.next_cursor).toBeNull();
  expect(store.list('b',{limit:2,state:'active',cursor:first.next_cursor!}).items).toEqual([]);
 });
+it('records report time separately from edit time, clears it on withdrawal and never accepts client timestamps',()=>{
+ const a=create();expect(a.reported_at).toBeNull();clock+=1000;
+ const reported=store.update('a',a.id,{version:1,submission:'self_reported'});expect(reported.reported_at).toBe(new Date(clock).toISOString());
+ clock+=1000;const edited=store.update('a',a.id,{version:2,note:'A later note',submission:'self_reported'});expect(edited.reported_at).toBe(reported.reported_at);expect(edited.updated_at).not.toBe(reported.updated_at);
+ expect(()=>store.update('a',a.id,{version:3,reported_at:'2020-01-01T00:00:00Z'})).toThrow();
+ const cleared=store.update('a',a.id,{version:3,submission:'not_reported'});expect(cleared.reported_at).toBeNull();
+ clock+=1000;expect(store.update('a',a.id,{version:4,submission:'self_reported'}).reported_at).toBe(new Date(clock).toISOString());
+});
+it('timestamps self-reported outcome independently, preserving it across revision acceptance',()=>{
+ const a=create();clock+=1000;
+ const done=store.update('a',a.id,{version:1,self_reported_outcome:'completed'});expect(done.outcome_recorded_at).toBe(new Date(clock).toISOString());expect(done.reported_at).toBeNull();
+ store.publish(template(2),'reviewer');clock+=1000;
+ const accepted=store.acceptRevision('a',a.id,{instance_version:2,from_revision:1,to_revision:2,changed_step_choices:{check:'reset'}},'accept-report-time');expect(accepted.outcome_recorded_at).toBe(done.outcome_recorded_at);
+ const cleared=store.update('a',a.id,{version:3,self_reported_outcome:'unknown'});expect(cleared.outcome_recorded_at).toBeNull();expect(cleared.official_status.status).toBe('unknown');
+});
+it('exports complete accepted historical templates, not merely changed-field diffs',()=>{
+ const a=create();store.publish(template(2),'reviewer');store.acceptRevision('a',a.id,{instance_version:1,from_revision:1,to_revision:2,changed_step_choices:{check:'reset'}},'export-accept-key');
+ store.publish(template(3),'reviewer');
+ const exported=store.exportAll('a')[0];expect(exported.accepted_templates.map(t=>t.revision)).toEqual([1,2]);expect(exported.accepted_templates[0]).toEqual(template());
+ expect(exported.current_template.revision).toBe(3);expect(store.exportAll('b')).toEqual([]);
+});
+it('migrates existing progress without inventing historical report times',()=>{
+ const a=create();store.update('a',a.id,{version:1,submission:'self_reported',self_reported_outcome:'completed'});
+ // Reconstruct the pre17 schema in this disposable database, retaining the persisted v16 payload.
+ db.exec('ALTER TABLE affair_instances DROP COLUMN reported_at; ALTER TABLE affair_instances DROP COLUMN outcome_recorded_at; DELETE FROM schema_migrations WHERE version=17;');
+ db.close();db=openDatabase(dir);store=createAffairsStore(db,()=>clock);
+ expect(store.get('a',a.id)).toMatchObject({submission:'self_reported',self_reported_outcome:'completed',reported_at:null,outcome_recorded_at:null,version:2});
+ expect(store.update('a',a.id,{version:2,note:'preserve legacy record'}).reported_at).toBeNull();
+});
