@@ -1,3 +1,4 @@
+import {ReconnectionScreen} from './ReconnectionScreen';
 import {writeReceipt,ensureReplayable,writeRejected,reviewRequired,type WriteReceipt} from '../write-receipt';
 import {useInputProtection} from '../navigation/InputProtection';
 import {useSceneFocus} from '../navigation/TabScene';
@@ -30,6 +31,7 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
  useEffect(()=>{if(joinState.phase==='result'&&joinState.activity)setActivity(joinState.activity);},[joinState]);
  useEffect(onNavigate,[editing,onNavigate]);
  const [reviewOnly,setReviewOnly]=useState(false);
+ const [recontact,setRecontact]=useState<{id:string;display_name:string}|null>(null);
  const pending=useRef<Pending|null>(null),lock=useRef(false),epoch=useRef(0),alive=useRef(true);
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;epoch.current++;};},[]);
  const protectInput=useInputProtection({reply},busy||joinState.phase==='submitting',pending.current!==null||joinState.phase==='uncertain',zh);
@@ -47,8 +49,11 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
  const confirm=(title:string,body:string,action:()=>void)=>Alert.alert(title,body,[{text:zh?'返回':'Back',style:'cancel'},{text:zh?'确认':'Confirm',style:'destructive',onPress:action}]);
  const frozen=busy||pending.current!==null||joinPending;
  async function more(){if(cursor===null||frozen)return;setBusy(true);try{const m=await session.request<{items:ActivityComment[];next_cursor:number|null}>(`/activities/${id}/comments?cursor=${cursor}`);setComments(old=>[...old,...m.items.filter(x=>!old.some(y=>y.id===x.id))]);setCursor(m.next_cursor);}catch(e){setError(socialError(e,language));}finally{setBusy(false);}}
+ if(recontact)return <ReconnectionScreen activityId={id} peer={recontact} language={language} dark={dark} onBack={()=>{setRecontact(null);void load();}}/>;
  if(editing&&activity)return <ActivityForm initial={activity} language={language} dark={dark} onBack={()=>setEditing(false)} onSaved={()=>setEditing(false)}/>;
  const mine=activity?.mine,part=mine?.participation,participating=part&&['confirmed','waitlisted'].includes(part.status);
+ const canReconnect=!!profile&&!!activity?.ended&&activity.status!=='cancelled'&&(mine?.is_organizer||part?.status==='confirmed');
+ const reconnect=(peer:{id:string;display_name:string})=>protectInput(()=>{setRecontact(peer);onNavigate();});
  const prefs=(changes:object)=>act('/preferences','PUT',{bookmarked:mine?.bookmarked??false,calendar_saved:mine?.calendar_saved??false,remind_minutes:mine?.remind_minutes??null,...changes});
  return <View style={styles.stack}>
   <View style={styles.row}><Button variant="ghost" onPress={()=>protectInput(onBack)}>{zh?'返回':'Back'}</Button>
@@ -72,6 +77,7 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
    </View>
    {activity.description?<Text selectable style={[styles.body,{color:c.text}]}>{activity.description}</Text>:null}
    <SafetyActions target={{kind:'activity',id:activity.id}} author={activity.organizer} language={language} dark={dark} disabled={frozen} onChanged={()=>void load()}/>
+   {canReconnect&&activity.organizer.id!==profile?.id?<Button variant="secondary" isDisabled={frozen} onPress={()=>reconnect(activity.organizer)}>{zh?'私下表达再次同行意愿':'Privately express interest in meeting again'}</Button>:null}
    {activity.requirements?<Text selectable style={[styles.body,{color:c.text}]}>{zh?'参与须知':'Requirements'}: {activity.requirements}</Text>:null}
    {!profile?<Button onPress={onLogin}>{zh?'登录后报名／收藏':'Sign in to join / save'}</Button>:<>
     {part?<Text accessibilityRole="text" style={[styles.heading,{color:c.text}]}>{participationLabel(part.status,zh)}{part.waitlist_position?` · ${zh?'排位':'Position'} ${part.waitlist_position}`:''}</Text>:null}
@@ -90,7 +96,7 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
    <Text style={[styles.heading,{color:c.text}]}>{zh?'活动讨论':'Activity discussion'}</Text>
    {profile&&!activity.ended&&activity.status!=='cancelled'?<><Input accessibilityLabel={zh?'发表评论':'Write a comment'} value={reply} editable={!frozen} onChangeText={setReply} multiline placeholder={zh?'询问条件、集合方式……':'Ask about requirements, meeting details…'} style={[styles.input,{color:c.text,borderColor:c.border,minHeight:90}]}/><Text style={[styles.caption,{color:c.muted}]}>{zh?'评论与活动具有相同可见范围。':'Comments have the same visibility as this activity.'}</Text><Button isDisabled={frozen||!reply.trim()} onPress={()=>act('/comments','POST',{body:reply},()=>setReply(''))}>{zh?'发布评论':'Post comment'}</Button></>:null}
    {!comments.length?<Text style={[styles.body,{color:c.muted}]}>{zh?'还没有评论。':'No comments yet.'}</Text>:null}
-   {comments.map(m=><Card key={m.id} style={[styles.card,{backgroundColor:c.surface}]}><Text style={[styles.caption,{color:c.muted}]}>{m.author.display_name} · {dateTimeInZone(m.created_at,'Asia/Hong_Kong')}</Text><Text selectable style={[styles.body,{color:c.text}]}>{m.body}</Text><SafetyActions target={{kind:'activity_comment',id:String(m.id)}} author={m.author} language={language} dark={dark} disabled={frozen} onChanged={()=>void load()}/>{m.can_delete?<Button variant="ghost" isDisabled={frozen} onPress={()=>confirm(zh?'删除评论？':'Delete comment?',m.body,()=>act(`/comments/${m.id}`,'DELETE',{version:m.version}))}>{zh?'删除我的评论':'Delete my comment'}</Button>:null}</Card>)}
+   {comments.map(m=><Card key={m.id} style={[styles.card,{backgroundColor:c.surface}]}><Text style={[styles.caption,{color:c.muted}]}>{m.author.display_name} · {dateTimeInZone(m.created_at,'Asia/Hong_Kong')}</Text><Text selectable style={[styles.body,{color:c.text}]}>{m.body}</Text><SafetyActions target={{kind:'activity_comment',id:String(m.id)}} author={m.author} language={language} dark={dark} disabled={frozen} onChanged={()=>void load()}/>{canReconnect&&m.author.id!==profile?.id?<Button variant="secondary" isDisabled={frozen} onPress={()=>reconnect(m.author)}>{zh?'与这位同学再次同行':'Meet this person again'}</Button>:null}{m.can_delete?<Button variant="ghost" isDisabled={frozen} onPress={()=>confirm(zh?'删除评论？':'Delete comment?',m.body,()=>act(`/comments/${m.id}`,'DELETE',{version:m.version}))}>{zh?'删除我的评论':'Delete my comment'}</Button>:null}</Card>)}
    {cursor!==null?<Button variant="secondary" isDisabled={frozen} onPress={()=>void more()}>{zh?'加载较早评论':'Load earlier comments'}</Button>:null}
   </>:null}
   <JoinActivitySheet visible={joinVisible} controller={joinController} state={joinState} language={language} dark={dark} onClose={()=>{setJoinVisible(false);if(joinController.snapshot().phase==='result')void load(true);}} onRefresh={()=>{setJoinVisible(false);void load();}}/>

@@ -1,6 +1,6 @@
 # Again together: private mutual consent foundation
 
-PRD X04 / AC18, backend foundation only. No native entry, peer-discovery UI, direct messaging or notification delivery is implemented by this unit. Do not call X04 complete.
+PRD X04 / AC18, backend foundation only. Native ActivityDetail now opens ReconnectionScreen for existing visible organizer/comment authors; no new roster. Direct messaging and notification delivery remain unimplemented. Do not call X04 complete.
 
 Authenticated local-development API, no-store, same envelope and account safeguards as implemented-mvp-api.md:
 
@@ -16,8 +16,8 @@ Provisional consent window: seven days after activity end. Both declarations mus
 
 Withdrawal is permitted even when the activity is no longer eligible. Blocking atomically clears both parties' willingness through a DB trigger; removing the block cannot revive prior consent. Cancellation/moderation/bans suppress mutual state. Missing/opposite/unilateral intent is not exposed as a count, timestamp or distinct refusal status. A user's own declaration is still visible to them with expired flag when applicable.
 
-Optimistic version conflicts return 409; do not automatically replay a stale mutation. A lost reply is resolved by reading one's own state. Error 404 RECONNECTION_UNAVAILABLE does not identify why a positive request is unavailable. There is no public participant roster or endpoint listing incoming intent. The future UI must use explicit, legitimate peer selection; this endpoint is not a peer directory.
+Optimistic version conflicts return 409; do not automatically replay a stale mutation. A lost reply is resolved by reading one's own state. Error 404 RECONNECTION_UNAVAILABLE does not identify why a positive request is unavailable. There is no public participant roster or endpoint listing incoming intent. The native UI selects existing visible organizer/comment authors, with separate explicit participation/consent confirmation. Being a comment author alone does not grant eligibility; unavailable responses remain neutral. This endpoint is not a peer directory.
 
 Own declarations are included in /me/export. Foreign keys cascade on account/activity deletion. No separate analytics or notification contains unilateral intent. Raw DB access remains privileged infrastructure access, not user/admin API access.
 
-Evidence: reconnections.test.ts exercises mutual consent, outsider eligibility, withdrawal, expiry, version conflicts, blocking/unblocking and account cascade with SQLite. product-social.test.ts exercises two authenticated users through actual API and checks third-user isolation/export. Native UI, notification behavior, peer discovery, broader privacy review and actual student participation remain outstanding.
+Evidence: reconnections.test.ts exercises mutual consent, outsider eligibility, withdrawal, expiry, version conflicts, blocking/unblocking and account cascade with SQLite. product-social.test.ts exercises two authenticated users through actual API and checks third-user isolation/export. Native touch/navigation/accessibility acceptance, notification behavior, broader peer discovery/privacy review and actual student participation remain outstanding.
