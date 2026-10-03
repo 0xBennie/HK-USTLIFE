@@ -54923,6 +54923,591 @@
           "width": "fill_container"
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "iMNQk",
+      "x": 20240,
+      "y": 0,
+      "name": "affair-date / 私人日期",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 393,
+      "fill": "$campus-background",
+      "layout": "vertical",
+      "gap": 12,
+      "children": [
+        {
+          "id": "s3GETo",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "rSWEe",
+          "name": "School plan content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 22,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "khcb3",
+              "name": "Back to Today",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "‹  我的事务",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "pfuOI",
+              "name": "Page title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "安排一个时间",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "e7n1tZ",
+              "name": "Source label",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "私人提醒 · 非官方期限",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "T2t230",
+              "name": "Assignment title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "留出时间，处理这件事。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "RgKhV",
+              "name": "Official deadline",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "只为你自己的安排",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "IfgZw",
+              "name": "Source requirements",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "日期    2026 年 10 月 8 日  ›\n具体时刻    关闭\n\n加入我的安排    关闭\n系统提醒    需开启具体时刻",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "lFMyy",
+              "name": "Sync notice",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "以下为设置示例。初次进入默认不加入日程、不启用提醒。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "I8HbY3",
+              "name": "Personal completion action",
+              "width": "fill_container",
+              "fill": "$campus-accent",
+              "cornerRadius": 14,
+              "padding": 14,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "aTvPd",
+                  "name": "Completion label",
+                  "fill": "#FFFFFF",
+                  "content": "保存个人安排",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "sL5Ry",
+              "name": "Private note heading",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "清除个人日期",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "mx77Q",
+              "name": "Private note",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "只保存日期不会在午夜提醒。修改后会替换旧计划；清除日期会同时取消日程和提醒。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "pmoVR",
+              "name": "Prototype disclosure",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "X05 · 状态设计 · 控件与动效待原生验收",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "id": "fv02a",
+          "type": "ref",
+          "ref": "C2KuRh",
+          "name": "Five main tabs",
+          "width": "fill_container"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "LGsfG",
+      "x": 20713,
+      "y": 0,
+      "name": "affair-uncertain / 保存待核对",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 393,
+      "fill": "$campus-background",
+      "layout": "vertical",
+      "gap": 12,
+      "children": [
+        {
+          "id": "YWI2K",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "zhVLs",
+          "name": "School plan content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 22,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "Ko23E",
+              "name": "Back to Today",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "‹  我的事务",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "HFJYN",
+              "name": "Page title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "保存结果待核对",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "xQSdz",
+              "name": "Source label",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "连接中断 · 草稿已保留",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "g28NW",
+              "name": "Assignment title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "先确认，是否已保存。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "OaZSu",
+              "name": "Official deadline",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "请不要重复提交",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "HO6ao",
+              "name": "Source requirements",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "刚才的修改可能已到达服务器。\n\n你的草稿仍在本页；读取最新记录后，可对比是否保存成功。",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "j2zGQz",
+              "name": "Sync notice",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "核对期间暂不能继续提交、归档或删除。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "LwmY1",
+              "name": "Personal completion action",
+              "width": "fill_container",
+              "fill": "$campus-accent",
+              "cornerRadius": 14,
+              "padding": 14,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "BXVN0",
+                  "name": "Completion label",
+                  "fill": "#FFFFFF",
+                  "content": "读取最新记录",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "I4LG2C",
+              "name": "Private note heading",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "留在这里",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "STT7V",
+              "name": "Private note",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "读取失败仍保留草稿；不会显示保存成功，也不会生成第二条事务。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "etPJ4",
+              "name": "Prototype disclosure",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "X05 · 状态设计 · 控件与动效待原生验收",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "id": "v2sOEi",
+          "type": "ref",
+          "ref": "C2KuRh",
+          "name": "Five main tabs",
+          "width": "fill_container"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "rfBsw",
+      "x": 21186,
+      "y": 0,
+      "name": "affair-conflict / 版本冲突",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 393,
+      "fill": "$campus-background",
+      "layout": "vertical",
+      "gap": 12,
+      "children": [
+        {
+          "id": "bf4o4",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "A5E9nn",
+          "name": "School plan content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 22,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "gTTIc",
+              "name": "Back to Today",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "‹  我的事务",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "TZsg7",
+              "name": "Page title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "记录已被修改",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "MVVDN",
+              "name": "Source label",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "另一处保存了新内容",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "nJaA4",
+              "name": "Assignment title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "对比后，再决定。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "W236h",
+              "name": "Official deadline",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "当前版本 3 · 你的草稿基于版本 2",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "UrfES",
+              "name": "Source requirements",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "服务器记录\n备注：周四先查借阅记录\n\n你的草稿\n备注：周五去图书馆\n\n尚未覆盖服务器记录。",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "QlxzJ",
+              "name": "Sync notice",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "选择保留草稿后，仍需核对其他改动并重新保存。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "hZmFC",
+              "name": "Personal completion action",
+              "width": "fill_container",
+              "fill": "$campus-accent",
+              "cornerRadius": 14,
+              "padding": 14,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Rv2Bu",
+                  "name": "Completion label",
+                  "fill": "#FFFFFF",
+                  "content": "保留草稿，重新核对",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "IRXO9",
+              "name": "Private note heading",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "采用服务器记录",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "WsW0B",
+              "name": "Private note",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "采用服务器记录前确认放弃本页修改。返回可保留草稿，不做自动覆盖。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "oi1GN",
+              "name": "Prototype disclosure",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "X05 · 状态设计 · 控件与动效待原生验收",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "id": "Wcgku",
+          "type": "ref",
+          "ref": "C2KuRh",
+          "name": "Five main tabs",
+          "width": "fill_container"
+        }
+      ]
     }
   ],
   "themes": {

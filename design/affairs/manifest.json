@@ -58,5 +58,35 @@
     "status": "design_only",
     "native_route": null,
     "api_status": "proposed"
+  },
+  {
+    "key": "affair-date",
+    "id": "iMNQk",
+    "title": "私人日期",
+    "requirement": "X05",
+    "stage": "R1.1",
+    "status": "design_only",
+    "native_route": null,
+    "api_status": "partial"
+  },
+  {
+    "key": "affair-uncertain",
+    "id": "LGsfG",
+    "title": "保存待核对",
+    "requirement": "X05",
+    "stage": "R1.1",
+    "status": "design_only",
+    "native_route": null,
+    "api_status": "partial"
+  },
+  {
+    "key": "affair-conflict",
+    "id": "rfBsw",
+    "title": "版本冲突",
+    "requirement": "X05",
+    "stage": "R1.1",
+    "status": "design_only",
+    "native_route": null,
+    "api_status": "partial"
   }
 ]

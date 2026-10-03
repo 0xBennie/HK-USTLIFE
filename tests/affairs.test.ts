@@ -106,3 +106,27 @@ it('migrates existing progress without inventing historical report times',()=>{
  expect(store.get('a',a.id)).toMatchObject({submission:'self_reported',self_reported_outcome:'completed',reported_at:null,outcome_recorded_at:null,version:2});
  expect(store.update('a',a.id,{version:2,note:'preserve legacy record'}).reported_at).toBeNull();
 });
+it('requires explicit calendar consent and a precise time for reminders without guessing missing dates',()=>{
+ const a=create();expect(store.schedule('a')).toEqual([]);
+ expect(()=>store.update('a',a.id,{version:1,personal_due:{kind:'date',date:'2026-02-30',timezone:'Asia/Hong_Kong'}})).toThrow();
+ expect(()=>store.update('a',a.id,{version:1,personal_due:{kind:'date',date:'2026-10-05',timezone:'Asia/Hong_Kong'},calendar_saved:true,remind_minutes:10})).toThrow();
+ store.update('a',a.id,{version:1,personal_due:{kind:'time',at:'2026-10-05T12:00:00+08:00',timezone:'Asia/Hong_Kong'}});expect(store.schedule('a')).toEqual([]);
+ store.update('a',a.id,{version:2,calendar_saved:true,remind_minutes:15});
+ expect(store.schedule('a')[0]).toMatchObject({id:a.id,at:'2026-10-05T04:00:00.000Z',date:null,remind_minutes:15,origin:'personal_affair'});
+ expect(store.schedule('b')).toEqual([]);
+});
+it('updates schedule identity on reschedule and removes projection on unsave/archive/delete',()=>{
+ const a=create();store.update('a',a.id,{version:1,personal_due:{kind:'time',at:'2026-10-05T12:00:00Z',timezone:'Asia/Hong_Kong'},calendar_saved:true,remind_minutes:0});
+ store.update('a',a.id,{version:2,personal_due:{kind:'time',at:'2026-10-06T12:00:00Z',timezone:'Asia/Hong_Kong'}});
+ expect(store.schedule('a')).toHaveLength(1);expect(store.schedule('a')[0]).toMatchObject({id:a.id,at:'2026-10-06T12:00:00.000Z'});
+ store.update('a',a.id,{version:3,calendar_saved:false});expect(store.schedule('a')).toEqual([]);expect(store.get('a',a.id).remind_minutes).toBeNull();
+ store.update('a',a.id,{version:4,calendar_saved:true,remind_minutes:0});store.update('a',a.id,{version:5,archived:true});expect(store.schedule('a')).toEqual([]);
+ store.update('a',a.id,{version:6,archived:false});expect(store.schedule('a')).toHaveLength(1);store.remove('a',a.id,7);expect(store.schedule('a')).toEqual([]);
+});
+it('does not copy official or review deadlines into personal schedule when accepting revisions',()=>{
+ const a=create();store.update('a',a.id,{version:1,personal_due:{kind:'date',date:'2026-10-08',timezone:'Asia/Hong_Kong'},calendar_saved:true});
+ store.publish({...template(2),deadline:{kind:'fixed',at:'2026-10-09T00:00:00Z',source_id:'library'}},'reviewer');
+ store.acceptRevision('a',a.id,{instance_version:2,from_revision:1,to_revision:2,changed_step_choices:{check:'reset'}},'keep-personal-date');
+ expect(store.schedule('a')[0]).toMatchObject({date:'2026-10-08',at:null,remind_minutes:null});
+ store.update('a',a.id,{version:3,personal_due:null});expect(store.schedule('a')).toEqual([]);expect(store.get('a',a.id).calendar_saved).toBe(false);
+});

@@ -3,13 +3,14 @@ import type {DatabaseSync} from 'node:sqlite';
 import {z} from 'zod';
 import {transaction} from '../database.js';
 import {ApiError} from '../errors.js';
-import {templateSchema,createSchema,patchSchema,acceptSchema,type Template,type PrivateFields} from './schemas.js';
+import {templateSchema,createSchema,patchSchema,acceptSchema,privateSchema,type Template,type PrivateFields} from './schemas.js';
 
 type Row={id:string;owner_id:string;template_id:string;accepted_revision:number;payload:string;version:number;archived:number;created_at:number;updated_at:number;reported_at:number|null;outcome_recorded_at:number|null};
 type Header={id:string;current_revision:number;retired_at:number|null};
 const canonical=(v:unknown):string=>Array.isArray(v)?`[${v.map(canonical).join(',')}]`:v!==null&&typeof v==='object'?`{${Object.entries(v).sort(([a],[b])=>a.localeCompare(b)).map(([k,x])=>`${JSON.stringify(k)}:${canonical(x)}`).join(',')}}`:JSON.stringify(v);
 const fail=(status:number,code:string,message:string):never=>{throw new ApiError(status,code,message);};
 const same=(a:unknown,b:unknown)=>canonical(a)===canonical(b);
+const privateFields=(payload:string):PrivateFields=>privateSchema.parse({personal_due:null,calendar_saved:false,remind_minutes:null,...JSON.parse(payload)});
 export function createAffairsStore(db:DatabaseSync,now:()=>number){
  function header(id:string){return db.prepare('SELECT * FROM affair_templates WHERE id=?').get(id) as Header|undefined;}
  function revision(id:string,rev:number):Template{
@@ -43,7 +44,7 @@ export function createAffairsStore(db:DatabaseSync,now:()=>number){
  }
  function get(owner:string,id:string){
   const r=raw(owner,id),h=header(r.template_id)!,old=revision(r.template_id,r.accepted_revision),latest=revision(r.template_id,h.current_revision);
-  return {...JSON.parse(r.payload) as PrivateFields,id:r.id,version:r.version,template_id:r.template_id,accepted_revision:r.accepted_revision,current_revision:h.current_revision,
+  return {...privateFields(r.payload),id:r.id,version:r.version,template_id:r.template_id,accepted_revision:r.accepted_revision,current_revision:h.current_revision,
    reported_at:r.reported_at===null?null:new Date(r.reported_at).toISOString(),outcome_recorded_at:r.outcome_recorded_at===null?null:new Date(r.outcome_recorded_at).toISOString(),created_at:new Date(r.created_at).toISOString(),updated_at:new Date(r.updated_at).toISOString(),template:display(old),current_template:display(latest),retired:h.retired_at!==null,
    requires_review:r.accepted_revision!==h.current_revision,change_summary:diff(old,latest),official_status:{status:'unknown' as const,reason:'not_connected' as const}};
  }
@@ -62,19 +63,24 @@ export function createAffairsStore(db:DatabaseSync,now:()=>number){
   if(input.revision!==h.current_revision)fail(409,'TEMPLATE_CHANGED','Template changed.');const t=revision(h.id,h.current_revision);available(h,t);
   const count=db.prepare('SELECT COUNT(*) AS n FROM affair_instances WHERE owner_id=? AND archived=0').get(owner)!;
   if(Number(count.n)>=100)fail(409,'ACTIVE_LIMIT','Archive an existing affair before adding another.');
-  const fields:PrivateFields={label:input.label,step_checks:Object.fromEntries(t.steps.map(s=>[s.id,false])),submission:'not_reported',self_reported_outcome:'unknown',note:'',archived:false};
+  const fields:PrivateFields={label:input.label,step_checks:Object.fromEntries(t.steps.map(s=>[s.id,false])),submission:'not_reported',self_reported_outcome:'unknown',note:'',archived:false,personal_due:null,calendar_saved:false,remind_minutes:null};
   const id=randomUUID(),stamp=now();db.prepare('INSERT INTO affair_instances(id,owner_id,template_id,accepted_revision,payload,created_at,updated_at) VALUES(?,?,?,?,?,?,?)').run(id,owner,h.id,h.current_revision,JSON.stringify(fields),stamp,stamp);return get(owner,id);
  });}
  function write(r:Row,fields:PrivateFields,rev=r.accepted_revision){db.prepare('UPDATE affair_instances SET payload=?,archived=?,accepted_revision=?,version=version+1,updated_at=? WHERE id=? AND owner_id=?').run(JSON.stringify(fields),Number(fields.archived),rev,now(),r.id,r.owner_id);}
  function update(owner:string,id:string,body:unknown){const {version,...changes}=patchSchema.parse(body);return transaction(db,()=>{
   const r=raw(owner,id);if(r.version!==version)fail(409,'VERSION_CONFLICT','Record changed; reload before editing.');
-  const old=JSON.parse(r.payload) as PrivateFields;
+  const old=privateFields(r.payload);
   if(changes.step_checks){const ids=new Set(revision(r.template_id,r.accepted_revision).steps.map(s=>s.id));if(Object.keys(changes.step_checks).some(k=>!ids.has(k)))fail(400,'INVALID_INPUT','Unknown step.');}
   if(old.archived&&changes.archived===false&&Number(db.prepare('SELECT COUNT(*) AS n FROM affair_instances WHERE owner_id=? AND archived=0').get(owner)!.n)>=100)fail(409,'ACTIVE_LIMIT','Active affair limit reached.');
+  const next:PrivateFields={...old,...changes,step_checks:{...old.step_checks,...changes.step_checks}};
+  if(changes.remind_minutes!==undefined&&changes.remind_minutes!==null&&(!next.calendar_saved||next.personal_due?.kind!=='time'))fail(400,'INVALID_INPUT','A reminder needs an explicitly saved precise time.');
+  if(changes.calendar_saved===true&&!next.personal_due)fail(400,'INVALID_INPUT','Set a personal date before saving to calendar.');
+  if(!next.personal_due)next.calendar_saved=false;
+  if(!next.calendar_saved||next.personal_due?.kind!=='time')next.remind_minutes=null;
   const reported=changes.submission===undefined||changes.submission===old.submission?r.reported_at:changes.submission==='self_reported'?now():null;
   const outcome=changes.self_reported_outcome===undefined||changes.self_reported_outcome===old.self_reported_outcome?r.outcome_recorded_at:changes.self_reported_outcome==='unknown'?null:now();
   db.prepare('UPDATE affair_instances SET reported_at=?,outcome_recorded_at=? WHERE owner_id=? AND id=?').run(reported,outcome,owner,id);
-  write(r,{...old,...changes,step_checks:{...old.step_checks,...changes.step_checks}});return get(owner,id);
+  write(r,next);return get(owner,id);
  });}
  function acceptRevision(owner:string,id:string,body:unknown,key:unknown){const input=acceptSchema.parse(body);return receipt(owner,'accept:'+id,key,input,()=>{
   const r=raw(owner,id),h=header(r.template_id)!;
@@ -83,7 +89,7 @@ export function createAffairsStore(db:DatabaseSync,now:()=>number){
   const old=revision(h.id,r.accepted_revision),next=revision(h.id,input.to_revision);available(h,next);
   const changed=next.steps.filter(s=>old.steps.some(o=>o.id===s.id&&!same(o,s))).map(s=>s.id);
   if(!same(Object.keys(input.changed_step_choices).sort(),changed.sort()))fail(400,'INVALID_INPUT','Choose for every changed step, and only changed steps.');
-  const fields=JSON.parse(r.payload) as PrivateFields;
+  const fields=privateFields(r.payload);
   const checks=Object.fromEntries(next.steps.map(s=>[s.id,changed.includes(s.id)?input.changed_step_choices[s.id]==='retain'&&!!fields.step_checks[s.id]:!!fields.step_checks[s.id]]));
   const history={from_revision:r.accepted_revision,to_revision:next.revision,old_checks:fields.step_checks,choices:input.changed_step_choices,change_summary:diff(old,next),reason:next.change_reason};
   db.prepare('INSERT INTO affair_acknowledgements VALUES(?,?,?,?)').run(id,r.version+1,JSON.stringify(history),now());
@@ -100,6 +106,14 @@ export function createAffairsStore(db:DatabaseSync,now:()=>number){
  }
  function template(id:string){const h=header(id);if(!h)return fail(404,'NOT_FOUND','Template not found.');if(h.retired_at!==null)fail(410,'TEMPLATE_RETIRED','Template retired.');return display(revision(id,h.current_revision));}
  function catalog(query:{limit:number;cursor?:string}){const q=z.object({limit:z.number().int().min(1).max(50),cursor:z.string().max(120).optional()}).parse(query);const rows=db.prepare('SELECT * FROM affair_templates WHERE retired_at IS NULL AND id>? ORDER BY id LIMIT ?').all(q.cursor??'',q.limit+1) as Header[];return {items:rows.slice(0,q.limit).map(h=>display(revision(h.id,h.current_revision))),next_cursor:rows.length>q.limit?rows[q.limit-1].id:null};}
+ function schedule(owner:string){
+  return db.prepare('SELECT * FROM affair_instances WHERE owner_id=? AND archived=0 ORDER BY created_at,id').all(owner).flatMap(rawRow=>{
+   const r=rawRow as Row,fields=privateFields(r.payload);
+   if(!fields.calendar_saved||!fields.personal_due)return [];
+   const t=revision(r.template_id,r.accepted_revision),due=fields.personal_due;
+   return [{id:r.id,version:r.version,title:t.title,label:fields.label,origin:'personal_affair' as const,at:due.kind==='time'?due.at:null,date:due.kind==='date'?due.date:null,timezone:due.timezone,remind_minutes:fields.remind_minutes}];
+  });
+ }
  function exportAll(owner:string){
   return db.prepare('SELECT id FROM affair_instances WHERE owner_id=? ORDER BY created_at,id').all(owner).map(row=>{
    const item=get(owner,String(row.id));
@@ -109,5 +123,5 @@ export function createAffairsStore(db:DatabaseSync,now:()=>number){
    return {...item,history,accepted_templates:[...revisions].sort((a,b)=>a-b).map(rev=>revision(item.template_id,rev))};
   });
  }
- return {publish,retire,catalog,template,list,get,create,update,acceptRevision,remove,exportAll};
+ return {publish,retire,catalog,template,list,get,create,update,acceptRevision,remove,schedule,exportAll};
 }

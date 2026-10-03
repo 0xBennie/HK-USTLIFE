@@ -1,6 +1,6 @@
 # Important affairs API — implemented foundation
 
-2026-10-04; X05 / partial AC19. Local persistent backend only. No official result adapter, approved school write access, native affair screen, personal date/reminder projection or reviewed live template seeds are delivered by this unit. Empty public catalogue is intentional until content is reviewed and published. Tests use labelled fixtures in temporary databases.
+2026-10-04; X05 / partial AC19. Local persistent backend only. No official result adapter, approved school write access, native affair screen, calendar/reminder feed integration or reviewed live template seeds are delivered by this unit. Empty public catalogue is intentional until content is reviewed and published. Tests use labelled fixtures in temporary databases.
 
 ## Routes
 
@@ -18,7 +18,9 @@ Base `/api/v1`; standard `data/meta` and structured errors. Private routes deriv
 | DELETE | /me/affairs/:id | Body {version}; deletes instance and acceptance history. Does not withdraw anything at school. |
 | GET | /me/export | Existing v5 additive `affairs` array: private instances, acceptance history and full accepted_templates snapshots; other owners excluded. |
 
-Editable fields: label(max120), note(max2000), step_checks(known step IDs→boolean), submission(not_reported/self_reported), self_reported_outcome(unknown/received/approved/rejected/completed), archived(boolean). Step updates merge with existing checks. Empty patch and unknown step rejected. Read-only `reported_at` records the server time when submission changes to self_reported; `outcome_recorded_at` records when a nonunknown personal outcome changes. Unrelated edits or repeated same-state patches preserve these times. Clearing submission/outcome clears its respective timestamp. These are App recording times, never official submission/approval times. Migration17 leaves legacy timestamps null rather than inventing them. Client timestamp overrides are rejected. personal_due and reminder fields remain unimplemented.
+Editable fields: label(max120), note(max2000), step_checks(known step IDs→boolean), submission(not_reported/self_reported), self_reported_outcome(unknown/received/approved/rejected/completed), archived(boolean). Step updates merge with existing checks. Empty patch and unknown step rejected. Read-only `reported_at` records the server time when submission changes to self_reported; `outcome_recorded_at` records when a nonunknown personal outcome changes. Unrelated edits or repeated same-state patches preserve these times. Clearing submission/outcome clears its respective timestamp. These are App recording times, never official submission/approval times. Migration17 leaves legacy timestamps null rather than inventing them. Client timestamp overrides are rejected. `personal_due` now accepts null, {kind:"date",date:"YYYY-MM-DD",timezone:"Asia/Hong_Kong"}, or {kind:"time",at:ISO8601-with-offset,timezone:"Asia/Hong_Kong"}. Invalid dates are rejected; precise times normalize to UTC. `calendar_saved` defaults false; `remind_minutes` defaults null and permits0–10080 only when a precise time is explicitly saved to calendar. Clearing personal_due clears consent and reminder; unsaving clears reminder; changing to date-only clears a prior reminder. Explicit incompatible reminder input is rejected. Version acceptance does not overwrite these personal fields.
+
+Store `schedule(owner)` projects active explicitly saved instances using stable affair IDs. Archived/deleted records disappear; unarchive restores prior schedule preferences. Projection contains date OR exact time, bilingual title, user label, personal_affair origin and reminder preference. **It is not yet connected to /me/calendar, /me/reminders or the native scheduler**, because an affair needs its own detail target before delivery can be enabled. No current claim of OS cancellation/delivery is made from these projection tests.
 
 `official_status` is always `{status:"unknown",reason:"not_connected"}`. There is no member-writable official field. A self_reported_outcome of approved/completed remains personal input, not evidence of approval. It never changes official_status.
 
@@ -40,4 +42,4 @@ Store-level `publish`/`retire` functions are trusted internal functions, not mem
 
 Migration17 adds nullable recording timestamps. Migration16 creates public immutable revisions, private owner-cascaded instances, acceptance history and receipts. Account deletion removes private data while retaining public templates. No school credentials, card numbers or receipt uploads are supported.
 
-Next: source filters, personal dates/reminders, reviewed templates, maintenance audit controls, native UI and iOS acceptance. Current foundation is not full X05 completion.
+Next: source filters, calendar/reminder feed and native integration, reviewed templates, maintenance audit controls, native UI and iOS acceptance. Current foundation is not full X05 completion.
