@@ -22,3 +22,7 @@ Native: ActivityDetail → existing visible organizer/comment author → Reconne
 ## Contact-card safety entry
 
 `wLxKM` adds report/block state. Native `ContactCardScreen` uses the shared `SafetyActions` with exact `peer.report_id`; absence of a card leaves block available. Report drafts and unknown writes participate in navigation guards; retry retains the original payload and idempotency key. Validated receipts, not HTTP success alone, trigger success feedback. Card editor Back checks child safety guards. Pen screenshot reviewed and saved; rendered/native gesture acceptance remains pending.
+
+## Inbox entry
+
+`ubX08` is the mutual-choice notification design state. Native Inbox opens `ReconnectionScreen` with the exact activity/peer and a Back-to-messages label; it reloads consent, then refreshes Inbox on return. Existing stale list protection remains. No remote push or native runtime acceptance is implied.

@@ -30,6 +30,7 @@ export function createReconnections(db:DatabaseSync,now:()=>number){
  function set(owner:string,activity:string,target:string,raw:unknown){
   const body=input.parse(raw);
   return transaction(db,()=>{
+   const wasMutual=get(owner,activity,target).mutual;
    const old=row(owner,activity,target);
    if((old?.version??0)!==body.version)throw new ApiError(409,'VERSION_CONFLICT','Read your current choice before changing it.');
    const expiry=eligible(owner,activity,target);
@@ -37,8 +38,16 @@ export function createReconnections(db:DatabaseSync,now:()=>number){
    if(!old&&!body.willing)return get(owner,activity,target);
    if(!old&&Number(db.prepare('SELECT COUNT(*) AS n FROM reconnection_intents WHERE owner_id=?').get(owner)!.n)>=500)throw new ApiError(409,'INTENT_LIMIT','Private intent limit reached.');
    db.prepare(`INSERT INTO reconnection_intents VALUES(?,?,?,?,1,?,?) ON CONFLICT(owner_id,target_id,activity_id) DO UPDATE SET willing=excluded.willing,version=version+1,updated_at=excluded.updated_at,expires_at=excluded.expires_at`).run(owner,target,activity,body.willing?1:0,now(),expiry??old!.expires_at);
-   return get(owner,activity,target);
+   const result=get(owner,activity,target);
+   if(result.mutual&&!wasMutual){
+    for(const [recipient,peer] of [[owner,target],[target,owner]])db.prepare("INSERT OR IGNORE INTO notifications(owner_id,activity_id,kind,created_at,reconnection_target) VALUES(?,?,'reconnection_mutual',?,?)").run(recipient,activity,now(),peer);
+   }
+   return result;
   });
+ }
+ function purgeNotices(owner?:string){
+  const notices=db.prepare("SELECT id,owner_id,activity_id,reconnection_target FROM notifications WHERE kind='reconnection_mutual'"+(owner?' AND owner_id=?':'')).all(...(owner?[owner]:[]));
+  for(const n of notices)if(!n.activity_id||!n.reconnection_target||!get(String(n.owner_id),String(n.activity_id),String(n.reconnection_target)).mutual)db.prepare('DELETE FROM notifications WHERE id=?').run(Number(n.id));
  }
  function list(owner:string){return (db.prepare('SELECT activity_id,target_id FROM reconnection_intents WHERE owner_id=? ORDER BY updated_at DESC,activity_id,target_id LIMIT 500').all(owner) as {activity_id:string;target_id:string}[]).map(r=>get(owner,r.activity_id,r.target_id));}
  type Card={id:string;text:string;version:number;own_consent:number;peer_consent:number};
@@ -70,5 +79,5 @@ export function createReconnections(db:DatabaseSync,now:()=>number){
  }
  function exportCards(owner:string){purgeExpiredCards();return db.prepare('SELECT activity_id,target_id,text,version FROM reconnection_cards WHERE owner_id=? ORDER BY activity_id,target_id').all(owner);}
  purgeExpiredCards();
- return {get,set,list,cards,saveCard,exportCards,purgeExpiredCards};
+ return {get,set,list,cards,saveCard,exportCards,purgeExpiredCards,purgeNotices};
 }

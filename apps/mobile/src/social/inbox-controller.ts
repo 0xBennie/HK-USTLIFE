@@ -15,6 +15,7 @@ function pageValid(page:InboxPage,before?:number){
  let previous=before??Number.MAX_SAFE_INTEGER;
  for(const item of page.items){
   if(!item||!integer(item.id)||item.id===0||item.id>=previous||!timestamp(item.created_at)||!(item.read_at===null||timestamp(item.read_at)))return false;
+  if(item.kind==='reconnection_mutual'&&(!item.reconnection||typeof item.reconnection.activity_id!=='string'||typeof item.reconnection.target_id!=='string'||typeof item.reconnection.display_name!=='string'))return false;
   previous=item.id;
  }
  return page.next_cursor===null||page.items.length>0&&page.next_cursor===previous;

@@ -79,3 +79,15 @@ it('retains unexpired cards and clears both directions at expiry',()=>{
  expect(store.exportCards('b')[0]).toMatchObject({text:'',version:2});
  expect(store.cards('a','event','b')).toMatchObject({mine:{text:'',version:2},peer:null});
 });
+it('notifies only after mutual consent and removes notices on withdrawal, block and expiry',()=>{
+ const notices=()=>db.prepare("SELECT owner_id,reconnection_target FROM notifications WHERE kind='reconnection_mutual'").all();
+ store.set('a','event','b',{version:0,willing:true,participated:true});expect(notices()).toEqual([]);
+ store.set('b','event','a',{version:0,willing:true,participated:true});expect(notices()).toHaveLength(2);
+ expect(notices().map(n=>n.owner_id).sort()).toEqual(['a','b']);
+ store.set('b','event','a',{version:1,willing:false,participated:false});expect(notices()).toEqual([]);
+ store.set('b','event','a',{version:2,willing:true,participated:true});expect(notices()).toHaveLength(2);
+ db.prepare("INSERT INTO user_blocks VALUES('b','a',?)").run(clock);expect(notices()).toEqual([]);
+ db.prepare('DELETE FROM user_blocks').run();expect(notices()).toEqual([]);
+ store.set('a','event','b',{version:2,willing:true,participated:true});store.set('b','event','a',{version:4,willing:true,participated:true});
+ expect(notices()).toHaveLength(2);clock=900000+7*86400000;store.purgeNotices();expect(notices()).toEqual([]);
+});

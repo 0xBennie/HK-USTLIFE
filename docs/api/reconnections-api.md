@@ -49,3 +49,11 @@ Use the existing authenticated `POST /api/v1/reports` with an idempotency key an
 Admin review reads the exact reported version, not a later edit. `hide_content` clears that card's text and increments its version; it does not cancel the activity. If the card changed, expired or was removed, content is null and destructive resolution returns 410; dismissal remains available. Existing author restriction and audit apply. No private contact snapshot is separately retained: after removal/version change this workflow cannot review its former body. Reports may themselves contain user-written details, governed by existing report/export/deletion rules.
 
 Migration 14 adds stable opaque card IDs and extends report targets while preserving existing report/audit rows. Native report/block controls for contact cards are not yet wired in this unit; no rendered administrator or iOS acceptance is claimed.
+
+## In-app mutual-choice notifications
+
+Migration 15 adds a private reconnection target to existing notifications and one current notice per owner/activity/peer. A transition from non-mutual to mutual consent creates one notice for each participant, atomically with the consent update. Unilateral intent creates none. No email, push or external message is sent.
+
+`GET /me/notifications` includes kind `reconnection_mutual` with `reconnection: {activity_id,target_id,display_name}` only after current mutual eligibility is checked. Native Inbox opens the corresponding choice and reloads consent; returning refreshes Inbox. Notification text asks to check current choice, not to assume a standing invitation. No contact text is included.
+
+Withdrawal/block clears matching notices; inbox read, read-marking, export and the existing periodic sweep remove notices failing current eligibility, including expiry/cancellation. Unread counts are computed after filtering. An old notice can return 404 when marked read. Previously downloaded client content is not remotely erased; stale/deep-linked actions must re-read authorization. This is in-app delivery only. Saved-choice entry for a unilateral choice is still separate outstanding work.

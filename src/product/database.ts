@@ -261,6 +261,13 @@ const migrations = [{ version: 1, sql: `
  DROP TABLE content_reports;
  ALTER TABLE content_reports_v2 RENAME TO content_reports;
  ALTER TABLE moderation_audit_v2 RENAME TO moderation_audit;
+` }, { version: 15, sql: `
+ ALTER TABLE notifications ADD COLUMN reconnection_target TEXT REFERENCES users(id) ON DELETE CASCADE;
+ CREATE UNIQUE INDEX reconnection_notice_pair ON notifications(owner_id,activity_id,reconnection_target) WHERE kind='reconnection_mutual';
+ CREATE TRIGGER clear_reconnection_notices AFTER UPDATE ON reconnection_intents WHEN NEW.willing=0 BEGIN
+  DELETE FROM notifications WHERE kind='reconnection_mutual' AND activity_id=NEW.activity_id
+  AND ((owner_id=NEW.owner_id AND reconnection_target=NEW.target_id) OR (owner_id=NEW.target_id AND reconnection_target=NEW.owner_id));
+ END;
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

@@ -146,3 +146,14 @@ it('preserves existing reports and moderation audit when applying the contact-ca
  const verify=new DatabaseSync(join(dir,'campus.sqlite'));
  try{expect(verify.prepare('SELECT report_id FROM moderation_audit').get()?.report_id).toBe(r.id);expect(verify.prepare('PRAGMA foreign_key_check').all()).toEqual([]);}finally{verify.close();}
 });
+it('exposes mutual notices only to their owners and removes withdrawn notices from unread counts and export',async()=>{
+ const {own,peer}=await sharedContact();
+ const messages=(await call('GET','/me/notifications')).json().data;
+ const notice=messages.items.find((n:{kind:string})=>n.kind==='reconnection_mutual');expect(notice.reconnection.target_id).toBe(aid);
+ const third=(await call('GET','/me/notifications',undefined,b)).json().data;expect(third.items.some((n:{kind:string})=>n.kind==='reconnection_mutual')).toBe(false);
+ await call('PUT',peer,{version:1,willing:false,participated:false},a);
+ const after=(await call('GET','/me/notifications')).json().data;expect(after.items.some((n:{kind:string})=>n.kind==='reconnection_mutual')).toBe(false);expect(after.unread).toBe(messages.unread-1);
+ expect((await call('PATCH',`/me/notifications/${notice.id}/read`,{})).statusCode).toBe(404);
+ const exported=(await call('GET','/me/export')).json().data;expect(exported.social.notifications.some((n:{kind:string})=>n.kind==='reconnection_mutual')).toBe(false);
+ expect((await call('GET',own)).json().data.mutual).toBe(false);
+});

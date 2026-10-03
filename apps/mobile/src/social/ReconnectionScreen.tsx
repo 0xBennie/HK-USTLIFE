@@ -7,7 +7,7 @@ import {palette,styles} from '../theme';
 import type {Language} from '../strings';
 import {ContactCardScreen} from './ContactCardScreen';
 import {ReconnectionController} from './reconnection-controller';
-function ReconnectionChoice({activityId,peer,language,dark,onBack,onContact}:{activityId:string;peer:{id:string;display_name:string};language:Language;dark:boolean;onBack:()=>void;onContact:()=>void}){
+function ReconnectionChoice({activityId,peer,language,dark,onBack,onContact,backLabel}:{activityId:string;peer:{id:string;display_name:string};language:Language;dark:boolean;onBack:()=>void;backLabel?:string;onContact:()=>void}){
  const zh=language==='zh',c=palette[dark?'dark':'light'];
  const controller=useMemo(()=>new ReconnectionController(activityId,peer.id,(p,o)=>session.request(p,o)),[activityId,peer.id]);
  const state=useSyncExternalStore(controller.subscribe,controller.snapshot),v=state.value,busy=state.phase==='saving'||state.phase==='loading';
@@ -15,7 +15,7 @@ function ReconnectionChoice({activityId,peer,language,dark,onBack,onContact}:{ac
  useEffect(()=>{void controller.refresh();},[controller]);
  function consent(){Alert.alert(zh?'确认这次参与与意愿':'Confirm your participation and choice',zh?'我实际参加过这场活动，并愿意再次与这位同学同行。单方选择不通知对方，双方同意不代表已报名新活动。':'I attended this activity and would like to meet this person again. My one-sided choice is private; mutual consent does not book another event.',[{text:zh?'暂时不选':'Not now',style:'cancel'},{text:zh?'我参加过，愿意再次同行':'I attended and would like to meet again',onPress:()=>void controller.choose(true)}]);}
  return <View style={styles.stack}>
-  <Button variant="ghost" isDisabled={busy} onPress={()=>protect(onBack)}>{zh?'返回活动':'Back to activity'}</Button>
+  <Button variant="ghost" isDisabled={busy} onPress={()=>protect(onBack)}>{backLabel??(zh?'返回活动':'Back to activity')}</Button>
   <Text style={[styles.title,{color:c.text}]}>{zh?'再次同行':'Meet again'}</Text>
   <Text style={[styles.heading,{color:c.text}]}>{peer.display_name}</Text>
   <Text style={[styles.body,{color:c.muted}]}>{zh?'这是你自己的私密选择。只有双方都愿意才显示双向同意；不显示对方的单方意愿或拒绝。选择在活动结束后七天到期，可随时撤回。':'This is your private choice. Mutual consent appears only when both agree; unilateral intent or refusal is not shown. Choices expire seven days after the activity and can be withdrawn.'}</Text>
@@ -31,7 +31,7 @@ function ReconnectionChoice({activityId,peer,language,dark,onBack,onContact}:{ac
  </View>;
 }
 
-export function ReconnectionScreen(props:{activityId:string;peer:{id:string;display_name:string};language:Language;dark:boolean;onBack:()=>void}){
+export function ReconnectionScreen(props:{activityId:string;peer:{id:string;display_name:string};language:Language;dark:boolean;onBack:()=>void;backLabel?:string}){
  const [contact,setContact]=useState(false);
  return contact?<ContactCardScreen {...props} onBack={()=>setContact(false)}/>:<ReconnectionChoice {...props} onContact={()=>setContact(true)}/>;
 }
