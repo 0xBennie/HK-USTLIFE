@@ -24,7 +24,8 @@
         {
           "launchMode": "most-recent"
         }
-      ]
+      ],
+      "./plugins/with-ios-scene.cjs"
     ]
   }
 }

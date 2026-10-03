@@ -25,3 +25,25 @@ After build, verify Ruby, OpenSSL and Psych, install the pinned CocoaPods 1.16.2
 ## Runtime
 
 Xcode 27.0 (27A266a) and iOS 27.0 simulator runtime (24A434) were verified on 2026-10-04. The original runtime download completed. The selected development device is iPhone 18 Pro `79EDA71B-E32F-421A-986B-7FA991BB1B0A`. A runtime/device existing is not evidence that Campus compiled or ran.
+
+## Regeneration and Xcode 27 scene support
+
+`apps/mobile/plugins/with-ios-scene.cjs` persists the SDK 57 scene opt-in without editing shared node_modules. It follows Expo's [scene migration guide](https://github.com/expo/fyi/blob/main/ios-scene-lifecycle.md): AppDelegate provides the existing factory, and `EXExpoAppSceneDelegate` owns window creation. The plugin rejects unsupported Expo versions or an unexpected AppDelegate/scene manifest rather than overwriting custom startup code. Remove/review it when adopting SDK 58.
+
+After `expo prebuild --platform ios --no-install` from `apps/mobile`, inspect its output: the CLI may recreate the native directory. Run `../../../scripts/with-ios-toolchain.sh pod install` from `apps/mobile/ios`, then run `scripts/with-ios-toolchain.sh ruby scripts/fix-ios-script-paths.rb` from the repository root. The latter fixes two generated shell invocations that otherwise split paths containing spaces; it patches only recognized scripts in this worktree, never shared dependencies.
+
+Build from repository root:
+
+```sh
+scripts/with-ios-toolchain.sh xcodebuild \
+  -workspace apps/mobile/ios/Campus.xcworkspace -scheme Campus \
+  -configuration Debug -sdk iphonesimulator \
+  -destination id=79EDA71B-E32F-421A-986B-7FA991BB1B0A \
+  -derivedDataPath .local/ios-derived CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- build
+```
+
+For local runtime acceptance use the isolated API at `http://127.0.0.1:4328/api/v1` and Metro at `http://localhost:8087`; Metro currently listens on IPv6 localhost, so substituting `127.0.0.1` for its hostname fails. The Expo manifest may advertise 127.0.0.1 even when opened via localhost. During this acceptance run a task-local TCP bridge listens only on 127.0.0.1:8087 and forwards to [::1]:8087. Keep both bound to loopback; do not expose the development server to the LAN. Use only development fixture accounts. Neither local login nor simulator startup establishes HKUST/SIS/Canvas approval.
+
+Simulator builds must retain Xcode ad-hoc signing (`CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-`). Disabling signing built successfully but omitted simulated keychain entitlements; notifications and SecureStore then fail at runtime. This does not provide physical-device signing or APNs acceptance.
+
+To reproduce the IPv4 bridge after checking no bridge is already listening, run `node scripts/metro-loopback-bridge.cjs 8087`. Keep it running alongside Metro; it does not start or restart Metro. A port-in-use error means inspect the existing listener, not kill it automatically.
