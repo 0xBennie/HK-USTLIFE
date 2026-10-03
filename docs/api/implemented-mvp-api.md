@@ -2,13 +2,15 @@
 
 Updated 2026-10-03. This document describes running account code, separate from the broader proposed `super-app.openapi.json`. Manual learning endpoints are now implemented and documented in [learning API](learning-api.md). ICS import/source management, campus queries/private saves and activity writes are also implemented; see [calendar import API](calendar-import-api.md), [campus API](campus-api.md), and [social API](social-api.md). Campus wall, reports, blocks and restricted moderation APIs are implemented in [wall/governance API](wall-governance-api.md); the restricted web UI remains pending.
 
+School source persistence and recovery are now implemented at the normalized-adapter boundary; authenticated cache/annotation/revoke endpoints are documented in [school sync foundation](school-sync-foundation.md). No upstream school adapter or approved contract is configured, and school records are not yet projected into native learning views or reminders.
+
 ## Local transport and account state
 
 Base: `http://127.0.0.1:4318/api/v1`. All responses use `Cache-Control: no-store`. Native requests use `Authorization: Bearer <opaque token>`; do not pass tokens in URLs. Cookie/CSRF browser sessions from the proposed document are not implemented. A later restricted web layer must use a same-origin server proxy or separately reviewed cookie session implementation.
 
 Successful response: `{data,meta:{request_id,generated_at,mode:"local-development"}}`. Error: `{error:{code,message,retryable,request_id}}`. Input schemas reject unknown fields. Maximum request body 32 KiB. Local host header, remote IP and supplied browser Origin are checked. No HTTP access to mail files. Local HTTP is simulator-only; external connections require separate approved secure configuration.
 
-Every account is `is_demo:true`; `membership:"unknown"` is immutable from the client. School email suffix does not grant student status. School SSO, Canvas and Outlook report `approval_required`; no external connection is attempted.
+Every account is `is_demo:true`; `membership:"unknown"` is immutable from the client. School email suffix does not grant student status. School SSO, SIS, Canvas and Outlook report `approval_required`; no external connection is attempted.
 
 ## Available routes
 

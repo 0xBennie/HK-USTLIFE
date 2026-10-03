@@ -1,0 +1,50 @@
+{
+  "unit": "school-sync-foundation",
+  "date": "2026-10-03",
+  "worktree": "/Users/bennie/.codex/worktrees/campus-school-sync/All in one HKUST",
+  "branch": "codex/campus-school-sync",
+  "base_commit": "b036e577a9d2769dcd0dbe4bd20e27a3e8c6881c",
+  "validation": {
+    "command": "npm test",
+    "exit_code": 0,
+    "test_files": 52,
+    "tests_passed": 306,
+    "tests_failed": 0,
+    "new_tests": 17,
+    "includes_typescript_build": true,
+    "diff_check": "passed",
+    "log": ".local/school-sync/accepted-tests.log",
+    "warnings": [
+      "Node 22 experimental SQLite warning"
+    ]
+  },
+  "evidence_kind": "real SQLite and Fastify, synthetic normalized provider fixtures; no school API or iOS runtime evidence",
+  "implemented": [
+    "approved-contract gate",
+    "separate SIS/Canvas coverage",
+    "scope snapshot commit",
+    "personal annotation separation",
+    "revoke/reconnect lease invalidation",
+    "auth-expiry gate",
+    "cache choice",
+    "owner-only APIs",
+    "account export and deletion"
+  ],
+  "not_implemented": [
+    "actual OIDC/SIS/Canvas transport",
+    "school token custody and refresh",
+    "native source presentation",
+    "calendar/reminder projection",
+    "actual iOS acceptance",
+    "R1.1 mechanisms"
+  ],
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "first_launch_check_exit": 0,
+    "simulator_runtimes": 0,
+    "eas_identity": "Not logged in",
+    "global_changes": false
+  },
+  "goal_status": "active; development acceptance incomplete",
+  "review": "self-review only; user forbids subagents"
+}

@@ -184,6 +184,35 @@ const migrations = [{ version: 1, sql: `
     action TEXT NOT NULL, reason TEXT NOT NULL, fields_json TEXT NOT NULL,
     before_version INTEGER NOT NULL, after_version INTEGER NOT NULL, created_at INTEGER NOT NULL
   );
+` }, { version: 11, sql: `
+  CREATE TABLE school_connections (
+    owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider TEXT NOT NULL CHECK(provider IN ('sis','canvas')), subject TEXT NOT NULL,
+    consent_version TEXT NOT NULL, approval_reference TEXT NOT NULL,
+    generation INTEGER NOT NULL, version INTEGER NOT NULL, revoked_at INTEGER,
+    PRIMARY KEY(owner_id,provider)
+  );
+  CREATE TABLE school_scopes (
+    owner_id TEXT NOT NULL, provider TEXT NOT NULL, scope_id TEXT NOT NULL,
+    state TEXT NOT NULL, last_attempt_at INTEGER, last_success_at INTEGER,
+    error_code TEXT, active_run TEXT, lease_until INTEGER,
+    PRIMARY KEY(owner_id,provider,scope_id),
+    FOREIGN KEY(owner_id,provider) REFERENCES school_connections(owner_id,provider) ON DELETE CASCADE
+  );
+  CREATE TABLE school_records (
+    id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, provider TEXT NOT NULL, scope_id TEXT NOT NULL,
+    remote_key TEXT NOT NULL, payload TEXT NOT NULL CHECK(json_valid(payload)),
+    source_state TEXT NOT NULL CHECK(source_state IN ('active','cancelled','removed')),
+    source_updated_at TEXT, source_seen_at INTEGER NOT NULL, version INTEGER NOT NULL,
+    UNIQUE(owner_id,provider,scope_id,remote_key), UNIQUE(owner_id,id),
+    FOREIGN KEY(owner_id,provider,scope_id) REFERENCES school_scopes(owner_id,provider,scope_id) ON DELETE CASCADE
+  );
+  CREATE INDEX school_records_owner ON school_records(owner_id,id);
+  CREATE TABLE school_personal (
+    record_id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, notes TEXT NOT NULL,
+    completed INTEGER NOT NULL CHECK(completed IN (0,1)), remind_minutes INTEGER, version INTEGER NOT NULL,
+    FOREIGN KEY(owner_id,record_id) REFERENCES school_records(owner_id,id) ON DELETE CASCADE
+  );
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

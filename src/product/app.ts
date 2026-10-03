@@ -1,3 +1,5 @@
+import { createSchoolStore } from './school/store.js';
+import { registerSchoolRoutes } from './school/routes.js';
 import {registerActivityMaintenanceRoutes} from './social/maintenance-routes.js';
 import {createShuttleStore} from './campus/shuttle-store.js';
 import {registerShuttleMaintenanceRoutes} from './campus/shuttle-maintenance-routes.js';
@@ -30,7 +32,12 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   if (process.env.NODE_ENV === 'production') throw new Error('Local development mail is forbidden in production.');
   const now = options.now ?? Date.now;
   const db = openDatabase(options.dataDir);
-  const auth = createAuth(db, options.dataDir, now);
+  // No school approval or transport is configured by the local development app.
+  const school = createSchoolStore(db,now);
+  const auth = createAuth(db, options.dataDir, now, id=>{
+    const connections=school.status(id);
+    return {sis:connections[0].state,canvas:connections[1].state};
+  });
   const learning = createLearningStore(db,now);
   const calendars = createCalendarStore(db,now);
   const directory = createDirectoryStore(db,now);
@@ -60,6 +67,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   registerPublicTransitRoutes(app,createPublicTransit({now,fetch:options.transitFetch}),ok);
   registerMaintenanceRoutes(app,maintenance,directory,requireAdmin,ok);
   registerDirectoryRoutes(app,directory,request=>auth.requireUser(request.headers.authorization).id,ok);
+  registerSchoolRoutes(app,school,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerLearningRoutes(app,learning,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerCalendarRoutes(app,calendars,request=>auth.requireUser(request.headers.authorization).id,ok);
   app.get('/api/v1/me/calendar',async request=>{
@@ -101,7 +109,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   });
   app.get('/api/v1/me/export', async request => {
     const user = auth.requireUser(request.headers.authorization);
-    return ok({ version: 5, governance:governance.exportAll(user.id), wall:wall.exportAll(user.id), social:social.exportAll(user.id), campus:directory.exportAll(user.id), calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
+    return ok({ version: 5, school:school.exportAll(user.id), governance:governance.exportAll(user.id), wall:wall.exportAll(user.id), social:social.exportAll(user.id), campus:directory.exportAll(user.id), calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
   });
   app.delete('/api/v1/me', async request => {
     const user = auth.requireUser(request.headers.authorization);

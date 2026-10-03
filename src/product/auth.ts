@@ -9,7 +9,7 @@ type Challenge = { id: string; email: string; code_hash: string; attempts: numbe
 export type Principal = { id: string; email: string; role: 'admin' | 'member'; signedInAt: number };
 const digest = (s: string) => createHash('sha256').update(s).digest('hex');
 
-export function createAuth(db: DatabaseSync, dataDir: string, now: () => number) {
+export function createAuth(db: DatabaseSync, dataDir: string, now: () => number, schoolStates: (owner:string)=>{sis:string;canvas:string} = () => ({sis:'approval_required',canvas:'approval_required'})) {
   const secretPath = join(dataDir, 'auth-secret');
   if (!existsSync(secretPath)) writeFileSync(secretPath, randomBytes(32), { mode: 0o600, flag: 'wx' });
   chmodSync(secretPath, 0o600);
@@ -97,7 +97,7 @@ export function createAuth(db: DatabaseSync, dataDir: string, now: () => number)
   function profile(id: string) {
     const row = db.prepare('SELECT id,email,display_name,language,role,membership,is_demo,created_at FROM users WHERE id=?').get(id)!;
     return { ...row, is_demo: row.is_demo === 1, created_at: new Date(Number(row.created_at)).toISOString(),
-      connections: { school_sso: 'approval_required', canvas: 'approval_required', outlook: 'approval_required' } };
+      connections: { school_sso: 'approval_required', ...schoolStates(id), outlook: 'approval_required' } };
   }
   function logout(authorization: string) { db.prepare('DELETE FROM sessions WHERE token_hash=?').run(digest(authorization.slice(7))); }
   function deleteAccount(user: Principal, beforeDelete?: () => void) {
