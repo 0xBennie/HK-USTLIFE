@@ -1,3 +1,5 @@
+import {createReconnections} from './social/reconnections.js';
+import {registerReconnectionRoutes} from './social/reconnection-routes.js';
 import {projectSchoolCalendar} from './school/projection.js';
 import type {Contracts} from './school/schemas.js';
 import { createSchoolStore } from './school/store.js';
@@ -45,6 +47,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   const directory = createDirectoryStore(db,now);
   const wall=createWallStore(db,now);
   const social=createSocialStore(db,now);
+  const reconnections=createReconnections(db,now);
   const governance=createGovernanceStore(db,now,wall,social);
   const app = Fastify({ logger: false, bodyLimit: 32_768, trustProxy: false });
   app.addHook('onClose', async () => { db.close(); });
@@ -59,6 +62,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   const ok = (data: unknown, requestId: string) => ({ data, meta: { request_id: requestId, generated_at: new Date(now()).toISOString(), mode: 'local-development' } });
   registerGovernanceRoutes(app,governance,request=>auth.requireUser(request.headers.authorization).id,request=>{const user=auth.requireUser(request.headers.authorization);if(user.role!=='admin')throw new ApiError(403,'ADMIN_REQUIRED','Administrator access required.');return user.id;},ok);
   registerWallRoutes(app,wall,request=>auth.requireUser(request.headers.authorization).id,ok);
+  registerReconnectionRoutes(app,reconnections,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerSocialRoutes(app,social,request=>auth.requireUser(request.headers.authorization).id,ok);
   const requireAdmin=(request:import('fastify').FastifyRequest)=>{const user=auth.requireUser(request.headers.authorization);if(user.role!=='admin')throw new ApiError(403,'ADMIN_REQUIRED','Administrator access required.');return user.id;};
   const maintenance=createMaintenanceStore(db,directory,now,options.sourceFetch);
@@ -113,7 +117,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   });
   app.get('/api/v1/me/export', async request => {
     const user = auth.requireUser(request.headers.authorization);
-    return ok({ version: 5, school:school.exportAll(user.id), governance:governance.exportAll(user.id), wall:wall.exportAll(user.id), social:social.exportAll(user.id), campus:directory.exportAll(user.id), calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
+    return ok({ version: 5, reconnections:reconnections.list(user.id), school:school.exportAll(user.id), governance:governance.exportAll(user.id), wall:wall.exportAll(user.id), social:social.exportAll(user.id), campus:directory.exportAll(user.id), calendars: calendars.exportAll(user.id), profile: auth.profile(user.id), learning: learning.exportAll(user.id), exported_at: new Date(now()).toISOString() }, request.id);
   });
   app.delete('/api/v1/me', async request => {
     const user = auth.requireUser(request.headers.authorization);

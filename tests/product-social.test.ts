@@ -131,3 +131,19 @@ it('places a withdrawn and rejoining user at the back of the FIFO waitlist',asyn
  await call('POST',`/activities/${x.id}/withdraw`,{participation_version:1},a);
  expect((await detail(x.id,c)).mine.participation.status).toBe('confirmed');expect((await detail(x.id,b)).mine.participation).toMatchObject({status:'waitlisted',waitlist_position:1});
 });
+
+it('keeps reconnection intent private across authenticated API users until both consent after the event',async()=>{
+ const event=await create({capacity:2,starts_at:'2026-10-03T00:10:00Z',ends_at:'2026-10-03T00:20:00Z'});const joined=await call('POST',`/activities/${event.id}/join`,{activity_version:event.version},a);expect(joined.statusCode,joined.body).toBe(200);
+ const ownerId=(await call('GET','/me')).json().data.id,peerId=(await call('GET','/me',undefined,a)).json().data.id;
+ const path=`/activities/${event.id}/reconnections/${peerId}`;
+ expect((await call('PUT',path,{version:0,willing:true,participated:true})).statusCode).toBe(404);
+ clock=Date.parse('2026-10-03T00:25:00Z');
+ const intent=await call('PUT',path,{version:0,willing:true,participated:true});expect(intent.statusCode,intent.body).toBe(200);expect(intent.json().data).toMatchObject({willing:true,mutual:false});
+ expect((await call('GET','/me/reconnections',undefined,a)).json().data.items).toEqual([]);
+ const reverse=`/activities/${event.id}/reconnections/${ownerId}`;
+ expect((await call('GET',reverse,undefined,a)).json().data).toMatchObject({willing:false,version:0,mutual:false});
+ expect((await call('PUT',reverse,{version:0,willing:true,participated:true},a)).json().data.mutual).toBe(true);
+ expect((await call('GET',path)).json().data.mutual).toBe(true);
+ expect((await call('GET','/me/reconnections',undefined,b)).json().data.items).toEqual([]);
+ expect((await call('GET','/me/export',undefined,a)).json().data.reconnections).toHaveLength(1);
+});

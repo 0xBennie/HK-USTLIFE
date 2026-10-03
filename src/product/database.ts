@@ -213,6 +213,19 @@ const migrations = [{ version: 1, sql: `
     completed INTEGER NOT NULL CHECK(completed IN (0,1)), remind_minutes INTEGER, version INTEGER NOT NULL,
     FOREIGN KEY(owner_id,record_id) REFERENCES school_records(owner_id,id) ON DELETE CASCADE
   );
+` }, { version: 12, sql: `
+ CREATE TABLE reconnection_intents (
+  owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  target_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  activity_id TEXT NOT NULL REFERENCES activities(id) ON DELETE CASCADE,
+  willing INTEGER NOT NULL CHECK(willing IN (0,1)),
+  version INTEGER NOT NULL, updated_at INTEGER NOT NULL, expires_at INTEGER NOT NULL,
+  PRIMARY KEY(owner_id,target_id,activity_id), CHECK(owner_id!=target_id)
+ );
+ CREATE TRIGGER revoke_reconnections_on_block AFTER INSERT ON user_blocks BEGIN
+  UPDATE reconnection_intents SET willing=0,version=version+1,updated_at=NEW.created_at
+  WHERE (owner_id=NEW.owner_id AND target_id=NEW.target_id) OR (owner_id=NEW.target_id AND target_id=NEW.owner_id);
+ END;
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {
