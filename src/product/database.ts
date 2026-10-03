@@ -226,6 +226,18 @@ const migrations = [{ version: 1, sql: `
   UPDATE reconnection_intents SET willing=0,version=version+1,updated_at=NEW.created_at
   WHERE (owner_id=NEW.owner_id AND target_id=NEW.target_id) OR (owner_id=NEW.target_id AND target_id=NEW.owner_id);
  END;
+` }, { version: 13, sql: `
+ CREATE TABLE reconnection_cards (
+  owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  target_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  activity_id TEXT NOT NULL REFERENCES activities(id) ON DELETE CASCADE,
+  text TEXT NOT NULL, version INTEGER NOT NULL, own_consent INTEGER NOT NULL, peer_consent INTEGER NOT NULL,
+  PRIMARY KEY(owner_id,target_id,activity_id)
+ );
+ CREATE TRIGGER clear_reconnection_cards AFTER UPDATE ON reconnection_intents BEGIN
+  UPDATE reconnection_cards SET text='',version=version+1
+  WHERE activity_id=NEW.activity_id AND ((owner_id=NEW.owner_id AND target_id=NEW.target_id) OR (owner_id=NEW.target_id AND target_id=NEW.owner_id));
+ END;
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

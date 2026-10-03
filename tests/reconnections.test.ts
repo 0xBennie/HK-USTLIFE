@@ -29,3 +29,31 @@ it('rejects stale writes, hides blocked matches and cascades account deletion',(
  db.prepare("DELETE FROM user_blocks").run();expect(store.get('a','event','b')).toMatchObject({mutual:false,willing:false});
  db.prepare("DELETE FROM users WHERE id='b'").run();expect(store.list('a')).toEqual([]);
 });
+it('shares only a voluntarily supplied contact card after mutual consent, never through someone else export',()=>{
+ store.set('a','event','b',{version:0,willing:true,participated:true});
+ expect(()=>store.saveCard('a','event','b',{version:0,text:'Signal: alice'})).toThrow();
+ store.set('b','event','a',{version:0,willing:true,participated:true});
+ store.saveCard('a','event','b',{version:0,text:'Signal: alice'});
+ expect(store.cards('b','event','a').peer).toEqual({text:'Signal: alice'});
+ expect(store.cards('c','event','a').peer).toBeNull();expect(store.exportCards('b')).toEqual([]);
+ store.set('b','event','a',{version:1,willing:false,participated:false});
+ expect(store.cards('b','event','a').peer).toBeNull();
+ store.set('b','event','a',{version:2,willing:true,participated:true});
+ expect(store.cards('b','event','a').peer).toBeNull();
+ expect(()=>store.saveCard('a','event','b',{version:1,text:'Old stale edit'})).toThrow();
+});
+it('removes contact visibility on block and expiry and supports explicit owner clearing',()=>{
+ store.set('a','event','b',{version:0,willing:true,participated:true});store.set('b','event','a',{version:0,willing:true,participated:true});
+ store.saveCard('a','event','b',{version:0,text:'Email: chosen@example.test'});
+ const saved=store.cards('a','event','b').mine;store.saveCard('a','event','b',{version:saved.version,text:''});
+ expect(store.cards('b','event','a').peer).toBeNull();
+ store.saveCard('a','event','b',{version:saved.version+1,text:'Signal: chosen'});
+ db.prepare("INSERT INTO user_blocks VALUES('b','a',?)").run(clock);db.prepare('DELETE FROM user_blocks').run();
+ expect(store.cards('b','event','a').peer).toBeNull();expect(store.exportCards('a')[0].text).toBe('');
+});
+
+it('does not return a formerly shared card after expiry or cancellation',()=>{
+ store.set('a','event','b',{version:0,willing:true,participated:true});store.set('b','event','a',{version:0,willing:true,participated:true});store.saveCard('a','event','b',{version:0,text:'Voluntary channel'});
+ clock=900000+7*86400000;expect(store.cards('b','event','a').peer).toBeNull();
+ clock=1000000;db.prepare("UPDATE activities SET status='cancelled' WHERE id='event'").run();expect(store.cards('b','event','a').peer).toBeNull();
+});
