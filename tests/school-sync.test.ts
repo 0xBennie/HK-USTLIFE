@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -30,10 +30,51 @@ describe('school sync with persistent source and personal layers', () => {
     for (const id of ['alice','bob']) db.prepare('INSERT INTO users(id,email,created_at) VALUES(?,?,?)').run(id, `${id}@example.test`, stamp);
     store = createSchoolStore(db, () => stamp, contracts);
   });
-  afterEach(() => { db.close(); rmSync(dir, { recursive: true, force: true }); });
+  afterEach(() => { vi.useRealTimers(); db.close(); rmSync(dir, { recursive: true, force: true }); });
   const grant = (provider: 'sis'|'canvas' = 'sis') => store.grant('alice', provider, { subject: `fixture-${provider}-alice`, consent_version: 'v1' });
   const sync = (records: unknown[], scope = 'fall') => syncSchoolScope(store, 'alice', 'sis', scope, async () => ({ records, next_cursor: null }));
   const records = () => store.list('alice', { limit: 100 }).items;
+
+  it('bounds a hung request, aborts its transport, preserves the snapshot and releases the lease', async () => {
+    grant(); await sync([lecture('1','Original')]); vi.useFakeTimers();
+    let signal:AbortSignal|undefined,finish!:(page:{records:unknown[];next_cursor:null})=>void;
+    let outcome:unknown;
+    const run=syncSchoolScope(store,'alice','sis','fall',(_cursor,context)=>{
+      signal=context?.signal;
+      return new Promise(resolve=>{finish=resolve;});
+    }).then(value=>{outcome=value;});
+    await vi.advanceTimersByTimeAsync(30_001);
+    expect(outcome).toEqual({state:'error'});
+    expect(signal?.aborted).toBe(true);
+    expect(records()[0].payload.title).toBe('Original');
+    finish({records:[lecture('1','Too late')],next_cursor:null});await run;
+    expect(records()[0].payload.title).toBe('Original');
+    await expect(sync([lecture('1','Retry')])).resolves.toMatchObject({state:'connected'});
+  });
+
+  it('aborts a hung adapter after revocation without waiting for it to return', async () => {
+    grant();vi.useFakeTimers();let signal:AbortSignal|undefined,outcome:unknown;
+    const run=syncSchoolScope(store,'alice','sis','fall',(_cursor,context)=>{
+      signal=context?.signal;return new Promise(()=>{});
+    }).then(value=>{outcome=value;});
+    await Promise.resolve();store.revoke('alice','sis',store.status('alice')[0].version,false);
+    await vi.advanceTimersByTimeAsync(251);
+    expect(outcome).toEqual({state:'obsolete'});expect(signal?.aborted).toBe(true);await run;
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('bounds the whole paginated run even when each page stays below the request timeout', async () => {
+    grant();await sync([lecture('old','Original')]);vi.useFakeTimers();let outcome:unknown,page=0;
+    const run=syncSchoolScope(store,'alice','sis','fall',()=>new Promise(resolve=>{
+      const key=String(++page);
+      setTimeout(()=>resolve({records:[lecture(key)],next_cursor:key}),29_000);
+    })).then(value=>{outcome=value;});
+    await vi.advanceTimersByTimeAsync(240_001);
+    expect(outcome).toEqual({state:'partial'});await run;
+    expect(records()).toHaveLength(1);expect(records()[0].payload.title).toBe('Original');
+    expect(store.status('alice')[0].scopes.find(s=>s.id==='fall')?.error_code).toBe('PARTIAL_FETCH');
+    await vi.runAllTimersAsync();expect(records()).toHaveLength(1);
+  });
 
   it('blocks unapproved contracts, wrong consent and public identity assumptions', () => {
     const blocked = createSchoolStore(db, () => stamp);

@@ -51,7 +51,7 @@ The future approved identity adapter calls `grant(owner,provider,{subject,consen
 5. A safe failure code replaces provider exception text. `SchoolAuthorizationExpired` marks reauth_required and blocks further scope reads until a new grant. No provider exception, subject or credentials are returned through status/export.
 6. Revoking/reconnecting or replacing an expired worker invalidates old leases. Old workers cannot commit records or overwrite current status. Process restart preserves accepted data; an expired interrupted lease displays an error and can be retried by the future scheduler.
 
-No upstream token vault, refresh token rotation, HTTP cancellation/timeout adapter or periodic scheduler is shipped in this unit. A real adapter must enforce bounded request timeouts and approved rate limits; the lease prevents late writes but is not a network abort. There are no school credentials stored by this module.
+No upstream token vault, refresh token rotation, concrete HTTP transport or periodic scheduler is shipped. The runner now passes `{signal}` as the adapter second argument: forward it into actual HTTP requests. Each page is bounded to 30 seconds and the whole run to 240 seconds. A 250 ms lease check aborts in-flight work after revocation/obsolescence. Timer cleanup occurs after each page. Even a non-cooperative adapter cannot keep the runner pending or commit a late result; stopping its underlying network activity still requires it to honor the signal. A timeout preserves the prior snapshot and returns error/partial according to accepted page count. Approved rate limits remain the adapter responsibility. There are no school credentials stored by this module.
 
 ## Revocation and deletion
 
