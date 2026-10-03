@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { readFile } from 'node:fs/promises';
+import { readFile, lstat } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { pathToFileURL } from 'node:url';
@@ -29,10 +29,10 @@ const PLACEHOLDER_VALUE =
   /^(?:replace[-_ ]?with|your[-_ ]|example|placeholder|changeme|change[-_ ]me|dummy|fake|sample|test[-_ ]|redacted|none|null|undefined|true|false|""|''|<[^>]*>|\$\{[^}]*\}|\$[A-Z_]+|x{3,}|\.{3}|\*{3,})/i;
 
 const FORBIDDEN_PATHS = [
-  { rule: 'tracked environment file', test: (file) => /(?:^|\/)\.env(?:\.|$)/.test(file) },
-  { rule: 'tracked calendar export', test: (file) => /\.(?:ics|ical|ifb)$/i.test(file) },
-  { rule: 'tracked contact or profile export', test: (file) => /\.(?:vcf|mbox|eml|pst|ost)$/i.test(file) },
-  { rule: 'tracked key material', test: (file) => /\.(?:pem|p12|pfx|jks|keystore|asc)$/i.test(file) },
+  { rule: 'release environment file', test: (file) => /(?:^|\/)\.env(?:\.|$)/.test(file) },
+  { rule: 'release calendar export', test: (file) => /\.(?:ics|ical|ifb)$/i.test(file) },
+  { rule: 'release contact or profile export', test: (file) => /\.(?:vcf|mbox|eml|pst|ost)$/i.test(file) },
+  { rule: 'release key material', test: (file) => /\.(?:pem|p12|pfx|jks|keystore|asc)$/i.test(file) },
 ];
 
 function unquote(value) {
@@ -60,9 +60,9 @@ export async function scanTrackedText(text) {
   return value === '' || PLACEHOLDER_VALUE.test(value) ? [] : ['credential-like assignment'];
 }
 
-async function listTrackedFiles(cwd) {
-  const { stdout } = await run('git', ['ls-files', '-z'], { cwd, maxBuffer: 32 * 1024 * 1024 });
-  return stdout.split('\0').filter(Boolean);
+async function listWorktreeFiles(cwd) {
+  const { stdout } = await run('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], { cwd, maxBuffer: 32 * 1024 * 1024 });
+  return [...new Set(stdout.split('\0').filter(Boolean))];
 }
 
 async function readTextFile(cwd, file) {
@@ -95,11 +95,18 @@ async function auditProduction(cwd) {
  * @returns {Promise<{ ok: boolean, findings: Array<{ file: string, line?: number, rule: string }>, scannedFiles: number, audit: object }>}
  */
 export async function runReleaseCheck({ cwd = process.cwd(), audit = true } = {}) {
-  const files = await listTrackedFiles(cwd);
+  const files = await listWorktreeFiles(cwd);
   const findings = [];
   let scannedFiles = 0;
 
   for (const file of files) {
+    // Check the deliverable working tree, including newly authored files. Ignored
+    // local credentials remain excluded by Git; removed files have no live content.
+    let stat;
+    try { stat = await lstat(path.join(cwd, file)); }
+    catch (error) { if (error.code === 'ENOENT') continue; throw error; }
+    if (stat.isSymbolicLink()) { findings.push({ file, rule: 'symlink requires release review' }); continue; }
+    if (!stat.isFile()) continue;
     for (const { rule, test } of FORBIDDEN_PATHS) {
       if (test(file)) {
         findings.push({ file, rule });
@@ -129,7 +136,7 @@ export async function runReleaseCheck({ cwd = process.cwd(), audit = true } = {}
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const result = await runReleaseCheck();
 
-  console.log(`release-check: scanned ${result.scannedFiles} tracked text files`);
+  console.log(`release-check: scanned ${result.scannedFiles} tracked and nonignored untracked text files`);
   for (const finding of result.findings) {
     console.error(`  ${finding.rule}: ${finding.file}${finding.line ? `:${finding.line}` : ''}`);
   }

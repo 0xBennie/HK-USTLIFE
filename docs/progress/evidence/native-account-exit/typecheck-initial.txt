@@ -1,0 +1,12 @@
+
+> @campus/mobile@0.1.0 typecheck
+> tsc --noEmit
+
+App.tsx(46,12): error TS2339: Property 'proposal' does not exist on type 'ExitPreparation'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path /Users/bennie/HKUST/All in one HKUST/apps/mobile
+npm error workspace @campus/mobile@0.1.0
+npm error location /Users/bennie/HKUST/All in one HKUST/apps/mobile
+npm error command failed
+npm error command sh -c tsc --noEmit

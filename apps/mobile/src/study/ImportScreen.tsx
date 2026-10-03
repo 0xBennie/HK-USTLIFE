@@ -1,8 +1,9 @@
+import {useInputProtection} from '../navigation/InputProtection';
 import {useEffect,useRef,useState} from 'react';
 import {Text,View,Alert} from 'react-native';
-import {Button} from 'heroui-native/button';
-import {Card} from 'heroui-native/card';
-import {Input} from 'heroui-native/input';
+import { Button } from '../ui/Primitives';
+import { Card } from '../ui/Primitives';
+import { Input } from '../ui/Primitives';
 import * as DocumentPicker from 'expo-document-picker';
 import {File,Paths} from 'expo-file-system';
 import {session} from '../runtime';
@@ -21,6 +22,7 @@ export function ImportScreen({language,dark,onBack,onSaved}:{language:Language;d
   const confirmation=useRef<{uids:string[];acknowledge_fingerprints:boolean;resolutions:Record<string,string>}|null>(null);
   const [busy,setBusy]=useState(false),[error,setError]=useState('');
   const content=useRef(''),alive=useRef(true),locked=useRef(false);
+ const protectInput=useInputProtection({source,name,fileName,zone,selected,resolutions,ack},busy,pending,zh);
   async function loadSources() {try {const v=await session.request<Source[]>('/calendar/sources');if(alive.current){setSources(v);setError('');}}catch{if(alive.current)setError(zh?'无法载入已有来源，请重试。':'Could not load existing sources. Retry.');}}
   useEffect(()=>{alive.current=true;void loadSources();return()=>{alive.current=false;content.current='';};},[zh]);
   const reset=()=>{setPreview(null);setSelected([]);setResolutions({});setAck(false);setError('');};
@@ -59,7 +61,7 @@ export function ImportScreen({language,dark,onBack,onSaved}:{language:Language;d
   const missing=preview?.entries.some(e=>selected.includes(e.series.uid)&&e.action==='conflict'&&!resolutions[e.series.uid]);
   const needsAck=preview?.entries.some(e=>selected.includes(e.series.uid)&&e.series.identity==='fingerprint');
   return <View style={styles.stack}>
-    <Button variant="ghost" isDisabled={busy||pending} onPress={onBack}>{zh?'返回':'Back'}</Button>
+    <Button variant="ghost" isDisabled={busy||pending} onPress={()=>protectInput(onBack)}>{zh?'返回':'Back'}</Button>
     <Text style={[styles.title,{color:c.text}]}>{zh?'导入日历':'Import calendar'}</Text>
     {caption(zh?'文件仅用于你的私人安排。导入不代表正式选课或报名；确认前不会写入课表。':'Files are used for your private schedule. Import does not confirm enrolment or participation. Nothing enters your calendar until confirmation.')}
     <Button variant={source===null?'primary':'secondary'} isDisabled={busy||pending} onPress={()=>{setSource(null);reset();}}>{zh?'建立新来源':'New source'}</Button>

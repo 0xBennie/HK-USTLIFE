@@ -159,6 +159,31 @@ const migrations = [{ version: 1, sql: `
     actor_id TEXT REFERENCES users(id) ON DELETE SET NULL, action TEXT NOT NULL, reason TEXT NOT NULL, created_at INTEGER NOT NULL
   );
 
+` }, { version: 8, sql: `
+  ALTER TABLE campus_corrections ADD COLUMN version INTEGER NOT NULL DEFAULT 1;
+  ALTER TABLE campus_corrections ADD COLUMN reviewed_at INTEGER;
+  ALTER TABLE campus_corrections ADD COLUMN reviewer_id TEXT REFERENCES users(id) ON DELETE SET NULL;
+  CREATE TABLE campus_source_checks (
+    id TEXT PRIMARY KEY, target_kind TEXT NOT NULL, target_id TEXT NOT NULL,
+    url TEXT NOT NULL, sha256 TEXT NOT NULL, retrieved_at INTEGER NOT NULL,
+    body TEXT NOT NULL, actor_id TEXT REFERENCES users(id) ON DELETE SET NULL
+  );
+  CREATE TABLE campus_maintenance_audit (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, target_kind TEXT NOT NULL, target_id TEXT NOT NULL,
+    actor_id TEXT REFERENCES users(id) ON DELETE SET NULL, action TEXT NOT NULL,
+    reason TEXT NOT NULL, before_json TEXT NOT NULL, after_json TEXT NOT NULL,
+    source_check_id TEXT REFERENCES campus_source_checks(id), created_at INTEGER NOT NULL
+  );
+` }, { version: 9, sql: `
+  CREATE TABLE shuttle_catalog (id INTEGER PRIMARY KEY CHECK(id=1), revision INTEGER NOT NULL, payload TEXT NOT NULL CHECK(json_valid(payload)));
+` }, { version: 10, sql: `
+  CREATE TABLE activity_maintenance_audit (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    activity_id TEXT REFERENCES activities(id) ON DELETE SET NULL,
+    actor_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+    action TEXT NOT NULL, reason TEXT NOT NULL, fields_json TEXT NOT NULL,
+    before_version INTEGER NOT NULL, after_version INTEGER NOT NULL, created_at INTEGER NOT NULL
+  );
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

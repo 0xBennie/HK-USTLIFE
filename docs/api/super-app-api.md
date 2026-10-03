@@ -1,11 +1,13 @@
 # 香港校园与社交 Super App：API 文档
 
-> 实现状态更新（2026-10-03）：本文及 OpenAPI 是完整拟议合同。当前已运行的原生账户 API、Bearer 会话和本地开发限制见 [实际 MVP API](implemented-mvp-api.md)，不能把下文全部端点视为已实现。
+> 实现状态更新（2026-10-03）：本文及 OpenAPI 是完整拟议合同。当前已运行的原生账户 API、Bearer 会话和本地开发限制见 [实际 MVP API](implemented-mvp-api.md)，校园来源核对、地点编辑及纠错处理见 [校园维护 API](campus-maintenance-api.md)，不能把下文全部端点视为已实现。
 
-版本：0.1，2026-10-02。本文是统一接口设计及接入说明，重点展开学生登录和校巴时间。**本产品 `/api/v1` 接口尚未实施；外部接口可读取、文档合同通过、规则样例通过、真实产品通过，是四种不同结果。**
+版本：0.1，2026-10-02。本文是统一接口设计及接入说明，重点展开学生登录和校巴时间。**下文为初始拟议合同；已实施子集以以上实际 API 文档为准。外部接口可读取、文档合同通过、规则样例通过、真实产品通过，是四种不同结果。**
 
+- 已实现的校巴时刻与假期维护：[接口与验证](shuttle-maintenance-api.md)。
 - 机器可读合同：[OpenAPI 3.1](super-app.openapi.json)。所有产品操作均标记 `x-implementation-status: planned`，不能拿本文件当作现有服务器地址。
 - 数据源完整调查：[来源、字段与权限](../research/2026-10-02-super-app-data-and-api-feasibility.md)。
+- 2026-10-03主流程更新：[HKUST账号登录与SIS正式课表接入](hkust-sis-integration.md)。目标为学校登录后自动同步正式课表；SSO与SIS权限分别申请，目前均未接通，ICS仅为备用。
 - 本轮测试：[结果与限制](test-report-2026-10-02.md)。测试结果文件与复跑方式见该报告。
 - 范围更新：用户已将参考网站全部功能纳入[长期路线图](../superpowers/specs/2026-10-02-bnbu-full-feature-roadmap.md)。该文件第 5 节登记原生身份、邮件读写、作业提交、成绩/信息卡、跨端及 AI 的合同增补；当前 OpenAPI 0.1 尚未覆盖，原测试结果不适用于这些新增能力。
 
@@ -208,4 +210,9 @@ npm test
 
 前两项使用当前环境已有的 Python `jsonschema`、`certifi`、`beautifulsoup4`；不需要学校凭证，不发送邮件，不创建外部账户。探测结果为执行时快照，写入 `docs/api/test-results/`，网络失败会在报告中明确失败并返回非零状态；机构未批准项列为 blocked。
 
-本轮交付为 API 文档、OpenAPI 合同、验证脚本和真实测试记录。应用认证服务、学校接入和新交通产品端点未实施。下一步按已批准的子模块设计与实施计划，先交付账户/个人安排或公共交通，再用同一合同做真实服务验收。
+上述结论记录的是最初 API 研究阶段。2026-10-03 已实现本地开发认证、个人安排、ICS、校园交通与目录、活动/校园墙及治理端点；实际可调用合同以 [implemented-mvp-api.md](implemented-mvp-api.md) 及其模块链接为准。本文件和早期 OpenAPI 仍包含规划能力，不能视为全部已接入。学校私有连接、正式邮件与原生 iOS 运行验收仍未完成；当前逐项状态见 [首版验收清单](../progress/2026-10-03-mvp-acceptance-matrix.md)。
+
+
+## Implemented local reminder projection
+
+Authenticated `GET /api/v1/me/reminders` and the native local scheduler are described in [reminders-api.md](reminders-api.md). This includes permission, per-account enablement, cancellation, bounded scheduling, failure behavior and evidence. Actual iOS delivery acceptance remains pending.

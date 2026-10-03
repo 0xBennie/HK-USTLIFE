@@ -1,41 +1,8 @@
-import type { Metadata, Viewport } from 'next';
+import type {Metadata,Viewport} from 'next';
 import Link from 'next/link';
-
+import {Suspense} from 'react';
+import {SiteHeader} from '../components/site-header';
 import './globals.css';
-
-export const metadata: Metadata = {
-  title: { default: 'HKUST, less scattered', template: '%s · HKUST Skills Hub' },
-  description: 'A source-grounded Clear Water Bay student guide, skills catalogue and public MCP.',
-};
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  themeColor: '#073763',
-};
-
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="en">
-      <body>
-        <header className="site-header">
-          <Link className="brand" href="/" aria-label="HKUST Skills Hub home">
-            <span className="brand-mark" aria-hidden="true">HK</span>
-            <span><strong>HKUST</strong><small>Clear Water Bay field guide</small></span>
-          </Link>
-          <nav aria-label="Main navigation">
-            <Link href="/start">Start</Link>
-            <Link href="/plan">Plan</Link>
-            <Link href="/skills">Skills</Link>
-            <Link href="/sources">Sources</Link>
-          </nav>
-        </header>
-        <main>{children}</main>
-        <footer className="site-footer">
-          <p>Clear Water Bay only. Public facts link to their owner; your private information stays with you.</p>
-          <Link href="/connect">Data &amp; account boundary</Link>
-        </footer>
-      </body>
-    </html>
-  );
-}
+export const metadata:Metadata={title:{default:'HKUST · 学习，也好好生活',template:'%s · HKUST Campus'},description:'Learning plans, campus information and low-pressure activities. Independent local development preview.',robots:{index:false,follow:false}};
+export const viewport:Viewport={width:'device-width',initialScale:1,themeColor:'#F5F5F7'};
+export default function RootLayout({children}:Readonly<{children:React.ReactNode}>){return <html lang="zh-Hans"><body><a className="campus-skip" href="#main-content">跳到内容 / Skip to content</a><Suspense fallback={<header className="campus-header"><Link href="/">HKUST Campus</Link></header>}><SiteHeader/></Suspense><main id="main-content">{children}</main><footer className="campus-footer"><p>独立学生产品 · 本地开发预览<br/><span lang="en">Independent student project. Local development preview.</span></p><nav aria-label="Footer"><Link href="/privacy">隐私 / Privacy</Link><Link href="/support">帮助 / Help</Link><Link href="/start">校园指南 / Guide</Link><Link href="/admin">管理 / Admin</Link></nav></footer></body></html>;}

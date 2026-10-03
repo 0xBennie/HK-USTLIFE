@@ -1,9 +1,12 @@
+import {writeReceipt,ensureReplayable,writeRejected,reviewRequired,type WriteReceipt} from '../write-receipt';
+import {useInputProtection} from '../navigation/InputProtection';
+import {useSceneFocus} from '../navigation/TabScene';
 import {SafetyActions} from './SafetyActions';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {Alert,AppState,Text,View} from 'react-native';
-import {Button} from 'heroui-native/button';
-import {Card} from 'heroui-native/card';
-import {Input} from 'heroui-native/input';
+import { Button } from '../ui/Primitives';
+import { Card } from '../ui/Primitives';
+import { Input } from '../ui/Primitives';
 import {session} from '../runtime';
 import {ApiFailure} from '../api';
 import {palette,styles} from '../theme';
@@ -12,38 +15,42 @@ import type {WallPost,WallReply} from '../../../../src/product/social/wall-types
 import {dateTimeInZone,newWriteKey} from '../study/dates';
 import {wallError,postStatus} from './wall-shared';
 import {WallForm} from './WallForm';
-type Pending={path:string;method:string;body:unknown;key:string;after?:()=>void};
+type Pending=WriteReceipt&{path:string;method:string;after?:()=>void};
 export function WallDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:string;language:Language;dark:boolean;onBack:()=>void;onLogin:()=>void;onNavigate:()=>void}){
+ const sceneActive=useSceneFocus();
  const zh=language==='zh',c=palette[dark?'dark':'light'],profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [post,setPost]=useState<WallPost|null>(null),[replies,setReplies]=useState<WallReply[]>([]),[cursor,setCursor]=useState<number|null>(null);
  const [text,setText]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[editing,setEditing]=useState(false);
+ const [reviewOnly,setReviewOnly]=useState(false);
  const pending=useRef<Pending|null>(null),lock=useRef(false),epoch=useRef(0),alive=useRef(true);
+ const protectInput=useInputProtection({text},busy,pending.current!==null,zh);
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;epoch.current++;};},[]);
  useEffect(onNavigate,[editing,onNavigate]);
- const load=useCallback(async(before?:number)=>{
+ const load=useCallback(async(before?:number,afterWrite=false)=>{
   const generation=++epoch.current;setBusy(true);setError('');
   try{const [current,page]=await Promise.all([session.request<WallPost>(`/posts/${id}`),session.request<{items:WallReply[];next_cursor:number|null}>(`/posts/${id}/replies`+(before?`?cursor=${before}`:''))]);
    if(alive.current&&generation===epoch.current){setPost(current);setReplies(old=>before?[...old,...page.items.filter(x=>!old.some(y=>y.id===x.id))]:page.items);setCursor(page.next_cursor);}
-  }catch(e){if(alive.current&&generation===epoch.current){setPost(null);setReplies([]);setCursor(null);setError(wallError(e,language));}}
+  }catch(e){if(alive.current&&generation===epoch.current){setPost(null);setReplies([]);setCursor(null);setError(afterWrite&&(!(e instanceof ApiFailure)||e.status===0||e.status>=500)?(zh?'操作已保存，但帖子详情暂时无法刷新。请稍后刷新，勿重复发布。':'The change was saved, but the post could not refresh. Refresh later; do not publish it again.'):wallError(e,language));}}
   finally{if(alive.current&&generation===epoch.current)setBusy(false);}
  },[id,language]);
- useEffect(()=>{if(editing)return;void load();const listener=AppState.addEventListener('change',s=>{if(s==='active'&&!lock.current&&!pending.current)void load();});return()=>{epoch.current++;listener.remove();};},[load,editing]);
+ useEffect(()=>{if(!sceneActive||editing)return;if(!pending.current&&!lock.current)void load();const listener=AppState.addEventListener('change',s=>{if(s==='active'&&!lock.current&&!pending.current)void load();});return()=>{epoch.current++;listener.remove();};},[load,editing,sceneActive]);
  async function run(){if(lock.current||!pending.current)return;lock.current=true;setBusy(true);setError('');const request=pending.current;
-  try{await session.request(request.path,{method:request.method,body:request.body,idempotencyKey:request.key});
-   if(alive.current){pending.current=null;request.after?.();if(request.method!=='DELETE'||request.path!==`/posts/${id}`)await load();}
-  }catch(e){if(alive.current){if(e instanceof ApiFailure&&e.status>0&&e.status<500){pending.current=null;if(e.status===404||e.status===410){setPost(null);setReplies([]);setCursor(null);}}setError(wallError(e,language));}}
+  try{ensureReplayable(request,request.method);await session.request(request.path,{method:request.method,body:request.body,idempotencyKey:request.key});
+   if(alive.current){pending.current=null;request.after?.();if(request.method!=='DELETE'||request.path!==`/posts/${id}`)await load(undefined,true);}
+  }catch(e){if(alive.current){if(writeRejected(e)){pending.current=null;if(e.status===404||e.status===410){setPost(null);setReplies([]);setCursor(null);}}setReviewOnly(reviewRequired(e));setError(wallError(e,language));}}
   finally{lock.current=false;if(alive.current)setBusy(false);}
  }
- function act(suffix:string,method:string,body:unknown,after?:()=>void){if(lock.current||pending.current)return;epoch.current++;pending.current={path:`/posts/${id}${suffix}`,method,body,key:newWriteKey(),after};void run();}
+ function act(suffix:string,method:string,body:unknown,after?:()=>void){if(lock.current||pending.current)return;epoch.current++;pending.current={path:`/posts/${id}${suffix}`,method,...writeReceipt(body,newWriteKey()),after};void run();}
  const frozen=busy||pending.current!==null;
  function confirm(title:string,message:string,action:()=>void){Alert.alert(title,message,[{text:zh?'返回':'Go back',style:'cancel'},{text:zh?'确认':'Confirm',style:'destructive',onPress:action}]);}
- function back(){if(pending.current)confirm(zh?'结果尚未确认':'Result unconfirmed',zh?'操作可能已保存。返回后请先刷新核对，再重复操作。':'The change may already be saved. Refresh and check its state before repeating.',onBack);else onBack();}
+ function back(){protectInput(onBack);}
  if(editing&&post)return <WallForm initial={post} language={language} dark={dark} onBack={()=>setEditing(false)} onSaved={()=>setEditing(false)}/>;
  return <View style={styles.stack}>
   <Button variant="ghost" isDisabled={busy} onPress={back}>{zh?'返回校园墙':'Back to wall'}</Button>
   <Button variant="secondary" isDisabled={frozen} onPress={()=>void load()}>{busy?(zh?'更新中…':'Updating…'):(zh?'刷新帖子与回复':'Refresh post and replies')}</Button>
+  {reviewOnly?<Button variant="secondary" onPress={()=>protectInput(onBack)}>{zh?'返回列表核对已保存内容':'Return to check saved content'}</Button>:null}
   {error?<Text accessibilityRole="alert" style={[styles.body,{color:c.danger}]}>{error}</Text>:null}
-  {pending.current?<Button isDisabled={busy} onPress={()=>void run()}>{zh?'重试确认上次操作':'Retry last operation'}</Button>:null}
+  {pending.current&&!reviewOnly?<Button isDisabled={busy} onPress={()=>void run()}>{zh?'重试确认上次操作':'Retry last operation'}</Button>:null}
   {post?<>
    <Text style={[styles.caption,{color:c.muted}]}>{zh?'本地演示':'Local demo'} · {post.visibility==='public'?(zh?'公开，访客可见':'Public, including visitors'):(zh?'登录可见（非在籍认证）':'Signed-in users (not school verified)')}</Text>
    <Text style={[styles.title,{color:c.text}]}>{post.title}</Text>

@@ -1,0 +1,32 @@
+{
+  "checked_at": "2026-10-02T22:24:32.435Z",
+  "student_http_status": 200,
+  "student_correction": {
+    "id": "4af31431-8048-407a-9c26-d9074ba4223f",
+    "status": "resolved",
+    "version": 2,
+    "resolution": "已核对官方来源：邮务柜台位于主校园 2 楼 2615 室，近 31、32 号电梯。周一至五（公众假期除外）09:00–12:30、14:00–17:15。已统一中英文位置说明；资料为已核对快照，非实时开放状态。",
+    "reviewed_at": 1790979820866
+  },
+  "public_place": {
+    "id": "postal-counter",
+    "version": 2,
+    "location": {
+      "zh": "主校园 2 楼 2615 室，近 31、32 号电梯",
+      "en": "Main Campus, Room 2615, 2/F, near lifts 31 and 32"
+    },
+    "published_hours": {
+      "zh": "周一至五（公众假期除外）：09:00–12:30、14:00–17:15。",
+      "en": "Monday–Friday except public holidays: 09:00–12:30, 14:00–17:15."
+    },
+    "source": {
+      "id": "postal",
+      "url": "https://cso.hkust.edu.hk/index.php/mail/pos_ctr",
+      "retrieved_at": "2026-10-02T22:23:01.391Z",
+      "sha256": "993e92b70361d8b4bdccfc061b01295af0dd4cd5f05c459c339b8596e82a7601"
+    },
+    "review_due_at": "2026-11-01T22:23:01.391Z",
+    "open_now": "unknown",
+    "availability": "unknown"
+  }
+}

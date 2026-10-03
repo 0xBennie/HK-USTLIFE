@@ -1,0 +1,11 @@
+
+ RUN  v4.1.11 /Users/bennie/HKUST/All in one HKUST
+
+(node:21475) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ Test Files  2 passed (2)
+      Tests  11 passed (11)
+   Start at  08:41:56
+   Duration  401ms (transform 143ms, setup 0ms, import 194ms, tests 185ms, environment 0ms)
+

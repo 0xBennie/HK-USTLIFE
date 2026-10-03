@@ -1,0 +1,9 @@
+# Administrator activity maintenance
+
+Close V10's activity-maintenance gap without impersonating an organizer or weakening ordinary routes. Add an admin-only searchable/paginated activity catalog and current detail, versioned edit/close/reopen/cancel with mandatory reason, and metadata-only audit. Reuse existing domain update/cancel functions inside a shared transaction so participation promotion, calendar projection, reminder projection and in-app notices stay coherent. Notify the organizer of administrator changes. Preserve fixed visibility/kind, capacity floor, future-time rules, moderation restrictions and terminal cancellation.
+
+The web editor shows organizer/visibility/current state, editable activity fields and a concrete change review before save. No delete, roster access, private email, impersonation or external notification. Invalid/conflicting/uncertain writes retain draft and require current-state review; search/selection cannot silently discard edits. Keep section state while switching existing admin tabs.
+
+Tests: member/admin and ordinary organizer isolation; version/visibility/capacity/past/cancelled guards; edit → calendar/message/promotion; cancel → participation/calendar/reminder cleanup; audit transaction and deletion without retained content snapshots; web CSRF/Origin/allowlist. Real browser local fixture edit and cancel plus participant API readback, desktop/narrow screenshot. Update actual API and handoff. No iOS runtime claim.
+
+Completed this unit: backend/routes/gateway/editor, six added tests (241total), real browser edit/conflict/cancel with independent participant readback,390px focus/overflow, actual contract and evidence. No admin deletion or native runtime claim. Parent session/reconnect draft protection remains separate open work; memory-only section retention verified.

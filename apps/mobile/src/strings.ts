@@ -2,7 +2,7 @@ export type Language = 'zh' | 'en';
 export const strings = {
   zh: {
     tabs: ['今天', '校园', '发现', '消息', '我的'], brand: '在科大，好好生活', campus: '香港科技大学 · 清水湾',
-    dev: '本地开发版 · 数据仅供测试', loginTitle: '从你的校园日常开始', loginBody: '登录后保存自己的安排。浏览校园信息不需要公开课表，也不需要参与社交。',
+    dev: '本地开发版 · 数据仅供测试', loginTitle: '欢迎来到 Campus', loginBody: '登录后保存自己的安排。浏览校园信息不需要公开课表，也不需要参与社交。',
     email: '邮箱', sendCode: '获取开发验证码', code: '六位验证码', signIn: '登录', resend: '重新获取', changeEmail: '更换邮箱',
     localMail: '当前不会发送真实邮件。验证码保存在电脑的本地开发收件箱，使用启动说明中的命令查看。',
     guest: '先以访客浏览', retry: '重试', loading: '正在连接…', network: '暂时无法连接，请确认本机后端已启动后重试。',
@@ -16,7 +16,7 @@ export const strings = {
   },
   en: {
     tabs: ['Today', 'Campus', 'Discover', 'Inbox', 'Me'], brand: 'Make room for campus life', campus: 'HKUST · Clear Water Bay',
-    dev: 'Local development · Test data only', loginTitle: 'Start with your everyday campus', loginBody: 'Sign in to keep your own plans. Browse campus information without sharing your timetable or joining social activities.',
+    dev: 'Local development · Test data only', loginTitle: 'Welcome to Campus', loginBody: 'Sign in to keep your own plans. Browse campus information without sharing your timetable or joining social activities.',
     email: 'Email', sendCode: 'Get development code', code: 'Six-digit code', signIn: 'Sign in', resend: 'Request another code', changeEmail: 'Change email',
     localMail: 'No real email is sent. Your code is stored in the computer’s local development inbox. See the startup guide for the read command.',
     guest: 'Browse as a guest', retry: 'Try again', loading: 'Connecting…', network: 'Could not connect. Check that the local backend is running and try again.',

@@ -1,8 +1,9 @@
+import {useSceneFocus} from '../navigation/TabScene';
 import {useEffect,useRef,useState} from 'react';
 import {AppState,Linking,Text,View} from 'react-native';
-import {Button} from 'heroui-native/button';
-import {Card} from 'heroui-native/card';
-import {Input} from 'heroui-native/input';
+import { Button } from '../ui/Primitives';
+import { Card } from '../ui/Primitives';
+import { Input } from '../ui/Primitives';
 import {api} from '../runtime';
 import {palette,styles} from '../theme';
 import type {Language} from '../strings';
@@ -10,12 +11,14 @@ import type {PublicRoute,TransitArrivals,TransitCatalog,TransitStops} from '../.
 import {visibleTransitArrivals} from './transit-state';
 const hkTime=(s:string)=>new Date(s).toLocaleString('en-GB',{timeZone:'Asia/Hong_Kong',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
 export function PublicTransitScreen({language,dark,onBack}:{language:Language;dark:boolean;onBack:()=>void}) {
+ const sceneActive=useSceneFocus();
  const zh=language==='zh',c=palette[dark?'dark':'light'];
  const [route,setRoute]=useState<PublicRoute|null>(null),[sequence,setSequence]=useState<number|null>(null),[search,setSearch]=useState('');
  const [catalog,setCatalog]=useState<TransitCatalog|null>(null),[stops,setStops]=useState<TransitStops|null>(null),[arrivals,setArrivals]=useState<TransitArrivals|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState(false),[linkError,setLinkError]=useState(false),[clock,setClock]=useState(Date.now());
  const refresh=useRef<()=>Promise<void>>(async()=>{}),epoch=useRef(0);
  useEffect(()=>{
+  if(!sceneActive){setArrivals(null);return;}
   let active=true;
   const load=async()=>{
    const request=++epoch.current;setBusy(true);setError(false);setArrivals(null);
@@ -36,10 +39,10 @@ export function PublicTransitScreen({language,dark,onBack}:{language:Language;da
    setArrivals(null);setClock(Date.now());if(state==='active')void load();else epoch.current++;
   });
   return()=>{active=false;epoch.current++;clearInterval(timer);if(tick)clearInterval(tick);subscription.remove();};
- },[route?.id,sequence]);
+ },[route?.id,sequence,sceneActive]);
  const open=async(url:string)=>{try{setLinkError(false);await Linking.openURL(url);}catch{setLinkError(true);}};
  const labels:Record<string,string>={not_listed:zh?'运营商当前目录没有此路线，暂不提供查询。':'Not listed in the current operator catalog; query unavailable.',available:zh?'运营商到站预测':'Operator arrival predictions',no_predictions:zh?'暂时没有到站预测；不代表路线停运。':'No predictions currently available; this does not mean the route is suspended.',unavailable:zh?'暂时无法查询，请稍后刷新或查看官方来源。':'Query unavailable. Refresh later or check the official source.',stale:zh?'资料已过期，已隐藏预测，请刷新。':'Source data expired. Predictions are hidden; refresh to retry.',disabled:zh?'运营商已暂停此站的到站预报。':'The operator has disabled predictions for this stop.'};
- const visible=visibleTransitArrivals(arrivals,clock);
+ const visible=visibleTransitArrivals(sceneActive&&!busy?arrivals:null,clock);
  const query=search.trim().toLowerCase();
  const routes=catalog?.routes.filter(r=>`${r.code} ${r.origin.zh} ${r.origin.en} ${r.destination.zh} ${r.destination.en}`.toLowerCase().includes(query))??[];
  const stopList=stops?.status==='available'?stops.stops.filter(s=>`${s.name.zh} ${s.name.en}`.toLowerCase().includes(query)):[];

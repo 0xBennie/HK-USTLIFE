@@ -1,0 +1,101 @@
+ M apps/hub/app/globals.css
+ M apps/hub/app/layout.tsx
+ M apps/hub/app/page.tsx
+ M apps/hub/package-lock.json
+ M apps/hub/package.json
+ M apps/mobile/App.tsx
+ M apps/mobile/package.json
+ M apps/mobile/src/campus/CampusScreen.tsx
+ M apps/mobile/src/campus/DirectoryScreen.tsx
+ M apps/mobile/src/campus/PublicTransitScreen.tsx
+ M apps/mobile/src/campus/TargetActions.tsx
+ M apps/mobile/src/runtime.ts
+ M apps/mobile/src/screens/AccountScreen.tsx
+ M apps/mobile/src/session.ts
+ M apps/mobile/src/social/ActivityDetail.tsx
+ M apps/mobile/src/social/ActivityForm.tsx
+ M apps/mobile/src/social/CommunityScreen.tsx
+ M apps/mobile/src/social/DiscoverScreen.tsx
+ M apps/mobile/src/social/GovernanceScreen.tsx
+ M apps/mobile/src/social/InboxScreen.tsx
+ M apps/mobile/src/social/SafetyActions.tsx
+ M apps/mobile/src/social/WallDetail.tsx
+ M apps/mobile/src/social/WallForm.tsx
+ M apps/mobile/src/social/WallScreen.tsx
+ M apps/mobile/src/strings.ts
+ M apps/mobile/src/study/ImportScreen.tsx
+ M apps/mobile/src/study/SourceScreen.tsx
+ M apps/mobile/src/study/StudyForm.tsx
+ M apps/mobile/src/study/StudyScreen.tsx
+ M apps/mobile/src/theme.ts
+ M docs/api/learning-api.md
+ M docs/api/social-api.md
+ M docs/api/super-app-api.md
+ M docs/development-ios.md
+ M docs/progress/ios-mvp-v1-handoff.md
+ M package-lock.json
+ M package.json
+ M src/product/app.ts
+ M src/product/campus/directory.ts
+ M src/product/campus/routes.ts
+ M src/product/campus/shuttle.ts
+ M src/product/database.ts
+?? AGENTS.md
+?? apps/hub/app/admin/
+?? apps/hub/app/api/campus/
+?? apps/hub/app/events/
+?? apps/hub/app/preview/
+?? apps/hub/app/privacy/
+?? apps/hub/app/support/
+?? apps/hub/components/admin-console.tsx
+?? apps/hub/components/app-mock.tsx
+?? apps/hub/components/campus-day-experience.tsx
+?? apps/hub/components/campus-maintenance.tsx
+?? apps/hub/components/campus-preview.tsx
+?? apps/hub/components/feature-explorer.tsx
+?? apps/hub/components/glyph.tsx
+?? apps/hub/components/site-header.tsx
+?? apps/hub/lib/feature-catalog.ts
+?? apps/hub/lib/page-config.ts
+?? apps/hub/lib/product-web.ts
+?? apps/hub/lib/public-activities.ts
+?? apps/mobile/src/navigation/
+?? apps/mobile/src/reminders/
+?? apps/mobile/src/social/JoinActivitySheet.tsx
+?? apps/mobile/src/social/activity-join.ts
+?? apps/mobile/src/study/save-controller.ts
+?? apps/mobile/src/ui/
+?? design/
+?? docs/api/campus-maintenance-api.md
+?? docs/api/reminders-api.md
+?? docs/progress/2026-10-03-apple-ui-status.md
+?? docs/progress/2026-10-03-interactive-mock.md
+?? docs/progress/evidence/apple-ui/
+?? docs/progress/evidence/campus-maintenance/
+?? docs/progress/evidence/e5/
+?? docs/progress/evidence/native-continuity/
+?? docs/progress/evidence/reminders/
+?? docs/progress/evidence/shuttle-maintenance/
+?? docs/research/ui-references/
+?? docs/superpowers/plans/2026-10-03-campus-maintenance.md
+?? docs/superpowers/plans/2026-10-03-e5-web.md
+?? docs/superpowers/plans/2026-10-03-local-reminders.md
+?? docs/superpowers/plans/2026-10-03-native-activity-confirmation.md
+?? docs/superpowers/plans/2026-10-03-native-tab-continuity.md
+?? docs/superpowers/plans/2026-10-03-shuttle-maintenance.md
+?? docs/superpowers/specs/2026-10-03-apple-ui-redesign.md
+?? src/design/
+?? src/product/campus/maintenance-routes.ts
+?? src/product/campus/maintenance.ts
+?? src/product/campus/shuttle-maintenance-routes.ts
+?? src/product/campus/shuttle-store.ts
+?? src/product/reminders/
+?? tests/mock-state.test.ts
+?? tests/native-activity-join.test.ts
+?? tests/native-navigation.test.ts
+?? tests/native-reminders.test.ts
+?? tests/native-study-save.test.ts
+?? tests/product-maintenance.test.ts
+?? tests/product-public-share.test.ts
+?? tests/product-reminders.test.ts
+?? tests/product-web.test.ts

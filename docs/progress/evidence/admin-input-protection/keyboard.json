@@ -1,0 +1,9 @@
+{
+  "focusFirst": "放弃草稿并退出后台",
+  "focusWrapped": "继续编辑",
+  "focusReverse": "放弃草稿并退出后台",
+  "focusReturn": {
+    "focus": "退出后台",
+    "open": false
+  }
+}

@@ -1,0 +1,138 @@
+
+> hkust-life-mcp@0.1.0 test
+> npm run build:core && vitest run
+
+
+> hkust-life-mcp@0.1.0 build:core
+> tsc -p tsconfig.json
+
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+(node:82019) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82020) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82027) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82025) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82022) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82016) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82018) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82030) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82029) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82023) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82017) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82031) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82028) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82032) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/native-reminders.test.ts (11 tests) 17ms
+(node:82021) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/product-ics.test.ts (16 tests) 198ms
+ ✓ tests/product-public-transit.test.ts (13 tests) 277ms
+ ✓ tests/course-planner.test.ts (4 tests) 4ms
+ ✓ tests/server-tools.test.ts (4 tests) 37ms
+ ✓ tests/mock-state.test.ts (7 tests) 6ms
+ ✓ tests/native-study-save.test.ts (5 tests) 293ms
+ ✓ tests/native-activity-join.test.ts (4 tests) 298ms
+ ✓ tests/product-maintenance.test.ts (5 tests) 341ms
+ ✓ tests/product-directory.test.ts (5 tests) 353ms
+ ✓ tests/calendar-store.test.ts (14 tests) 518ms
+ ❯ tests/product-shuttle-maintenance.test.ts (5 tests | 2 failed) 366ms
+   ✓ isolates admin routes and evidence, previews without mutation, persists student-visible edits and audit 134ms
+   × rejects invalid dates, duplicate or unordered times, wrong/old evidence and preserves catalog 67ms
+     → expected 401 to be 409 // Object.is equality
+   ✓ publishes holiday coverage transactionally without renewing timetable freshness 75ms
+   × renews only the reviewed route, and suppresses schedules when holiday evidence expires 53ms
+     → {"error":{"code":"SESSION_EXPIRED","message":"Please sign in again.","retryable":false,"request_id":"req-6"}}: expected 401 to be 200 // Object.is equality
+   ✓ honors an explicitly reviewed Sunday/holiday service instead of imposing the seed rule 36ms
+ ✓ tests/mobile-session.test.ts (6 tests) 379ms
+ ✓ tests/product-reminders.test.ts (4 tests) 461ms
+(node:82058) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/product-wall.test.ts (7 tests) 511ms
+ ✓ tests/graph-outlook.test.ts (1 test) 5ms
+ ✓ tests/release-assets.test.ts (3 tests) 15ms
+(node:82061) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/product-web.test.ts (7 tests) 500ms
+ ✓ tests/today.test.ts (1 test) 7ms
+ ✓ tests/hko-weather.test.ts (1 test) 3ms
+ ✓ tests/ics-calendar.test.ts (3 tests) 2ms
+ ✓ tests/product-auth.test.ts (11 tests) 544ms
+ ✓ tests/daily-brief.test.ts (1 test) 7ms
+ ✓ tests/product-governance.test.ts (8 tests) 579ms
+ ✓ tests/reminder-plan.test.ts (2 tests) 7ms
+(node:82017) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82017) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/native-navigation.test.ts (3 tests) 1ms
+ ✓ tests/product-shuttle.test.ts (5 tests) 305ms
+ ✓ tests/source-registry.test.ts (4 tests) 4ms
+ ✓ tests/study-dates.test.ts (3 tests) 12ms
+ ✓ tests/account-status.test.ts (2 tests) 2ms
+ ✓ tests/product-social.test.ts (12 tests) 731ms
+ ✓ tests/browser-profile.test.ts (2 tests) 2ms
+ ✓ tests/hub-content.test.ts (3 tests) 3ms
+ ✓ tests/skills-catalog.test.ts (2 tests) 2ms
+ ✓ tests/newcomer-checklist.test.ts (2 tests) 2ms
+ ✓ tests/skill-packages.test.ts (1 test) 19ms
+ ✓ tests/http-transport.test.ts (1 test) 75ms
+ ✓ tests/hub-manifest.test.ts (1 test) 2ms
+ ✓ tests/product-public-share.test.ts (2 tests) 147ms
+ ✓ tests/source-search.test.ts (2 tests) 2ms
+ ✓ tests/release-check.test.ts (5 tests) 239ms
+ ✓ tests/public-mcp-route.test.ts (3 tests) 12ms
+ ✓ tests/product-learning.test.ts (26 tests) 946ms
+ ✓ tests/smoke-mcp.test.ts (1 test) 114ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/product-shuttle-maintenance.test.ts > rejects invalid dates, duplicate or unordered times, wrong/old evidence and preserves catalog
+AssertionError: expected 401 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 401
+
+ ❯ tests/product-shuttle-maintenance.test.ts:36:103
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/product-shuttle-maintenance.test.ts > renews only the reviewed route, and suppresses schedules when holiday evidence expires
+AssertionError: {"error":{"code":"SESSION_EXPIRED","message":"Please sign in again.","retryable":false,"request_id":"req-6"}}: expected 401 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 401
+
+ ❯ capture tests/product-shuttle-maintenance.test.ts:17:224
+
+ ❯ tests/product-shuttle-maintenance.test.ts:49:97
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 43 passed (44)
+      Tests  2 failed | 226 passed (228)
+   Start at  06:46:47
+   Duration  1.49s (transform 1.25s, setup 0ms, collect 5.34s, tests 8.35s, environment 4ms, prepare 2.04s)
+

@@ -1,8 +1,9 @@
+import {useSceneFocus} from '../navigation/TabScene';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {AppState,Text,View} from 'react-native';
-import {Button} from 'heroui-native/button';
-import {Card} from 'heroui-native/card';
-import {Input} from 'heroui-native/input';
+import { Button } from '../ui/Primitives';
+import { Card } from '../ui/Primitives';
+import { Input } from '../ui/Primitives';
 import {session} from '../runtime';
 import {ApiFailure} from '../api';
 import {palette,styles} from '../theme';
@@ -14,6 +15,7 @@ import {ActivityForm} from './ActivityForm';
 import {ActivityDetail} from './ActivityDetail';
 type Filters={q:string;kind:string;interaction:string;language:string;mine:string;from:string;to:string};
 export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,onNavigate,onDepthChange}:{language:Language;dark:boolean;onLogin:()=>void;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void;onDepthChange?:(nested:boolean)=>void}){
+ const sceneActive=useSceneFocus();
  const zh=language==='zh',c=palette[dark?'dark':'light'],profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [selected,setSelected]=useState<string|null>(initialId),[creating,setCreating]=useState(false),[filtersOpen,setFiltersOpen]=useState(false);
  const [filters,setFilters]=useState<Filters>({q:'',kind:'',interaction:'',language:'',mine:'',from:'',to:''}),[applied,setApplied]=useState(filters);
@@ -26,14 +28,14 @@ export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,
   const page=await session.request<{items:Activity[];next_cursor:string|null}>('/activities?'+query.toString());
   if(generation===epoch.current){setItems(old=>next?[...old,...page.items.filter(x=>!old.some(y=>y.id===x.id))]:page.items);setCursor(page.next_cursor);}
  }catch(e){if(generation===epoch.current){setItems([]);setCursor(null);setError(e instanceof Error&&!(e instanceof ApiFailure)?(zh?'时间格式应为 YYYY-MM-DD HH:mm。':'Use YYYY-MM-DD HH:mm for the time window.'):socialError(e,language));}}finally{if(generation===epoch.current){lock.current=false;setBusy(false);}}},[applied,language]);
- useEffect(()=>{if(selected||creating)return;void load();const listener=AppState.addEventListener('change',state=>{if(state==='active')void load();});return()=>{epoch.current++;lock.current=false;listener.remove();};},[load,selected,creating]);
+ useEffect(()=>{if(!sceneActive||selected||creating)return;void load();const listener=AppState.addEventListener('change',state=>{if(state==='active')void load();});return()=>{epoch.current++;lock.current=false;listener.remove();};},[load,selected,creating,sceneActive]);
  if(creating)return <ActivityForm language={language} dark={dark} onBack={()=>setCreating(false)} onSaved={id=>{setCreating(false);setSelected(id);}}/>;
  if(selected)return <ActivityDetail key={selected} id={selected} language={language} dark={dark} onLogin={onLogin} onNavigate={onNavigate} onBack={()=>{setSelected(null);onDismissTarget();}}/>;
  const choose=(key:keyof Filters,value:string)=>setFilters({...filters,[key]:value});
  const options=(key:keyof Filters,values:[string,string][])=> <View style={styles.smallStack}>{values.map(([value,label])=><Button key={value} variant={filters[key]===value?'primary':'secondary'} isDisabled={busy} onPress={()=>choose(key,value)}>{label}</Button>)}</View>;
  return <View style={styles.stack}>
-  <Text style={[styles.title,{color:c.text}]}>{zh?'一起做点什么':'Find something to do together'}</Text>
-  <Text style={[styles.body,{color:c.muted}]}>{zh?'先看具体时间和相处方式。想参加就报名，不需要先和陌生人聊天。':'Choose a time and interaction style that suit you. Join without needing to message a stranger first.'}</Text>
+  <Text style={[styles.title,{color:c.text}]}>{zh?'发现':'Discover'}</Text>
+  <Text style={[styles.body,{color:c.muted}]}>{zh?'从一起做一件小事开始。':'A small plan. Some good company.'}</Text>
   <Text style={[styles.caption,{color:c.muted}]}>{zh?'以下均为本地开发演示内容。':'All content here is local development demo content.'}</Text>
   <Button onPress={()=>profile?setCreating(true):onLogin()}>{zh?'发起活动／学习组队':'Start an activity / study group'}</Button>
   <Input accessibilityLabel={zh?'搜索标题或地点':'Search title or place'} value={filters.q} onChangeText={v=>choose('q',v)} placeholder={zh?'标题／地点':'Title / place'} style={[styles.input,{color:c.text,borderColor:c.border}]}/>

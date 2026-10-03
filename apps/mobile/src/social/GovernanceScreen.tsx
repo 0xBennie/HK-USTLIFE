@@ -1,7 +1,8 @@
+import {useSceneFocus} from '../navigation/TabScene';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {Alert,AppState,Text,View} from 'react-native';
-import {Button} from 'heroui-native/button';
-import {Card} from 'heroui-native/card';
+import { Button } from '../ui/Primitives';
+import { Card } from '../ui/Primitives';
 import {session} from '../runtime';
 import {palette,styles} from '../theme';
 import type {Language} from '../strings';
@@ -10,6 +11,7 @@ import {reportReasonLabel} from './SafetyActions';
 import {wallError} from './wall-shared';
 import {dateTimeInZone} from '../study/dates';
 export function GovernanceScreen({language,dark,onBack}:{language:Language;dark:boolean;onBack:()=>void}){
+ const sceneActive=useSceneFocus();
  const zh=language==='zh',c=palette[dark?'dark':'light'];
  const [blocks,setBlocks]=useState<BlockedUser[]>([]),[reports,setReports]=useState<ContentReport[]>([]),[cursor,setCursor]=useState<string|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const epoch=useRef(0),lock=useRef(false),alive=useRef(true);
@@ -18,7 +20,7 @@ export function GovernanceScreen({language,dark,onBack}:{language:Language;dark:
   const [users,page]=await Promise.all([session.request<BlockedUser[]>('/me/blocks'),session.request<{items:ContentReport[];next_cursor:string|null}>('/me/reports'+(next?'?cursor='+next:''))]);
   if(alive.current&&generation===epoch.current){setBlocks(users);setReports(old=>next?[...old,...page.items.filter(x=>!old.some(y=>y.id===x.id))]:page.items);setCursor(page.next_cursor);}
  }catch(e){if(alive.current&&generation===epoch.current){setBlocks([]);setReports([]);setCursor(null);setError(wallError(e,language));}}finally{if(alive.current&&generation===epoch.current)setBusy(false);}},[language]);
- useEffect(()=>{void load();const listener=AppState.addEventListener('change',s=>{if(s==='active'&&!lock.current)void load();});return()=>{epoch.current++;listener.remove();};},[load]);
+ useEffect(()=>{if(!sceneActive)return;void load();const listener=AppState.addEventListener('change',s=>{if(s==='active'&&!lock.current)void load();});return()=>{epoch.current++;listener.remove();};},[load,sceneActive]);
  async function unblock(id:string){if(lock.current)return;lock.current=true;epoch.current++;setBusy(true);setError('');try{await session.request(`/me/blocks/${id}`,{method:'DELETE',body:{}});if(alive.current)await load();}catch(e){if(alive.current)setError(wallError(e,language));}finally{lock.current=false;if(alive.current)setBusy(false);}}
  return <View style={styles.stack}>
   <Button variant="ghost" isDisabled={busy} onPress={onBack}>{zh?'返回我的':'Back to my account'}</Button>

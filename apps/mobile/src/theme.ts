@@ -1,22 +1,23 @@
 import { StyleSheet } from 'react-native';
 
+// System-font metrics and semantic colors, shared by every native screen.
 export const palette = {
-  light: { background: '#F4F7F4', surface: '#FFFFFF', text: '#1B3534', muted: '#526767', accent: '#17685D', border: '#D9E4DF', danger: '#AA2535', tint: '#E3EFE9' },
-  dark: { background: '#101C1B', surface: '#1A2A28', text: '#E8F1EC', muted: '#A5BCB5', accent: '#8CDBBF', border: '#36504A', danger: '#FFA8B1', tint: '#29433C' },
+  light: { background: '#F2F2F7', surface: '#FFFFFF', text: '#1C1C1E', muted: '#636366', accent: '#0066CC', border: '#D1D1D6', danger: '#C9342D', tint: '#E8F1FC' },
+  dark: { background: '#000000', surface: '#1C1C1E', text: '#F5F5F7', muted: '#AEAEB2', accent: '#70B5FF', border: '#38383A', danger: '#FF6961', tint: '#152C46' },
 };
 export const spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 };
 export const styles = StyleSheet.create({
-  flex: { flex: 1 }, page: { padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl },
-  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.md, gap: spacing.sm },
-  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
+  flex: { flex: 1 }, page: { padding: 20, gap: spacing.lg, paddingBottom: spacing.xl },
+  header: { paddingHorizontal: 20, paddingTop: spacing.xs, paddingBottom: spacing.xs },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm, flexWrap: 'wrap' },
   stack: { gap: spacing.md }, smallStack: { gap: spacing.sm },
-  title: { fontSize: 30, fontWeight: '700', lineHeight: 38 }, heading: { fontSize: 22, fontWeight: '600', lineHeight: 30 },
-  body: { fontSize: 16, lineHeight: 25 }, caption: { fontSize: 13, lineHeight: 20 },
-  card: { padding: spacing.lg, gap: spacing.md, borderRadius: 24 },
-  input: { minHeight: 52, borderRadius: 14, borderWidth: 1, paddingHorizontal: spacing.md, fontSize: 17 },
-  tabs: { flexDirection: 'row', borderTopWidth: 1, paddingTop: spacing.sm },
-  tab: { flex: 1, minHeight: 56, justifyContent: 'center', alignItems: 'center', paddingHorizontal: spacing.xs, paddingVertical: spacing.sm, gap: spacing.xs },
-  tabLabel: { fontSize: 12, fontWeight: '600', textAlign: 'center' },
-  indicator: { height: 3, width: 24, borderRadius: 2 },
+  title: { fontSize: 34, fontWeight: '700', lineHeight: 41, letterSpacing: 0.2 },
+  heading: { fontSize: 20, fontWeight: '600', lineHeight: 27 },
+  body: { fontSize: 17, lineHeight: 24 }, caption: { fontSize: 13, lineHeight: 19 },
+  card: { padding: 20, gap: 12, borderRadius: 20, borderCurve: 'continuous', boxShadow: 'none' },
+  input: { minHeight: 48, borderRadius: 12, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: spacing.md, paddingVertical: 12, fontSize: 17 },
+  tabs: { flexDirection: 'row', borderTopWidth: StyleSheet.hairlineWidth, paddingTop: spacing.xs, paddingHorizontal: spacing.xs, paddingBottom: spacing.xs },
+  tab: { flex: 1, minHeight: 56, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 2, paddingVertical: spacing.xs, gap: 3 },
+  tabLabel: { fontSize: 11, fontWeight: '500', textAlign: 'center' },
   language: { minHeight: 44, minWidth: 44, justifyContent: 'center', alignItems: 'center' },
 });

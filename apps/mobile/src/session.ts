@@ -7,12 +7,14 @@ export type SessionState = { status: 'loading' | 'guest' | 'authenticated' | 'er
 export class SessionController {
   private state: SessionState = { status: 'loading', profile: null };
   private listeners = new Set<() => void>();
+  private mutationListeners = new Set<() => void>();
   private epoch = 0;
   private token: string | null = null;
   private writes: Promise<void> = Promise.resolve();
   constructor(private api: ApiClient, private storage: TokenStorage) {}
   snapshot = () => this.state;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
+  subscribeMutations = (listener: () => void) => { this.mutationListeners.add(listener); return () => { this.mutationListeners.delete(listener); }; };
   private publish(state: SessionState) { this.state = state; for (const listener of this.listeners) listener(); }
   private persist(action: () => Promise<void>) { const write = this.writes.then(action); this.writes = write.catch(() => {}); return write; }
 
@@ -67,6 +69,11 @@ export class SessionController {
         await this.persist(() => this.storage.clear());
       }
       throw error;
+    }
+    finally {
+      if (options.method && options.method !== 'GET' && options.method !== 'HEAD') {
+        for (const listener of this.mutationListeners) listener();
+      }
     }
   }
 

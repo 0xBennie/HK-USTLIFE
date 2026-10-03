@@ -1,71 +1,25 @@
 import Link from 'next/link';
-
-import { SkillCard } from '../components/skill-card';
-import { toHubSkillCards } from '../lib/catalog';
-import { renderHomeModel } from '../lib/content';
-import { listSkills } from '../../../src/data/skills-catalog';
-
-export default function HomePage() {
-  const model = renderHomeModel();
-  const cards = toHubSkillCards(listSkills());
-
-  return (
-    <>
-      <section className="hero section-shell">
-        <div className="hero-copy">
-          <p className="eyebrow light">Clear Water Bay · student field guide</p>
-          <h1>Less scavenger hunt.<br /><em>More campus life.</em></h1>
-          <p className="hero-deck">HKUST information is scattered across offices, portals and group chats. This is the quiet place to find the next real action—and the official source behind it.</p>
-          <div className="hero-actions">
-            <Link className="button button-gold" href={model.primaryAction.href}>{model.primaryAction.label} <span aria-hidden="true">→</span></Link>
-            <Link className="button button-ghost" href="/plan">Plan a timetable</Link>
-          </div>
-        </div>
-        <aside className="field-ticket" aria-label="What this Hub does">
-          <div className="ticket-row"><span>01</span><p>Find the office<br />that actually owns it.</p></div>
-          <div className="ticket-row"><span>02</span><p>See whether the<br />information is fresh.</p></div>
-          <div className="ticket-row"><span>03</span><p>Keep your timetable<br />and account private.</p></div>
-          <p className="ticket-stamp">STUDENT COPY<br />CWB / HKUST</p>
-        </aside>
-      </section>
-
-      <section className="action-section section-shell" aria-labelledby="start-heading">
-        <div className="section-heading">
-          <p className="eyebrow">Choose your next move</p>
-          <h2 id="start-heading">Start where you are.</h2>
-        </div>
-        <div className="action-grid">
-          {model.actions.map((action) => (
-            <Link className="action-card" href={action.href} key={action.href}>
-              <span className="action-tag">{action.tag}</span>
-              <h3>{action.label}</h3>
-              <p>{action.description}</p>
-              <span className="arrow" aria-hidden="true">→</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="trust-strip">
-        <div className="section-shell trust-grid">
-          <p><strong>Official first.</strong> ARO, CSO, Library, SHRLO and other owners stay attached to the answer.</p>
-          <p><strong>Freshness shown.</strong> A missing live source is labeled unavailable, never quietly guessed.</p>
-          <p><strong>Private by default.</strong> No password form. No shared mailbox, timetable or SIS data.</p>
-        </div>
-      </section>
-
-      <section className="skills-preview section-shell" aria-labelledby="skills-heading">
-        <div className="section-heading row-heading">
-          <div>
-            <p className="eyebrow">For the agent you already use</p>
-            <h2 id="skills-heading">Seven focused Skills.</h2>
-          </div>
-          <Link className="text-link" href="/skills">See all Skills <span aria-hidden="true">→</span></Link>
-        </div>
-        <div className="skills-grid">
-          {cards.slice(0, 3).map((skill) => <SkillCard key={skill.slug} skill={skill} />)}
-        </div>
-      </section>
-    </>
-  );
+import {CampusPreview,Glyph} from '../components/campus-preview';
+import {CampusDayExperience} from '../components/campus-day-experience';
+import {FeatureExplorer} from '../components/feature-explorer';
+import {pageLanguage,type PageQuery} from '../lib/page-config';
+export default async function HomePage({searchParams}:{searchParams:PageQuery}){
+ const language=pageLanguage(await searchParams),zh=language==='zh';
+ const t=(cn:string,en:string)=>zh?cn:en;
+ return <div className="campus-home product-story" lang={zh?'zh-Hans':'en'}>
+  <section className="campus-intro campus-shell">
+   <div className="campus-hero-copy"><p className="campus-eyebrow">HKUST FIRST. HONG KONG NEXT.</p><h1>{t('课表之外，','Beyond classes.')}<br/><span>{t('还有整个校园。','A whole campus.')}</span></h1><p className="campus-lead">{t('下一节课在哪，下一班车几点，今晚能和谁一起自习。\n把学习、生活和遇见，放回同一个 App。','Your next class. Your next bus. Someone to study with tonight.\nBring learning, campus life and good company together.')}</p><div className="campus-actions"><a className="campus-button" href="#experience">{t('看看我的一天','Explore a campus day')}</a><a className="campus-text-link" href="#features">{t('查看全部功能','See every feature')} <span aria-hidden="true">↗</span></a></div><p className="campus-note campus-development">{t('iPhone 优先 · 独立学生产品 · 开发预览，尚未开放下载','iPhone first · Independent student project · In development, not yet available')}</p><div className="hero-topics"><span><Glyph name="book" size={16}/>{t('学习有序','Study clearly')}</span><span><Glyph name="bus" size={16}/>{t('生活顺手','Move easily')}</span><span><Glyph name="people" size={16}/>{t('认识同频的人','Find your people')}</span></div></div>
+   <CampusPreview language={language}/>
+  </section>
+  <nav className="product-subnav" aria-label={t('产品章节','Product chapters')}><div className="campus-shell">{[['experience',t('你的一天','Your day')],['learning',t('学习','Learning')],['living',t('生活','Campus life')],['together',t('一起','Together')],['features',t('全部功能','All features')],['roadmap',t('接下来','What’s next')]].map(([id,label])=><a key={id} href={'#'+id}>{label}</a>)}</div></nav>
+  <section id="experience" className="story-section campus-shell">
+   <div className="story-heading"><p className="campus-eyebrow">{t('一天很满。打开 App，少忙一点。','A full day. A little less friction.')}</p><h2>{t('从第一节课，','From your first class')}<br/><span>{t('到不想结束的晚上。','to one more conversation.')}</span></h2></div>
+   <CampusDayExperience language={language}/><div className="day-ribbon">{[['08:40','today',t('上课前','Before class'),t('课表、教室与今天的截止，一起看。','Your class, room and deadlines, together.')],['12:10','bus',t('准备出发','On your way'),t('查校巴与上客点，不再翻聊天记录。','Find a shuttle and boarding point without searching old chats.')],['15:00','book',t('一起专注','Time to focus'),t('找个安静的小组，把难题往前推一点。','A quiet study group. A little progress on a hard problem.')],['18:30','people',t('留点时间给生活','Room for life'),t('散步、吃饭、校园墙，轻轻加入就好。','A walk, a meal, a campus conversation. Join at your pace.')]].map(([time,icon,title,body])=><article key={time}><time>{time}</time><Glyph name={icon as 'today'|'bus'|'book'|'people'} size={24}/><h3>{title}</h3><p>{body}</p></article>)}</div><p className="story-caption">{t('场景示意。下方功能目录逐项说明实现进度。','Illustrative scenarios. The feature directory below shows actual progress.')}</p>
+  </section>
+  <section id="learning" className="story-section story-tint"><div className="campus-shell story-split"><div className="story-copy"><p className="campus-eyebrow">01 / {t('学习，心里有数','LEARNING, IN FOCUS')}</p><h2>{t('DDL 很多。','Many deadlines.')}<br/>{t('脑子只留一个入口。','One place to think.')}</h2><p>{t('课程、作业、TA 课、个人安排，放在一张日历里。导入之前先看清变化；自己改过的时间，也不会被悄悄覆盖。','Classes, tasks, tutorials and personal plans in one calendar. Review an import before saving it. Keep control of changes you made yourself.')}</p><ul className="story-bullets"><li>{t('日 / 周课表，课程与个人日程','Day and week views, courses and personal plans')}</li><li>{t('私人任务、笔记与课程资料链接','Private tasks, notes and resource links')}</li><li>{t('ICS 导入、重复安排与冲突选择','ICS imports, recurrence and conflict review')}</li><li>{t('主动保存活动，带入自己的日历','Save an activity into your own calendar')}</li></ul><Link href={'/preview?screen=today&lang='+language} className="campus-text-link">{t('试试学习安排','Try planning your day')} ↗</Link></div><div className="study-scene" aria-label={t('学习界面示意','Illustrative study interface')}><div className="scene-topline"><span>{t('我的一周','My week')}</span><span>{t('示例安排','Example plans')}</span></div><div className="week-strip">{[t('一','M'),t('二','T'),t('三','W'),t('四','T'),t('五','F')].map((d,i)=><span key={i} className={i===0?'selected':''}><small>{d}</small>{5+i}</span>)}</div><div className="schedule-block"><time>10:30</time><div><small>ISOM · {t('课程','CLASS')}</small><h3>{t('信息系统管理','Information Systems')}</h3><p>{t('教学楼 · 教室示例','Academic Building · Example room')}</p></div></div><div className="schedule-block purple"><time>14:00</time><div><small>{t('自愿加入 · 小组','OPT-IN · STUDY GROUP')}</small><h3>{t('安静自习 90 分钟','90 minutes of quiet study')}</h3><p>{t('图书馆 · 3 人','Library · 3 people')}</p></div></div><div className="task-slip"><Glyph name="check"/><div><strong>{t('小组展示提纲','Group presentation outline')}</strong><p>{t('今晚之前 · 私人任务','This evening · Private task')}</p></div></div><p className="scene-note">{t('正式学校课表与 Canvas 尚未连接','Official timetable and Canvas connections are pending')}</p></div></div></section>
+  <section id="living" className="story-section campus-shell"><div className="story-heading"><p className="campus-eyebrow">02 / {t('生活，顺手一点','CAMPUS LIFE, WITH LESS SEARCHING')}</p><h2>{t('刚来不熟。','New here?')}<br/><span>{t('也能走得很从容。','Find your feet.')}</span></h2><p>{t('把分散的时间表、地点和办事入口收好。想知道一件事时，不必先知道该打开哪个 App。','Timetables, places and service links in reach. Find what you need without first figuring out which app to open.')}</p></div><Link className="campus-text-link" href={'/preview?screen=campus&lang='+language}>{t('试试校园查询','Explore the campus mock')} ↗</Link><div className="living-grid"><article className="living-transit"><Glyph name="bus" size={36}/><h3>{t('下一程，有方向。','Your next stop, sorted.')}</h3><p>{t('校巴运行日、计划班次；九巴和绿色小巴路线、上客点及到站查询。','Shuttle schedules and service days. Bus and minibus routes, boarding points and arrival queries.')}</p><div className="route-line"><span>{t('清水湾校园','Clear Water Bay')}</span><span className="route-track"/><span>{t('城市里的下一站','Your next stop')}</span></div><small>{t('校巴按公布时刻表；公共交通预测以运营商数据为准。','Shuttles use published schedules; public arrival predictions come from operators.')}</small></article><article><Glyph name="campus" size={36}/><h3>{t('地方找得到。','Places you can find.')}</h3><p>{t('图书馆、教学楼、学生服务。查看位置、公开时间与官方入口，收藏下次要去的地方。','Libraries, buildings and student services. Locations, published hours, official links and private bookmarks.')}</p><div className="place-chips">{[t('图书馆','Library'),t('学生服务','Student services'),t('校园地图','Campus map')].map(v=><span key={v}>{v}</span>)}</div></article><article><Glyph name="inbox" size={36}/><h3>{t('信息越用越准。','Information worth keeping.')}</h3><p>{t('查看来源和更新时间，发现问题可以提交纠错。餐饮、社团、评价与校外推荐也已纳入后续扩展。','Check sources and freshness, then report a correction. Dining, clubs, reviews and off-campus recommendations are in the roadmap.')}</p><small>{t('已实现地点与纠错；完整生活目录继续补充。','Places and corrections exist; broader listings are still to come.')}</small></article></div></section>
+  <section id="together" className="story-section together-section"><div className="campus-shell story-split"><div className="social-scene"><p className="scene-topline">{t('一个小小的邀请','A small invitation')}<span>{t('场景示意','Illustration')}</span></p><div className="social-orbit" aria-hidden="true"><span>J</span><span>M</span><span>Y</span><span>你</span></div><h3>{t('不用很会聊天。\n带上自己就好。','You don’t need an opening line.\nJust come as you are.')}</h3><div className="social-options"><span>{t('安静共处','Quiet company')}</span><span>{t('3—5 人','3–5 people')}</span><span>{t('先看看','Take a look first')}</span></div><div className="social-invite"><Glyph name="book"/><div><strong>{t('一起坐一会儿','Stay for a while')}</strong><p>{t('自习 · 自带电脑 · 无需自我介绍','Study · Bring a laptop · No introductions needed')}</p></div></div></div><div className="story-copy"><p className="campus-eyebrow">03 / {t('认识人，从一起做事开始','CONNECTION, THROUGH A SHARED PLAN')}</p><h2>{t('想认识朋友。','Want some company?')}<br/>{t('不用先变外向。','Stay yourself.')}</h2><p>{t('先找到想做的事，再遇到愿意一起的人。自习、散步、学习组队，或在校园墙问一个小问题。社交可以有具体的开头，也可以有舒服的距离。','Start with something you want to do, then find people to do it with. Study, take a walk or ask a campus question. Connection can start small and leave room to breathe.')}</p><ul className="story-bullets"><li>{t('按语言、时间与互动偏好发现活动','Discover activities by language, time and interaction preference')}</li><li>{t('人数、参与要求、报名与候补状态清楚','Clear capacity, requirements, registration and waitlists')}</li><li>{t('校园墙、求助、回复与已解决标记','Campus posts, questions, replies and resolved status')}</li><li>{t('随时退出，举报和屏蔽有入口','Withdraw when needed; report and block unwanted contact')}</li></ul><Link href={'/preview?screen=discover&lang='+language} className="campus-button">{t('体验活动报名','Try joining an activity')}</Link></div></div></section>
+  <section id="features" className="story-section campus-shell"><div className="story-heading"><p className="campus-eyebrow">{t('完整功能地图','THE FULL PRODUCT MAP')}</p><h2>{t('你想要的，都在规划里。','See the whole picture.')}</h2><p>{t('学习、生活、社交、邮件、身份、苹果设备与 AI。这里保留完整范围，也说清每一项走到了哪里。','Learning, campus life, social plans, email, identity, Apple devices and AI. The full scope, with an honest view of where each feature stands.')}</p></div><div className="catalog-note">{t('本地已实现 ≠ 已上线：表示已有本地代码与相应接口验证，iOS 设备体验仍待验收。待接入和已规划项目目前不可用。','Local implementation is not a launch: code and relevant API checks exist, while iOS device acceptance is pending. Planned features and pending connections are not available.')}</div><FeatureExplorer language={language}/></section>
+  <section id="roadmap" className="story-section story-tint"><div className="campus-shell"><div className="story-heading"><p className="campus-eyebrow">{t('从一所校园，走向整座城市','FROM ONE CAMPUS TO THE CITY')}</p><h2>{t('先把每天做好。','Make every day work.')}<br/><span>{t('再把可能打开。','Then open up what’s next.')}</span></h2></div><div className="roadmap-grid">{[[t('正在做','In progress'),t('你的 iPhone 日常','Your iPhone routine'),t('完成学习、交通、校园墙与活动流程，打磨全部界面，并在真实 iOS 环境验收。','Complete learning, transit, wall and activity flows; refine every screen and verify on iOS.')],[t('下一阶段','Next'),t('更深的校园连接','Deeper campus connections'),t('按权限接入学校账号、Canvas、邮件与学业信息；完善系统提醒、小组件与身份体验。','Connect school accounts, Canvas, email and academic records with permission; add reminders and widgets.')],[t('长期方向','Longer term'),t('在全港，找到同频','Find your people across Hong Kong'),t('跨校活动、组织者与社团网络，再拓展 iPad、Mac、Watch 和可控的 AI 助手。','Cross-campus activities, organizers and clubs, then iPad, Mac, Watch and an AI assistant under your control.')]].map(([stage,title,body],i)=><article key={stage}><span className="roadmap-number">0{i+1}</span><small>{stage}</small><h3>{title}</h3><p>{body}</p></article>)}</div><div className="story-close"><h3>{t('学习和生活，都值得被好好照顾。','A place for learning. And living.')}</h3><p>{t('iOS 版本开发中。现在可以了解全部功能，浏览本地公开活动演示。','The iOS app is in development. Explore the full plan and local public activity demo today.')}</p><div className="campus-actions"><a className="campus-button" href="#features">{t('查看功能进度','Explore feature progress')}</a><Link className="campus-text-link" href={'/support?lang='+language}>{t('帮助与项目说明','Help & project details')} ↗</Link></div></div></div></section>
+ </div>;
 }

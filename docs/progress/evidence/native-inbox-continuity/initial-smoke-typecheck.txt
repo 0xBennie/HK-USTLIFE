@@ -1,0 +1,2 @@
+scripts/smoke-inbox.ts(25,44): error TS7006: Parameter 'path' implicitly has an 'any' type.
+scripts/smoke-inbox.ts(25,49): error TS7006: Parameter 'options' implicitly has an 'any' type.

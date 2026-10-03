@@ -1,0 +1,3746 @@
+[
+  {
+    "key": "today",
+    "id": "vkMwi",
+    "title": "今天",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "本周课表",
+        "target": "week",
+        "id": "E6rAI5"
+      },
+      {
+        "name": "Button plus",
+        "target": "task-edit"
+      },
+      {
+        "name": "Up next widget",
+        "target": "course"
+      },
+      {
+        "name": "Button 导航到课室",
+        "target": "map"
+      },
+      {
+        "name": "Button 课程",
+        "target": "course"
+      },
+      {
+        "name": "Shuttle widget",
+        "target": "shuttle"
+      },
+      {
+        "name": "Tasks widget",
+        "target": "task"
+      },
+      {
+        "name": "Row 整理小组展示提纲",
+        "target": "task"
+      },
+      {
+        "name": "Row 图书馆，自习一小时",
+        "target": "activity"
+      },
+      {
+        "name": "Row 课程与日历来源",
+        "target": "connections"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 987
+  },
+  {
+    "key": "campus",
+    "id": "DBOQz",
+    "title": "校园",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "全部校园服务",
+        "target": "all-apps",
+        "id": "wfzoR"
+      },
+      {
+        "name": "Button map",
+        "target": "map"
+      },
+      {
+        "name": "Search field",
+        "target": "search"
+      },
+      {
+        "name": "Next shuttle card",
+        "target": "shuttle"
+      },
+      {
+        "name": "Row 校巴时刻表",
+        "target": "shuttle"
+      },
+      {
+        "name": "Row 九巴与绿色小巴",
+        "target": "public-transit"
+      },
+      {
+        "name": "Row 图书馆",
+        "target": "place"
+      },
+      {
+        "name": "Row 学生服务",
+        "target": "services"
+      },
+      {
+        "name": "Hero image",
+        "target": "directory"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 1133
+  },
+  {
+    "key": "discover",
+    "id": "MjoHv",
+    "title": "发现",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button plus",
+        "target": "create-activity"
+      },
+      {
+        "name": "Segment 校园墙",
+        "target": "wall"
+      },
+      {
+        "name": "Segment 活动与组队",
+        "target": "discover"
+      },
+      {
+        "name": "Activity card 图书馆，自习一小时",
+        "target": "activity"
+      },
+      {
+        "name": "Activity card 课后，去海边走走",
+        "target": "activity"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 975
+  },
+  {
+    "key": "inbox",
+    "id": "t1Arsk",
+    "title": "消息",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button check-check",
+        "target": "@read"
+      },
+      {
+        "name": "Row 报名已确认",
+        "target": "confirmed"
+      },
+      {
+        "name": "Row 活动时间有变化",
+        "target": "activity"
+      },
+      {
+        "name": "Row 有人回复你的问题",
+        "target": "post"
+      },
+      {
+        "name": "Row 候补名额更新",
+        "target": "waitlisted"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 630
+  },
+  {
+    "key": "me",
+    "id": "B7wsR",
+    "title": "我的",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "学校连接",
+        "target": "connections",
+        "id": "N9pGH5"
+      },
+      {
+        "name": "设置",
+        "target": "settings",
+        "id": "O3Rru"
+      },
+      {
+        "name": "我发起的活动",
+        "target": "manage-activity",
+        "id": "bstgQ"
+      },
+      {
+        "name": "Profile",
+        "target": "account-profile"
+      },
+      {
+        "name": "Row 我的参与",
+        "target": "saved"
+      },
+      {
+        "name": "Row 我的收藏",
+        "target": "saved"
+      },
+      {
+        "name": "Row 日程与导入来源",
+        "target": "week"
+      },
+      {
+        "name": "Row 隐私与安全",
+        "target": "privacy"
+      },
+      {
+        "name": "Row 外观与语言",
+        "target": "appearance"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 1036
+  },
+  {
+    "key": "course",
+    "id": "C5VmhJ",
+    "title": "信息系统管理",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button ellipsis",
+        "target": "course-edit"
+      },
+      {
+        "name": "Row 整理小组展示提纲",
+        "target": "task"
+      },
+      {
+        "name": "Row 私人笔记",
+        "target": "notes"
+      },
+      {
+        "name": "Row 课程资料与链接",
+        "target": "materials"
+      },
+      {
+        "name": "Button 添加课程任务",
+        "target": "task-edit"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 727
+  },
+  {
+    "key": "task",
+    "id": "q22eT",
+    "title": "把想法，整理清楚。",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button trash-2",
+        "target": "@delete-task"
+      },
+      {
+        "name": "Row 截止时间",
+        "target": "task-edit"
+      },
+      {
+        "name": "Row 提醒",
+        "target": "reminders"
+      },
+      {
+        "name": "Button 标记完成",
+        "target": "task-completed"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 663
+  },
+  {
+    "key": "import",
+    "id": "IDCj6",
+    "title": "先看看，再放进日程。",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Row 2 项新增",
+        "target": "week"
+      },
+      {
+        "name": "Row 1 项重复",
+        "target": "ics-conflicts"
+      },
+      {
+        "name": "Row 1 项时间重叠",
+        "target": "ics-conflicts"
+      },
+      {
+        "name": "Row 可见范围",
+        "target": "privacy"
+      },
+      {
+        "name": "Button 确认导入 2 项",
+        "target": "ics-conflicts"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 756
+  },
+  {
+    "key": "shuttle",
+    "id": "n71ixQ",
+    "title": "校巴时刻表",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button share",
+        "target": "@share"
+      },
+      {
+        "name": "Row 上客点",
+        "target": "map"
+      },
+      {
+        "name": "Row 数据来源与更新时间",
+        "target": "source"
+      },
+      {
+        "name": "Button 收藏这条路线",
+        "target": "@save"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 818
+  },
+  {
+    "key": "place",
+    "id": "d7WFL",
+    "title": "图书馆",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button chevron-left",
+        "target": "campus"
+      },
+      {
+        "name": "Button share",
+        "target": "@share"
+      },
+      {
+        "name": "Row 地点与路线",
+        "target": "map"
+      },
+      {
+        "name": "Row 图书馆，自习一小时",
+        "target": "activity"
+      },
+      {
+        "name": "Row 信息有变化？",
+        "target": "correction"
+      },
+      {
+        "name": "Action 路线",
+        "target": "map"
+      },
+      {
+        "name": "Action 收藏",
+        "target": "@save"
+      },
+      {
+        "name": "Action 官网",
+        "target": "source"
+      },
+      {
+        "name": "Action 纠错",
+        "target": "correction"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 840
+  },
+  {
+    "key": "activity",
+    "id": "lAQTw",
+    "title": "图书馆，自习一小时",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button chevron-left",
+        "target": "discover"
+      },
+      {
+        "name": "Button share",
+        "target": "@share"
+      },
+      {
+        "name": "Button bookmark",
+        "target": "@save"
+      },
+      {
+        "name": "Row 10 月 5 日 · 16:00–17:00",
+        "target": "reminders"
+      },
+      {
+        "name": "Row 图书馆入口",
+        "target": "place"
+      },
+      {
+        "name": "Row 安静共处 · 普通话 / English",
+        "target": "participants"
+      },
+      {
+        "name": "Row 2 / 4 人已确认 · 免费",
+        "target": "participants"
+      },
+      {
+        "name": "Row 还没有评论",
+        "target": "activity-chat"
+      },
+      {
+        "name": "Row 举报 / 屏蔽",
+        "target": "report"
+      },
+      {
+        "name": "Button calendar-plus",
+        "target": "@calendar"
+      },
+      {
+        "name": "Button 看看报名安排",
+        "target": "join"
+      },
+      {
+        "name": "Button 候补按顺序递补，报名后可随时退出",
+        "target": "waitlisted"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 1177
+  },
+  {
+    "key": "join",
+    "id": "oiYrF",
+    "title": "确认报名",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "确认报名",
+        "target": "confirmed"
+      },
+      {
+        "name": "再想一想",
+        "target": "activity"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 796
+  },
+  {
+    "key": "confirmed",
+    "id": "zrHOJ",
+    "title": "报名已确认",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "查看活动安排",
+        "target": "activity"
+      },
+      {
+        "name": "退出报名",
+        "target": "withdraw"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 764
+  },
+  {
+    "key": "waitlisted",
+    "id": "v69Dn",
+    "title": "已加入候补",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "查看活动安排",
+        "target": "activity"
+      },
+      {
+        "name": "退出候补",
+        "target": "withdraw"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 788
+  },
+  {
+    "key": "uncertain",
+    "id": "qOuXf",
+    "title": "暂时无法确认结果",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "重试确认结果",
+        "target": "confirmed"
+      },
+      {
+        "name": "返回活动详情",
+        "target": "activity"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 788
+  },
+  {
+    "key": "wall",
+    "id": "oSpb6",
+    "title": "校园墙",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button square-pen",
+        "target": "wall-compose"
+      },
+      {
+        "name": "Post 怎么找到课室？",
+        "target": "post"
+      },
+      {
+        "name": "Post 今天的海边很好看",
+        "target": "post"
+      },
+      {
+        "name": "Post 第一次参加社团活动",
+        "target": "post"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 818
+  },
+  {
+    "key": "post",
+    "id": "j2X69",
+    "title": "怎么找到课室？",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button ellipsis",
+        "target": "report"
+      },
+      {
+        "name": "Row 教学楼",
+        "target": "map"
+      },
+      {
+        "name": "Row 举报 / 屏蔽",
+        "target": "report"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 700
+  },
+  {
+    "key": "saved",
+    "id": "xD7W4",
+    "title": "想再见的人和事。",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Segment 全部",
+        "target": "@filter"
+      },
+      {
+        "name": "Segment 参与",
+        "target": "@filter"
+      },
+      {
+        "name": "Segment 收藏",
+        "target": "@filter"
+      },
+      {
+        "name": "Row 图书馆",
+        "target": "place"
+      },
+      {
+        "name": "Row 校巴时刻表",
+        "target": "shuttle"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 587
+  },
+  {
+    "key": "privacy",
+    "id": "FiPCa",
+    "title": "留好自己的空间。",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Row 课表可见范围",
+        "target": "@private"
+      },
+      {
+        "name": "Row 消息提醒",
+        "target": "notification-settings"
+      },
+      {
+        "name": "Row 举报与屏蔽",
+        "target": "blocked"
+      },
+      {
+        "name": "Row 导出我的数据",
+        "target": "@export"
+      },
+      {
+        "name": "Row 删除账户",
+        "target": "delete-account"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 658
+  },
+  {
+    "key": "empty",
+    "id": "M2UXBG",
+    "title": "暂时没有合适的",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button 清除筛选",
+        "target": "discover"
+      },
+      {
+        "name": "Button 发起一个小计划",
+        "target": "create-activity"
+      },
+      {
+        "name": "Row 你的课表仍然私密",
+        "target": "privacy"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 623
+  },
+  {
+    "key": "offline",
+    "id": "FDPsd",
+    "title": "暂时连不上",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "Button 重新查询",
+        "target": "shuttle"
+      },
+      {
+        "name": "Row 已缓存的站点与路线说明",
+        "target": "shuttle"
+      },
+      {
+        "name": "Row 计划班次",
+        "target": "shuttle"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 601
+  },
+  {
+    "key": "welcome",
+    "id": "DCTVp",
+    "title": "大学生活，\n从容一点。",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "学习有条理",
+        "target": "week",
+        "id": "H36MA"
+      },
+      {
+        "name": "校园少一点绕路",
+        "target": "campus",
+        "id": "PgKui"
+      },
+      {
+        "name": "认识朋友，不必勉强",
+        "target": "discover",
+        "id": "Y8O1U"
+      },
+      {
+        "name": "使用 HKUST 账号登录",
+        "target": "school-login"
+      },
+      {
+        "name": "先随便看看",
+        "target": "today"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 668
+  },
+  {
+    "key": "school-login",
+    "id": "X155X",
+    "title": "返回",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "返回",
+        "target": "welcome",
+        "id": "X5G6v"
+      },
+      {
+        "name": "SIS 正式课表",
+        "target": "sis-consent",
+        "id": "KN4DV"
+      },
+      {
+        "name": "Canvas 学习内容",
+        "target": "connections",
+        "id": "WRYHm"
+      },
+      {
+        "name": "继续到学校登录",
+        "target": "sis-consent"
+      },
+      {
+        "name": "暂时跳过",
+        "target": "today"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 686
+  },
+  {
+    "key": "sis-consent",
+    "id": "y6wMQ",
+    "title": "返回",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "返回",
+        "target": "school-login",
+        "id": "yjMuN"
+      },
+      {
+        "name": "本学期已选课程",
+        "target": "sync",
+        "id": "UyoYu"
+      },
+      {
+        "name": "上课时间与地点",
+        "target": "sync",
+        "id": "Gi3OD"
+      },
+      {
+        "name": "改期与取消",
+        "target": "sync",
+        "id": "aofsw"
+      },
+      {
+        "name": "同意并同步 · 体验示例",
+        "target": "sync"
+      },
+      {
+        "name": "暂不连接",
+        "target": "today"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 835
+  },
+  {
+    "key": "sync",
+    "id": "z3Hr2J",
+    "title": "正在整理你的课表",
+    "stage": "MVP",
+    "back": "sis-consent",
+    "links": [
+      {
+        "name": "返回",
+        "target": "sis-consent",
+        "id": "NhZju"
+      },
+      {
+        "name": "验证授权",
+        "target": "connections",
+        "id": "Y4bHjG"
+      },
+      {
+        "name": "读取本学期课程",
+        "target": "week",
+        "id": "wCh6C"
+      },
+      {
+        "name": "更新提醒",
+        "target": "reminders",
+        "id": "p5C2k0"
+      },
+      {
+        "name": "查看示例周课表",
+        "target": "week"
+      },
+      {
+        "name": "查看连接状态",
+        "target": "connections"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 767
+  },
+  {
+    "key": "connections",
+    "id": "RukkW",
+    "title": "学校连接",
+    "stage": "MVP",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "ySo0M"
+      },
+      {
+        "name": "HKUST 账号",
+        "target": "school-login",
+        "id": "ALx61"
+      },
+      {
+        "name": "SIS 正式课表",
+        "target": "sis-consent",
+        "id": "PKS2G"
+      },
+      {
+        "name": "Canvas",
+        "target": "school-login",
+        "id": "HrVF6"
+      },
+      {
+        "name": "Outlook 学校邮箱",
+        "target": "mail",
+        "id": "IiyL2"
+      },
+      {
+        "name": "同步与数据管理",
+        "target": "privacy",
+        "id": "oNxwV"
+      },
+      {
+        "name": "备用日历导入",
+        "target": "import",
+        "id": "Z3CsUS"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 884
+  },
+  {
+    "key": "week",
+    "id": "uwRFc",
+    "title": "本周课表",
+    "stage": "MVP",
+    "back": "today",
+    "links": [
+      {
+        "name": "返回",
+        "target": "today",
+        "id": "k6Ilw"
+      },
+      {
+        "name": "09:00",
+        "target": "task-edit",
+        "id": "I2YbC"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "weuVJ"
+      },
+      {
+        "name": "ECON",
+        "target": "course",
+        "id": "fd5mX"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "QgQt7"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "oIrfz"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "f87mFd"
+      },
+      {
+        "name": "10:30",
+        "target": "task-edit",
+        "id": "APDsX"
+      },
+      {
+        "name": "ISOM",
+        "target": "course",
+        "id": "cnWn4"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "L4I9y"
+      },
+      {
+        "name": "ISOM",
+        "target": "course",
+        "id": "P2GCn"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "K2ivMB"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "iEWv7"
+      },
+      {
+        "name": "12:00",
+        "target": "task-edit",
+        "id": "qvUbQ"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "TrjkL"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "accdD"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "T536tA"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "OhFGZ"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "YgPzw"
+      },
+      {
+        "name": "14:00",
+        "target": "task-edit",
+        "id": "MW2IK"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "cqLe5"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "XlQiV"
+      },
+      {
+        "name": "LANG",
+        "target": "course",
+        "id": "n6RngH"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "VJ9xS"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "lfXJb"
+      },
+      {
+        "name": "16:00",
+        "target": "task-edit",
+        "id": "A4clGZ"
+      },
+      {
+        "name": "自习",
+        "target": "activity",
+        "id": "Qg15v"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "gGHPw"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "P7RqJ0"
+      },
+      {
+        "name": "小组",
+        "target": "course",
+        "id": "bcPLx"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "OKvJD"
+      },
+      {
+        "name": "19:00",
+        "target": "task-edit",
+        "id": "SfEtu"
+      },
+      {
+        "name": "提纲",
+        "target": "task",
+        "id": "x8QQIN"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "w7kN2L"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "PwU74"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "AZptZ"
+      },
+      {
+        "name": "Free slot",
+        "target": "task-edit",
+        "id": "MF80O"
+      },
+      {
+        "name": "添加个人安排",
+        "target": "task-edit"
+      },
+      {
+        "name": "课程与学习资料",
+        "target": "course"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 936
+  },
+  {
+    "key": "task-edit",
+    "id": "B4cNH",
+    "title": "添加安排",
+    "stage": "MVP",
+    "back": "today",
+    "links": [
+      {
+        "name": "返回",
+        "target": "today",
+        "id": "yqVFr"
+      },
+      {
+        "name": "保存安排",
+        "target": "task"
+      },
+      {
+        "name": "取消并保留草稿",
+        "target": "draft"
+      }
+    ],
+    "fields": [
+      {
+        "id": "hybWS",
+        "label": "名称",
+        "value": "小组展示准备"
+      },
+      {
+        "id": "esWCh",
+        "label": "关联课程",
+        "value": "信息系统管理"
+      },
+      {
+        "id": "uXrWZ",
+        "label": "时间",
+        "value": "10 月 5 日 · 19:00"
+      },
+      {
+        "id": "a4XUwL",
+        "label": "重复",
+        "value": "不重复"
+      },
+      {
+        "id": "FcyqY",
+        "label": "提醒",
+        "value": "提前 15 分钟"
+      }
+    ],
+    "width": 393,
+    "height": 760
+  },
+  {
+    "key": "course-edit",
+    "id": "l4ygQI",
+    "title": "课程偏好",
+    "stage": "MVP",
+    "back": "course",
+    "links": [
+      {
+        "name": "返回",
+        "target": "course",
+        "id": "UEEuY"
+      },
+      {
+        "name": "显示在今天",
+        "target": "course",
+        "id": "jrcFj"
+      },
+      {
+        "name": "截止日期提醒",
+        "target": "reminders",
+        "id": "TrRTe"
+      },
+      {
+        "name": "保存偏好",
+        "target": "course"
+      }
+    ],
+    "fields": [
+      {
+        "id": "vl2Eh",
+        "label": "个人名称",
+        "value": "信息系统管理"
+      },
+      {
+        "id": "CGqnV",
+        "label": "显示颜色",
+        "value": "靛蓝"
+      },
+      {
+        "id": "h20so",
+        "label": "课程排序",
+        "value": "第 1 位"
+      }
+    ],
+    "width": 393,
+    "height": 761
+  },
+  {
+    "key": "notes",
+    "id": "VESOP",
+    "title": "私人笔记",
+    "stage": "MVP",
+    "back": "course",
+    "links": [
+      {
+        "name": "返回",
+        "target": "course",
+        "id": "IyuqV"
+      },
+      {
+        "name": "保存笔记",
+        "target": "course"
+      },
+      {
+        "name": "继续整理资料",
+        "target": "materials"
+      }
+    ],
+    "fields": [
+      {
+        "id": "tdixa",
+        "label": "标题",
+        "value": "Week 3 · 讨论要点"
+      },
+      {
+        "id": "YugkN",
+        "label": "正文",
+        "value": "先讲清楚问题，再解释我们的选择。\n案例：开放创新与组织学习。\n下次讨论前补充两个例子。"
+      }
+    ],
+    "width": 393,
+    "height": 578
+  },
+  {
+    "key": "materials",
+    "id": "YtX8u",
+    "title": "课程资料",
+    "stage": "MVP",
+    "back": "course",
+    "links": [
+      {
+        "name": "返回",
+        "target": "course",
+        "id": "L4wu5"
+      },
+      {
+        "name": "课堂资料",
+        "target": "file",
+        "id": "rA2IY"
+      },
+      {
+        "name": "案例阅读",
+        "target": "file",
+        "id": "C6UaVA"
+      },
+      {
+        "name": "我的学习笔记",
+        "target": "notes",
+        "id": "VNi1Z"
+      },
+      {
+        "name": "添加资料链接",
+        "target": "material-edit",
+        "id": "r8Iat"
+      },
+      {
+        "name": "下载与打包",
+        "target": "downloads",
+        "id": "o1qhwY"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 776
+  },
+  {
+    "key": "material-edit",
+    "id": "YDVa8",
+    "title": "添加资料",
+    "stage": "MVP",
+    "back": "materials",
+    "links": [
+      {
+        "name": "返回",
+        "target": "materials",
+        "id": "CO5KO"
+      },
+      {
+        "name": "保存链接",
+        "target": "materials"
+      }
+    ],
+    "fields": [
+      {
+        "id": "L1PazC",
+        "label": "标题",
+        "value": "Week 3 案例阅读"
+      },
+      {
+        "id": "xGJzG",
+        "label": "网址",
+        "value": "https://…"
+      },
+      {
+        "id": "yEQvG",
+        "label": "关联课程",
+        "value": "信息系统管理"
+      },
+      {
+        "id": "hEzzw",
+        "label": "备注",
+        "value": "下次讨论前阅读"
+      }
+    ],
+    "width": 393,
+    "height": 609
+  },
+  {
+    "key": "ics-conflicts",
+    "id": "n5Chc",
+    "title": "确认导入变化",
+    "stage": "MVP",
+    "back": "import",
+    "links": [
+      {
+        "name": "返回",
+        "target": "import",
+        "id": "EtvvN"
+      },
+      {
+        "name": "3 条新增安排",
+        "target": "import",
+        "id": "pSjMn"
+      },
+      {
+        "name": "1 条时间修改",
+        "target": "import",
+        "id": "u71rH"
+      },
+      {
+        "name": "2 条重复记录",
+        "target": "import",
+        "id": "FDd5v"
+      },
+      {
+        "name": "确认所选变化",
+        "target": "today"
+      },
+      {
+        "name": "返回预览",
+        "target": "import"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 747
+  },
+  {
+    "key": "reminders",
+    "id": "OtBqH",
+    "title": "提醒，刚刚好",
+    "stage": "MVP",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "yPVRQ"
+      },
+      {
+        "name": "上课前",
+        "target": "reminders",
+        "id": "Hnv9X"
+      },
+      {
+        "name": "任务截止",
+        "target": "reminders",
+        "id": "fvp7N"
+      },
+      {
+        "name": "活动",
+        "target": "reminders",
+        "id": "oLXwd"
+      },
+      {
+        "name": "静默时段",
+        "target": "notification-settings",
+        "id": "I9Y2Q"
+      },
+      {
+        "name": "系统通知权限",
+        "target": "permission",
+        "id": "t3camZ"
+      },
+      {
+        "name": "保存提醒偏好",
+        "target": "me"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 789
+  },
+  {
+    "key": "permission",
+    "id": "oLmD5",
+    "title": "不错过，也不打扰",
+    "stage": "MVP",
+    "back": "reminders",
+    "links": [
+      {
+        "name": "返回",
+        "target": "reminders",
+        "id": "sCTIB"
+      },
+      {
+        "name": "体验允许后的设置",
+        "target": "notification-settings"
+      },
+      {
+        "name": "暂时不用",
+        "target": "today"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 449
+  },
+  {
+    "key": "empty-study",
+    "id": "xocoH",
+    "title": "今天，留点空白",
+    "stage": "MVP",
+    "back": "today",
+    "links": [
+      {
+        "name": "返回",
+        "target": "today",
+        "id": "kiyo2"
+      },
+      {
+        "name": "连接 SIS 课表",
+        "target": "connections",
+        "id": "HGqQO"
+      },
+      {
+        "name": "添加个人安排",
+        "target": "task-edit",
+        "id": "L2zhf3"
+      },
+      {
+        "name": "备用导入日历",
+        "target": "import",
+        "id": "N9Q9C"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 593
+  },
+  {
+    "key": "search",
+    "id": "Bn29q",
+    "title": "想找什么？",
+    "stage": "MVP",
+    "back": "campus",
+    "links": [
+      {
+        "name": "返回",
+        "target": "campus",
+        "id": "xf2JV"
+      },
+      {
+        "name": "图书馆",
+        "target": "place",
+        "id": "d43Gew"
+      },
+      {
+        "name": "坑口校巴",
+        "target": "shuttle",
+        "id": "I5WzQV"
+      },
+      {
+        "name": "校园地图",
+        "target": "map",
+        "id": "a6hwNy"
+      },
+      {
+        "name": "办事与服务",
+        "target": "services",
+        "id": "w9zl1"
+      },
+      {
+        "name": "学院与教师",
+        "target": "departments",
+        "id": "Ilfx8"
+      }
+    ],
+    "fields": [
+      {
+        "id": "I6o1db",
+        "label": "搜索校园",
+        "value": "地点、服务、社团或教师"
+      }
+    ],
+    "width": 393,
+    "height": 869
+  },
+  {
+    "key": "directory",
+    "id": "DzQxm",
+    "title": "校园生活",
+    "stage": "MVP",
+    "back": "campus",
+    "links": [
+      {
+        "name": "返回",
+        "target": "campus",
+        "id": "BntRw"
+      },
+      {
+        "name": "图书馆",
+        "target": "place",
+        "id": "X0J24"
+      },
+      {
+        "name": "餐饮与商店",
+        "target": "dining",
+        "id": "k7K5z"
+      },
+      {
+        "name": "运动与场地",
+        "target": "services",
+        "id": "sghmV"
+      },
+      {
+        "name": "社团与组织",
+        "target": "clubs",
+        "id": "FKLAO"
+      },
+      {
+        "name": "公开信息目录",
+        "target": "departments",
+        "id": "l0IrbG"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 755
+  },
+  {
+    "key": "public-transit",
+    "id": "fpXlD",
+    "title": "离开校园",
+    "stage": "MVP",
+    "back": "campus",
+    "links": [
+      {
+        "name": "返回",
+        "target": "campus",
+        "id": "jAFv1"
+      },
+      {
+        "name": "校巴",
+        "target": "shuttle",
+        "id": "lH6Nx"
+      },
+      {
+        "name": "九巴",
+        "target": "transit-detail",
+        "id": "tT1vn"
+      },
+      {
+        "name": "绿色专线小巴",
+        "target": "transit-detail",
+        "id": "o1oDw"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 695
+  },
+  {
+    "key": "transit-detail",
+    "id": "SMNyM",
+    "title": "到站预测",
+    "stage": "MVP",
+    "back": "public-transit",
+    "links": [
+      {
+        "name": "返回",
+        "target": "public-transit",
+        "id": "gMIJG"
+      },
+      {
+        "name": "路线与方向",
+        "target": "public-transit",
+        "id": "zGMlC"
+      },
+      {
+        "name": "上车站点",
+        "target": "map",
+        "id": "RzOYw"
+      },
+      {
+        "name": "重新查询",
+        "target": "transit-detail"
+      },
+      {
+        "name": "查看来源与更新",
+        "target": "source"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 666
+  },
+  {
+    "key": "correction",
+    "id": "JGoFz",
+    "title": "帮大家改准一点",
+    "stage": "MVP",
+    "back": "place",
+    "links": [
+      {
+        "name": "返回",
+        "target": "place",
+        "id": "r0Nn5v"
+      },
+      {
+        "name": "提交纠错 · 原型演示",
+        "target": "correction-sent"
+      },
+      {
+        "name": "先保留草稿",
+        "target": "draft"
+      }
+    ],
+    "fields": [
+      {
+        "id": "E0kN9",
+        "label": "关联条目",
+        "value": "图书馆"
+      },
+      {
+        "id": "YoSYd",
+        "label": "问题类型",
+        "value": "开放时间有变化"
+      },
+      {
+        "id": "THYHv",
+        "label": "补充说明",
+        "value": "请描述你发现的变化和来源"
+      },
+      {
+        "id": "fDidG",
+        "label": "来源链接 · 可选",
+        "value": "https://…"
+      }
+    ],
+    "width": 393,
+    "height": 702
+  },
+  {
+    "key": "correction-sent",
+    "id": "ISlgM",
+    "title": "纠错已记录",
+    "stage": "MVP",
+    "back": "place",
+    "links": [
+      {
+        "name": "返回",
+        "target": "place",
+        "id": "v7e8u"
+      },
+      {
+        "name": "查看我的反馈",
+        "target": "feedback"
+      },
+      {
+        "name": "返回地点",
+        "target": "place"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 476
+  },
+  {
+    "key": "source",
+    "id": "tLSyW",
+    "title": "信息从哪里来",
+    "stage": "MVP",
+    "back": "shuttle",
+    "links": [
+      {
+        "name": "返回",
+        "target": "shuttle",
+        "id": "ZymZX"
+      },
+      {
+        "name": "学校交通公告",
+        "target": "shuttle",
+        "id": "t73wr"
+      },
+      {
+        "name": "适用日期",
+        "target": "shuttle",
+        "id": "XwwKR"
+      },
+      {
+        "name": "更新时间",
+        "target": "offline",
+        "id": "tjFvb"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 608
+  },
+  {
+    "key": "create-activity",
+    "id": "zMWmp",
+    "title": "一起做点小事",
+    "stage": "MVP",
+    "back": "discover",
+    "links": [
+      {
+        "name": "返回",
+        "target": "discover",
+        "id": "wuzoN"
+      },
+      {
+        "name": "预览活动",
+        "target": "activity-preview"
+      },
+      {
+        "name": "保留草稿",
+        "target": "draft"
+      }
+    ],
+    "fields": [
+      {
+        "id": "gFWoG",
+        "label": "活动名称",
+        "value": "图书馆，自习一小时"
+      },
+      {
+        "id": "CDV7F",
+        "label": "时间",
+        "value": "10 月 5 日 · 16:00—17:00"
+      },
+      {
+        "id": "UF1x5",
+        "label": "地点",
+        "value": "图书馆 · 集合点待确认"
+      },
+      {
+        "id": "TBzLq",
+        "label": "人数与语言",
+        "value": "4 人 · 普通话 / English"
+      },
+      {
+        "id": "pqZOX",
+        "label": "参与方式",
+        "value": "可以安静参与，不需要自我介绍"
+      }
+    ],
+    "width": 393,
+    "height": 787
+  },
+  {
+    "key": "activity-preview",
+    "id": "ptJRT",
+    "title": "发布前再看一眼",
+    "stage": "MVP",
+    "back": "create-activity",
+    "links": [
+      {
+        "name": "返回",
+        "target": "create-activity",
+        "id": "t95GB"
+      },
+      {
+        "name": "周一 16:00—17:00",
+        "target": "create-activity",
+        "id": "A1qEnQ"
+      },
+      {
+        "name": "安静参与也很好",
+        "target": "create-activity",
+        "id": "Z5Uvz"
+      },
+      {
+        "name": "自由退出",
+        "target": "create-activity",
+        "id": "j97zZ"
+      },
+      {
+        "name": "发布示例活动",
+        "target": "manage-activity"
+      },
+      {
+        "name": "返回修改",
+        "target": "create-activity"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 645
+  },
+  {
+    "key": "manage-activity",
+    "id": "RlqMw",
+    "title": "我的活动",
+    "stage": "MVP",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "mgElD"
+      },
+      {
+        "name": "已确认 3 / 4",
+        "target": "participants",
+        "id": "an7TF"
+      },
+      {
+        "name": "活动讨论",
+        "target": "activity-chat",
+        "id": "I8ZYP"
+      },
+      {
+        "name": "修改时间与地点",
+        "target": "reschedule",
+        "id": "Yu8Gf"
+      },
+      {
+        "name": "取消活动",
+        "target": "cancel-activity",
+        "id": "YQ6H6"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 722
+  },
+  {
+    "key": "participants",
+    "id": "Tkykq",
+    "title": "参与者",
+    "stage": "MVP",
+    "back": "manage-activity",
+    "links": [
+      {
+        "name": "返回",
+        "target": "manage-activity",
+        "id": "hhU2t"
+      },
+      {
+        "name": "你",
+        "target": "me",
+        "id": "gfydu"
+      },
+      {
+        "name": "Alex",
+        "target": "activity-chat",
+        "id": "VEcKZ"
+      },
+      {
+        "name": "Sam",
+        "target": "activity-chat",
+        "id": "EGM2L"
+      },
+      {
+        "name": "Taylor",
+        "target": "waitlisted",
+        "id": "A7RPw"
+      },
+      {
+        "name": "返回活动管理",
+        "target": "manage-activity"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 708
+  },
+  {
+    "key": "reschedule",
+    "id": "nsF0l",
+    "title": "修改活动",
+    "stage": "MVP",
+    "back": "manage-activity",
+    "links": [
+      {
+        "name": "返回",
+        "target": "manage-activity",
+        "id": "yI59u"
+      },
+      {
+        "name": "确认修改 · 示例",
+        "target": "inbox"
+      },
+      {
+        "name": "暂不修改",
+        "target": "manage-activity"
+      }
+    ],
+    "fields": [
+      {
+        "id": "GKNuy",
+        "label": "新时间",
+        "value": "10 月 6 日 · 16:00—17:00"
+      },
+      {
+        "id": "LfZjq",
+        "label": "新地点",
+        "value": "图书馆 · 集合点不变"
+      },
+      {
+        "id": "tPqRL",
+        "label": "告诉大家原因",
+        "value": "课程安排有变化"
+      }
+    ],
+    "width": 393,
+    "height": 712
+  },
+  {
+    "key": "cancel-activity",
+    "id": "IXilt",
+    "title": "取消这次活动？",
+    "stage": "MVP",
+    "back": "manage-activity",
+    "links": [
+      {
+        "name": "返回",
+        "target": "manage-activity",
+        "id": "sSZ32"
+      },
+      {
+        "name": "确认取消 · 示例",
+        "target": "cancelled"
+      },
+      {
+        "name": "保留活动",
+        "target": "manage-activity"
+      }
+    ],
+    "fields": [
+      {
+        "id": "VrXV4",
+        "label": "给参与者的说明",
+        "value": "这次临时有事，我们下次再约。"
+      }
+    ],
+    "width": 393,
+    "height": 542
+  },
+  {
+    "key": "cancelled",
+    "id": "WENqH",
+    "title": "活动已取消",
+    "stage": "MVP",
+    "back": "discover",
+    "links": [
+      {
+        "name": "返回",
+        "target": "discover",
+        "id": "c9eig"
+      },
+      {
+        "name": "看看其他活动",
+        "target": "discover"
+      },
+      {
+        "name": "查看通知",
+        "target": "inbox"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 476
+  },
+  {
+    "key": "activity-chat",
+    "id": "UyFsc",
+    "title": "活动讨论",
+    "stage": "MVP",
+    "back": "activity",
+    "links": [
+      {
+        "name": "返回",
+        "target": "activity",
+        "id": "eTiSj"
+      },
+      {
+        "name": "Alex · 15:10",
+        "target": "activity-chat",
+        "id": "UyOAa"
+      },
+      {
+        "name": "组织者 · 15:12",
+        "target": "activity-chat",
+        "id": "mnWX9"
+      },
+      {
+        "name": "发送示例回复",
+        "target": "activity-chat"
+      }
+    ],
+    "fields": [
+      {
+        "id": "hib0A",
+        "label": "回复",
+        "value": "想问集合地点或带什么？"
+      }
+    ],
+    "width": 393,
+    "height": 591
+  },
+  {
+    "key": "wall-compose",
+    "id": "XiMkD",
+    "title": "有什么想分享？",
+    "stage": "MVP",
+    "back": "wall",
+    "links": [
+      {
+        "name": "返回",
+        "target": "wall",
+        "id": "h6VGF"
+      },
+      {
+        "name": "发布示例帖子",
+        "target": "post"
+      },
+      {
+        "name": "保留草稿",
+        "target": "draft"
+      }
+    ],
+    "fields": [
+      {
+        "id": "iBWRk",
+        "label": "类型",
+        "value": "校园求助"
+      },
+      {
+        "id": "m7ocJx",
+        "label": "标题",
+        "value": "第一次做小组展示，有什么建议？"
+      },
+      {
+        "id": "bZbT7",
+        "label": "正文",
+        "value": "说说具体遇到的问题，大家更容易帮到你。"
+      },
+      {
+        "id": "x3oSMP",
+        "label": "可见范围",
+        "value": "校园社区 · 昵称展示"
+      }
+    ],
+    "width": 393,
+    "height": 777
+  },
+  {
+    "key": "report",
+    "id": "bhwKo",
+    "title": "告诉我们问题",
+    "stage": "MVP",
+    "back": "post",
+    "links": [
+      {
+        "name": "返回",
+        "target": "post",
+        "id": "anXl7"
+      },
+      {
+        "name": "屏蔽此用户",
+        "target": "blocked",
+        "id": "J0HlG"
+      },
+      {
+        "name": "提交举报 · 示例",
+        "target": "feedback"
+      },
+      {
+        "name": "返回帖子",
+        "target": "post"
+      }
+    ],
+    "fields": [
+      {
+        "id": "lQN9z",
+        "label": "举报原因",
+        "value": "骚扰或不友善内容"
+      },
+      {
+        "id": "oLkO8",
+        "label": "补充说明 · 可选",
+        "value": "描述需要核查的具体内容"
+      }
+    ],
+    "width": 393,
+    "height": 634
+  },
+  {
+    "key": "blocked",
+    "id": "tKFsu",
+    "title": "屏蔽管理",
+    "stage": "MVP",
+    "back": "privacy",
+    "links": [
+      {
+        "name": "返回",
+        "target": "privacy",
+        "id": "qeEWZ"
+      },
+      {
+        "name": "示例用户",
+        "target": "unblock",
+        "id": "nFDmb"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 473
+  },
+  {
+    "key": "unblock",
+    "id": "HtySB",
+    "title": "解除屏蔽？",
+    "stage": "MVP",
+    "back": "blocked",
+    "links": [
+      {
+        "name": "返回",
+        "target": "blocked",
+        "id": "CRHFp"
+      },
+      {
+        "name": "解除屏蔽 · 示例",
+        "target": "blocked"
+      },
+      {
+        "name": "继续屏蔽",
+        "target": "blocked"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 374
+  },
+  {
+    "key": "feedback",
+    "id": "Ff1nd",
+    "title": "我的反馈",
+    "stage": "MVP",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "N0yZl"
+      },
+      {
+        "name": "地点信息纠错",
+        "target": "correction-sent",
+        "id": "X5a88T"
+      },
+      {
+        "name": "内容举报",
+        "target": "report",
+        "id": "mPjML"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 485
+  },
+  {
+    "key": "account-profile",
+    "id": "K43Sjn",
+    "title": "你的校园名片",
+    "stage": "MVP",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "CBS1N"
+      },
+      {
+        "name": "保存资料",
+        "target": "me"
+      },
+      {
+        "name": "头像与裁剪",
+        "target": "avatar"
+      }
+    ],
+    "fields": [
+      {
+        "id": "j0phEg",
+        "label": "昵称",
+        "value": "Bennie"
+      },
+      {
+        "id": "qYAEz",
+        "label": "一句介绍",
+        "value": "喜欢安静自习，也想偶尔出去走走。"
+      },
+      {
+        "id": "zTh82",
+        "label": "兴趣",
+        "value": "电影 · 羽毛球 · 咖啡"
+      },
+      {
+        "id": "pjYlK",
+        "label": "语言",
+        "value": "中文 / English"
+      }
+    ],
+    "width": 393,
+    "height": 702
+  },
+  {
+    "key": "avatar",
+    "id": "n08b1e",
+    "title": "选择头像",
+    "stage": "MVP",
+    "back": "account-profile",
+    "links": [
+      {
+        "name": "返回",
+        "target": "account-profile",
+        "id": "jEdpn"
+      },
+      {
+        "name": "从相册选择",
+        "target": "account-profile",
+        "id": "vXulN"
+      },
+      {
+        "name": "使用默认头像",
+        "target": "account-profile",
+        "id": "SQFlq"
+      },
+      {
+        "name": "确认头像 · 示例",
+        "target": "account-profile"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 498
+  },
+  {
+    "key": "appearance",
+    "id": "A9wMaW",
+    "title": "按你的习惯",
+    "stage": "MVP",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "IZkXa"
+      },
+      {
+        "name": "跟随系统",
+        "target": "appearance",
+        "id": "GBb9S"
+      },
+      {
+        "name": "语言",
+        "target": "language",
+        "id": "kKTiM"
+      },
+      {
+        "name": "文字大小",
+        "target": "large-text",
+        "id": "CBBsL"
+      },
+      {
+        "name": "减少动态效果",
+        "target": "motion",
+        "id": "f2SyF"
+      },
+      {
+        "name": "减少透明度",
+        "target": "motion",
+        "id": "k7Zce"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 696
+  },
+  {
+    "key": "language",
+    "id": "kpogc",
+    "title": "语言",
+    "stage": "MVP",
+    "back": "appearance",
+    "links": [
+      {
+        "name": "返回",
+        "target": "appearance",
+        "id": "bCH60"
+      },
+      {
+        "name": "简体中文",
+        "target": "appearance",
+        "id": "M1M9f"
+      },
+      {
+        "name": "繁體中文",
+        "target": "appearance",
+        "id": "CFumW"
+      },
+      {
+        "name": "English",
+        "target": "english",
+        "id": "xLGqG"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 486
+  },
+  {
+    "key": "notification-settings",
+    "id": "s1c5ns",
+    "title": "消息与通知",
+    "stage": "MVP",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "gqZmD"
+      },
+      {
+        "name": "报名与活动变更",
+        "target": "inbox",
+        "id": "pFAxt"
+      },
+      {
+        "name": "回复与求助",
+        "target": "inbox",
+        "id": "lTe1z"
+      },
+      {
+        "name": "学习安排提醒",
+        "target": "reminders",
+        "id": "rK1Sd"
+      },
+      {
+        "name": "安静时段",
+        "target": "reminders",
+        "id": "vLIaY"
+      },
+      {
+        "name": "通知预览",
+        "target": "privacy",
+        "id": "NTajk"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 696
+  },
+  {
+    "key": "delete-account",
+    "id": "K09fbk",
+    "title": "离开前，再确认",
+    "stage": "MVP",
+    "back": "privacy",
+    "links": [
+      {
+        "name": "返回",
+        "target": "privacy",
+        "id": "nlwLq"
+      },
+      {
+        "name": "查看删除完成状态 · 示例",
+        "target": "deleted"
+      },
+      {
+        "name": "保留账号",
+        "target": "privacy"
+      }
+    ],
+    "fields": [
+      {
+        "id": "spsIi",
+        "label": "确认操作",
+        "value": "输入“删除”以继续"
+      }
+    ],
+    "width": 393,
+    "height": 569
+  },
+  {
+    "key": "deleted",
+    "id": "iFcjT",
+    "title": "账号已删除",
+    "stage": "MVP",
+    "back": "welcome",
+    "links": [
+      {
+        "name": "返回",
+        "target": "welcome",
+        "id": "uODRF"
+      },
+      {
+        "name": "回到欢迎页",
+        "target": "welcome"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 308
+  },
+  {
+    "key": "draft",
+    "id": "tYT5o",
+    "title": "还有没保存的内容",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "保留草稿并返回",
+        "target": "today"
+      },
+      {
+        "name": "继续编辑",
+        "target": "task-edit"
+      },
+      {
+        "name": "放弃修改",
+        "target": "today"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 373
+  },
+  {
+    "key": "session-expired",
+    "id": "mFEgW",
+    "title": "需要重新登录",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "使用 HKUST 账号登录",
+        "target": "school-login"
+      },
+      {
+        "name": "继续浏览公共信息",
+        "target": "campus"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 409
+  },
+  {
+    "key": "services",
+    "id": "V8N7A",
+    "title": "办事，少走一步",
+    "stage": "MVP",
+    "back": "campus",
+    "links": [
+      {
+        "name": "返回",
+        "target": "campus",
+        "id": "ZnNqu"
+      },
+      {
+        "name": "教务与注册",
+        "target": "service-detail",
+        "id": "sKK6b"
+      },
+      {
+        "name": "场地与设施",
+        "target": "service-detail",
+        "id": "yv3we"
+      },
+      {
+        "name": "学生支援",
+        "target": "service-detail",
+        "id": "A5zfV"
+      },
+      {
+        "name": "图书馆服务",
+        "target": "place",
+        "id": "k7nSQ"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 647
+  },
+  {
+    "key": "service-detail",
+    "id": "oRLe9",
+    "title": "教务与注册",
+    "stage": "MVP",
+    "back": "services",
+    "links": [
+      {
+        "name": "返回",
+        "target": "services",
+        "id": "hndZ0"
+      },
+      {
+        "name": "准备材料",
+        "target": "source",
+        "id": "K8msVC"
+      },
+      {
+        "name": "适用对象与期限",
+        "target": "source",
+        "id": "s7J8q"
+      },
+      {
+        "name": "官方办理入口",
+        "target": "services",
+        "id": "tDP9Z"
+      },
+      {
+        "name": "查看官方来源",
+        "target": "source"
+      },
+      {
+        "name": "反馈信息问题",
+        "target": "correction"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 645
+  },
+  {
+    "key": "departments",
+    "id": "Psv7X",
+    "title": "学院与教师",
+    "stage": "MVP",
+    "back": "campus",
+    "links": [
+      {
+        "name": "返回",
+        "target": "campus",
+        "id": "GoHtO"
+      },
+      {
+        "name": "学院与部门",
+        "target": "teacher",
+        "id": "Mb5HO"
+      },
+      {
+        "name": "教师与研究方向",
+        "target": "teacher",
+        "id": "q6PvWS"
+      },
+      {
+        "name": "搜索公开资料",
+        "target": "search",
+        "id": "ZMvQK"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 593
+  },
+  {
+    "key": "teacher",
+    "id": "FtsjM",
+    "title": "教师资料",
+    "stage": "授权后深化",
+    "back": "departments",
+    "links": [
+      {
+        "name": "返回",
+        "target": "departments",
+        "id": "jpoN9"
+      },
+      {
+        "name": "姓名与所属部门",
+        "target": "source",
+        "id": "HrN0H"
+      },
+      {
+        "name": "研究领域与主页",
+        "target": "source",
+        "id": "dUMZe"
+      },
+      {
+        "name": "联系入口",
+        "target": "mail-compose",
+        "id": "t6Ta6i"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 615
+  },
+  {
+    "key": "dining",
+    "id": "mUCiT",
+    "title": "吃点什么",
+    "stage": "MVP",
+    "back": "directory",
+    "links": [
+      {
+        "name": "返回",
+        "target": "directory",
+        "id": "JsWY8"
+      },
+      {
+        "name": "快速吃一餐",
+        "target": "place",
+        "id": "vjQg1"
+      },
+      {
+        "name": "喝杯咖啡",
+        "target": "reviews",
+        "id": "R5mWR"
+      },
+      {
+        "name": "日常采购",
+        "target": "place",
+        "id": "yVHTz"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 593
+  },
+  {
+    "key": "reviews",
+    "id": "sSRfe",
+    "title": "大家的体验",
+    "stage": "后续设计",
+    "back": "place",
+    "links": [
+      {
+        "name": "返回",
+        "target": "place",
+        "id": "fF7M0"
+      },
+      {
+        "name": "预览评价",
+        "target": "post"
+      },
+      {
+        "name": "返回地点",
+        "target": "place"
+      }
+    ],
+    "fields": [
+      {
+        "id": "OJ62t",
+        "label": "分享体验",
+        "value": "哪些信息对下一位同学有帮助？"
+      }
+    ],
+    "width": 393,
+    "height": 569
+  },
+  {
+    "key": "clubs",
+    "id": "BvQO4",
+    "title": "找到你的圈子",
+    "stage": "MVP",
+    "back": "discover",
+    "links": [
+      {
+        "name": "返回",
+        "target": "discover",
+        "id": "k6470"
+      },
+      {
+        "name": "运动与户外",
+        "target": "club-detail",
+        "id": "Fr06D"
+      },
+      {
+        "name": "文化与创作",
+        "target": "club-detail",
+        "id": "EjhqM"
+      },
+      {
+        "name": "学习与实践",
+        "target": "club-detail",
+        "id": "L7SDZ"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 593
+  },
+  {
+    "key": "club-detail",
+    "id": "D3FVQh",
+    "title": "周末摄影小组",
+    "stage": "MVP",
+    "back": "clubs",
+    "links": [
+      {
+        "name": "返回",
+        "target": "clubs",
+        "id": "Oo5Sb"
+      },
+      {
+        "name": "手机也可以参加",
+        "target": "discover",
+        "id": "SKFHr"
+      },
+      {
+        "name": "下一次活动",
+        "target": "activity",
+        "id": "dMDBm"
+      },
+      {
+        "name": "组织者与规则",
+        "target": "activity",
+        "id": "q3MbYx"
+      },
+      {
+        "name": "先看看活动",
+        "target": "discover"
+      },
+      {
+        "name": "收藏这个小组",
+        "target": "saved"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 645
+  },
+  {
+    "key": "file",
+    "id": "G0jiP9",
+    "title": "课堂资料",
+    "stage": "待学校授权",
+    "back": "materials",
+    "links": [
+      {
+        "name": "返回",
+        "target": "materials",
+        "id": "BIGl4"
+      },
+      {
+        "name": "在原站查看",
+        "target": "materials",
+        "id": "v0tIAb"
+      },
+      {
+        "name": "下载到本机",
+        "target": "downloads",
+        "id": "WbSuq"
+      },
+      {
+        "name": "整理到私人笔记",
+        "target": "notes",
+        "id": "kiP6U"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 635
+  },
+  {
+    "key": "downloads",
+    "id": "B7R17K",
+    "title": "下载与打包",
+    "stage": "待学校授权",
+    "back": "materials",
+    "links": [
+      {
+        "name": "返回",
+        "target": "materials",
+        "id": "lhaKt"
+      },
+      {
+        "name": "Week 3 · 课堂资料",
+        "target": "file",
+        "id": "g8ALJR"
+      },
+      {
+        "name": "案例阅读",
+        "target": "file",
+        "id": "bRnGh"
+      },
+      {
+        "name": "返回资料库",
+        "target": "materials"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 593
+  },
+  {
+    "key": "grades",
+    "id": "qyFTN",
+    "title": "学业记录",
+    "stage": "待SIS扩展授权",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "BoF3N"
+      },
+      {
+        "name": "本学期成绩与学分",
+        "target": "connections",
+        "id": "j1J6P"
+      },
+      {
+        "name": "历史学期",
+        "target": "connections",
+        "id": "SXaR8"
+      },
+      {
+        "name": "学校计算口径",
+        "target": "source",
+        "id": "MXODC"
+      },
+      {
+        "name": "管理学校连接",
+        "target": "connections"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 701
+  },
+  {
+    "key": "mail",
+    "id": "w8P85",
+    "title": "学校邮箱",
+    "stage": "待Graph授权",
+    "back": "inbox",
+    "links": [
+      {
+        "name": "返回",
+        "target": "inbox",
+        "id": "yY3Jb"
+      },
+      {
+        "name": "收件箱",
+        "target": "mail-detail",
+        "id": "z9SOJ"
+      },
+      {
+        "name": "草稿",
+        "target": "mail-compose",
+        "id": "QhivP"
+      },
+      {
+        "name": "已发送",
+        "target": "mail-detail",
+        "id": "nvdrB"
+      },
+      {
+        "name": "连接学校邮箱",
+        "target": "connections"
+      },
+      {
+        "name": "体验写邮件",
+        "target": "mail-compose"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 645
+  },
+  {
+    "key": "mail-detail",
+    "id": "O5vEDM",
+    "title": "课程通知",
+    "stage": "待Graph授权",
+    "back": "mail",
+    "links": [
+      {
+        "name": "返回",
+        "target": "mail",
+        "id": "H5tlxH"
+      },
+      {
+        "name": "发件人与收件人",
+        "target": "mail",
+        "id": "G9ij2"
+      },
+      {
+        "name": "小组展示安排",
+        "target": "task-edit",
+        "id": "qKD7q"
+      },
+      {
+        "name": "回复",
+        "target": "mail-compose"
+      },
+      {
+        "name": "记为私人待办",
+        "target": "task-edit"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 564
+  },
+  {
+    "key": "mail-compose",
+    "id": "Iq5nu",
+    "title": "写邮件",
+    "stage": "待Graph写入授权",
+    "back": "mail",
+    "links": [
+      {
+        "name": "返回",
+        "target": "mail",
+        "id": "C8g7oM"
+      },
+      {
+        "name": "发送前预览",
+        "target": "mail-review"
+      },
+      {
+        "name": "保存草稿 · 示例",
+        "target": "mail"
+      }
+    ],
+    "fields": [
+      {
+        "id": "GiAlZ",
+        "label": "收件人",
+        "value": "从官方目录选择，不猜测邮箱"
+      },
+      {
+        "id": "LTCan",
+        "label": "主题",
+        "value": "关于小组展示安排"
+      },
+      {
+        "id": "YwpdJ",
+        "label": "正文",
+        "value": "您好，想确认一下下次展示的具体安排。谢谢！"
+      },
+      {
+        "id": "BeAOJ",
+        "label": "附件",
+        "value": "未添加附件"
+      }
+    ],
+    "width": 393,
+    "height": 698
+  },
+  {
+    "key": "mail-review",
+    "id": "vbtnk",
+    "title": "确认后再发送",
+    "stage": "待Graph写入授权",
+    "back": "mail-compose",
+    "links": [
+      {
+        "name": "返回",
+        "target": "mail-compose",
+        "id": "qGqR0"
+      },
+      {
+        "name": "收件人",
+        "target": "mail-compose",
+        "id": "rKCeW"
+      },
+      {
+        "name": "主题与正文",
+        "target": "mail-compose",
+        "id": "j08Pzc"
+      },
+      {
+        "name": "附件",
+        "target": "mail-compose",
+        "id": "V3jBHC"
+      },
+      {
+        "name": "返回编辑",
+        "target": "mail-compose"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 674
+  },
+  {
+    "key": "assignment",
+    "id": "S9nEgX",
+    "title": "作业详情",
+    "stage": "待Canvas授权",
+    "back": "course",
+    "links": [
+      {
+        "name": "返回",
+        "target": "course",
+        "id": "PSozo"
+      },
+      {
+        "name": "提交要求",
+        "target": "materials",
+        "id": "yUuUr"
+      },
+      {
+        "name": "截止时间",
+        "target": "source",
+        "id": "Ne3MX"
+      },
+      {
+        "name": "学校提交状态",
+        "target": "connections",
+        "id": "mEzlh"
+      },
+      {
+        "name": "体验提交预览",
+        "target": "submission"
+      },
+      {
+        "name": "添加私人提醒",
+        "target": "reminders"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 645
+  },
+  {
+    "key": "submission",
+    "id": "TOXNy",
+    "title": "提交前确认",
+    "stage": "独立写入交付",
+    "back": "assignment",
+    "links": [
+      {
+        "name": "返回",
+        "target": "assignment",
+        "id": "gdG7Z"
+      },
+      {
+        "name": "查看回执界面设计",
+        "target": "submission-receipt"
+      },
+      {
+        "name": "返回作业",
+        "target": "assignment"
+      }
+    ],
+    "fields": [
+      {
+        "id": "TAsv7",
+        "label": "目标课程与作业",
+        "value": "信息系统管理 · 展示提纲"
+      },
+      {
+        "id": "fwAvA",
+        "label": "提交内容",
+        "value": "此处填写准备提交的正文"
+      },
+      {
+        "id": "I9OO46",
+        "label": "附件",
+        "value": "尚未选择文件"
+      }
+    ],
+    "width": 393,
+    "height": 712
+  },
+  {
+    "key": "submission-receipt",
+    "id": "a7JxxC",
+    "title": "提交结果待确认",
+    "stage": "独立写入交付",
+    "back": "assignment",
+    "links": [
+      {
+        "name": "返回",
+        "target": "assignment",
+        "id": "lSeMh"
+      },
+      {
+        "name": "重新查询状态",
+        "target": "assignment"
+      },
+      {
+        "name": "返回课程",
+        "target": "course"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 449
+  },
+  {
+    "key": "assistant",
+    "id": "nfmHc",
+    "title": "需要一点帮助？",
+    "stage": "后续AI设计",
+    "back": "today",
+    "links": [
+      {
+        "name": "返回",
+        "target": "today",
+        "id": "qf3m7"
+      },
+      {
+        "name": "这周有什么要准备？",
+        "target": "assistant-answer",
+        "id": "xqpcR"
+      },
+      {
+        "name": "解释一段课程资料",
+        "target": "assistant-answer",
+        "id": "Zs44g"
+      },
+      {
+        "name": "找校园信息",
+        "target": "assistant-answer",
+        "id": "uApT6"
+      },
+      {
+        "name": "选择可用资料",
+        "target": "assistant-consent"
+      }
+    ],
+    "fields": [
+      {
+        "id": "pKevJ",
+        "label": "你的问题",
+        "value": "帮我安排今天晚上的学习时间"
+      }
+    ],
+    "width": 393,
+    "height": 672
+  },
+  {
+    "key": "assistant-consent",
+    "id": "ZRv5x",
+    "title": "这次可以看什么",
+    "stage": "后续AI设计",
+    "back": "assistant",
+    "links": [
+      {
+        "name": "返回",
+        "target": "assistant",
+        "id": "ffSv9"
+      },
+      {
+        "name": "个人安排",
+        "target": "assistant-answer",
+        "id": "Mdro7"
+      },
+      {
+        "name": "指定课程资料",
+        "target": "assistant-answer",
+        "id": "vlxO9"
+      },
+      {
+        "name": "学校邮件",
+        "target": "assistant-consent",
+        "id": "hcShI"
+      },
+      {
+        "name": "体验示例回答",
+        "target": "assistant-answer"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 674
+  },
+  {
+    "key": "assistant-answer",
+    "id": "p8I5c",
+    "title": "把今晚安排轻一点",
+    "stage": "后续AI设计",
+    "back": "assistant",
+    "links": [
+      {
+        "name": "返回",
+        "target": "assistant",
+        "id": "xX6ql"
+      },
+      {
+        "name": "19:00—19:30 · 整理提纲",
+        "target": "task-edit",
+        "id": "GyCYc"
+      },
+      {
+        "name": "19:30—19:40 · 休息",
+        "target": "task-edit",
+        "id": "wFqi2"
+      },
+      {
+        "name": "19:40—20:10 · 补充案例",
+        "target": "materials",
+        "id": "K0bHv0"
+      },
+      {
+        "name": "查看本次资料范围",
+        "target": "assistant-consent",
+        "id": "s30vc"
+      },
+      {
+        "name": "预览加入个人安排",
+        "target": "task-edit"
+      },
+      {
+        "name": "管理对话与记忆",
+        "target": "ai-settings"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 774
+  },
+  {
+    "key": "ai-settings",
+    "id": "ab76M",
+    "title": "AI 与你的资料",
+    "stage": "后续AI设计",
+    "back": "assistant",
+    "links": [
+      {
+        "name": "返回",
+        "target": "assistant",
+        "id": "iByMH"
+      },
+      {
+        "name": "对话记录",
+        "target": "assistant",
+        "id": "A7xAGn"
+      },
+      {
+        "name": "记住的偏好",
+        "target": "privacy",
+        "id": "DGOsj"
+      },
+      {
+        "name": "处理强度与用量",
+        "target": "assistant",
+        "id": "jLHnD"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 486
+  },
+  {
+    "key": "identity",
+    "id": "iR0FP",
+    "title": "校园资料",
+    "stage": "待学校授权",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "zfQv4"
+      },
+      {
+        "name": "学校身份",
+        "target": "connections",
+        "id": "CVdh6"
+      },
+      {
+        "name": "院系与学籍",
+        "target": "connections",
+        "id": "sP5Ck"
+      },
+      {
+        "name": "Wallet 信息卡",
+        "target": "widgets",
+        "id": "nO4dA"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 608
+  },
+  {
+    "key": "widgets",
+    "id": "Isf79",
+    "title": "抬眼就能看到",
+    "stage": "后续系统扩展",
+    "back": "appearance",
+    "links": [
+      {
+        "name": "返回",
+        "target": "appearance",
+        "id": "vZ1et"
+      },
+      {
+        "name": "日程小组件",
+        "target": "today",
+        "id": "Fe1tk"
+      },
+      {
+        "name": "锁屏与灵动岛",
+        "target": "reminders",
+        "id": "OQzRn"
+      },
+      {
+        "name": "私人内容遮罩",
+        "target": "privacy",
+        "id": "JKTDt"
+      },
+      {
+        "name": "Apple Watch 偏好",
+        "target": "devices",
+        "id": "gstuG"
+      },
+      {
+        "name": "iPad / Mac",
+        "target": "devices",
+        "id": "rqFLM"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 696
+  },
+  {
+    "key": "devices",
+    "id": "jgoe0",
+    "title": "设备与同步",
+    "stage": "后续跨设备设计",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "ohPu6"
+      },
+      {
+        "name": "当前 iPhone",
+        "target": "me",
+        "id": "y3msX"
+      },
+      {
+        "name": "其他设备",
+        "target": "privacy",
+        "id": "BqiVS"
+      },
+      {
+        "name": "同步冲突",
+        "target": "sync-conflict",
+        "id": "YhM0p"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 486
+  },
+  {
+    "key": "sync-conflict",
+    "id": "zTekz",
+    "title": "两处修改不一样",
+    "stage": "MVP",
+    "back": "devices",
+    "links": [
+      {
+        "name": "返回",
+        "target": "devices",
+        "id": "rCCq2"
+      },
+      {
+        "name": "这台设备",
+        "target": "notes",
+        "id": "k5KkI"
+      },
+      {
+        "name": "其他设备",
+        "target": "notes",
+        "id": "X00rU"
+      },
+      {
+        "name": "打开笔记并核对",
+        "target": "notes"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 593
+  },
+  {
+    "key": "motion",
+    "id": "wr9bV",
+    "title": "舒服的交互",
+    "stage": "MVP",
+    "back": "appearance",
+    "links": [
+      {
+        "name": "返回",
+        "target": "appearance",
+        "id": "q4aTH"
+      },
+      {
+        "name": "进入详情",
+        "target": "activity",
+        "id": "kD8kB"
+      },
+      {
+        "name": "确认反馈",
+        "target": "confirmed",
+        "id": "iWYO4"
+      },
+      {
+        "name": "减少动态效果",
+        "target": "appearance",
+        "id": "U87XF7"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 608
+  },
+  {
+    "key": "large-text",
+    "id": "VfD1p",
+    "title": "字体大一点，\\n也能看清楚",
+    "stage": "MVP",
+    "back": "appearance",
+    "links": [
+      {
+        "name": "返回",
+        "target": "appearance",
+        "id": "xkni6"
+      },
+      {
+        "name": "整理小组展示提纲",
+        "target": "task",
+        "id": "GxopJ"
+      },
+      {
+        "name": "图书馆，自习一小时",
+        "target": "activity",
+        "id": "XJMje"
+      },
+      {
+        "name": "查看任务详情",
+        "target": "task"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 707
+  },
+  {
+    "key": "english",
+    "id": "NUGyH",
+    "title": "A little room\\nin your day.",
+    "stage": "MVP",
+    "back": "language",
+    "links": [
+      {
+        "name": "返回",
+        "target": "language",
+        "id": "HX1iT"
+      },
+      {
+        "name": "Information Systems Management",
+        "target": "course",
+        "id": "c4dSC"
+      },
+      {
+        "name": "An hour at the library",
+        "target": "activity",
+        "id": "kDbsG"
+      },
+      {
+        "name": "Explore the campus",
+        "target": "campus"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 566
+  },
+  {
+    "key": "map",
+    "id": "htHkn",
+    "title": "返回",
+    "stage": "MVP",
+    "links": [
+      {
+        "name": "返回",
+        "target": "campus",
+        "id": "I7LbI8"
+      },
+      {
+        "name": "图书馆",
+        "target": "place",
+        "id": "qC7TH"
+      },
+      {
+        "name": "教学楼",
+        "target": "search",
+        "id": "iCY0r"
+      },
+      {
+        "name": "校巴上车点",
+        "target": "shuttle",
+        "id": "T3DLS"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 881
+  },
+  {
+    "key": "withdraw",
+    "id": "CIoM7",
+    "title": "这次先不参加了？",
+    "stage": "MVP",
+    "back": "confirmed",
+    "links": [
+      {
+        "name": "返回",
+        "target": "confirmed",
+        "id": "H9Lik"
+      },
+      {
+        "name": "确认退出",
+        "target": "withdrawn"
+      },
+      {
+        "name": "保留报名",
+        "target": "confirmed"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 476
+  },
+  {
+    "key": "withdrawn",
+    "id": "W8UbTL",
+    "title": "已经退出",
+    "stage": "MVP",
+    "back": "discover",
+    "links": [
+      {
+        "name": "返回",
+        "target": "discover",
+        "id": "F8yg8y"
+      },
+      {
+        "name": "看看其他活动",
+        "target": "discover"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 363
+  },
+  {
+    "key": "login-failed",
+    "id": "eM8ER",
+    "title": "还没有连接成功",
+    "stage": "MVP",
+    "back": "school-login",
+    "links": [
+      {
+        "name": "返回",
+        "target": "school-login",
+        "id": "rtG8T"
+      },
+      {
+        "name": "重新连接学校",
+        "target": "school-login"
+      },
+      {
+        "name": "先体验一下",
+        "target": "today"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 476
+  },
+  {
+    "key": "sync-partial",
+    "id": "v0fqT",
+    "title": "有一部分还在等",
+    "stage": "MVP",
+    "back": "connections",
+    "links": [
+      {
+        "name": "返回",
+        "target": "connections",
+        "id": "tUl0W"
+      },
+      {
+        "name": "课程安排已更新",
+        "target": "week",
+        "id": "Tjfbx"
+      },
+      {
+        "name": "Canvas 暂时没有回应",
+        "target": "sync",
+        "id": "EFXnz"
+      },
+      {
+        "name": "重试 Canvas",
+        "target": "sync"
+      },
+      {
+        "name": "回到今天",
+        "target": "today"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 659
+  },
+  {
+    "key": "task-completed",
+    "id": "N5SOGE",
+    "title": "又完成了一件事",
+    "stage": "MVP",
+    "back": "today",
+    "links": [
+      {
+        "name": "返回",
+        "target": "today",
+        "id": "P43CR"
+      },
+      {
+        "name": "回到今天",
+        "target": "today"
+      },
+      {
+        "name": "撤销完成",
+        "target": "task"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 429
+  },
+  {
+    "key": "settings",
+    "id": "JHWsS",
+    "title": "设置",
+    "stage": "MVP",
+    "back": "me",
+    "links": [
+      {
+        "name": "返回",
+        "target": "me",
+        "id": "Dhn7F"
+      },
+      {
+        "name": "学校连接",
+        "target": "connections",
+        "id": "QuDS1"
+      },
+      {
+        "name": "消息与通知",
+        "target": "notification-settings",
+        "id": "MrPac"
+      },
+      {
+        "name": "外观与语言",
+        "target": "appearance",
+        "id": "zve0B"
+      },
+      {
+        "name": "设备与同步",
+        "target": "devices",
+        "id": "lVN4g"
+      },
+      {
+        "name": "小组件",
+        "target": "widgets",
+        "id": "jEM46"
+      },
+      {
+        "name": "校园资料",
+        "target": "identity",
+        "id": "fwu1J"
+      },
+      {
+        "name": "隐私与安全",
+        "target": "privacy",
+        "id": "iCSKJ"
+      },
+      {
+        "name": "我的反馈",
+        "target": "feedback",
+        "id": "yPAYH"
+      },
+      {
+        "name": "AI 与资料权限",
+        "target": "ai-settings",
+        "id": "Rafsk"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 1020
+  },
+  {
+    "key": "all-apps",
+    "id": "uMMvf",
+    "title": "校园里的每件小事",
+    "stage": "MVP",
+    "back": "campus",
+    "links": [
+      {
+        "name": "返回",
+        "target": "campus",
+        "id": "Z2rN5"
+      },
+      {
+        "name": "课表与任务",
+        "target": "week",
+        "id": "FNhMo"
+      },
+      {
+        "name": "学业记录",
+        "target": "grades",
+        "id": "olFqb"
+      },
+      {
+        "name": "学校邮箱",
+        "target": "mail",
+        "id": "Xg56l"
+      },
+      {
+        "name": "AI 助手",
+        "target": "assistant",
+        "id": "U19x55"
+      },
+      {
+        "name": "校园地图与地点",
+        "target": "directory",
+        "id": "NsRyF"
+      },
+      {
+        "name": "出行",
+        "target": "shuttle",
+        "id": "WSBgi"
+      },
+      {
+        "name": "办事与学院",
+        "target": "services",
+        "id": "CzHgK"
+      },
+      {
+        "name": "社团与活动",
+        "target": "clubs",
+        "id": "RSpFX"
+      }
+    ],
+    "fields": [],
+    "width": 393,
+    "height": 966
+  }
+]

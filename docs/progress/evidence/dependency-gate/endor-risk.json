@@ -1,0 +1,11 @@
+{
+  "profile": "package-risk",
+  "summary": "Exact npm vitest@4.1.11 Endor evidence unavailable. This is not a safety approval.",
+  "risk_posture": "UNKNOWN",
+  "dependencies_reviewed": [{"ecosystem":"npm","name":"vitest","version":"4.1.11"}],
+  "evidence_queries": [{"name":"PackageVersion","source":"endorctl_agent_api","status":"unavailable","filter_summary":"meta.name equals npm://vitest@4.1.11","field_mask_summary":"uuid,meta.name,spec.ecosystem,spec.package_name,spec.release_timestamp","result_count":null,"reason":"No Endor MCP tools exposed; CLI command returned127(command not found)."}],
+  "policy_context": {"status":"unavailable"},
+  "policy_evaluations": [],
+  "data_gaps": ["unavailable:endor_mcp_package_risk","unavailable:endorctl","unavailable:trusted_policy_pack"],
+  "recommended_actions": ["Keep Endor assessment distinct from npm audit and compatibility test results."]
+}

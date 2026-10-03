@@ -1,6 +1,6 @@
 import {useEffect,useState} from 'react';
 import {View} from 'react-native';
-import {Button} from 'heroui-native/button';
+import { SegmentedControl } from '../ui/Primitives';
 import type {Language} from '../strings';
 import {styles} from '../theme';
 import {DiscoverScreen} from './DiscoverScreen';
@@ -14,8 +14,7 @@ export function CommunityScreen({language,dark,onLogin,initialTarget,onDismissTa
  // Keep feed switching out of nested forms so their pending-write/back checks run.
  const shared={language,dark,onLogin,onDismissTarget,onNavigate,onDepthChange:setNested};
  return <View style={styles.stack}>
-  {!nested?<><Button variant={mode==='activity'?'primary':'secondary'} onPress={()=>{onDismissTarget();setMode('activity');}}>{language==='zh'?'活动与学习组队':'Activities and study groups'}</Button>
-  <Button variant={mode==='post'?'primary':'secondary'} onPress={()=>{onDismissTarget();setMode('post');}}>{language==='zh'?'校园墙与求助':'Campus wall and help'}</Button></>:null}
+  {!nested?<SegmentedControl value={mode} label={language==='zh'?'发现内容类型':'Discovery content'} options={[{value:'activity',label:language==='zh'?'活动与组队':'Activities'},{value:'post',label:language==='zh'?'校园墙':'Campus wall'}]} onChange={value=>{onDismissTarget();setMode(value);}}/>:null}
   {mode==='activity'?<DiscoverScreen {...shared} initialId={initialTarget?.kind==='activity'?initialTarget.id:null}/>:<WallScreen {...shared} initialId={initialTarget?.kind==='post'?initialTarget.id:null}/>}
  </View>;
 }

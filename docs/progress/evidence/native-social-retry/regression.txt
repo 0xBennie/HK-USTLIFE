@@ -1,0 +1,103 @@
+
+> hkust-life-mcp@0.1.0 test
+> npm run build:core && vitest run
+
+
+> hkust-life-mcp@0.1.0 build:core
+> tsc -p tsconfig.json
+
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+(node:89997) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:89998) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:90003) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:90006) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:90000) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:89996) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:89994) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:90001) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:90008) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:90007) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:90004) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:90009) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:89995) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:90010) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/native-reminders.test.ts (11 tests) 15ms
+(node:89999) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/product-ics.test.ts (16 tests) 238ms
+(node:90029) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/product-public-transit.test.ts (13 tests) 284ms
+ ✓ tests/course-planner.test.ts (4 tests) 5ms
+ ✓ tests/native-social-receipts.test.ts (4 tests) 315ms
+ ✓ tests/product-maintenance.test.ts (5 tests) 363ms
+ ✓ tests/product-directory.test.ts (5 tests) 386ms
+ ✓ tests/product-shuttle-maintenance.test.ts (5 tests) 464ms
+ ✓ tests/calendar-store.test.ts (14 tests) 618ms
+ ✓ tests/mobile-session.test.ts (6 tests) 454ms
+ ✓ tests/product-reminders.test.ts (4 tests) 506ms
+ ✓ tests/mock-state.test.ts (7 tests) 3ms
+ ✓ tests/native-activity-join.test.ts (7 tests) 524ms
+ ✓ tests/product-wall.test.ts (7 tests) 582ms
+(node:90045) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/server-tools.test.ts (4 tests) 24ms
+(node:90043) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/graph-outlook.test.ts (1 test) 16ms
+ ✓ tests/product-governance.test.ts (8 tests) 660ms
+ ✓ tests/product-web.test.ts (7 tests) 733ms
+ ✓ tests/release-assets.test.ts (3 tests) 24ms
+ ✓ tests/hko-weather.test.ts (1 test) 3ms
+ ✓ tests/ics-calendar.test.ts (3 tests) 2ms
+ ✓ tests/today.test.ts (1 test) 9ms
+ ✓ tests/native-study-save.test.ts (5 tests) 586ms
+ ✓ tests/reminder-plan.test.ts (2 tests) 15ms
+ ✓ tests/daily-brief.test.ts (1 test) 7ms
+ ✓ tests/product-auth.test.ts (11 tests) 856ms
+(node:89995) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:89995) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/native-navigation.test.ts (3 tests) 7ms
+ ✓ tests/source-registry.test.ts (4 tests) 2ms
+ ✓ tests/study-dates.test.ts (3 tests) 14ms
+ ✓ tests/browser-profile.test.ts (2 tests) 2ms
+ ✓ tests/skill-packages.test.ts (1 test) 7ms
+ ✓ tests/product-social.test.ts (12 tests) 1024ms
+ ✓ tests/hub-content.test.ts (3 tests) 10ms
+ ✓ tests/product-shuttle.test.ts (5 tests) 445ms
+   ✓ serves reviewed schedules to visitors and rejects unknown routes or invalid timestamps  438ms
+ ✓ tests/http-transport.test.ts (1 test) 41ms
+ ✓ tests/account-status.test.ts (2 tests) 2ms
+ ✓ tests/newcomer-checklist.test.ts (2 tests) 2ms
+ ✓ tests/skills-catalog.test.ts (2 tests) 2ms
+ ✓ tests/hub-manifest.test.ts (1 test) 2ms
+ ✓ tests/source-search.test.ts (2 tests) 2ms
+ ✓ tests/product-public-share.test.ts (2 tests) 230ms
+ ✓ tests/public-mcp-route.test.ts (3 tests) 13ms
+ ✓ tests/release-check.test.ts (5 tests) 264ms
+ ✓ tests/product-learning.test.ts (26 tests) 1274ms
+ ✓ tests/smoke-mcp.test.ts (1 test) 131ms
+
+ Test Files  45 passed (45)
+      Tests  235 passed (235)
+   Start at  07:11:38
+   Duration  1.79s (transform 1.18s, setup 0ms, collect 6.26s, tests 11.16s, environment 4ms, prepare 2.24s)
+

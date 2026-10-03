@@ -1,0 +1,31 @@
+# EAS archives this monorepo. Keep these exclusions at least as strict as .gitignore.
+node_modules/
+dist/
+.env
+.env.*
+coverage/
+.DS_Store
+.next/
+*.tsbuildinfo
+.turbo/
+.local/
+.expo/
+.superpowers/
+.git/
+# Local credentials and student exports never belong in a cloud build archive.
+credentials.json
+*.p8
+*.p12
+*.pfx
+*.pem
+*.key
+*.mobileprovision
+*.sqlite
+*.sqlite-*
+*.db
+*.ics
+*.ical
+*.vcf
+# Design and acceptance evidence are not build inputs.
+/design/
+/docs/

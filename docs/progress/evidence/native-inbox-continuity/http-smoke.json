@@ -1,0 +1,12 @@
+{
+  "started": "2026-10-03T00:25:29.082Z",
+  "checks": [
+    "Real HTTP post/reply produced an owned inbox notification and current post destination.",
+    "Other account could not mark the notification read.",
+    "Injected lost acknowledgement retained uncertain UI state without optimistic read/count change.",
+    "Restart retained original read time; explicit retry reconciled in place with authoritative unread count.",
+    "Deleted post disappeared from the message destination after authoritative refresh."
+  ],
+  "read_at": "2026-10-03T00:25:29.117Z",
+  "result": "passed"
+}

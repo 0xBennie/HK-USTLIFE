@@ -1,6 +1,6 @@
 # Activities, participation and inbox — implemented local MVP API
 
-Base `/api/v1`. Real SQLite migration 6. Native Discover, activity editor/detail, calendar link and Inbox are connected. Every activity is `is_demo:true` under the same enforced local-development boundary as accounts. This is not a real public event supply or school-certified community. Campus wall/help and report/block/admin APIs are now implemented in [wall and governance API](wall-governance-api.md). Restricted web administration, website share pages and device notification scheduling remain E5 work.
+Base `/api/v1`. Real SQLite migration 6. Native Discover, activity editor/detail, calendar link and Inbox are connected. Every activity is `is_demo:true` under the same enforced local-development boundary as accounts. This is not a real public event supply or school-certified community. Campus wall/help and report/block/admin APIs are now implemented in [wall and governance API](wall-governance-api.md). Restricted web administration, website share pages and local device notification scheduling are implemented; native runtime and device delivery acceptance remain incomplete.
 
 ## Content and visibility
 
@@ -26,7 +26,7 @@ Create payload: `kind:activity|study`, `title` (1–120), `description` (0–5,0
 | POST `/activities/:id/comments` | `{body}` (1–2,000), Idempotency-Key → 201 Comment | Logged-in; before event end, not cancelled |
 | DELETE `/activities/:id/comments/:cid` | `{version}` | Comment author only |
 | GET `/me/notifications` | 50/page, positive integer `cursor`; `{items,next_cursor,unread}` | Own inbox only |
-| PATCH `/me/notifications/:nid/read` | `{}` → `{read:true}`; repeat does not alter original read time | Recipient only |
+| PATCH `/me/notifications/:nid/read` | `{}` → `{id,read:true,read_at,unread}`; repeat does not alter original read time | Recipient only |
 
 Default discovery shows upcoming, noncancelled content. `mine=participating` retains withdrawn/cancelled history; `mine=saved` includes bookmarks or calendar saves. A selected time window requires an event to start on/after `from` and end on/before `to`; no private timetable is sent. Pagination order is start time then UUID; after rescheduling/deletion, refresh the list rather than treating the cursor as a frozen snapshot.
 
@@ -45,7 +45,7 @@ Activity response includes content, version/status, derived started/ended flags,
 
 `GET /me/calendar` now merges explicitly saved activities with manual/ICS events. They have stable `id:"activity:<uuid>"`, current activity content, and `activity_origin:{id,participation}`. Participation is organizer/confirmed/waitlisted/not_joined (or withdrawn after an explicit resave). Waitlisted or saved-only items are shown as unconfirmed, never proof of a place. Projection reads current activity state rather than making an editable manual copy. Native calendar links to activity management instead of private-item edit/delete buttons.
 
-Withdrawal clears the user's calendar save/reminder preference; cancellation clears all such preferences. Deletion removes projection by cascade. Bookmarks can remain after cancellation. Reminder preference storage is not native scheduling or notification delivery; E5 still must reconcile/cancel local OS notifications after synchronization. Offline devices cannot be claimed to have learned remote changes immediately.
+Withdrawal clears the user's calendar save/reminder preference; cancellation clears all such preferences. Deletion removes projection by cascade. Bookmarks can remain after cancellation. Reminder preference storage is not proof of notification delivery. Native scheduling/reconciliation now consumes `/me/reminders`; see [reminders-api.md](reminders-api.md) for the implementation and pending device acceptance. Offline devices cannot be claimed to have learned remote changes immediately.
 
 Inbox kinds: joined, waitlisted, promoted, withdrawn, activity_updated, activity_cancelled, activity_removed, comment. Post reply/resolved kinds and a nullable post preview are now also available (see wall/governance API). Only generic kinds and content references persist; titles are visibility-checked at read time. Deleted/hidden/inaccessible activity produces `activity:null`, without stale title/body snapshots. Read status persists per recipient. Notifications currently refresh on entry/foreground/manual request; no APNs or remote push.
 
@@ -58,3 +58,36 @@ Account deletion invokes social cleanup in the same deletion transaction: remove
 `node scripts/smoke-social.mjs <optional-report-path>` (after `npm run build:core`) runs actual local HTTP with three local test accounts, parallel join, restart, withdraw/promote, reschedule/calendar, comment/read and cancel. It uses and removes its own temporary database/mail only, never sends email or logs credentials. Evidence: `docs/progress/evidence/e4/activity-http-smoke.json`.
 
 Native components compile/export, but actual simulator/device flows, accessibility, keyboard and screenshots remain unverified pending a usable Xcode/iOS runtime. These tests do not complete MV01–MV12.
+
+## Native join confirmation client
+
+The native detail screen reviews the current activity version and the optional calendar preference before submitting `POST /activities/:id/join`. It retains that payload and idempotency key for uncertain transport/5xx retries. A 4xx rejection requires a fresh activity review. No confirmed-place UI appears before a valid activity response carrying the current participation status.
+
+Receipt replay resolves current activity state: a previously committed join may now return `waitlisted`, `cancelled` or `withdrawn`. Clients must render that state, not infer success from the original request or remaining-count snapshot. Existing calendar entries are retained; calendar removal is a separate preferences action. Native controller checks are covered in `tests/native-activity-join.test.ts`; they do not substitute for device UI acceptance.
+
+### Bounded native retries — 2026-10-03
+
+Native activity/post creation, comments/replies and detail POST actions now freeze a deep copy of the original body, request key and local creation time. `apps/mobile/src/write-receipt.ts` stops POST replay at23hours, before the server's24-hour receipt lifetime; backward/nonfinite elapsed device time also requires review. `RECEIPT_REVIEW_REQUIRED` is an uncertain result, not a server rejection: it must not clear the old receipt and permit another creation. Other authoritative4xx errors permit correction/fresh review; transport/5xx and malformed save responses preserve the pending request.
+
+Expired activity/post/comment/reply writes expose a return-to-list review action and disable the old replay action. Drafts remain memory-only. A back/leave decision warns that the original operation may already exist; users must inspect current saved content before creating another. PATCH/DELETE still rely on version checks; a lost successful PATCH followed by409 is not called a successful retry.
+
+Expired signup offers **Check current participation**, which sends only GET `/activities/:id`. A confirmed/waitlisted/withdrawn/cancelled record is displayed as returned. An explicit null participation resets to review of the latest version and requires another user confirmation before any POST. Failure or malformed participation data keeps the uncertain state and the next recovery action remains GET. No automatic rejoin after withdrawal, cancellation or receipt expiry.
+
+When a write response was received successfully but the subsequent detail refresh fails, activity/post screens say the change was saved and that the view needs refreshing; they do not encourage publishing the same content again. Activity form/detail callbacks also ignore completion after unmount. This is source/controller behavior; visible controls, sheets, screen-reader announcements and keyboard interaction remain pending iOS runtime acceptance.
+
+Evidence: `tests/native-social-receipts.test.ts`, expanded `tests/native-activity-join.test.ts` and `docs/progress/evidence/native-social-retry/`. These exercise persisted Fastify/SQLite with deliberately delayed/lost response delivery semantics, not an actual iOS network interruption.
+
+Administrator maintenance now has an explicit authority boundary, shared activity domain mutations and metadata audit. See [activity-maintenance-api.md](activity-maintenance-api.md) for implemented endpoints, client recovery, and connected calendar/message/reminder behavior.
+
+
+### Inbox acknowledgement and native continuity — 2026-10-03
+
+`PATCH /me/notifications/:nid/read` now returns the target notification ID, original server read timestamp and recipient-wide unread count in the same transaction as the owned update. Example: `{ "id": 52, "read": true, "read_at": "2026-10-03T00:25:29.117Z", "unread": 3 }`. Existing clients may continue using `read`; the extra fields support authoritative in-place updates. Repeating this operation is idempotent without a receipt key or expiry window. It only marks read and never toggles unread. Another recipient's notification returns404.
+
+The native inbox retains already loaded pages when marking a message read, and refreshes the same loaded page depth on tab re-entry/foreground/manual refresh. A multi-page refresh publishes atomically: a later-page failure leaves the old records/cursor/count intact and labels them stale. Stale linked-content buttons stay disabled until refresh succeeds. Pagination is a live feed, not a frozen snapshot; newly arriving/deleted notifications can change the contents of the loaded window.
+
+A valid acknowledgement updates only the matching row plus the authoritative unread count. Lost/malformed acknowledgements do not invent read state; explicit retry repeats the same safe mark. A GET refresh can reconcile a pending mark when the notification is still in the loaded window. If it is outside that window, the explicit same-ID retry remains available. Duplicate taps and overlapping controller operations are suppressed synchronously. Unmount invalidates late responses; each account receives a fresh controller.
+
+Evidence: `tests/native-inbox.test.ts` (10 real Fastify/SQLite cases), `npx tsx scripts/smoke-inbox.ts [report-path]` (actual local HTTP post/reply, owned read, deliberate response-delivery failure, backend restart/retry and deleted destination). The smoke script creates/removes only its temporary database/mailbox and sends no email. Its deliberate lost-response fault is not a real iOS network interruption. Reports: `../progress/evidence/native-inbox-continuity/`.
+
+Native scroll position, VoiceOver announcements, dynamic fonts and actual touch behavior remain unverified. Compiling/exporting the native screen does not complete that acceptance.

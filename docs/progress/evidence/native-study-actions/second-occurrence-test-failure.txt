@@ -1,0 +1,133 @@
+
+> hkust-life-mcp@0.1.0 test
+> npm run build:core && vitest run
+
+
+> hkust-life-mcp@0.1.0 build:core
+> tsc -p tsconfig.json
+
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+(node:787) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:780) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:774) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:784) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:777) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:782) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:795) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:778) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:776) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:783) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:796) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:793) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:791) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:797) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/native-reminders.test.ts (11 tests) 15ms
+(node:781) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:821) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/product-ics.test.ts (16 tests) 197ms
+ ✓ tests/product-public-transit.test.ts (13 tests) 261ms
+(node:824) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:825) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/product-maintenance.test.ts (5 tests) 355ms
+ ✓ tests/product-directory.test.ts (5 tests) 361ms
+ ✓ tests/calendar-store.test.ts (14 tests) 540ms
+ ✓ tests/product-shuttle-maintenance.test.ts (5 tests) 420ms
+ ❯ tests/native-study-actions.test.ts (7 tests | 1 failed) 426ms
+   ✓ synchronously locks a task toggle and refreshes the actual completed version before another action 94ms
+   ✓ does not undo a committed toggle after a lost response; read-only recovery survives backend restart 62ms
+   ✓ reports accepted write with failed refresh separately and never resends it on refresh retry 52ms
+   ✓ requires current-state review after version conflict and freezes a concurrent recovery 50ms
+   ✓ recovers a lost delete response from the collection without repeating deletion or deleting detached records 69ms
+   ✓ leaves malformed successful responses unconfirmed and allows correction after an explicit validation rejection 46ms
+   × accepts the dedicated imported-occurrence contract and refreshes its removal without editing the source 52ms
+     → expected undefined to be 'private-series' // Object.is equality
+ ✓ tests/product-reminders.test.ts (4 tests) 456ms
+ ✓ tests/product-activity-maintenance.test.ts (5 tests) 468ms
+ ✓ tests/native-activity-join.test.ts (7 tests) 460ms
+ ✓ tests/mobile-session.test.ts (6 tests) 436ms
+ ✓ tests/product-wall.test.ts (7 tests) 532ms
+ ✓ tests/course-planner.test.ts (4 tests) 5ms
+ ✓ tests/mock-state.test.ts (7 tests) 4ms
+ ✓ tests/product-auth.test.ts (11 tests) 555ms
+ ✓ tests/product-web.test.ts (8 tests) 589ms
+ ✓ tests/product-governance.test.ts (8 tests) 633ms
+ ✓ tests/graph-outlook.test.ts (1 test) 4ms
+ ✓ tests/native-social-receipts.test.ts (4 tests) 278ms
+(node:776) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:776) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:839) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/release-assets.test.ts (3 tests) 9ms
+ ✓ tests/native-study-save.test.ts (5 tests) 249ms
+(node:835) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/hko-weather.test.ts (1 test) 3ms
+ ✓ tests/ics-calendar.test.ts (3 tests) 6ms
+ ✓ tests/daily-brief.test.ts (1 test) 8ms
+ ✓ tests/today.test.ts (1 test) 8ms
+ ✓ tests/product-social.test.ts (12 tests) 752ms
+ ✓ tests/reminder-plan.test.ts (2 tests) 7ms
+ ✓ tests/native-navigation.test.ts (3 tests) 2ms
+ ✓ tests/source-registry.test.ts (4 tests) 2ms
+ ✓ tests/server-tools.test.ts (4 tests) 27ms
+ ✓ tests/http-transport.test.ts (1 test) 34ms
+ ✓ tests/study-dates.test.ts (3 tests) 11ms
+ ✓ tests/product-shuttle.test.ts (5 tests) 232ms
+ ✓ tests/skill-packages.test.ts (1 test) 24ms
+ ✓ tests/browser-profile.test.ts (2 tests) 2ms
+ ✓ tests/hub-content.test.ts (3 tests) 2ms
+ ✓ tests/account-status.test.ts (2 tests) 2ms
+ ✓ tests/newcomer-checklist.test.ts (2 tests) 2ms
+ ✓ tests/skills-catalog.test.ts (2 tests) 2ms
+ ✓ tests/hub-manifest.test.ts (1 test) 2ms
+ ✓ tests/source-search.test.ts (2 tests) 2ms
+ ✓ tests/product-public-share.test.ts (2 tests) 174ms
+ ✓ tests/product-learning.test.ts (26 tests) 999ms
+ ✓ tests/public-mcp-route.test.ts (3 tests) 14ms
+ ✓ tests/release-check.test.ts (5 tests) 282ms
+ ✓ tests/smoke-mcp.test.ts (1 test) 115ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/native-study-actions.test.ts > accepts the dedicated imported-occurrence contract and refreshes its removal without editing the source
+AssertionError: expected undefined to be 'private-series' // Object.is equality
+
+- Expected: 
+"private-series"
+
++ Received: 
+undefined
+
+ ❯ tests/native-study-actions.test.ts:54:188
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 46 passed (47)
+      Tests  1 failed | 247 passed (248)
+   Start at  07:43:21
+   Duration  1.61s (transform 1.18s, setup 0ms, collect 6.10s, tests 9.97s, environment 4ms, prepare 2.03s)
+

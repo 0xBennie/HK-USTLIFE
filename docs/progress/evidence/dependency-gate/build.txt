@@ -1,0 +1,55 @@
+
+> hkust-life-mcp@0.1.0 build:hub
+> npm run build:core && npm --prefix apps/hub run build
+
+
+> hkust-life-mcp@0.1.0 build:core
+> tsc -p tsconfig.json
+
+
+> hkust-skills-hub@0.1.0 build
+> next build
+
+▲ Next.js 16.3.8 (Turbopack)
+✓ Running next.config.ts took 11ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 167ms
+  Running TypeScript ...
+  Finished TypeScript in 1463ms ...
+  Collecting page data using 17 workers ...
+  Generating static pages using 17 workers (0/21) ...
+  Generating static pages using 17 workers (5/21) 
+  Generating static pages using 17 workers (10/21) 
+  Generating static pages using 17 workers (15/21) 
+✓ Generating static pages using 17 workers (21/21) in 175ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /admin
+├ ƒ /api/campus/[...path]
+├ ○ /api/health
+├ ƒ /api/mcp
+├ ○ /connect
+├ ƒ /events
+├ ƒ /events/[id]
+├ ○ /plan
+├ ƒ /preview
+├ ƒ /privacy
+├ ○ /skills
+├   /skills/[slug]
+│ ├ ● /skills/hkust-today
+│ ├ ● /skills/hkust-newcomer
+│ ├ ● /skills/hkust-campus-status
+│ └ ● [+4 more paths]
+├ ○ /sources
+├ ○ /start
+└ ƒ /support
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {Alert,Text,View} from 'react-native';
-import {Button} from 'heroui-native/button';
-import {Input} from 'heroui-native/input';
+import { Button } from '../ui/Primitives';
+import { Input } from '../ui/Primitives';
 import {session} from '../runtime';
 import {ApiFailure} from '../api';
 import {palette,styles} from '../theme';

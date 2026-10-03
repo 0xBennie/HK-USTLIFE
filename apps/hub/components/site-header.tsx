@@ -1,0 +1,5 @@
+'use client';
+import Link from 'next/link';
+import {usePathname,useSearchParams} from 'next/navigation';
+import {useEffect} from 'react';
+export function SiteHeader(){const query=useSearchParams(),path=usePathname(),language=query.get('lang')==='en'?'en':'zh',zh=language==='zh';const next=new URLSearchParams(query);next.set('lang',zh?'en':'zh');useEffect(()=>{document.documentElement.lang=zh?'zh-Hans':'en';},[zh]);return <header className="campus-header"><Link className="campus-brand" href={'/?lang='+language}><span>Campus<span className="campus-brand-dot">.</span></span><small>HKUST</small></Link><nav aria-label={zh?'主导航':'Main navigation'}><Link href={'/?lang='+language+'#features'}>{zh?'全部功能':'Features'}</Link><Link href={'/preview?lang='+language}>{zh?'体验 App':'Try the App'}</Link><Link href={'/events?lang='+language}>{zh?'公开活动':'Activities'}</Link><Link href={'/support?lang='+language}>{zh?'使用帮助':'Help'}</Link><Link href={path+'?'+next.toString()} lang={zh?'en':'zh-Hans'}>{zh?'English':'中文'}</Link></nav></header>;}

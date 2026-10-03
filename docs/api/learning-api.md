@@ -1,6 +1,6 @@
 # Private learning API — manual records
 
-Implemented 2026-10-03. Base `/api/v1`; requires the native bearer account from `implemented-mvp-api.md`. All data is private to the principal. Imported calendars and official enrolments are not yet connected.
+Implemented 2026-10-03. Base `/api/v1`; requires the native bearer account from `implemented-mvp-api.md`. All data is private to the principal. ICS imports and private occurrence overrides are connected through the calendar API; official enrolments are not connected.
 
 ## Endpoints
 
@@ -30,7 +30,7 @@ All items include `{kind,title,course_id?}`; null/unset course means independent
 - Note: `body`. Private short text, not public course reviews.
 - Material: `body,url`. Only HTTP(S), no URL credentials; server does not fetch the link. Native opening requires a user tap.
 
-Reminder minutes may be null or 0–10080 and require a precise timestamp. Saving this field is configuration, **not device scheduling/delivery**; local notification integration is E5. All-day/date-only records do not silently acquire a reminder time.
+Reminder minutes may be null or 0–10080 and require a precise timestamp. Saving this field is configuration, **not proof of device delivery**. The native scheduler now consumes `/me/reminders`; see [reminders-api.md](reminders-api.md) for opt-in, reconciliation and remaining iOS acceptance. All-day/date-only records do not silently acquire a reminder time.
 
 ## Calendar semantics
 
@@ -45,3 +45,24 @@ Deleting a course sets its items' course_id to null and increments affected item
 ## Still pending
 
 ICS preview/confirmation, recurrence expansion/EXDATE/RECURRENCE-ID, source update conflicts and import batch lifecycle are E2 Task 3 and are not delivered by these manual endpoints. Native rendered acceptance remains pending Xcode; tests prove the HTTP/storage contract and client logic, not the iOS interface.
+
+
+## Native save / navigation behavior
+
+The native learning editor freezes the exact request and idempotency key after an uncertain network response. Inputs stay frozen for a retry, and synchronous repeated taps do not send additional requests. New records retry against the same server receipt even after server restart. After 23 hours of local elapsed wall-clock time, or if the elapsed clock is negative/nonfinite, the editor stops replaying a creation and offers a return-to-records action, ahead of the server's 24-hour receipt expiry.
+
+Fulfilled HTTP requests alone do not confirm a save. The editor checks course/item record identity, positive version (exact next version for edits), resource kind and all submitted content after documented title/code trimming and timestamp normalization. Imported occurrence edits check series, recurrence ID, next version and submitted event fields. A malformed/mismatched response remains uncertain with the same frozen request. Creation replay may return an already-modified current record; differing content remains unconfirmed and requires review, not an invented success. Evidence: `tests/native-study-save.test.ts` and `../progress/evidence/native-study-save-confirmation/acceptance.md`.
+
+PATCH operations retain the reviewed version. They are not creation-receipt replays: if a committed edit response was lost, a retry may return VERSION_CONFLICT. The editor reports that conflict and requires reviewing the latest record; it does not fabricate a successful edit.
+
+Bottom-tab switching retains the in-memory editor. Back/deep-link replacement protects dirty or uncertain work; account changes clear it. These are implemented client behaviors, with controller/API tests. Actual iOS interaction acceptance is still pending.
+
+## Native inline action recovery (2026-10-03)
+
+The native StudyScreen exposes task completion directly on the task card, with checked state, textual status and an accessible44ptminimum target. Add task/schedule are first-level actions. This is native implementation; simulator/device visual acceptance remains pending.
+
+Task/event status PATCH, imported single-occurrence cancellation and course/item DELETE use `StudyActionController`. It locks synchronously before sending, snapshots the exact version/body and validates returned record identity/version/status (or delete acknowledgement). A known non4094xxrejection is not saved.409or network/invalid responses require current-state review. **Recovery is read-only**: reload course/item/calendar collections and ask the user to review; never auto-replay a toggle/delete or substitute a fresh version.
+
+A confirmed write followed by refresh failure remains “saved, refresh needed.” Further conflicting actions stay disabled until a successful read; successful read-only recovery of an uncertain write says current records were loaded, not that the original write necessarily succeeded. Failed reads retain the previous records with a stale-state label. Bottom-tab scene retention preserves the controller; navigation guards protect external targets from overwriting pending work. Account changes unmount this memory-only state; no durable cross-session receipt is claimed for these inline actions. External resource links are handled separately from writes.
+
+Evidence: `tests/native-study-actions.test.ts` exercises real Fastify/SQLite toggle/reopen, double invocation, lost response/restart, failed post-save refresh,409recovery, lost course-delete response with detached task preservation, malformed responses/validation, and imported cancellation with unchanged source summary. See `docs/progress/evidence/native-study-actions/`; this does not certify iOS touch, VoiceOver, keyboard, dynamic font or notification delivery.

@@ -2,6 +2,7 @@ import {ApiFailure} from '../api';
 import type {Language} from '../strings';
 import {socialError} from './shared';
 export function wallError(error:unknown,language:Language){const zh=language==='zh';if(error instanceof ApiFailure){
+ if(error.code==='RECEIPT_REVIEW_REQUIRED')return socialError(error,language);
  if(error.code==='DISCUSSION_CLOSED')return zh?'帖子已解决或讨论已结束，暂时不能回复。':'This post is resolved or closed to replies.';
  if(error.status===400)return zh?'请检查标题、正文、回复和可见范围。':'Check the title, body, reply and visibility.';
  if(error.status===409)return zh?'帖子已变化或请求内容不同，请返回刷新后核对。':'The post or request content changed. Go back and refresh before continuing.';

@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-10-03T00:53:49.036501+00:00",
+  "developer_directory": {
+    "exit_code": 0,
+    "stdout": "/Library/Developer/CommandLineTools",
+    "stderr": ""
+  },
+  "simctl": {
+    "exit_code": 72,
+    "stdout": "",
+    "stderr": "xcrun: error: unable to find utility \"simctl\", not a developer tool or in PATH"
+  },
+  "xcodebuild": {
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance"
+  },
+  "spotlight_xcode": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "xcode_candidates": [],
+  "simulator_devices_directory_present": true,
+  "usb_probe": {
+    "exit_code": 0,
+    "error": null,
+    "mobile_device_names": []
+  },
+  "idevice_id_available": false
+}

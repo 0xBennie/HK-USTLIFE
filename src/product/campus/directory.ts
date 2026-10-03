@@ -9,7 +9,7 @@ export const targetSchema=z.object({target_kind:z.enum(['place','shuttle']),targ
 export const directoryQuery=z.object({q:z.string().trim().max(100).default(''),category:z.enum(['study','shop','service']).optional()}).strict();
 type Target=z.infer<typeof targetSchema>;
 type Entry=typeof directoryData[number];
-type Correction=Target&{id:string;message:string;status:'pending'|'resolved'|'rejected';resolution:string;created_at:number};
+type Correction=Target&{id:string;message:string;status:'pending'|'resolved'|'rejected';resolution:string;created_at:number;version:number;reviewed_at:number|null};
 export function createDirectoryStore(db:DatabaseSync,now:()=>number) {
   transaction(db,()=>{for(const entry of directoryData)db.prepare('INSERT INTO campus_entries(id,payload) VALUES(?,?) ON CONFLICT(id) DO NOTHING').run(entry.id,JSON.stringify(entry));});
   function entry(id:string) {
@@ -37,17 +37,17 @@ export function createDirectoryStore(db:DatabaseSync,now:()=>number) {
       return {...target,saved:save};
     });
   }
-  function corrections(owner:string) {return db.prepare('SELECT id,target_kind,target_id,message,status,resolution,created_at FROM campus_corrections WHERE owner_id=? ORDER BY created_at DESC,id').all(owner) as Correction[];}
+  function corrections(owner:string) {return db.prepare('SELECT id,target_kind,target_id,message,status,resolution,created_at,version,reviewed_at FROM campus_corrections WHERE owner_id=? ORDER BY created_at DESC,id').all(owner) as Correction[];}
   function correction(owner:string,input:unknown,key:unknown) {
     const value=targetSchema.extend({message:z.string().trim().min(5).max(2000)}).strict().parse(input);
     const requestKey=z.string().min(8).max(128).regex(/^[A-Za-z0-9_-]+$/).parse(key);
     return transaction(db,()=>{
-      const previous=db.prepare('SELECT id,target_kind,target_id,message,status,resolution,created_at FROM campus_corrections WHERE owner_id=? AND request_key=?').get(owner,requestKey) as Correction|undefined;
+      const previous=db.prepare('SELECT id,target_kind,target_id,message,status,resolution,created_at,version,reviewed_at FROM campus_corrections WHERE owner_id=? AND request_key=?').get(owner,requestKey) as Correction|undefined;
       if(previous){if(previous.message!==value.message||previous.target_kind!==value.target_kind||previous.target_id!==value.target_id)throw new ApiError(409,'IDEMPOTENCY_CONFLICT','Retry key was used with different content.');return previous;}
       validateTarget(value);
       const count=db.prepare('SELECT COUNT(*) AS n FROM campus_corrections WHERE owner_id=? AND created_at>?').get(owner,now()-86400_000) as {n:number};
       if(count.n>=20)throw new ApiError(429,'CORRECTION_LIMIT','At most 20 correction requests per day.');
-      const record={id:randomUUID(),...value,status:'pending' as const,resolution:'',created_at:now()};
+      const record={id:randomUUID(),...value,status:'pending' as const,resolution:'',created_at:now(),version:1,reviewed_at:null};
       db.prepare('INSERT INTO campus_corrections(id,owner_id,target_kind,target_id,message,created_at,request_key) VALUES(?,?,?,?,?,?,?)').run(record.id,owner,value.target_kind,value.target_id,value.message,record.created_at,requestKey);
       return record;
     });

@@ -1,0 +1,11 @@
+'use client';
+import {useState} from 'react';
+import {features,type FeatureStatus} from '../lib/feature-catalog';
+import {Glyph} from './campus-preview';
+const groups=[['all','全部','All'],['study','学习','Study'],['campus','校园生活','Campus'],['social','社交与活动','Social'],['mail','学校邮件','Email'],['identity','身份与隐私','Identity'],['ios','苹果体验','Apple experience'],['ai','AI 助手','AI'],['platform','平台与运营','Platforms']];
+const statuses:Record<FeatureStatus,[string,string]>={local:['本地已实现','Local implementation'],partial:['部分实现','Partially implemented'],connection:['待接入','Connection pending'],planned:['已规划','Planned'],review:['仅评估','Review only']};
+export function FeatureExplorer({language}:{language:'zh'|'en'}){
+ const zh=language==='zh',[group,setGroup]=useState('all'),[search,setSearch]=useState('');
+ const shown=features.filter(f=>(group==='all'||f.group===group)&&[f.zh,f.en,f.detail,f.detailEn].join(' ').toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()));
+ return <div className="feature-explorer"><div className="feature-controls"><label className="feature-search"><Glyph name="search" size={20}/><span className="sr-only">{zh?'搜索全部功能':'Search all features'}</span><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={zh?'搜索课表、校巴、邮箱、AI…':'Search timetable, shuttles, email, AI…'}/></label><div className="feature-filters" aria-label={zh?'功能分类':'Feature categories'}>{groups.map(([id,z,e])=><button key={id} onClick={()=>setGroup(id)} aria-pressed={group===id}>{zh?z:e}</button>)}</div></div><p className="feature-result" role="status">{zh?`显示 ${shown.length} 项 · 点击查看用途和当前进度`:`${shown.length} features · Open an item for scope and progress`}</p><div className="feature-grid">{shown.map(f=><details key={f.id} className="feature-item"><summary><span className={'feature-status status-'+f.status}>{statuses[f.status][zh?0:1]}</span><span className="feature-name">{zh?f.zh:f.en}</span><span className="feature-plus" aria-hidden="true">+</span></summary><p>{zh?f.detail:f.detailEn}</p></details>)}</div>{!shown.length?<div className="campus-empty"><p>{zh?'没有找到匹配功能，试试其他关键词。':'No matches. Try another search.'}</p><button className="campus-button" onClick={()=>{setGroup('all');setSearch('');}}>{zh?'显示全部功能':'Show all features'}</button></div>:null}</div>;
+}

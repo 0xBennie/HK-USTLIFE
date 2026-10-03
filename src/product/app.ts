@@ -1,3 +1,8 @@
+import {registerActivityMaintenanceRoutes} from './social/maintenance-routes.js';
+import {createShuttleStore} from './campus/shuttle-store.js';
+import {registerShuttleMaintenanceRoutes} from './campus/shuttle-maintenance-routes.js';
+import {createMaintenanceStore} from './campus/maintenance.js';
+import {registerMaintenanceRoutes} from './campus/maintenance-routes.js';
 import {createGovernanceStore} from './social/governance.js';
 import {registerGovernanceRoutes} from './social/governance-routes.js';
 import {createWallStore} from './social/wall.js';
@@ -19,8 +24,9 @@ import { createLearningStore } from './learning/store.js';
 import { createCalendarStore } from './calendar/store.js';
 import { registerCalendarRoutes } from './calendar/routes.js';
 import { registerLearningRoutes } from './learning/routes.js';
+import { projectReminders, REMINDER_DAYS } from './reminders/projection.js';
 
-export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch }) {
+export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch }) {
   if (process.env.NODE_ENV === 'production') throw new Error('Local development mail is forbidden in production.');
   const now = options.now ?? Date.now;
   const db = openDatabase(options.dataDir);
@@ -45,8 +51,14 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   registerGovernanceRoutes(app,governance,request=>auth.requireUser(request.headers.authorization).id,request=>{const user=auth.requireUser(request.headers.authorization);if(user.role!=='admin')throw new ApiError(403,'ADMIN_REQUIRED','Administrator access required.');return user.id;},ok);
   registerWallRoutes(app,wall,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerSocialRoutes(app,social,request=>auth.requireUser(request.headers.authorization).id,ok);
-  registerCampusRoutes(app,ok,now);
+  const requireAdmin=(request:import('fastify').FastifyRequest)=>{const user=auth.requireUser(request.headers.authorization);if(user.role!=='admin')throw new ApiError(403,'ADMIN_REQUIRED','Administrator access required.');return user.id;};
+  const maintenance=createMaintenanceStore(db,directory,now,options.sourceFetch);
+  const shuttles=createShuttleStore(db,now,maintenance);
+  registerCampusRoutes(app,ok,now,()=>shuttles.read().catalog);
+  registerActivityMaintenanceRoutes(app,social,requireAdmin,ok);
+  registerShuttleMaintenanceRoutes(app,shuttles,requireAdmin,ok);
   registerPublicTransitRoutes(app,createPublicTransit({now,fetch:options.transitFetch}),ok);
+  registerMaintenanceRoutes(app,maintenance,directory,requireAdmin,ok);
   registerDirectoryRoutes(app,directory,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerLearningRoutes(app,learning,request=>auth.requireUser(request.headers.authorization).id,ok);
   registerCalendarRoutes(app,calendars,request=>auth.requireUser(request.headers.authorization).id,ok);
@@ -54,6 +66,12 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
     const user=auth.requireUser(request.headers.authorization).id,query=calendarQuerySchema.parse(request.query);
     const imported=calendars.occurrences(user,query);
     return ok({...learning.calendar(user,query,[...imported.items,...social.calendar(user)]),import_issues:imported.issues},request.id);
+  });
+  app.get('/api/v1/me/reminders',async request=>{
+    const user=auth.requireUser(request.headers.authorization).id,time=now();
+    const range={from:new Date(time-86400_000).toISOString().slice(0,10),to:new Date(time+(REMINDER_DAYS+8)*86400_000).toISOString().slice(0,10)};
+    const imported=calendars.occurrences(user,range);
+    return ok(projectReminders(user,[...learning.exportAll(user).items,...imported.items,...social.calendar(user)],time,imported.issues),request.id);
   });
   app.setErrorHandler((error, request, reply) => {
     const status = typeof error === 'object' && error !== null && 'statusCode' in error && typeof error.statusCode === 'number' ? error.statusCode : 500;

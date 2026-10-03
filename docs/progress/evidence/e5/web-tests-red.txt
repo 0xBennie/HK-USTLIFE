@@ -1,0 +1,29 @@
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+(node:97289) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/product-web.test.ts [ tests/product-web.test.ts ]
+Error: Cannot find module '../apps/hub/lib/product-web.js' imported from '/Users/bennie/HKUST/All in one HKUST/tests/product-web.test.ts'
+ ❯ tests/product-web.test.ts:8:1
+      6| import {DatabaseSync} from 'node:sqlite';
+      7| import {createProductApp} from '../src/product/app.js';
+      8| import {createProductWeb} from '../apps/hub/lib/product-web.js';
+       | ^
+      9| let app:ReturnType<typeof createProductApp>,dir:string,apiBase:string,…
+     10| const origin='http://127.0.0.1:3000';
+
+Caused by: Error: Failed to load url ../apps/hub/lib/product-web.js (resolved id: ../apps/hub/lib/product-web.js) in /Users/bennie/HKUST/All in one HKUST/tests/product-web.test.ts. Does the file exist?
+ ❯ loadAndTransform ../All%20in%20one%20HKUST/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:35835:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  03:17:15
+   Duration  515ms (transform 158ms, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 59ms)
+

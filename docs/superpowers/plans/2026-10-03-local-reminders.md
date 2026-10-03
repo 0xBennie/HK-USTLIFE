@@ -1,0 +1,9 @@
+# Local reminders — MV08
+
+Implement an authenticated server projection of personal timed events, open timed tasks, opted-in imported occurrences and saved activity reminders. Use canonical stores and server time. Project the next 14 days of firing times, include the maximum 7-day lead time during recurrence expansion, return at most the nearest 60 with deferred count and import warnings.
+
+Native device reconciliation uses Expo local notifications only. Permission is requested solely after the user taps Enable. Persist enablement per account on this device. Reconcile on sign-in/account change, foreground, relevant writes (including uncertain outcomes), and a bounded foreground timer. Remove old notifications on cancellation, completion, changed times, disabled permission, logout, deletion and account switch. Serialize OS writes and guard every await against stale identity. Never clear unrelated notifications. Known mutations and identity changes clear possibly invalid owned reminders even if the subsequent fetch fails. Ordinary offline refreshes preserve the last queue with an explicit stale status; they do not discard otherwise useful reminders.
+
+Provide reminder lead-time controls in timed study forms and saved activity details, plus a device permission/sync status panel. Explain that remote organizer changes reach this local-only device at its next successful sync; offline/background instant cancellation is unavailable without remote push. No APNs or external service is added.
+
+Verify server authentication/ownership, recurrence exceptions, rescheduling, completion and cancellations using real SQLite/Fastify. Verify OS adapter races, queue capacity, failures and cleanup using deterministic fake device tests. Run native typecheck/export. Keep permission prompt, actual delivery, notification taps, font scaling and iOS runtime acceptance explicitly pending until an iOS environment is available.

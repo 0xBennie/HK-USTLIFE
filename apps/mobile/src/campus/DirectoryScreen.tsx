@@ -1,8 +1,10 @@
+import {useSceneFocus} from '../navigation/TabScene';
+import {useSceneNavigation} from '../navigation/InputProtection';
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {Linking,Text,View} from 'react-native';
-import {Button} from 'heroui-native/button';
-import {Input} from 'heroui-native/input';
-import {Card} from 'heroui-native/card';
+import { Button } from '../ui/Primitives';
+import { Input } from '../ui/Primitives';
+import { Card } from '../ui/Primitives';
 import {api,session} from '../runtime';
 import {palette,styles} from '../theme';
 import type {Language} from '../strings';
@@ -10,15 +12,17 @@ import type {directoryData} from '../../../../src/product/campus/directory-data'
 import {TargetActions,type CampusTarget} from './TargetActions';
 type Entry=typeof directoryData[number]&{version:number;freshness:string};
 export function DirectoryScreen({language,dark,onBack,onLogin}:{language:Language;dark:boolean;onBack:()=>void;onLogin:()=>void}) {
+ const sceneActive=useSceneFocus();
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const zh=language==='zh',c=palette[dark?'dark':'light'];
- const [entries,setEntries]=useState<Entry[]>([]),[selected,setSelected]=useState<Entry|null>(null),[q,setQ]=useState(''),[category,setCategory]=useState(''),[onlySaved,setOnlySaved]=useState(false),[marks,setMarks]=useState<CampusTarget[]>([]),[busy,setBusy]=useState(false),[error,setError]=useState(false);const alive=useRef(true);
- async function load(){setBusy(true);setError(false);try{const [next,saved]=await Promise.all([api.request<Entry[]>('/campus/places'),profile?session.request<CampusTarget[]>('/me/campus/bookmarks'):Promise.resolve([])]);if(alive.current){setEntries(next);setMarks(saved);setSelected(old=>old?next.find(e=>e.id===old.id)??null:null);}}catch{if(alive.current)setError(true);}finally{if(alive.current)setBusy(false);}}
- useEffect(()=>{alive.current=true;void load();return()=>{alive.current=false;};},[profile?.id]);
+ const navigate=useSceneNavigation(zh);
+ const [entries,setEntries]=useState<Entry[]>([]),[selected,setSelected]=useState<Entry|null>(null),[q,setQ]=useState(''),[category,setCategory]=useState(''),[onlySaved,setOnlySaved]=useState(false),[marks,setMarks]=useState<CampusTarget[]>([]),[busy,setBusy]=useState(false),[error,setError]=useState(false);const alive=useRef(true),epoch=useRef(0);
+ async function load(){const generation=++epoch.current;setBusy(true);setError(false);try{const [next,saved]=await Promise.all([api.request<Entry[]>('/campus/places'),profile?session.request<CampusTarget[]>('/me/campus/bookmarks'):Promise.resolve([])]);if(alive.current&&generation===epoch.current){setEntries(next);setMarks(saved);setSelected(old=>old?next.find(e=>e.id===old.id)??{...old,freshness:'stale'}:null);}}catch{if(alive.current&&generation===epoch.current)setError(true);}finally{if(alive.current&&generation===epoch.current)setBusy(false);}}
+ useEffect(()=>{if(!sceneActive)return;alive.current=true;void load();return()=>{alive.current=false;epoch.current++;};},[profile?.id,sceneActive]);
  const visible=entries.filter(e=>(!category||e.category===category)&&(!onlySaved||marks.some(m=>m.target_kind==='place'&&m.target_id===e.id))&&`${e.name.zh} ${e.name.en} ${e.location.zh} ${e.location.en} ${e.description.zh} ${e.description.en}`.toLowerCase().includes(q.trim().toLowerCase()));
  const open=async(url:string)=>{try{await Linking.openURL(url);}catch{setError(true);}};
  return <View style={styles.stack}>
-  <Button variant="ghost" onPress={()=>selected?setSelected(null):onBack()}>{selected?(zh?'返回地点目录':'Back to directory'):(zh?'返回交通':'Back to transport')}</Button>
+  <Button variant="ghost" onPress={()=>navigate(()=>selected?setSelected(null):onBack())}>{selected?(zh?'返回地点目录':'Back to directory'):(zh?'返回交通':'Back to transport')}</Button>
   <Text style={[styles.title,{color:c.text}]}>{zh?'校园地点与服务':'Campus places and services'}</Text>
   <Button variant="secondary" isDisabled={busy} onPress={load}>{busy?(zh?'加载中…':'Loading…'):(zh?'刷新':'Refresh')}</Button>
   {error?<Text accessibilityRole="alert" style={[styles.body,{color:c.danger}]}>{zh?'更新失败，保留的资料可能过时，请联网重试。':'Refresh failed. Retained information may be outdated; reconnect and retry.'}</Text>:null}

@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-03",
+  "scope": "Pen UI and browser presentation, not native runtime",
+  "screens": 102,
+  "darkExamples": 8,
+  "reusableComponents": 7,
+  "penGeometry": {
+    "clippedNodes": 0
+  },
+  "browser": {
+    "width360": {
+      "horizontalOverflowScreens": []
+    },
+    "verified": [
+      "signup confirmation",
+      "optional calendar disabled by default",
+      "calendar and inbox cross-page state",
+      "withdraw clears calendar",
+      "waitlist distinct from confirmed",
+      "uncertain result and retry",
+      "required field validation",
+      "draft keep and restore",
+      "task saved to Today and course",
+      "activity preview and demo publish",
+      "dark contrast",
+      "reduced motion",
+      "place correction and save",
+      "in-app back",
+      "content variants preserve event data"
+    ]
+  },
+  "notVerified": [
+    "production school authorization",
+    "production API integration",
+    "all 102 native screens",
+    "native iOS runtime and haptics",
+    "full English and Traditional Chinese localization"
+  ],
+  "artifacts": {
+    "pen": "../campus-apple.pen",
+    "pdf": "pdf/export.pdf",
+    "presentation": "http://127.0.0.1:14331/",
+    "manifest": "manifest.json"
+  }
+}

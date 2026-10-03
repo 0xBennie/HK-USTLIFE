@@ -1,0 +1,10 @@
+
+ RUN  v3.1.2 /Users/bennie/HKUST/All in one HKUST
+
+ ✓ tests/mock-state.test.ts (7 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  06:06:41
+   Duration  249ms (transform 43ms, setup 0ms, collect 39ms, tests 2ms, environment 0ms, prepare 37ms)
+

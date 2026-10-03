@@ -1,0 +1,3 @@
+(node:16874) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Inbox HTTP acceptance passed: 5 checks. Report: docs/progress/evidence/native-inbox-continuity/http-smoke.json

@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-02T22:58:42.216Z",
+  "version": "maintenance-3",
+  "route_count": 24,
+  "holiday_count": 51,
+  "holiday_years": [
+    2025,
+    2026,
+    2027
+  ],
+  "source_matches_saved_holidays": true,
+  "workday": {
+    "status": "scheduled",
+    "origin": "Ming Shing Street (next to East Point City)",
+    "upcoming": [
+      {
+        "local_time": "08:35",
+        "scheduled_at": "2026-10-05T00:35:00.000Z"
+      },
+      {
+        "local_time": "08:40",
+        "scheduled_at": "2026-10-05T00:40:00.000Z"
+      }
+    ],
+    "source": {
+      "url": "https://cso.hkust.edu.hk/index.php/tran/stud_sh_b",
+      "retrieved_at": "2026-10-02T22:50:48.660Z",
+      "sha256": "834751f219313fae24b0e2c23c37c1c69f86373b810c66d46f99ff7dc35682a1",
+      "status": 200
+    },
+    "refresh_due_at": "2026-10-09T22:50:48.660Z"
+  },
+  "holiday": {
+    "date": "2026-10-19",
+    "status": "public_holiday"
+  },
+  "last_departure_status": "finished_for_day",
+  "outside_term_status": "outside_service_period",
+  "other_route_refresh_due_at": "2026-10-09T17:20:01.715Z",
+  "audit": [
+    {
+      "action": "edit_shuttle_route",
+      "target_kind": "shuttle",
+      "target_id": "hang-hau-to-campus",
+      "created_at": 1790981776918,
+      "source_check_id": "efd9f63e-38d6-4029-82da-58cb4e9ad146"
+    },
+    {
+      "action": "edit_shuttle_holidays",
+      "target_kind": "shuttle_holidays",
+      "target_id": "calendar",
+      "created_at": 1790981817681,
+      "source_check_id": "d2b98245-013b-47ea-8cf5-62d9b9c6cd4e"
+    }
+  ]
+}
