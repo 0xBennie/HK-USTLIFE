@@ -1,0 +1,62 @@
+[
+  {
+    "key": "affairs",
+    "id": "DJaBs",
+    "title": "重要事务",
+    "requirement": "X05",
+    "stage": "R1.1",
+    "status": "design_only",
+    "native_route": null,
+    "api_status": "proposed"
+  },
+  {
+    "key": "affair-detail",
+    "id": "dIQbA",
+    "title": "续借说明",
+    "requirement": "X05",
+    "stage": "R1.1",
+    "status": "design_only",
+    "native_route": null,
+    "api_status": "proposed"
+  },
+  {
+    "key": "affair-progress",
+    "id": "G9UWx8",
+    "title": "私人进度",
+    "requirement": "X05",
+    "stage": "R1.1",
+    "status": "design_only",
+    "native_route": null,
+    "api_status": "proposed"
+  },
+  {
+    "key": "affair-report",
+    "id": "CxUV5",
+    "title": "本人报告",
+    "requirement": "X05",
+    "stage": "R1.1",
+    "status": "design_only",
+    "native_route": null,
+    "api_status": "proposed"
+  },
+  {
+    "key": "affair-revision",
+    "id": "fGjAb",
+    "title": "来源变化",
+    "requirement": "X05",
+    "stage": "R1.1",
+    "status": "design_only",
+    "native_route": null,
+    "api_status": "proposed"
+  },
+  {
+    "key": "affair-source-review",
+    "id": "X1MKZe",
+    "title": "来源待核对",
+    "requirement": "X05",
+    "stage": "R1.1",
+    "status": "design_only",
+    "native_route": null,
+    "api_status": "proposed"
+  }
+]

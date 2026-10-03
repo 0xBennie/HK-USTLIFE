@@ -1,0 +1,39 @@
+{
+  "status": "planning_sources_only_not_live_templates",
+  "checked_at": "2026-10-04",
+  "sources": [
+    {
+      "id": "hkust-library-renewals",
+      "url": "https://library.hkust.edu.hk/about-us/policies-and-rules/borrowing-policy/requests-renewals-recalls",
+      "publisher": "HKUST Library",
+      "page_modified_at": "2026-01-27",
+      "scope": "图书续借核对",
+      "facts": ["在 My Account 操作并核对续借回复", "有人预约的项目不能续借", "被召回可能使原到期日提前"],
+      "personal_data_unavailable": ["借阅清单", "本人到期日", "续借结果"],
+      "deadline_mode": "per_user",
+      "evidence_state": "public_page_read"
+    },
+    {
+      "id": "hkust-registry-card-replacement",
+      "url": "https://registry.hkust.edu.hk/resource-library/lossreplacement-hkust-card",
+      "publisher": "HKUST Academic Registry",
+      "page_display_date": "2021-08-01",
+      "scope": "学生卡挂失与补卡核对",
+      "facts": ["Student Intranet 提供挂失入口", "补卡使用 RR-26a", "页面列出 HKD150 补卡费", "已完成学业者不获发补卡"],
+      "personal_data_unavailable": ["本人卡状态", "付款结果", "申请是否受理"],
+      "deadline_mode": "none_published",
+      "evidence_state": "public_page_read"
+    },
+    {
+      "id": "hkust-card-administration",
+      "url": "https://hkustcard.hkust.edu.hk/administrative-matters-for-students",
+      "publisher": "HKUST Card",
+      "page_modified_at": null,
+      "scope": "学生卡挂失与补卡核对",
+      "facts": ["挂失不会自动生成补卡申请", "此页另提及提交付款打印记录"],
+      "evidence_state": "public_page_read",
+      "review_issue": "与 Academic Registry 页的材料和办理说明详略不同；不得推定无需付款记录或必须线下办理。当前表单/Registry答复仍需用户办理时核对。"
+    }
+  ],
+  "publication_gate": "Build versioned bilingual summaries and review source differences before serving as active templates. No school-account access or application submission performed."
+}
