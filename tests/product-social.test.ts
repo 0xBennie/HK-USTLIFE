@@ -145,7 +145,7 @@ it('keeps reconnection intent private across authenticated API users until both 
  expect((await call('PUT',reverse,{version:0,willing:true,participated:true},a)).json().data.mutual).toBe(true);
  expect((await call('GET',path)).json().data.mutual).toBe(true);
  const card=await call('PUT',path+'/contact-card',{version:0,text:'Signal: voluntary-handle'});expect(card.statusCode,card.body).toBe(200);
- expect((await call('GET',reverse+'/contact-card',undefined,a)).json().data.peer).toEqual({text:'Signal: voluntary-handle'});
+ expect((await call('GET',reverse+'/contact-card',undefined,a)).json().data.peer).toMatchObject({text:'Signal: voluntary-handle'});
  expect((await call('GET',reverse+'/contact-card',undefined,b)).json().data.peer).toBeNull();
  expect((await call('GET','/me/export',undefined,a)).json().data.reconnection_cards).toEqual([]);
  expect((await call('PUT',reverse,{version:1,willing:false,participated:false},a)).statusCode).toBe(200);

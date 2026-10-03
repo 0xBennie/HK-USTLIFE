@@ -34,7 +34,7 @@ it('shares only a voluntarily supplied contact card after mutual consent, never 
  expect(()=>store.saveCard('a','event','b',{version:0,text:'Signal: alice'})).toThrow();
  store.set('b','event','a',{version:0,willing:true,participated:true});
  store.saveCard('a','event','b',{version:0,text:'Signal: alice'});
- expect(store.cards('b','event','a').peer).toEqual({text:'Signal: alice'});
+ expect(store.cards('b','event','a').peer).toMatchObject({text:'Signal: alice'});
  expect(store.cards('c','event','a').peer).toBeNull();expect(store.exportCards('b')).toEqual([]);
  store.set('b','event','a',{version:1,willing:false,participated:false});
  expect(store.cards('b','event','a').peer).toBeNull();

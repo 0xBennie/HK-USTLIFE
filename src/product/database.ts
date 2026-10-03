@@ -238,6 +238,29 @@ const migrations = [{ version: 1, sql: `
   UPDATE reconnection_cards SET text='',version=version+1
   WHERE activity_id=NEW.activity_id AND ((owner_id=NEW.owner_id AND target_id=NEW.target_id) OR (owner_id=NEW.target_id AND target_id=NEW.owner_id));
  END;
+` }, { version: 14, sql: `
+ ALTER TABLE reconnection_cards ADD COLUMN id TEXT;
+ UPDATE reconnection_cards SET id=lower(hex(randomblob(16)));
+ CREATE UNIQUE INDEX reconnection_card_id ON reconnection_cards(id);
+ CREATE TABLE content_reports_v2 (
+  id TEXT PRIMARY KEY, owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  target_kind TEXT NOT NULL CHECK(target_kind IN ('post','reply','activity','activity_comment','contact_card')),
+  target_id TEXT NOT NULL, target_author_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+  reason TEXT NOT NULL, details TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','dismissed','action_taken')),
+  version INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL,
+  resolution TEXT NOT NULL DEFAULT '', reviewed_at INTEGER, reviewer_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+  request_key TEXT NOT NULL, fingerprint TEXT NOT NULL, UNIQUE(owner_id,request_key)
+ );
+ INSERT INTO content_reports_v2 SELECT * FROM content_reports;
+ CREATE TABLE moderation_audit_v2 (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, report_id TEXT REFERENCES content_reports_v2(id) ON DELETE SET NULL,
+  actor_id TEXT REFERENCES users(id) ON DELETE SET NULL, action TEXT NOT NULL, reason TEXT NOT NULL, created_at INTEGER NOT NULL
+ );
+ INSERT INTO moderation_audit_v2 SELECT * FROM moderation_audit;
+ DROP TABLE moderation_audit;
+ DROP TABLE content_reports;
+ ALTER TABLE content_reports_v2 RENAME TO content_reports;
+ ALTER TABLE moderation_audit_v2 RENAME TO moderation_audit;
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

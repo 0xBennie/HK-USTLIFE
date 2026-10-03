@@ -48,7 +48,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   const wall=createWallStore(db,now);
   const social=createSocialStore(db,now);
   const reconnections=createReconnections(db,now);
-  const governance=createGovernanceStore(db,now,wall,social);
+  const governance=createGovernanceStore(db,now,wall,social,reconnections);
   const app = Fastify({ logger: false, bodyLimit: 32_768, trustProxy: false });
   const contactRetention=setInterval(()=>{
     try { reconnections.purgeExpiredCards(); }

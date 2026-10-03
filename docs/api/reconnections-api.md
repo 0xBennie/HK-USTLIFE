@@ -39,3 +39,13 @@ Contact text is cleared when either consent expires, is absent/inactive, or no l
 The store sweeps on startup and before card reads, writes and export. The local API additionally attempts a sweep every five minutes while running; the timer is released on shutdown and failures emit a warning for retry. Peer visibility still checks current eligibility on each read, independently of cleanup. An unavailable/stopped process cannot guarantee a wall-clock cleanup deadline; the next startup sweeps persisted records.
 
 This clears application-visible SQLite text, not copies previously viewed by recipients, SQLite free pages/WAL remnants or external backups. No secure-erasure claim is made. Native contact-card UI and runtime acceptance remain outstanding.
+
+## Version-bound contact-card reports (2026-10-04)
+
+A visible `peer` card now includes `report_id`, an opaque card identifier plus version (`32 lowercase hex characters.version`). It is only returned with contact text after current mutual-consent/eligibility checks. Do not infer permissions from possession of this identifier.
+
+Use the existing authenticated `POST /api/v1/reports` with an idempotency key and `target: {kind: "contact_card", id: peer.report_id}`, existing reason enum and optional details. The server requires the requesting user to be the card's recipient and still eligible to view that exact nonempty version. Other users/authors get neutral 404. Existing daily limits, same-key retries, private report lists and administrator-only moderation apply.
+
+Admin review reads the exact reported version, not a later edit. `hide_content` clears that card's text and increments its version; it does not cancel the activity. If the card changed, expired or was removed, content is null and destructive resolution returns 410; dismissal remains available. Existing author restriction and audit apply. No private contact snapshot is separately retained: after removal/version change this workflow cannot review its former body. Reports may themselves contain user-written details, governed by existing report/export/deletion rules.
+
+Migration 14 adds stable opaque card IDs and extends report targets while preserving existing report/audit rows. Native report/block controls for contact cards are not yet wired in this unit; no rendered administrator or iOS acceptance is claimed.

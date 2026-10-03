@@ -102,3 +102,47 @@ it('banning an organizer cancels their activities and wall previews; account del
  await call('PUT',`/me/blocks/${ownerId}`,{},a);expect((await call('DELETE','/me',{confirmation:'DELETE'},a)).statusCode).toBe(200);
  const db=new DatabaseSync(join(dir,'campus.sqlite'));try{expect(db.prepare('SELECT COUNT(*) AS n FROM content_reports WHERE owner_id=?').get(aid)!.n).toBe(0);expect(db.prepare('SELECT COUNT(*) AS n FROM user_blocks WHERE owner_id=?').get(aid)!.n).toBe(0);expect(db.prepare('SELECT report_id FROM moderation_audit').get()!.report_id).toBeNull();}finally{db.close();}
 });
+async function sharedContact(){
+ const x=await activity();await call('POST',`/activities/${x.id}/join`,{activity_version:1},a);
+ const db=new DatabaseSync(join(dir,'campus.sqlite'));db.prepare('UPDATE activities SET starts_at=?,ends_at=? WHERE id=?').run(now()-60000,now()-1,x.id);db.close();
+ const own=`/activities/${x.id}/reconnections/${aid}`,peer=`/activities/${x.id}/reconnections/${ownerId}`;
+ await call('PUT',own,{version:0,willing:true,participated:true});await call('PUT',peer,{version:0,willing:true,participated:true},a);
+ await call('PUT',own+'/contact-card',{version:0,text:'Voluntary test contact'});
+ const card=(await call('GET',peer+'/contact-card',undefined,a)).json().data.peer;
+ return {own,peer,target:{kind:'contact_card',id:card.report_id}};
+}
+it('allows only the recipient to report a visible contact card and routes it through restricted moderation',async()=>{
+ const {own,peer,target}=await sharedContact();const body={target,reason:'privacy',details:'Please review'};const key=randomUUID();
+ expect((await call('POST','/reports',body,b)).statusCode).toBe(404);
+ expect((await call('POST','/reports',body,owner)).statusCode).toBe(404);
+ const response=await call('POST','/reports',body,a,key);expect(response.statusCode,response.body).toBe(201);const report=response.json().data;
+ expect((await call('POST','/reports',body,a,key)).json().data.id).toBe(report.id);
+ expect((await call('GET','/admin/reports',undefined,a)).statusCode).toBe(403);
+ expect((await call('GET','/admin/reports',undefined,admin)).json().data.items[0].content.body).toBe('Voluntary test contact');
+ expect((await call('GET','/me/reports')).json().data.items).toEqual([]);
+ expect((await resolve(report.id,'hide_content')).statusCode).toBe(200);
+ expect((await call('GET',peer+'/contact-card',undefined,a)).json().data.peer).toBeNull();
+ expect((await call('GET',own+'/contact-card')).json().data.mine).toMatchObject({text:'',version:2});
+ expect((await call('POST','/reports',body,a,key)).json().data.id).toBe(report.id);
+});
+it('does not use an old contact-card report to remove a changed version or allow reporting after consent withdrawal',async()=>{
+ const {own,peer,target}=await sharedContact();const r=await report(target.kind,target.id);
+ await call('PUT',own+'/contact-card',{version:1,text:'Updated contact'});
+ expect((await resolve(r.id,'hide_content')).statusCode).toBe(410);
+ expect((await call('GET',peer+'/contact-card',undefined,a)).json().data.peer.text).toBe('Updated contact');
+ expect((await call('GET','/admin/reports',undefined,admin)).json().data.items[0].content).toBeNull();
+ const latest=(await call('GET',peer+'/contact-card',undefined,a)).json().data.peer.report_id;
+ await call('PUT',peer,{version:1,willing:false,participated:false},a);
+ expect((await call('POST','/reports',{target:{kind:'contact_card',id:latest},reason:'other'},a)).statusCode).toBe(404);
+ expect((await resolve(r.id,'dismiss')).statusCode).toBe(200);
+});
+it('preserves existing reports and moderation audit when applying the contact-card migration',async()=>{
+ const p=await post(),r=await report('post',p.id);await resolve(r.id,'dismiss');await app.close();
+ // Reproduce the pre-v14 card schema and migration ledger on the isolated fixture.
+ const db=new DatabaseSync(join(dir,'campus.sqlite'));
+ db.exec('DROP INDEX reconnection_card_id; ALTER TABLE reconnection_cards DROP COLUMN id; DELETE FROM schema_migrations WHERE version=14;');db.close();
+ app=createProductApp({dataDir:dir,now});
+ expect((await call('GET','/me/reports',undefined,a)).json().data.items[0]).toMatchObject({id:r.id,status:'dismissed'});
+ const verify=new DatabaseSync(join(dir,'campus.sqlite'));
+ try{expect(verify.prepare('SELECT report_id FROM moderation_audit').get()?.report_id).toBe(r.id);expect(verify.prepare('PRAGMA foreign_key_check').all()).toEqual([]);}finally{verify.close();}
+});

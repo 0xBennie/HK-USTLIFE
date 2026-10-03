@@ -7,8 +7,11 @@ import {keySchema,version} from './schemas.js';
 import type {createWallStore} from './wall.js';
 import type {createSocialStore} from './store.js';
 import type {ReportTarget} from './wall-types.js';
+import type {createReconnections} from './reconnections.js';
 import type {ContentReport,BlockedUser} from './governance-types.js';
+const contactId=z.string().regex(/^[a-f0-9]{32}\.[1-9]\d{0,14}$/);
 const targetSchema=z.discriminatedUnion('kind',[
+ z.object({kind:z.literal('contact_card'),id:contactId}).strict(),
  z.object({kind:z.literal('post'),id:z.string().uuid()}).strict(),
  z.object({kind:z.literal('activity'),id:z.string().uuid()}).strict(),
  z.object({kind:z.literal('reply'),id:z.string().regex(/^[1-9]\d{0,14}$/)}).strict(),
@@ -18,9 +21,14 @@ const reportSchema=z.object({target:targetSchema,reason:z.enum(['spam','harassme
 export const reportQuery=z.object({cursor:z.string().uuid().optional(),status:z.enum(['pending','dismissed','action_taken']).optional()}).strict();
 type ReportRow={id:string;owner_id:string;target_kind:ReportTarget['kind'];target_id:string;reason:ContentReport['reason'];details:string;status:ContentReport['status'];version:number;created_at:number;resolution:string;reviewed_at:number|null;fingerprint:string};
 const stamp=(n:number)=>new Date(n).toISOString();
-export function createGovernanceStore(db:DatabaseSync,now:()=>number,wall:ReturnType<typeof createWallStore>,social:ReturnType<typeof createSocialStore>){
+export function createGovernanceStore(db:DatabaseSync,now:()=>number,wall:ReturnType<typeof createWallStore>,social:ReturnType<typeof createSocialStore>,reconnections:ReturnType<typeof createReconnections>){
  function reportView(r:ReportRow):ContentReport{return {id:r.id,target:{kind:r.target_kind,id:r.target_id},reason:r.reason,details:r.details,status:r.status,version:r.version,created_at:stamp(r.created_at),resolution:r.resolution,reviewed_at:r.reviewed_at===null?null:stamp(r.reviewed_at)};}
+ function contact(target:ReportTarget){const [id,version]=target.id.split('.');return db.prepare("SELECT * FROM reconnection_cards WHERE id=? AND version=? AND text!=''").get(id,Number(version));}
  function content(target:ReportTarget){
+  if(target.kind==='contact_card'){
+   reconnections.purgeExpiredCards();const r=contact(target);if(!r)return null;
+   return {author_id:String(r.owner_id),body:String(r.text),title:'Contact card',moderation_state:'visible',parent_id:String(r.activity_id)};
+  }
   const table={post:'wall_posts',reply:'wall_replies',activity:'activities',activity_comment:'activity_comments'}[target.kind];
   const r=db.prepare(`SELECT * FROM ${table} WHERE id=?`).get(target.id);if(!r)return null;
   const author=String(target.kind==='activity'?r.organizer_id:r.author_id);
@@ -28,7 +36,11 @@ export function createGovernanceStore(db:DatabaseSync,now:()=>number,wall:Return
  }
  function visibleTarget(user:string,target:ReportTarget){
   const r=content(target);if(!r)throw new ApiError(404,'CONTENT_NOT_FOUND','Content unavailable.');
-  if(target.kind==='post')wall.get(target.id,user);
+  if(target.kind==='contact_card'){
+   const card=contact(target);
+   if(!card||card.target_id!==user||!reconnections.get(user,String(card.activity_id),String(card.owner_id)).mutual)throw new ApiError(404,'CONTENT_NOT_FOUND','Content unavailable.');
+  }
+  else if(target.kind==='post')wall.get(target.id,user);
   else if(target.kind==='reply')wall.reply(Number(target.id),r.parent_id!,user);
   else if(target.kind==='activity')social.get(target.id,user);
   else social.comment(user,r.parent_id!,Number(target.id));
@@ -60,9 +72,14 @@ export function createGovernanceStore(db:DatabaseSync,now:()=>number,wall:Return
    const target=content({kind:r.target_kind,id:r.target_id});
    if(v.action!=='dismiss'&&!target)throw new ApiError(410,'CONTENT_REMOVED','Content was deleted; dismiss this report instead.');
    if(v.action==='hide_content'){
+    if(r.target_kind==='contact_card'){
+     const [cardId,cardVersion]=r.target_id.split('.');
+     db.prepare("UPDATE reconnection_cards SET text='',version=version+1 WHERE id=? AND version=?").run(cardId,Number(cardVersion));
+    }else{
     if(r.target_kind==='activity')social.restrictActivity(r.target_id);
     const table={post:'wall_posts',reply:'wall_replies',activity:'activities',activity_comment:'activity_comments'}[r.target_kind];
     db.prepare(`UPDATE ${table} SET moderation_state='hidden',version=version+1 WHERE id=?`).run(r.target_id);
+    }
    }
    if(v.action==='ban_author'){
     const author=db.prepare('SELECT role FROM users WHERE id=?').get(target!.author_id);
