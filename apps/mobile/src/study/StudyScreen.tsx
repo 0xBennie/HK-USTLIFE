@@ -3,6 +3,7 @@ import {useInputProtection} from '../navigation/InputProtection';
 import {StudyActionController,type StudyAction} from './action-controller';
 import {useSceneFocus} from '../navigation/TabScene';
 import {participationLabel} from '../social/shared';
+import {SchoolSourcesScreen} from './SchoolSourcesScreen';
 import { SourceScreen } from './SourceScreen';
 import { ImportScreen } from './ImportScreen';
 import { useCallback,useEffect,useRef,useState,useSyncExternalStore } from 'react';
@@ -29,6 +30,7 @@ export function StudyScreen({language,dark,onActivity,initialReminder}:{language
  const sceneActive=useSceneFocus();
   const t=studyStrings[language],colors=palette[dark?'dark':'light'];
   const [managingSources,setManagingSources]=useState(false);
+  const [schoolSources,setSchoolSources]=useState(false);
   const [importing,setImporting]=useState(false);
   const [view,setView]=useState<'day'|'week'|'courses'|'all'>('day');
   const [date,setDate]=useState(()=>dateInZone(new Date().toISOString()));
@@ -38,7 +40,7 @@ export function StudyScreen({language,dark,onActivity,initialReminder}:{language
   const [loading,setLoading]=useState(true),[error,setError]=useState(''),[linkError,setLinkError]=useState('');
   const alive=useRef(true);
   useEffect(()=>{alive.current=true;return()=>{alive.current=false;generation.current++;};},[]);
-  useEffect(()=>{if(initialReminder){setDate(initialReminder.date);setZone('Asia/Hong_Kong');setView('day');setEditor(null);setImporting(false);setManagingSources(false);}},[initialReminder]);
+  useEffect(()=>{if(initialReminder){setDate(initialReminder.date);setZone('Asia/Hong_Kong');setView('day');setEditor(null);setImporting(false);setManagingSources(false);setSchoolSources(false);}},[initialReminder]);
   const generation=useRef(0);
   const load=useCallback(async()=>{
     if(!alive.current)return false;
@@ -103,6 +105,7 @@ export function StudyScreen({language,dark,onActivity,initialReminder}:{language
       </Disclosure>}
     </Card>;
   }
+  if(schoolSources)return <SchoolSourcesScreen language={language} dark={dark} onBack={()=>{setSchoolSources(false);void load();}}/>;
   if(managingSources)return <SourceScreen language={language} dark={dark} onBack={()=>{setManagingSources(false);void load();}}/>;
   if(importing)return <ImportScreen language={language} dark={dark} onBack={()=>setImporting(false)} onSaved={()=>{setImporting(false);void load();}}/>;
   if(editor)return <StudyForm editor={editor} courses={courses} language={language} dark={dark} onBack={()=>setEditor(null)} onSaved={()=>{setEditor(null);void load();}} />;
@@ -116,6 +119,7 @@ export function StudyScreen({language,dark,onActivity,initialReminder}:{language
     <Disclosure title={language==='zh'?'更多记录与日历设置':'More records & calendar settings'}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}><View style={styles.row}>{(['note','material','course'] as const).map(kind=><Button key={kind} variant="secondary" isDisabled={actionLocked} onPress={()=>setEditor({kind,courseId})}>{t.add} {t[kind]}</Button>)}</View></ScrollView>
       <Button variant="secondary" isDisabled={actionLocked} onPress={()=>setImporting(true)}>{language==='zh'?'备用方式：导入 ICS 日历':'Alternative: import an ICS calendar'}</Button>
+      <Button variant="ghost" isDisabled={actionLocked} onPress={()=>setSchoolSources(true)}>{language==='zh'?'学校连接与私人设置':'School connections and private settings'}</Button>
       <Button variant="ghost" isDisabled={actionLocked} onPress={()=>setManagingSources(true)}>{language==='zh'?'管理导入来源':'Manage imported sources'}</Button>
       <Button variant="ghost" isDisabled={actionLocked} onPress={()=>setChoosingZone(!choosingZone)}>{t.zone}: {zone}</Button>
       {choosingZone?(['Asia/Hong_Kong','UTC','Europe/London','America/New_York'].map(value=><Button key={value} variant={value===zone?'primary':'secondary'} isDisabled={actionLocked} onPress={()=>{setZone(value);setChoosingZone(false);}}>{value===zone?'✓ ':''}{value}</Button>)):null}

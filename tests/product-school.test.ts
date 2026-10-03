@@ -6,6 +6,9 @@ import { createProductApp } from '../src/product/app.js';
 import { openDatabase } from '../src/product/database.js';
 import { createSchoolStore } from '../src/product/school/store.js';
 
+import {StudyActionController} from '../apps/mobile/src/study/action-controller.js';
+import {ApiFailure} from '../apps/mobile/src/api.js';
+
 const clock=()=>Date.parse('2026-10-03T00:00:00Z');
 const fixtureContracts={sis:{approval_reference:'TEST ONLY',consent_version:'v1',scopes:[{id:'fall',collection:'timetable',missing:'remove'}]}} as const;
 
@@ -29,6 +32,20 @@ describe('authenticated school source API without a public approval bypass', () 
     store.commit(store.begin(owner,'sis','fall'),[{key:'private',state:'active',source_updated_at:null,payload:{kind:'event',title:'Alice private class',starts_at:'2026-10-05T01:00:00Z'}}]);
     const row=store.list(owner,{limit:1}).items[0];db.close();return row;
   }
+  it('confirms native private settings and cache-preserving revocation through real authenticated routes',async()=>{
+    const row=seedFixture();let current:any,reads=0;
+    const controller=new StudyActionController(async(path,options)=>{
+      const response=await call(options.method as 'PATCH'|'DELETE',path,options.body as object);
+      const json=response.json();if(response.statusCode>=400)throw new ApiFailure(response.statusCode,json.error.code,json.error.message);return json.data;
+    },async()=>{reads++;current=(await call('GET','/school/records')).json().data;return true;});
+    expect(await controller.submit({path:`/school/records/${row.id}/personal`,method:'PATCH',body:{version:0,notes:'Prepare questions',remind_minutes:15},label:'Private settings'})).toBe(true);
+    expect(current.items[0]).toMatchObject({personal:{notes:'Prepare questions',remind_minutes:15,version:1},payload:{title:'Alice private class'}});
+    expect(await controller.submit({path:`/school/records/${row.id}/personal`,method:'PATCH',body:{version:1,remind_minutes:null},label:'Disable reminder'})).toBe(true);
+    expect(current.items[0].personal.remind_minutes).toBeNull();
+    expect(await controller.submit({path:'/school/connections/sis',method:'DELETE',body:{version:1,delete_cached_data:false},label:'Revoke SIS'})).toBe(true);
+    expect(current.connections[0].state).toBe('revoked');expect(current.items[0].personal.notes).toBe('Prepare questions');expect(reads).toBe(3);
+    expect((await call('GET','/school/records',undefined,bob)).json().data.items).toEqual([]);
+  });
   it('requires authentication, exposes missing school approval and has no client grant/sync endpoint',async()=>{
     expect((await app.inject({url:'/api/v1/school/connections'})).statusCode).toBe(401);
     const response=await call('GET','/school/connections');expect(response.statusCode).toBe(200);

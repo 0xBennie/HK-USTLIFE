@@ -51413,6 +51413,591 @@
           "width": "fill_container"
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "X3COR",
+      "x": 11726,
+      "y": 0,
+      "name": "School management / 学校连接",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 393,
+      "fill": "$campus-background",
+      "layout": "vertical",
+      "gap": 12,
+      "children": [
+        {
+          "id": "W4BQgz",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "c7gC3",
+          "name": "School plan content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 22,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "XI04e",
+              "name": "Back to Today",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "‹  今天",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "KsQsh",
+              "name": "Page title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "学校连接",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "c5F9Y",
+              "name": "Source label",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "SIS · 正式课表",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "p7ASW",
+              "name": "Assignment title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "尚待学校批准",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "zNXyA",
+              "name": "Official deadline",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Canvas · 课程与作业",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "P6qga",
+              "name": "Source requirements",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "尚待学校批准。登录身份与读取数据是独立授权。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "iJuLk",
+              "name": "Sync notice",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "以当前来源状态为准",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "k28MqE",
+              "name": "Personal completion action",
+              "width": "fill_container",
+              "fill": "$campus-accent",
+              "cornerRadius": 14,
+              "padding": 14,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "w8w9t",
+                  "name": "Completion label",
+                  "fill": "#FFFFFF",
+                  "content": "刷新连接状态",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "eqJUU",
+              "name": "Private note heading",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "当前不会读取学校数据",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "MJXFd",
+              "name": "Private note",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "公开校园内容仍可使用；你可以先记录自己的安排。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "lacNI",
+              "name": "Prototype disclosure",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "交互设计样例 · 非真实学校连接",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "id": "X8mVbX",
+          "type": "ref",
+          "ref": "C2KuRh",
+          "name": "Five main tabs",
+          "width": "fill_container"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "gXcxl",
+      "x": 12199,
+      "y": 0,
+      "name": "School management / 我的学校记录",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 393,
+      "fill": "$campus-background",
+      "layout": "vertical",
+      "gap": 12,
+      "children": [
+        {
+          "id": "ME2ip",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "cjvEI",
+          "name": "School plan content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 22,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "V7Jkf",
+              "name": "Back to Today",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "‹  今天",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "kZYmb",
+              "name": "Page title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "我的学校记录",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "d3eVU5",
+              "name": "Source label",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Canvas · 作业",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "N5313",
+              "name": "Assignment title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "只修改自己的安排",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Fo0CS",
+              "name": "Official deadline",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "我的备注",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "JPGdB",
+              "name": "Source requirements",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "先整理访谈问题。内容仅自己可见，不会修改 Canvas。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "nKPqb",
+              "name": "Sync notice",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "以当前来源状态为准",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "Z5hMIp",
+              "name": "Personal completion action",
+              "width": "fill_container",
+              "fill": "$campus-accent",
+              "cornerRadius": 14,
+              "padding": 14,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "k9WKAz",
+                  "name": "Completion label",
+                  "fill": "#FFFFFF",
+                  "content": "保存私人设置",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ocheR",
+              "name": "Private note heading",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "提醒 · 提前 15 分钟",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "vg9Qa",
+              "name": "Private note",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "仅适用于有具体时间的安排。保存偏好不等于系统已送达。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "ge0nO",
+              "name": "Prototype disclosure",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "交互设计样例 · 非真实学校连接",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "id": "C4z9vd",
+          "type": "ref",
+          "ref": "C2KuRh",
+          "name": "Five main tabs",
+          "width": "fill_container"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "VIlQ7",
+      "x": 12672,
+      "y": 0,
+      "name": "School management / 撤销学校连接",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 393,
+      "fill": "$campus-background",
+      "layout": "vertical",
+      "gap": 12,
+      "children": [
+        {
+          "id": "Nv61K",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "duTXW",
+          "name": "School plan content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 22,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "FZ7mj",
+              "name": "Back to Today",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "‹  今天",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "b9S88",
+              "name": "Page title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "撤销学校连接",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "a1prm",
+              "name": "Source label",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "SIS · 当前连接",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "MLekS",
+              "name": "Assignment title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "选择如何处理缓存",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "skKLJ",
+              "name": "Official deadline",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "停止本产品后续同步",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "eJX2D",
+              "name": "Source requirements",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "撤销后，学校记录退出今天和提醒；学校端授权仍需到官方账户核对。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "f2hdu",
+              "name": "Sync notice",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "以当前来源状态为准",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "y2F0CZ",
+              "name": "Personal completion action",
+              "width": "fill_container",
+              "fill": "$campus-accent",
+              "cornerRadius": 14,
+              "padding": 14,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Bhw2R",
+                  "name": "Completion label",
+                  "fill": "#FFFFFF",
+                  "content": "撤销并保留缓存",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ljP7H",
+              "name": "Private note heading",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "也可删除缓存及私人备注",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "AX2Xd",
+              "name": "Private note",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "删除前再次确认。选择保留时，缓存仍可查看和导出。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Qc9Hz",
+              "name": "Prototype disclosure",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "交互设计样例 · 非真实学校连接",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "id": "RD474",
+          "type": "ref",
+          "ref": "C2KuRh",
+          "name": "Five main tabs",
+          "width": "fill_container"
+        }
+      ]
     }
   ],
   "themes": {

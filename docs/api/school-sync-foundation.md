@@ -75,7 +75,7 @@ Cancelled/removed records and revoked/unapproved/unconnected sources are exclude
 
 `GET /me/reminders` adds healthy school records with explicitly chosen reminder offsets. Targets use kind `school`; native routing opens the correct date. Private task completion removes its reminder, without editing Canvas submission state. Source date changes recalculate reminder times; cancellation/revocation removes candidates. Actual OS delivery/cancellation requires iOS runtime acceptance.
 
-Native Today/Week uses PATCH personal for a school checkbox; acknowledgement checks the independent personal version. Source facts cannot be edited/deleted using manual-study controls. Private notes are displayed; a dedicated school note/reminder editor is not part of this unit. Unknown writes retain existing verification/recovery behavior.
+Native Today/Week uses PATCH personal for a school checkbox; acknowledgement checks the independent personal version. Source facts cannot be edited/deleted using manual-study controls. Private notes are displayed and SchoolSourcesScreen provides a dedicated private-note/reminder editor. Unknown writes retain existing verification/recovery behavior.
 
 `createProductApp({schoolContracts})` is trusted server configuration only. Default registry stays empty. API projection tests inject a synthetic approved registry and normalized fixtures; this does not constitute school approval.
 
@@ -83,4 +83,4 @@ Tests: school-projection (eligibility/staleness/stable IDs/completion), product-
 
 ### Native write acknowledgement coverage
 
-StudyActionController now verifies every submitted private field (`notes`, `completed`, `remind_minutes`), including an explicit null reminder offset, against a newer personal version. Unsubmitted fields do not prevent acknowledgement. Revocation verifies provider, newer connection version, revoked state, and the exact retained/deleted cache choice. The current server contract explicitly reports upstream revocation not attempted. Malformed/mismatched results remain uncertain and lock further mutation until a read-only review; they are never replayed automatically. These controller capabilities are tested, but school note/reminder/revoke screens are not yet wired to them.
+StudyActionController now verifies every submitted private field (`notes`, `completed`, `remind_minutes`), including an explicit null reminder offset, against a newer personal version. Unsubmitted fields do not prevent acknowledgement. Revocation verifies provider, newer connection version, revoked state, and the exact retained/deleted cache choice. The current server contract explicitly reports upstream revocation not attempted. Malformed/mismatched results remain uncertain and lock further mutation until a read-only review; they are never replayed automatically. SchoolSourcesScreen is now wired to these controller capabilities. Actual iOS touch, navigation, keyboard and accessibility verification remains pending.
