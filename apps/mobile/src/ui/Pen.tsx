@@ -1,11 +1,12 @@
 // Native counterparts of the reusable Pen components in design/campus-apple.pen.
 import {GlassView,isLiquidGlassAvailable} from 'expo-glass-effect';
 import {Blur,Canvas,Circle as SkCircle,Group,Rect as SkRect} from '@shopify/react-native-skia';
-import {Easing,useDerivedValue,useSharedValue,withRepeat,withTiming,type SharedValue} from 'react-native-reanimated';
+import {Easing,Keyframe,interpolate,useAnimatedStyle,useDerivedValue,useSharedValue,withRepeat,withSpring,withTiming,type SharedValue} from 'react-native-reanimated';
+import {resetCompact,tabCompact} from './glass-motion';
 import {NumberFlow,TimeFlow} from 'number-flow-react-native';
 import {feel} from './feel';
 // Sizes, radii, colors and icon names are read from the Pen boards; do not restyle here without updating Pen.
-import {Children,createContext,isValidElement,useContext,useEffect,type ReactNode} from 'react';
+import {Children,createContext,isValidElement,useContext,useEffect,useState,type ReactNode} from 'react';
 import {Pressable,ScrollView,Switch,Text,TextInput,View,useColorScheme,useWindowDimensions,type StyleProp,type TextInputProps,type ViewStyle} from 'react-native';
 import Reanimated,{FadeIn,ZoomIn} from 'react-native-reanimated';
 import Svg,{Circle,Defs,LinearGradient as SvgGradient,RadialGradient,Rect,Stop} from 'react-native-svg';
@@ -25,11 +26,11 @@ export const usePenColors=():Colors=>palette[useColorScheme()==='dark'?'dark':'l
 const pressFeedback=(reduceMotion:boolean)=>({pressed}:{pressed:boolean})=>({opacity:pressed?0.6:1,transform:[{scale:pressed&&!reduceMotion?0.97:1}]});
 
 /** Pen "Button plus" / overlay nav buttons: 38pt circle, 19pt glyph, 1pt/4 blur shadow. */
-export function CircleButton({icon,label,onPress,variant='surface',color,disabled}:{icon:PenIconName;label:string;onPress:()=>void;variant?:'surface'|'overlay'|'fill';color?:string;disabled?:boolean}){
+export function CircleButton({icon,label,onPress,variant='surface',color,disabled}:{icon:PenIconName;label:string;onPress:()=>void;variant?:'surface'|'overlay'|'fill'|'prominent';color?:string;disabled?:boolean}){
  const c=usePenColors(),{reduceMotion}=useAppearance(),dark=useColorScheme()==='dark';
- const glass=variant!=='fill'&&liquidGlass;
- const background=glass?'transparent':variant==='overlay'?(dark?'#1C1C1ED9':'#FFFFFFE6'):variant==='fill'?c.fill:c.surface;
- return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{disabled}} disabled={disabled} hitSlop={4} onPress={()=>{feel.tap();onPress();}} style={state=>[{width:44,height:44,borderRadius:22,alignItems:'center',justifyContent:'center',backgroundColor:background,boxShadow:variant==='fill'||glass?undefined:'0 4px 14px #0000000F',opacity:disabled?0.4:1},pressFeedback(reduceMotion)(state)]}>{glass?<GlassFill radius={22}/>:null}<PenIcon name={icon} size={20} strokeWidth={2.2} color={color??c.text}/></Pressable>;
+ const prominent=variant==='prominent'&&!disabled,glass=variant!=='fill'&&liquidGlass;
+ const background=glass?'transparent':prominent?NAVY:variant==='overlay'?(dark?'#1C1C1ED9':'#FFFFFFE6'):variant==='fill'?c.fill:c.surface;
+ return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{disabled}} disabled={disabled} hitSlop={4} onPress={()=>{feel.tap();onPress();}} style={state=>[{width:44,height:44,borderRadius:22,alignItems:'center',justifyContent:'center',backgroundColor:background,boxShadow:variant==='fill'||glass?undefined:'0 4px 14px #0000000F',opacity:disabled?0.4:1},pressFeedback(reduceMotion)(state)]}>{glass?prominent?<GlassView pointerEvents="none" isInteractive glassEffectStyle="regular" tintColor={NAVY} style={{position:'absolute',inset:0,borderRadius:22}}/>:<GlassFill radius={22}/>:null}<PenIcon name={icon} size={20} strokeWidth={2.2} color={prominent?"#FFFFFF":variant==="prominent"?c.muted:color??c.text}/></Pressable>;
 }
 
 /** Pen "Large title": 13/600 eyebrow, 34/700 title, optional circle action. */
@@ -43,10 +44,7 @@ export function LargeTitle({eyebrow,title,action}:{eyebrow?:string;title:string;
 
 /** Pen "Segmented control": fill track, radius 10, padding 2, 32pt segments. */
 export function Segmented<T extends string>({value,options,onChange,label}:{value:T;options:{value:T;label:string}[];onChange:(value:T)=>void;label:string}){
- const c=usePenColors(),dark=useColorScheme()==='dark';
- return <View accessibilityRole="tablist" accessibilityLabel={label} style={{flexDirection:'row',backgroundColor:c.fill,borderRadius:99,padding:4}}>
-  {options.map(o=>{const on=o.value===value;return <Pressable key={o.value} accessibilityRole="tab" accessibilityState={{selected:on}} onPress={()=>onChange(o.value)} style={{flex:1,minHeight:38,borderRadius:99,justifyContent:'center',alignItems:'center',backgroundColor:on?(dark?'#3A3A3C':c.surface):'transparent',boxShadow:on?'0 3px 10px #00000014':undefined}}><Text style={{fontSize:15,lineHeight:20,fontWeight:on?'700':'500',color:on?c.text:c.muted}}>{o.label}</Text></Pressable>;})}
- </View>;
+ return <GlassChips fill items={options} value={value} onChange={onChange} label={label}/>;
 }
 
 /** Pen filter "Pill": 34pt, radius 99, padding 7/14, 14/600. Selected pill is inverted. */
@@ -80,7 +78,7 @@ const RowPosition=createContext(false);
 export function ListRow({icon,tile,title,subtitle,value,chevron,titleColor,onPress,disabled,accessory}:{icon?:PenIconName;tile?:string;title:string;subtitle?:string;value?:string;chevron?:boolean;titleColor?:string;onPress?:()=>void;disabled?:boolean;accessory?:ReactNode}){
  const c=usePenColors(),separated=useContext(RowPosition);
  const body=<View style={{flexDirection:'row',alignItems:'center',gap:14,paddingLeft:18}}>
-  {icon?<View style={{width:subtitle?40:32,height:subtitle?40:32,borderRadius:20,backgroundColor:tile??c.gray,alignItems:'center',justifyContent:'center'}}><PenIcon name={icon} size={subtitle?19:16} strokeWidth={2.2} color="#FFFFFF"/></View>:null}
+  {icon?<IconTile icon={icon} color={tile??c.gray} size={subtitle?40:32}/>:null}
   <View style={{flex:1,flexDirection:'row',alignItems:'center',gap:8,minHeight:subtitle?72:52,paddingVertical:12,paddingRight:18,borderBottomWidth:separated?0.5:0,borderBottomColor:c.border}}>
    <View style={{flex:1,gap:3}}><Text style={{fontSize:17,lineHeight:25,color:titleColor??c.text}}>{title}</Text>{subtitle?<Text style={{fontSize:13,lineHeight:19,color:c.muted}}>{subtitle}</Text>:null}</View>
    {value?<Text style={{fontSize:15,lineHeight:22,color:c.muted}}>{value}</Text>:null}
@@ -105,8 +103,12 @@ export function InitialAvatar({name,size=28}:{name:string;size?:number}){
 
 /** Pen "Primary action": 50pt pill, 17/600. */
 export function PrimaryButton({label,onPress,disabled,tone='accent',icon}:{label:string;onPress:()=>void;disabled?:boolean;tone?:'accent'|'soft';icon?:PenIconName}){
- const c=usePenColors(),{reduceMotion}=useAppearance(),ink=tone!=='soft';
- return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={()=>{feel.tap();onPress();}} style={state=>[{flex:1,minHeight:56,borderRadius:99,flexDirection:'row',gap:8,alignItems:'center',justifyContent:'center',paddingHorizontal:20,backgroundColor:ink?c.accent:c.surface,boxShadow:ink?'0 8px 20px #0000002E':'0 4px 16px #0000000F',opacity:disabled?0.4:1},pressFeedback(reduceMotion)(state)]}>{icon?<PenIcon name={icon} size={18} strokeWidth={2.2} color={ink?c.onAccent:c.text}/>:null}<Text style={{fontSize:18,lineHeight:24,fontWeight:'600',color:ink?c.onAccent:c.text}}>{label}</Text></Pressable>;
+ // Pen V5: accent = tinted (prominent) Liquid Glass in HKUST navy; soft = regular glass. One accent per screen.
+ const c=usePenColors(),{reduceMotion,reduceTransparency}=useAppearance(),prominent=tone!=='soft';
+ const glass=liquidGlass&&!reduceTransparency,fg=prominent?'#FFFFFF':c.text;
+ return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={()=>{feel.tap();onPress();}} style={state=>[{flex:1,minHeight:54,borderRadius:99,borderCurve:'continuous',flexDirection:'row',gap:8,alignItems:'center',justifyContent:'center',paddingHorizontal:22,backgroundColor:glass?'transparent':prominent?NAVY:c.glass,borderWidth:glass?0:1,borderColor:prominent?'#FFFFFF26':'#FFFFFFCC',boxShadow:glass?undefined:prominent?'0 10px 24px #1B356645':'0 6px 18px #1B35661A',opacity:disabled?0.4:1},pressFeedback(reduceMotion)(state)]}>
+  {glass?<GlassView pointerEvents="none" isInteractive glassEffectStyle="regular" tintColor={prominent?NAVY:undefined} style={{position:'absolute',inset:0,borderRadius:99}}/>:null}
+  {icon?<PenIcon name={icon} size={18} strokeWidth={2.2} color={fg}/>:null}<Text style={{fontSize:17,lineHeight:23,fontWeight:'600',color:fg}}>{label}</Text></Pressable>;
 }
 export function TextAction({label,onPress,color,disabled}:{label:string;onPress:()=>void;color?:string;disabled?:boolean}){
  const c=usePenColors();
@@ -115,26 +117,57 @@ export function TextAction({label,onPress,color,disabled}:{label:string;onPress:
 
 /** Pen "Bottom bar": glass, 0.5pt top line, blur 30, padding 12/16/(safe area). Replaces the tab bar on pushed pages. */
 export function BottomBar({children}:{children:ReactNode}){
- const c=usePenColors(),dark=useColorScheme()==='dark',{reduceTransparency}=useAppearance(),insets=useSafeAreaInsets();
- return <View style={{position:'absolute',left:0,right:0,bottom:0,paddingTop:12,paddingHorizontal:16,paddingBottom:Math.max(insets.bottom,12),gap:8,borderTopWidth:0.5,borderTopColor:c.border,backgroundColor:reduceTransparency?c.surface:liquidGlass?'transparent':c.glass,overflow:'hidden'}}>
-  <GlassFill/>
+ // Pen V5 "Floating input bar": no full-width slab; children are floating glass capsules over content.
+ const {reduceMotion}=useAppearance(),insets=useSafeAreaInsets();
+ return <Reanimated.View entering={reduceMotion?undefined:materialize} style={{position:'absolute',left:0,right:0,bottom:0,paddingTop:8,paddingHorizontal:16,paddingBottom:Math.max(insets.bottom-6,12),gap:8}}>
   {children}
- </View>;
+ </Reanimated.View>;
+}
+/** Floating glass capsule (input fields, grouped actions). */
+export function GlassCapsule({children,style,radius=24}:{children:ReactNode;style?:StyleProp<ViewStyle>;radius?:number}){
+ const c=usePenColors(),{reduceTransparency}=useAppearance(),glass=liquidGlass&&!reduceTransparency;
+ return <View style={[{borderRadius:radius,borderCurve:'continuous',overflow:'hidden',backgroundColor:glass?'transparent':reduceTransparency?c.surface:c.glass,borderWidth:glass?0:1,borderColor:'#FFFFFFCC',boxShadow:glass?undefined:'0 8px 24px #1B35661F'},style]}><GlassFill radius={radius}/>{children}</View>;
 }
 
 /** Pen "Component / Tab bar": 361×64 floating glass capsule, radius 34, selected tab on fill with accent. */
 export function FloatingTabBar({tabs,selected,onSelect,badges}:{tabs:{label:string;icon:PenIconName}[];selected:number;onSelect:(index:number)=>void;badges?:(number|undefined)[]}){
- const c=usePenColors(),dark=useColorScheme()==='dark',{reduceTransparency}=useAppearance(),insets=useSafeAreaInsets();
- // V3 (Plasma-style): frosted bar, the selected tab sits in a raised white pill with ink glyph and label.
+ // Pen "V5 / Glass tab bar": Liquid Glass capsule, a lens springs to the selected tab, compacts while scrolling down.
+ const c=usePenColors(),dark=useColorScheme()==='dark',{reduceTransparency,reduceMotion}=useAppearance(),insets=useSafeAreaInsets();
+ const [width,setWidth]=useState(0),item=width?(width-10)/tabs.length:0;
+ const x=useSharedValue(-1);
+ useEffect(()=>{if(!item)return;const to=5+selected*item;x.value=reduceMotion||x.value<0?to:withSpring(to,{damping:19,stiffness:210,mass:0.9});},[selected,item,reduceMotion]);
+ const lens=useAnimatedStyle(()=>({opacity:x.value<0?0:1,transform:[{translateX:Math.max(0,x.value)}]}));
+ const cfg={duration:reduceMotion?0:260};
+ const bar=useAnimatedStyle(()=>({height:withTiming(tabCompact.value?52:TAB_BAR_HEIGHT+4,cfg),marginHorizontal:withTiming(tabCompact.value?36:0,cfg)}));
+ const labels=useAnimatedStyle(()=>({opacity:withTiming(tabCompact.value?0:1,cfg),height:withTiming(tabCompact.value?0:14,cfg)}));
+ const glass=liquidGlass&&!reduceTransparency,accent=dark?'#8FB0E8':NAVY;
  return <View pointerEvents="box-none" style={{position:'absolute',left:14,right:14,bottom:Math.max(10,insets.bottom-16)}}>
-  <View accessibilityRole="tablist" style={{height:TAB_BAR_HEIGHT+4,flexDirection:'row',padding:5,borderRadius:36,borderCurve:'continuous',overflow:'hidden',backgroundColor:reduceTransparency?c.surface:liquidGlass?'transparent':c.glass,borderWidth:dark&&!liquidGlass?0.5:0,borderColor:'#FFFFFF1F',boxShadow:liquidGlass?undefined:'0 10px 30px #0000001A'}}>
+  <Reanimated.View accessibilityRole="tablist" onLayout={e=>setWidth(e.nativeEvent.layout.width)} style={[{flexDirection:'row',padding:5,borderRadius:36,borderCurve:'continuous',overflow:'hidden',backgroundColor:glass?'transparent':reduceTransparency?c.surface:c.glass,borderWidth:glass?0:1,borderColor:dark?'#FFFFFF1F':'#FFFFFFCC',boxShadow:glass?undefined:'0 10px 30px #1B35661F'},bar]}>
    <GlassFill radius={36}/>
-   {tabs.map((tab,index)=>{const on=index===selected,badge=badges?.[index];return <Pressable key={tab.label} accessibilityRole="tab" accessibilityLabel={badge?`${tab.label}, ${badge}`:tab.label} accessibilityState={{selected:on}} onPress={()=>{if(index!==selected)feel.select();onSelect(index);}} style={{flex:1,borderRadius:30,gap:3,alignItems:'center',justifyContent:'center',backgroundColor:on?(dark?'#2C2C2E':'#FFFFFF'):'transparent',boxShadow:on?'0 3px 10px #00000014':undefined}}>
-    <View><PenIcon name={tab.icon} size={23} strokeWidth={on?2.5:2.1} color={on?c.text:c.tertiary}/>{badge?<View style={{position:'absolute',top:-4,right:-9,minWidth:17,height:17,borderRadius:9,paddingHorizontal:4,backgroundColor:c.red,alignItems:'center',justifyContent:'center',borderWidth:1.5,borderColor:c.surface}}><Text style={{fontSize:10,fontWeight:'700',color:'#FFFFFF'}}>{badge>99?'99+':badge}</Text></View>:null}</View>
-    <Text style={{fontSize:11,lineHeight:14,fontWeight:on?'700':'600',color:on?c.text:c.tertiary}}>{tab.label}</Text>
+   {item?<Reanimated.View pointerEvents="none" style={[{position:'absolute',left:0,top:5,bottom:5,width:item,borderRadius:31,backgroundColor:dark?'#FFFFFF1F':'#24467F14',borderWidth:1,borderColor:dark?'#FFFFFF26':'#FFFFFFD9'},lens]}/>:null}
+   {tabs.map((tab,index)=>{const on=index===selected,badge=badges?.[index];return <Pressable key={tab.label} accessibilityRole="tab" accessibilityLabel={badge?`${tab.label}, ${badge}`:tab.label} accessibilityState={{selected:on}} onPress={()=>{if(index!==selected)feel.select();resetCompact();onSelect(index);}} style={{flex:1,gap:3,alignItems:'center',justifyContent:'center'}}>
+    <View><PenIcon name={tab.icon} size={22} strokeWidth={on?2.5:2.1} color={on?accent:c.text}/>{badge?<View style={{position:'absolute',top:-4,right:-9,minWidth:17,height:17,borderRadius:9,paddingHorizontal:4,backgroundColor:c.red,alignItems:'center',justifyContent:'center',borderWidth:1.5,borderColor:c.surface}}><Text style={{fontSize:10,fontWeight:'700',color:'#FFFFFF'}}>{badge>99?'99+':badge}</Text></View>:null}</View>
+    <Reanimated.Text style={[{fontSize:10,lineHeight:14,fontWeight:on?'700':'600',color:on?accent:c.text},labels]}>{tab.label}</Reanimated.Text>
    </Pressable>;})}
-  </View>
+  </Reanimated.View>
  </View>;
+}
+/** Pen "V5 / Glass chip row": glass capsule of options; a lens slides to the selection. Scrolls when options overflow. */
+export function GlassChips<T extends string>({items,value,onChange,label,fill}:{items:{value:T;label:string}[];value:T;onChange:(v:T)=>void;label:string;fill?:boolean}){
+ const c=usePenColors(),dark=useColorScheme()==='dark',{reduceMotion}=useAppearance(),accent=dark?'#8FB0E8':NAVY;
+ const [layouts,setLayouts]=useState<Record<string,{x:number;w:number}>>({});
+ const x=useSharedValue(-1),w=useSharedValue(0);
+ useEffect(()=>{const l=layouts[value];if(!l)return;if(reduceMotion||x.value<0){x.value=l.x;w.value=l.w;}else{x.value=withSpring(l.x,{damping:19,stiffness:210});w.value=withSpring(l.w,{damping:19,stiffness:210});}},[value,layouts,reduceMotion]);
+ const lens=useAnimatedStyle(()=>({opacity:x.value<0?0:1,width:w.value,transform:[{translateX:Math.max(0,x.value)}]}));
+ const chips=<>
+  <Reanimated.View pointerEvents="none" style={[{position:'absolute',left:0,top:4,bottom:4,borderRadius:18,backgroundColor:dark?'#FFFFFF1F':'#24467F14',borderWidth:1,borderColor:dark?'#FFFFFF26':'#FFFFFFD9'},lens]}/>
+  {items.map(it=>{const on=it.value===value;return <Pressable key={it.value} accessibilityRole="tab" accessibilityState={{selected:on}} onLayout={e=>{const {x:lx,width}=e.nativeEvent.layout;setLayouts(p=>p[it.value]?.x===lx&&p[it.value]?.w===width?p:{...p,[it.value]:{x:lx,w:width}});}} onPress={()=>{if(!on){feel.select();onChange(it.value);}}} style={{flex:fill?1:undefined,height:36,paddingHorizontal:16,alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:15,fontWeight:on?'700':'500',color:on?accent:c.text}}>{it.label}</Text></Pressable>;})}
+ </>;
+ return <GlassCapsule radius={22} style={{alignSelf:fill?'stretch':'flex-start',maxWidth:'100%'}}>
+  <View accessibilityRole="tablist" accessibilityLabel={label}>
+   {fill?<View style={{flexDirection:'row',padding:4,height:44}}>{chips}</View>:<ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexGrow:0,height:44}} contentContainerStyle={{padding:4,alignItems:'stretch'}}>{chips}</ScrollView>}
+  </View>
+ </GlassCapsule>;
 }
 /** Bottom inset scroll content needs so the last item clears the floating tab bar or bottom bar. */
 export function useBottomClearance(bar:'tab'|'bottom'){const insets=useSafeAreaInsets();return bar==='tab'?TAB_BAR_HEIGHT+Math.max(12,insets.bottom-14)+24:118+insets.bottom;}
@@ -318,6 +351,8 @@ function AuroraBlob({t,i,cx,cy,r,color}:{t:SharedValue<number>;i:number;cx:numbe
  return <SkCircle cx={x} cy={y} r={r} color={color} opacity={0.9}/>;
 }
 
+const NAVY='#24467F';
+const materialize=new Keyframe({0:{opacity:0,transform:[{scale:0.96}]},100:{opacity:1,transform:[{scale:1}]}}).duration(200);
 const liquidGlass=(()=>{try{return isLiquidGlassAvailable();}catch{return false;}})();
 /** Navigation-layer material: real iOS Liquid Glass when available, frosted blur otherwise. */
 export function GlassFill({radius,tint,interactive}:{radius?:number;tint?:string;interactive?:boolean}){

@@ -3,7 +3,7 @@ import {useSceneFocus} from '../navigation/TabScene';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {AppState,Pressable,Text,TextInput,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
-import {EmptyState,FilterPill,Notice,PenIcon,PillRow,Skeleton,Stagger,ViewAll,usePenColors} from '../ui/Pen';
+import {EmptyState,FilterPill,Notice,PenIcon,PillRow,Skeleton,Stagger,ViewAll,usePenColors,GlassChips} from '../ui/Pen';
 import {WallPostCard,topicMeta,topicOf} from './wall-ui';
 import { Button, SegmentedControl } from '../ui/Primitives';
 import { Card } from '../ui/Primitives';
@@ -54,10 +54,7 @@ export function WallScreen({language,dark,onLogin,initialId,onDismissTarget,onNa
    <View style={{flex:1,gap:1}}><Text style={{fontSize:12,fontWeight:'600',color:c.red}}>{zh?'今日热议':'Trending'}</Text><Text numberOfLines={1} style={{fontSize:15,fontWeight:'600',color:c.text}}>{hot.title}</Text></View>
    <PenIcon name="chevron-right" size={16} color={c.tertiary}/>
   </Pressable>:null}
-  <PillRow>
-   <FilterPill label={zh?'最新':'Latest'} selected={!filters.mine} onPress={()=>setFilters({...filters,mine:false})}/>
-   {profile?<FilterPill label={zh?'我发的':'Mine'} selected={filters.mine} onPress={()=>setFilters({...filters,mine:!filters.mine})}/>:null}
-  </PillRow>
+  <GlassChips label={zh?'帖子范围':'Posts'} value={filters.mine?'mine':'all'} onChange={v=>setFilters({...filters,mine:v==='mine'})} items={[{value:'all',label:zh?'最新':'Latest'},...(profile?[{value:'mine' as const,label:zh?'我发的':'Mine'}]:[])] as {value:'all'|'mine';label:string}[]}/>
   {error?<Notice tone="error" text={error} action={zh?'重试':'Retry'} onAction={()=>void load()}/>:null}
   {busy&&!items.length?<><Skeleton height={220} radius={28}/><Skeleton height={160} radius={28}/></>:null}
   {!busy&&!error&&!items.length?<EmptyState icon="messages-square" title={zh?'这里还很安静':'It is quiet here'} body={zh?'问第一个问题，或者约个搭子。':'Ask the first question or find a buddy.'} action={zh?'发一条':'Post'} onAction={()=>profile?setCreating(true):onLogin()}/>:null}

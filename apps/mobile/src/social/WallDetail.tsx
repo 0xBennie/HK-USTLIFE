@@ -5,7 +5,7 @@ import {SafetyActions} from './SafetyActions';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {ActionSheetIOS,Alert,AppState,Pressable,Share,Text,TextInput,View} from 'react-native';
 import {useSceneBottomBar} from '../navigation/SceneOverlay';
-import {BottomBar,CircleButton,EmptyState,Notice,PenIcon,PrimaryButton,Skeleton,Stagger,Surface,ViewAll,usePenColors} from '../ui/Pen';
+import {BottomBar,CircleButton,EmptyState,Notice,PenIcon,PrimaryButton,Skeleton,Stagger,Surface,ViewAll,usePenColors,GlassCapsule} from '../ui/Pen';
 import {GradientAvatar,TopicPill,relativeTime,topicMeta,topicOf} from './wall-ui';
 const replyCopy={
  question:{zh:['友善回复，帮到下一个人…','说说你知道的，帮到下一个人。'],en:['Reply kindly…','Share what you know.']},
@@ -58,8 +58,8 @@ export function WallDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:stri
  const ownerMenu=()=>post&&ActionSheetIOS.showActionSheetWithOptions({options:[zh?'编辑帖子':'Edit post',post.status!=='open'?(zh?'重新开放回复':'Reopen replies'):post.kind==='help'?(zh?'标记已解决':'Mark as solved'):(zh?'结束讨论':'Close discussion'),zh?'删除帖子':'Delete post',zh?'取消':'Cancel'],destructiveButtonIndex:2,cancelButtonIndex:3},i=>{if(frozen)return;if(i===0)setEditing(true);if(i===1)act('','PATCH',{version:post.version,status:post.status==='open'?(post.kind==='help'?'resolved':'closed'):'open'});if(i===2)confirm(zh?'删除帖子及所有回复？':'Delete this post and all replies?',zh?'删除后不能恢复。':'This cannot be undone.',()=>act('','DELETE',{version:post.version},onBack));});
  const bar=post&&profile&&post.status==='open'?<BottomBar><View style={{flexDirection:'row',alignItems:'flex-end',gap:10}}>
   <GradientAvatar name={profile.display_name||profile.email} size={36}/>
-  <TextInput accessibilityLabel={zh?'回复内容':'Reply text'} value={text} onChangeText={setText} editable={!frozen} multiline maxLength={2000} placeholder={zh?replyCopy[topicOf(post)].zh[0]:replyCopy[topicOf(post)].en[0]} placeholderTextColor={c.tertiary} style={{flex:1,minHeight:44,maxHeight:120,paddingHorizontal:16,paddingTop:12,paddingBottom:12,borderRadius:22,backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder,fontSize:16,color:c.text}}/>
-  <Pressable accessibilityRole="button" accessibilityLabel={zh?'发布回复':'Post reply'} disabled={frozen||!text.trim()} onPress={()=>act('/replies','POST',{body:text},()=>setText(''))} style={{width:44,height:44,borderRadius:22,alignItems:'center',justifyContent:'center',backgroundColor:c.accent,opacity:frozen||!text.trim()?0.35:1}}><PenIcon name="arrow-up" size={20} color={c.onAccent}/></Pressable>
+  <GlassCapsule radius={22} style={{flex:1}}><TextInput accessibilityLabel={zh?'回复内容':'Reply text'} value={text} onChangeText={setText} editable={!frozen} multiline maxLength={2000} placeholder={zh?replyCopy[topicOf(post)].zh[0]:replyCopy[topicOf(post)].en[0]} placeholderTextColor={c.muted} style={{minHeight:44,maxHeight:120,paddingHorizontal:16,paddingTop:12,paddingBottom:12,fontSize:16,color:c.text}}/></GlassCapsule>
+  <CircleButton variant="prominent" icon="arrow-up" label={zh?'发布回复':'Post reply'} disabled={frozen||!text.trim()} onPress={()=>act('/replies','POST',{body:text},()=>setText(''))}/>
  </View></BottomBar>:null;
  useSceneBottomBar(editing?null:bar);
  const topic=post?topicOf(post):'question';

@@ -13,7 +13,7 @@ import {api,session} from '../runtime';
 import type {Language} from '../strings';
 import type {ShuttleRoute,ShuttleDepartures} from '../../../../src/product/campus/shuttle';
 import type {directoryData} from '../../../../src/product/campus/directory-data';
-import {CircleButton,EmptyState,Hero,HeroActions,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,TopBar,ViewAll,usePenColors} from '../ui/Pen';
+import {CircleButton,EmptyState,Hero,HeroActions,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,TopBar,ViewAll,usePenColors,GlassChips} from '../ui/Pen';
 
 // Pen board "V2 / 校园 / 我的下一班" (gWkUE): search, my next ride with live alternatives, affairs, saved, campus life.
 type Catalog={routes:ShuttleRoute[];freshness:string;refresh_due_at:string};
@@ -90,9 +90,7 @@ export function CampusScreen({language,dark,onLogin,name,onMe}:{language:Languag
   {error?<Notice tone="error" text={zh?'暂时无法更新校园信息。':'Could not update campus info.'} action={zh?'重试':'Retry'} onAction={()=>setRevision(v=>v+1)}/>:null}
 
   <Section title={zh?'去哪里':'Where to'}>
-   <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginHorizontal:-16}} contentContainerStyle={{paddingHorizontal:16,gap:8}}>
-    {outbound.map(r=>{const on=r.id===routeId;return <Pressable key={r.id} accessibilityRole="button" accessibilityState={{selected:on}} onPress={()=>setRouteId(r.id)} style={{paddingVertical:9,paddingHorizontal:16,borderRadius:99,backgroundColor:on?c.accent:c.surface,boxShadow:on?undefined:'0 2px 8px #00000008'}}><Text style={{fontSize:15,fontWeight:'600',color:on?c.onAccent:c.text}}>{chipLabel(r)}</Text></Pressable>;})}
-   </ScrollView>
+   <GlassChips label={zh?'目的地':'Destination'} value={routeId??''} onChange={v=>setRouteId(v)} items={outbound.map(r=>({value:r.id,label:chipLabel(r)}))}/>
    {route?<Stagger index={0}><DepartureBoard zh={zh} title={zh?`校巴 · 往${chipLabel(route)}`:`Shuttle · to ${chipLabel(route)}`}
     label={first?(zh?'下一班':'Next'):nextDay?(zh?`${formatDay(nextDay.date,zh)}首班`:`${formatDay(nextDay.date,zh)} first`):(zh?'暂无班次':'No departures')}
     time={first?first.local_time:nextDay?nextDay.time:null} minutes={first?minutesUntil(first.scheduled_at):nextDay?Math.max(0,Math.round((Date.parse(`${nextDay.date}T${nextDay.time}:00+08:00`)-Date.now())/60000)):null}
