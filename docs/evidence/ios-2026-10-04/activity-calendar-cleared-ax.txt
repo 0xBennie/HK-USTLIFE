@@ -1,0 +1,72 @@
+Window: "iPhone 18 Pro", App: Device Hub.
+0 standard window iPhone 18 Pro – iOS 27.0, ID: com.apple.dt.DeviceKit.DeviceManagementWindow-AppWindow-1, Secondary Actions: Raise
+	1 split group
+		2 split group com.apple.dt.DeviceKit.DeviceManagementWindow-AppWindow-1, SidebarNavigationSplitView
+			3 scroll area
+				4 list Sidebar
+					5 row (selectable) Description: Available, Value: Expanded
+					6 row (selected) Description: iphone.gen3, Value: iPhone 18 Pro
+27.0
+Simulator
+			7 search text field (settable) Search
+				8 button Search
+			9 splitter (disabled, settable, float) 248
+			10 container
+				11 container
+					12 button Description: Switch to English, Secondary Actions: Cancel
+					13 text Description: 香港科技大学 · 清水湾 · 开发预览, Secondary Actions: Cancel
+					14 text Description: 今天, Secondary Actions: Cancel
+					15 text Description: 学习安排仅自己可见, Secondary Actions: Cancel
+					16 text Description: SIS · 尚未完整同步 / Canvas · 尚未完整同步, Secondary Actions: Cancel
+					17 button (selected) Description: 日程, Secondary Actions: Cancel
+					18 element Description: 本周, Secondary Actions: Cancel
+					19 element Description: 课程, Secondary Actions: Cancel
+					20 button Description: 全部记录, Secondary Actions: Cancel
+					21 button Description: 添加 任务, Secondary Actions: Cancel
+					22 button Description: 添加 日程, Secondary Actions: Cancel
+					23 button Description: 更多记录与日历设置, Secondary Actions: Cancel
+					24 button Description: 刷新, Secondary Actions: Cancel
+					25 text Description: 2026-10-05, Secondary Actions: Cancel
+					26 button Description: 上一段, Secondary Actions: Cancel
+					27 button Description: 下一段, Secondary Actions: Cancel
+					28 button Description: 回到今天, Secondary Actions: Cancel
+					29 text Description: 这里还没有安排。, Secondary Actions: Cancel
+					30 element (selected) Description: 今天, Secondary Actions: Cancel
+					31 element Description: 校园, Secondary Actions: Cancel
+					32 element Description: 发现, Secondary Actions: Cancel
+					33 element Description: 消息, Secondary Actions: Cancel
+					34 element Description: 我的, Secondary Actions: Cancel
+					35 image Description: Gear Shape, Filled, ID: gearshape.fill, Secondary Actions: Cancel
+				36 button Description: Home, ID: app.grid.3x3
+				37 button Description: Screenshot, ID: camera.viewfinder
+				38 button Description: Record, ID: record.circle
+				39 button Rotate Left
+	40 toolbar
+		41 menu button Add, Help: Add Device, ID: plus
+		42 toggle button Description: Filter, Help: Sort and Filter, Value: off
+		43 button Description: Hide Sidebar, Secondary Actions: Increment, Decrement, Delete, Cancel
+		44 toggle button Description: Capture Keyboard, Value: off
+		45 toggle button Description: Resize mode, Help: Enter resize mode, Value: off
+		46 Zoom
+			47 radio button Description: Zoom Out, Value: 0, ID: minus.magnifyingglass
+			48 radio button Description: arrowtriangles.up.right.down.left.magnifyingglass, Help: Zoom to Fit, Value: 0
+			49 radio button Description: Zoom To Actual Size, Help: Physical Size, Value: 1, ID: 1.magnifyingglass
+			50 radio button Description: Zoom In, Value: 0, ID: plus.magnifyingglass
+		51 button Description: Open in New Window, Secondary Actions: Increment, Decrement, Delete, Cancel, Move previous, Move next, Remove from toolbar
+		52 menu button More, Help: More Actions, ID: ellipsis
+		53 radio button Description: Edit, Help: Settings, Value: 0, ID: slider.horizontal.3
+		54 radio button Description: text.document, Help: Reports, Value: 0
+		55 radio button Description: Info, Value: 0, ID: info
+	56 close button
+	57 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	58 minimize button
+	59 text iPhone 18 Pro iOS 27.0
+60 menu bar
+	61 Device Hub
+	62 File
+	63 Edit
+	64 View
+	65 Device
+	66 Controls
+	67 Window
+	68 Help
