@@ -44,6 +44,9 @@ describe('authenticated school source API without a public approval bypass', () 
     expect(current.items[0].personal.remind_minutes).toBeNull();
     expect(await controller.submit({path:'/school/connections/sis',method:'DELETE',body:{version:1,delete_cached_data:false},label:'Revoke SIS'})).toBe(true);
     expect(current.connections[0].state).toBe('revoked');expect(current.items[0].personal.notes).toBe('Prepare questions');expect(reads).toBe(3);
+    expect(await controller.submit({path:'/school/connections/sis',method:'DELETE',body:{version:current.connections[0].version,delete_cached_data:true},label:'Delete retained cache'})).toBe(true);
+    expect(current.items).toEqual([]);expect(current.connections[0].state).toBe('revoked');
+    expect((await call('GET','/me/export')).json().data.school.records).toEqual([]);
     expect((await call('GET','/school/records',undefined,bob)).json().data.items).toEqual([]);
   });
   it('requires authentication, exposes missing school approval and has no client grant/sync endpoint',async()=>{

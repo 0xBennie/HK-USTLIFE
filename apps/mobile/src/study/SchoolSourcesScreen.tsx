@@ -30,9 +30,9 @@ export function SchoolSourcesScreen({language,dark,onBack}:Props){
  const protect=useNavigationProtection(busy?'busy':review?'uncertain':'clear',zh);
  useEffect(()=>{alive.current=true;void load();return()=>{alive.current=false;};},[]);
  function revoke(connection:Connection,erase:boolean){
-  Alert.alert(zh?(erase?'撤销并删除缓存？':'撤销并保留缓存？'):'Revoke this connection?',zh?(erase?'学校缓存和其中的私人备注、提醒设置都会删除。独立的手动安排保留。':'学校记录将退出今天与提醒。缓存和私人备注仍可在这里查看和导出。'):(erase?'School cache and its private notes and preferences will be deleted. Independent manual plans remain.':'School records leave Today and reminders. Cached records and private notes remain available here and in export.'),[
+  Alert.alert(zh?(erase?(connection.state==='revoked'?'删除保留的缓存？':'撤销并删除缓存？'):'撤销并保留缓存？'):(erase?'Delete school cache?':'Revoke this connection?'),zh?(erase?'学校缓存和其中的私人备注、提醒设置都会删除。独立的手动安排保留。':'学校记录将退出今天与提醒。缓存和私人备注仍可在这里查看和导出。'):(erase?'School cache and its private notes and preferences will be deleted. Independent manual plans remain.':'School records leave Today and reminders. Cached records and private notes remain available here and in export.'),[
    {text:zh?'取消':'Cancel',style:'cancel'},
-   {text:zh?'确认撤销':'Confirm revoke',style:'destructive',onPress:()=>{if(readLock.current)return;void controller.submit({path:`/school/connections/${connection.provider}`,method:'DELETE',body:{version:connection.version,delete_cached_data:erase},label:connection.provider.toUpperCase()});}},
+   {text:zh?(erase?'确认删除缓存':'确认撤销'):(erase?'Delete cache':'Confirm revoke'),style:'destructive',onPress:()=>{if(readLock.current)return;void controller.submit({path:`/school/connections/${connection.provider}`,method:'DELETE',body:{version:connection.version,delete_cached_data:erase},label:connection.provider.toUpperCase()});}},
   ]);
  }
  if(editing)return <SchoolPersonalEditor key={editing.id} record={editing} language={language} dark={dark} onBack={()=>setEditing(null)} onSaved={()=>{setEditing(null);void load();}}/>;
@@ -41,6 +41,7 @@ export function SchoolSourcesScreen({language,dark,onBack}:Props){
   <Text style={[styles.title,{color:c.text}]}>{zh?'学校连接':'School connections'}</Text>
   <Text style={[styles.body,{color:c.muted}]}>{zh?'学校身份登录与 SIS、Canvas 数据权限分别授权。目前尚未接通官方授权；这里不会收取学校密码。':'School sign-in, SIS and Canvas need separate authorization. Official authorization is not connected yet; we never collect your school password here.'}</Text>
   <Button variant="secondary" isDisabled={busy||review} onPress={()=>void load()}>{zh?'刷新状态':'Refresh status'}</Button>
+  {loading?<Text accessibilityLiveRegion="polite" style={{color:c.muted}}>{zh?'读取最新状态…':'Reading current state…'}</Text>:null}
   {error?<Text accessibilityRole="alert" style={{color:c.danger}}>{error}</Text>:null}
   {review?<><Text accessibilityRole="alert" style={{color:c.danger}}>{zh?'操作可能已生效。请读取当前状态核对，不要重复撤销。':'The change may have applied. Read the current state before another action.'}</Text><Button isDisabled={busy} onPress={()=>void controller.check()}>{zh?'核对当前状态':'Check current state'}</Button></>:null}
   {action.phase==='rejected'?<Text accessibilityRole="alert" style={{color:c.danger}}>{zh?'操作被拒绝，请刷新后核对权限。':'Request rejected. Refresh and check permissions.'}</Text>:null}
@@ -49,7 +50,7 @@ export function SchoolSourcesScreen({language,dark,onBack}:Props){
    <Text style={[styles.heading,{color:c.text}]}>{connection.provider.toUpperCase()} · {stateText(connection.state,zh)}</Text>
    <Text style={[styles.caption,{color:c.muted}]}>{zh?'最近成功读取：':'Last successful read: '}{connection.last_success_at??(zh?'尚无记录':'None')}</Text>
    {connection.scopes.map(scope=><Text key={scope.id} style={[styles.caption,{color:c.muted}]}>{scope.id} · {stateText(scope.state,zh)}</Text>)}
-   {connection.version>0&&connection.state!=='revoked'?<><Button variant="secondary" isDisabled={busy||review} onPress={()=>revoke(connection,false)}>{zh?'撤销并保留缓存':'Revoke and keep cache'}</Button><Button variant="ghost" isDisabled={busy||review} onPress={()=>revoke(connection,true)}>{zh?'撤销并删除缓存与备注':'Revoke and delete cache and notes'}</Button></>:null}
+   {connection.version>0?<>{connection.state!=='revoked'?<Button variant="secondary" isDisabled={busy||review} onPress={()=>revoke(connection,false)}>{zh?'撤销并保留缓存':'Revoke and keep cache'}</Button>:null}<Button variant="ghost" isDisabled={busy||review} onPress={()=>revoke(connection,true)}>{connection.state==='revoked'?(zh?'删除保留的缓存与备注':'Delete retained cache and notes'):(zh?'撤销并删除缓存与备注':'Revoke and delete cache and notes')}</Button></>:null}
   </Card>)}
   <Text style={[styles.caption,{color:c.muted}]}>{zh?'本产品的撤销不代表学校端授权已经撤销；请在官方账户核对。':'Revocation here does not confirm revocation at the school. Check your official account.'}</Text>
   <Text style={[styles.heading,{color:c.text}]}>{zh?'缓存记录与私人设置':'Cached records and private settings'}</Text>

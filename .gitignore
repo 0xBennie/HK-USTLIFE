@@ -10,3 +10,6 @@ coverage/
 .local/
 .expo/
 .superpowers/
+
+# Generated locally by Expo prebuild; regenerate from app.json.
+/apps/mobile/ios/

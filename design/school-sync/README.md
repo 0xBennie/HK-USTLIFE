@@ -17,3 +17,5 @@ Older g6IET/g8DPsq/jMZip PNGs are superseded scratch exports from the earlier un
 ## Connection management addition
 
 X3COR: school approval/connection state; gXcxl: private notes/reminder settings; VIlQ7: revoke/cache choice. Saved in the same isolated Pen file and exported as PNG. These supplement the initial three states. SchoolSourcesScreen.tsx implements corresponding authenticated record pagination, editor and native confirmation. Structural traversal reported no clipping; X3COR rendered review passed. Error/loading/confirmation logic exists in code but exhaustive Pen variants and actual runtime review remain pending.
+
+`jLkgF`: retained-cache deletion after local revocation; saved, rendered and exported. The native screen offers this action with a second confirmation and current connection version.

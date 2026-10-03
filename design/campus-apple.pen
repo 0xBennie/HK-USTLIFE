@@ -51998,6 +51998,201 @@
           "width": "fill_container"
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "jLkgF",
+      "x": 13145,
+      "y": 0,
+      "name": "School management / 已撤销与保留缓存",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 393,
+      "fill": "$campus-background",
+      "layout": "vertical",
+      "gap": 12,
+      "children": [
+        {
+          "id": "BliGf",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "OJhJm",
+          "name": "School plan content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 22,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "JaMcm",
+              "name": "Back to Today",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "‹  今天",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Dt8K7",
+              "name": "Page title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "连接已撤销",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "phHMW",
+              "name": "Source label",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "SIS · 当前连接",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "RWYQS",
+              "name": "Assignment title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "保留的内容，由你决定。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "afZst",
+              "name": "Official deadline",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "缓存与私人备注仍在",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "gcHlb",
+              "name": "Source requirements",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "这些记录不再进入今天和提醒。你仍可查看、导出，或删除本产品保留的缓存。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "DAsMk",
+              "name": "Sync notice",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "以当前来源状态为准",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "O4Gnvv",
+              "name": "Personal completion action",
+              "width": "fill_container",
+              "fill": "$campus-accent",
+              "cornerRadius": 14,
+              "padding": 14,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "tgkKA",
+                  "name": "Completion label",
+                  "fill": "#FFFFFF",
+                  "content": "删除保留的缓存与备注",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "i77kV",
+              "name": "Private note heading",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "删除前再次确认",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "EZSub",
+              "name": "Private note",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "学校原始记录不受影响。确认删除后，本产品中的缓存和其中的私人备注将一起移除。",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "LUXNc",
+              "name": "Prototype disclosure",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "交互设计样例 · 非真实学校连接",
+              "lineHeight": 1.3,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "id": "f3DqcH",
+          "type": "ref",
+          "ref": "C2KuRh",
+          "name": "Five main tabs",
+          "width": "fill_container"
+        }
+      ]
     }
   ],
   "themes": {
