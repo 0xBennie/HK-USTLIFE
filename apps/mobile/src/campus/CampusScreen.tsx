@@ -1,3 +1,4 @@
+import {AffairsScreen} from '../affairs/AffairsScreen';
 import {useSceneFocus} from '../navigation/TabScene';
 import {useSceneNavigation} from '../navigation/InputProtection';
 import { PublicTransitScreen } from './PublicTransitScreen';
@@ -18,11 +19,12 @@ export function CampusScreen({language,dark,onLogin}:{language:Language;dark:boo
  const navigate=useSceneNavigation(language==='zh');
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [onlySaved,setOnlySaved]=useState(false),[savedRoutes,setSavedRoutes]=useState<string[]>([]);
+ const [affairs,setAffairs]=useState(false);
  const [directory,setDirectory]=useState(false),[publicTransit,setPublicTransit]=useState(false);
  const zh=language==='zh',c=palette[dark?'dark':'light'];
  const [catalog,setCatalog]=useState<Catalog|null>(null),[route,setRoute]=useState<string|null>(null),[detail,setDetail]=useState<ShuttleDepartures|null>(null),[search,setSearch]=useState('');
  const [busy,setBusy]=useState(false),[error,setError]=useState(false);const epoch=useRef(0);
- useEffect(()=>{if(!sceneActive||directory||publicTransit)return;let active=true;
+ useEffect(()=>{if(!sceneActive||directory||publicTransit||affairs)return;let active=true;
    const load=async()=>{const current=++epoch.current;setBusy(true);setDetail(null);setError(false);try{
      const [list,result,bookmarks]=await Promise.all([api.request<Catalog>('/transport/routes'),route?api.request<ShuttleDepartures>(`/transport/routes/${route}/departures`):Promise.resolve(null),profile?session.request<{target_kind:string;target_id:string}[]>('/me/campus/bookmarks'):Promise.resolve([])]);
      if(active&&current===epoch.current){setCatalog(list);setDetail(result);setSavedRoutes(bookmarks.filter(b=>b.target_kind==='shuttle').map(b=>b.target_id));}
@@ -30,16 +32,17 @@ export function CampusScreen({language,dark,onLogin}:{language:Language;dark:boo
    void load();const timer=setInterval(()=>{if(AppState.currentState==='active')void load();},60000);
    const subscription=AppState.addEventListener('change',state=>{if(state==='active')void load();});
    refresh.current=load;return()=>{active=false;epoch.current++;clearInterval(timer);subscription.remove();};
- },[route,profile?.id,directory,publicTransit,sceneActive]);
+ },[route,profile?.id,directory,publicTransit,affairs,sceneActive]);
  const refresh=useRef<()=>Promise<void>>(async()=>{});
  const open=async(url:string)=>{try{await Linking.openURL(url);}catch{setError(true);}};
  const labels:Record<string,string>={scheduled:zh?'当日计划班次':'Scheduled service',finished_for_day:zh?'当日计划班次已结束':'Scheduled service finished',public_holiday:zh?'公众假期：无常规班次':'Public holiday: no regular service',non_operating_day:zh?'非运行日':'Non-operating day',outside_service_period:zh?'超出公布服务期':'Outside published service period',stale:zh?'资料待更新，请核对官方页面':'Timetable needs review; check official source',holiday_coverage_unknown:zh?'该年份假期资料未核验':'Holiday calendar not verified for this year'};
+ if(affairs)return <AffairsScreen language={language} dark={dark} onBack={()=>setAffairs(false)} onLogin={onLogin}/>;
  if(publicTransit)return <PublicTransitScreen language={language} dark={dark} onBack={()=>setPublicTransit(false)}/>;
  if(directory)return <DirectoryScreen language={language} dark={dark} onBack={()=>setDirectory(false)} onLogin={onLogin}/>;
  return <View style={styles.stack}>
    <Text style={[styles.title,{color:c.text}]}>{zh?'校园':'Campus'}</Text>
    <Text style={[styles.body,{color:c.muted}]}>{zh?'路线、地点，还有日常需要的帮助。':'Find your way. Feel at home.'}</Text>
-   {!route?<View style={styles.smallStack}><NavigationRow icon="campus" title={zh?'校园地点与服务':'Places & services'} subtitle={zh?'图书馆、生活与办事入口':'Library, essentials and student services'} onPress={()=>setDirectory(true)}/><NavigationRow icon="bus" title={zh?'公共交通':'Public transport'} subtitle={zh?'九巴与绿色小巴':'KMB and green minibuses'} onPress={()=>setPublicTransit(true)}/></View>:null}
+   {!route?<View style={styles.smallStack}><NavigationRow icon="campus" title={zh?'重要事务':'Important affairs'} subtitle={zh?'办事说明与私人进度':'Guides and private progress'} onPress={()=>setAffairs(true)}/><NavigationRow icon="campus" title={zh?'校园地点与服务':'Places & services'} subtitle={zh?'图书馆、生活与办事入口':'Library, essentials and student services'} onPress={()=>setDirectory(true)}/><NavigationRow icon="bus" title={zh?'公共交通':'Public transport'} subtitle={zh?'九巴与绿色小巴':'KMB and green minibuses'} onPress={()=>setPublicTransit(true)}/></View>:null}
    <Text style={[styles.heading,{color:c.text}]}>{zh?'校巴时刻表':'Campus shuttles'}</Text>
    <Text style={[styles.caption,{color:c.muted}]}>{zh?'计划班次 · 非实时车况':'Scheduled service · Not live tracking'}</Text>
    <Button variant="secondary" isDisabled={busy} onPress={()=>refresh.current()}>{busy?(zh?'更新中…':'Refreshing…'):(zh?'刷新班次':'Refresh schedules')}</Button>
