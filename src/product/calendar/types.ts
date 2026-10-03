@@ -8,7 +8,8 @@ export type ImportedEvent=Omit<Extract<StudyItem,{kind:'event'}>,'created_at'|'u
   import_origin:{source_id:string;source_name:string;series_id:string;recurrence_id:string};
 };
 export type ActivityCalendarEvent=Extract<StudyItem,{kind:'event'}>&{activity_origin:{id:string;participation:'organizer'|'not_joined'|'confirmed'|'waitlisted'|'withdrawn'|'cancelled'}};
-export type CalendarItem=StudyItem|ImportedEvent|ActivityCalendarEvent;
+export type SchoolCalendarItem=Extract<StudyItem,{kind:'event'|'task'}>&{school_origin:{provider:'sis'|'canvas';scope:string;scope_state:string;connection_state:string;stale:boolean;source_updated_at:string|null;source_seen_at:string;personal_version:number;notes:string}};
+export type CalendarItem=StudyItem|ImportedEvent|ActivityCalendarEvent|SchoolCalendarItem;
 export type SeriesSummary=Record<'title'|'start'|'end'|'duration'|'timezone'|'recurrence'|'excluded'|'exceptions'|'location'|'description'|'status',string>;
 export type ImportPreview={
   id:string;expires_at:number;
@@ -17,3 +18,5 @@ export type ImportPreview={
   entries:{series:{uid:string;identity:'uid'|'fingerprint';title:string};summary:SeriesSummary;previous_summary:SeriesSummary|null;expected_version:number|null;action:'new'|'unchanged'|'update'|'conflict';local_changes:number;previous_title:string|null}[];
 };
 export type ImportSourceDetail={id:string;name:string;version:number;created_at:number;series:{id:string;version:number;summary:SeriesSummary;overrides:{recurrence_id:string;payload:Omit<Extract<StudyItem,{kind:'event'}>,'id'|'version'|'created_at'|'updated_at'>}[]}[]};
+
+export type SchoolIssue={provider:'sis'|'canvas';scope:string|null;state:string};

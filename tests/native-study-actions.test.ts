@@ -53,3 +53,11 @@ it('accepts the dedicated imported-occurrence contract and refreshes its removal
  expect(await c.submit({path:'/calendar/series/'+item.import_origin.series_id+'/occurrence/status',method:'PATCH',body:{version:item.version,recurrence_id:item.recurrence_id,status:'cancelled'},label:item.title})).toBe(true);expect(c.snapshot().phase).toBe('saved');
  const source=await request('/calendar/sources/'+item.import_origin.source_id);expect(source.series[0].overrides[0].payload.status).toBe('cancelled');expect(source.series[0].id).toBe(beforeSource.series[0].id);expect(source.series[0].summary).toEqual(beforeSource.series[0].summary);
 });
+
+it('confirms school personal completion against its personal version, never the source version',async()=>{
+ const action={path:'/school/records/school-id/personal',method:'PATCH' as const,body:{version:3,completed:true},label:'Essay'};
+ const controller=new StudyActionController(async()=>({id:'school-id',version:1,personal:{version:4,completed:true}}),async()=>true);
+ expect(await controller.submit(action)).toBe(true);expect(controller.snapshot().phase).toBe('saved');
+ const wrong=new StudyActionController(async()=>({id:'school-id',version:99,personal:{version:3,completed:false}}),async()=>true);
+ expect(await wrong.submit(action)).toBe(false);expect(wrong.snapshot().phase).toBe('uncertain');
+});

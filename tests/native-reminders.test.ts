@@ -73,3 +73,9 @@ it('preserves the last queue when an ordinary foreground refresh is offline, but
  f.fetch.mockRejectedValueOnce(new Error('Offline'));await f.controller.refresh();
  expect(f.pending.has('alice:task-1')).toBe(true);expect(f.controller.snapshot()).toMatchObject({phase:'error',stale:true,scheduled:1});
 });
+
+it('routes owned school reminders to their current date and rejects another account',()=>{
+ const data={owner:'alice',target_at:'2026-10-05T01:00:00Z',target:{kind:'school',id:'source-item'}};
+ expect(reminderTarget(data,'alice')).toEqual({kind:'school',id:'source-item',date:'2026-10-05'});
+ expect(reminderTarget(data,'bob')).toBeNull();
+});

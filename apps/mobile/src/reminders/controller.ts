@@ -76,7 +76,7 @@ export class ReminderController {
    const accepted=new Set((await os.list()).map(item=>item.id));if(!current())return;
    const pending=scheduled.filter(item=>item.fires>(this.dependencies.now??Date.now)());
    if(pending.some(item=>!accepted.has(item.id)))throw new Error('OS did not retain the requested queue');
-   this.publish({phase:'ready',scheduled:pending.length,deferred:feed.deferred+Math.max(0,future.length-capacity),warnings:feed.import_issues.length,through:feed.through,lastSync:feed.generated_at,cleanupPending:false,stale:false});
+   this.publish({phase:'ready',scheduled:pending.length,deferred:feed.deferred+Math.max(0,future.length-capacity),warnings:feed.import_issues.length+(feed.school_issues?.length??0),through:feed.through,lastSync:feed.generated_at,cleanupPending:false,stale:false});
   }catch{
    let cleanupPending=false;
    if(changedQueue){try{await this.clear();}catch{cleanupPending=true;}}

@@ -2,7 +2,7 @@
 
 Updated 2026-10-03. This document describes running account code, separate from the broader proposed `super-app.openapi.json`. Manual learning endpoints are now implemented and documented in [learning API](learning-api.md). ICS import/source management, campus queries/private saves and activity writes are also implemented; see [calendar import API](calendar-import-api.md), [campus API](campus-api.md), and [social API](social-api.md). Campus wall, reports, blocks and restricted moderation APIs are implemented in [wall/governance API](wall-governance-api.md); the restricted web UI remains pending.
 
-School source persistence and recovery are now implemented at the normalized-adapter boundary; authenticated cache/annotation/revoke endpoints are documented in [school sync foundation](school-sync-foundation.md). No upstream school adapter or approved contract is configured, and school records are not yet projected into native learning views or reminders.
+School source persistence and recovery are now implemented at the normalized-adapter boundary; authenticated cache/annotation/revoke endpoints are documented in [school sync foundation](school-sync-foundation.md). No upstream school adapter or approved contract is configured, and authorized-source fixtures now project into calendar/reminder APIs and native Today/Week source presentation. Real school transport and iOS runtime acceptance remain outstanding.
 
 ## Local transport and account state
 

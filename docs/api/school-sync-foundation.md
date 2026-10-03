@@ -2,7 +2,7 @@
 
 Updated 2026-10-03. Implements a persistent normalized-source engine and authenticated cache/personal-data endpoints. **No school OIDC, SIS or Canvas transport is configured, no real approval has been obtained, and no student data was fetched.** All adapter tests use explicitly synthetic normalized fixtures, not claimed HKUST response formats. AC13/AC14 real integration remains incomplete.
 
-Related requirements: PRD A01, L01, L02, D01–D03. This unit does not yet project source records into native Today/Week, course details or device reminders. A saved `remind_minutes` preference is not a delivered notification.
+Related requirements: PRD A01, L01, L02, D01–D03. Source records now feed the calendar day/week API and reminder calculation, with native source labels and personal completion actions. Course association and actual device notification delivery remain unverified. A saved `remind_minutes` preference is not a delivered notification.
 
 ## HTTP endpoints
 
@@ -30,7 +30,7 @@ A source record contains `id` (stable local UUID), `provider`, `scope`, `remote_
 - `source_updated_at` can be null. `source_seen_at` is when this application accepted the snapshot. Neither is substituted for the other.
 - Personal values default to `{notes:"",completed:false,remind_minutes:null,version:0}`. Notes allow 10,000 characters. Reminder offsets are null or 0–10,080 minutes and require a timed record. Completion means a personal check, not Canvas submission or official completion.
 - Annotation versions are independent of source versions; stale annotation writes return `VERSION_CONFLICT`. Timetable/course/assignment official facts cannot be changed through the personal endpoint.
-- Cross-source course associations, recurrence expansion, course enrolment/submission state and native presentation are separate next units. Remote adapters must provide stable identities and fully normalized occurrences; no title-based associations are inferred here.
+- Cross-source course associations, recurrence expansion, course enrolment/submission state and complete course presentation are separate next units. Remote adapters must provide stable identities and fully normalized occurrences; no title-based associations are inferred here.
 
 ## Connection and sync state
 
@@ -66,3 +66,17 @@ Account deletion uses existing recent authentication and deletes all owned schoo
 Existing 400/401/404/409 envelopes apply. Relevant codes: `SCHOOL_APPROVAL_REQUIRED`, `SCHOOL_AUTH_REQUIRED`, `SCHOOL_REAUTH_REQUIRED`, `SCHOOL_SCOPE_UNAPPROVED`, `SCHOOL_IDENTITY_MISMATCH`, `SYNC_BUSY`, `SYNC_OBSOLETE`, `INVALID_SCHOOL_SNAPSHOT`, `VERSION_CONFLICT`. Internal sync failure codes are safe enums, not provider messages. A 409 requires inspecting current state; existing generic envelope does not mark every conflict automatically retryable.
 
 Behavior evidence: `tests/school-sync.test.ts` uses temporary real SQLite plus normalized fake provider pages for partial fetch, source/personal isolation, complete-scope deletion, identity isolation, lease/revoke/reconnect races, auth expiry, invalid contracts, invalid dates, restart and account cascade. `tests/product-school.test.ts` uses the real Fastify routes and auth system for access, strict inputs, no public approval path, personal writes, restart/export/revocation/deletion. These tests are backend evidence only; fixtures are not real school or iOS acceptance.
+
+## Calendar and reminder projection
+
+`GET /me/calendar` combines eligible school events/tasks with existing records using stable local UUIDs; adds `school_connections` and `school_issues`. `school_origin` carries provider/scope, connection/scope state, stale flag, source update/acceptance time, personal version and private notes. Canvas course metadata is not itself a calendar event. No title-based merging occurs.
+
+Cancelled/removed records and revoked/unapproved/unconnected sources are excluded. A previously successful scope with partial/error/reauth state retains its last snapshot, visibly stale. It contributes no reminder candidates until healthy again. Never interpret an unavailable source as an empty official timetable.
+
+`GET /me/reminders` adds healthy school records with explicitly chosen reminder offsets. Targets use kind `school`; native routing opens the correct date. Private task completion removes its reminder, without editing Canvas submission state. Source date changes recalculate reminder times; cancellation/revocation removes candidates. Actual OS delivery/cancellation requires iOS runtime acceptance.
+
+Native Today/Week uses PATCH personal for a school checkbox; acknowledgement checks the independent personal version. Source facts cannot be edited/deleted using manual-study controls. Private notes are displayed; a dedicated school note/reminder editor is not part of this unit. Unknown writes retain existing verification/recovery behavior.
+
+`createProductApp({schoolContracts})` is trusted server configuration only. Default registry stays empty. API projection tests inject a synthetic approved registry and normalized fixtures; this does not constitute school approval.
+
+Tests: school-projection (eligibility/staleness/stable IDs/completion), product-school (real authenticated calendar/reminder routes, owner isolation and revoke), native-study-actions (personal acknowledgement), native-reminders (school target). Full regression recorded 53 files / 312 tests; mobile TypeScript passed. No actual school transport or iOS runtime acceptance is claimed.

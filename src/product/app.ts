@@ -1,3 +1,5 @@
+import {projectSchoolCalendar} from './school/projection.js';
+import type {Contracts} from './school/schemas.js';
 import { createSchoolStore } from './school/store.js';
 import { registerSchoolRoutes } from './school/routes.js';
 import {registerActivityMaintenanceRoutes} from './social/maintenance-routes.js';
@@ -28,12 +30,12 @@ import { registerCalendarRoutes } from './calendar/routes.js';
 import { registerLearningRoutes } from './learning/routes.js';
 import { projectReminders, REMINDER_DAYS } from './reminders/projection.js';
 
-export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch }) {
+export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch; schoolContracts?:Contracts }) {
   if (process.env.NODE_ENV === 'production') throw new Error('Local development mail is forbidden in production.');
   const now = options.now ?? Date.now;
   const db = openDatabase(options.dataDir);
-  // No school approval or transport is configured by the local development app.
-  const school = createSchoolStore(db,now);
+  // The normal local app supplies no school registry; only server-owned approved adapters may configure it.
+  const school = createSchoolStore(db,now,options.schoolContracts);
   const auth = createAuth(db, options.dataDir, now, id=>{
     const connections=school.status(id);
     return {sis:connections[0].state,canvas:connections[1].state};
@@ -73,13 +75,15 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   app.get('/api/v1/me/calendar',async request=>{
     const user=auth.requireUser(request.headers.authorization).id,query=calendarQuerySchema.parse(request.query);
     const imported=calendars.occurrences(user,query);
-    return ok({...learning.calendar(user,query,[...imported.items,...social.calendar(user)]),import_issues:imported.issues},request.id);
+    const projected=projectSchoolCalendar(school.exportAll(user));
+    return ok({...learning.calendar(user,query,[...imported.items,...social.calendar(user),...projected.items]),import_issues:imported.issues,school_connections:school.status(user),school_issues:projected.issues},request.id);
   });
   app.get('/api/v1/me/reminders',async request=>{
     const user=auth.requireUser(request.headers.authorization).id,time=now();
     const range={from:new Date(time-86400_000).toISOString().slice(0,10),to:new Date(time+(REMINDER_DAYS+8)*86400_000).toISOString().slice(0,10)};
     const imported=calendars.occurrences(user,range);
-    return ok(projectReminders(user,[...learning.exportAll(user).items,...imported.items,...social.calendar(user)],time,imported.issues),request.id);
+    const projected=projectSchoolCalendar(school.exportAll(user));
+    return ok({...projectReminders(user,[...learning.exportAll(user).items,...imported.items,...social.calendar(user),...projected.reminder_items],time,imported.issues),school_issues:projected.issues},request.id);
   });
   app.setErrorHandler((error, request, reply) => {
     const status = typeof error === 'object' && error !== null && 'statusCode' in error && typeof error.statusCode === 'number' ? error.statusCode : 500;
