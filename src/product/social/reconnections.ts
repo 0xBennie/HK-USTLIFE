@@ -41,14 +41,23 @@ export function createReconnections(db:DatabaseSync,now:()=>number){
  }
  function list(owner:string){return (db.prepare('SELECT activity_id,target_id FROM reconnection_intents WHERE owner_id=? ORDER BY updated_at DESC,activity_id,target_id LIMIT 500').all(owner) as {activity_id:string;target_id:string}[]).map(r=>get(owner,r.activity_id,r.target_id));}
  type Card={text:string;version:number;own_consent:number;peer_consent:number};
+ function purgeExpiredCards(){
+  const at=now();
+  return db.prepare(`UPDATE reconnection_cards SET text='',version=version+1 WHERE text!='' AND (
+   NOT EXISTS(SELECT 1 FROM reconnection_intents i WHERE i.owner_id=reconnection_cards.owner_id AND i.target_id=reconnection_cards.target_id AND i.activity_id=reconnection_cards.activity_id AND i.willing=1 AND i.expires_at>? AND i.version=reconnection_cards.own_consent)
+   OR NOT EXISTS(SELECT 1 FROM reconnection_intents i WHERE i.owner_id=reconnection_cards.target_id AND i.target_id=reconnection_cards.owner_id AND i.activity_id=reconnection_cards.activity_id AND i.willing=1 AND i.expires_at>? AND i.version=reconnection_cards.peer_consent)
+  )`).run(at,at).changes;
+ }
  const card=(owner:string,activity:string,target:string)=>db.prepare('SELECT text,version,own_consent,peer_consent FROM reconnection_cards WHERE owner_id=? AND activity_id=? AND target_id=?').get(owner,activity,target) as Card|undefined;
  function cards(owner:string,activity:string,target:string){
+  purgeExpiredCards();
   const mine=card(owner,activity,target),peer=card(target,activity,owner),own=row(owner,activity,target),other=row(target,activity,owner);
   const visible=get(owner,activity,target).mutual&&peer?.text&&peer.own_consent===other?.version&&peer.peer_consent===own?.version;
   return {activity_id:activity,target_id:target,mine:{text:mine?.text??'',version:mine?.version??0},peer:visible?{text:peer!.text}:null};
  }
  function saveCard(owner:string,activity:string,target:string,raw:unknown){
   const body=z.object({version:z.number().int().min(0),text:z.string().trim().max(300)}).strict().parse(raw);
+  purgeExpiredCards();
   return transaction(db,()=>{
    const old=card(owner,activity,target);
    if((old?.version??0)!==body.version)throw new ApiError(409,'VERSION_CONFLICT','Read the current contact card before editing.');
@@ -58,6 +67,7 @@ export function createReconnections(db:DatabaseSync,now:()=>number){
    return cards(owner,activity,target);
   });
  }
- function exportCards(owner:string){return db.prepare('SELECT activity_id,target_id,text,version FROM reconnection_cards WHERE owner_id=? ORDER BY activity_id,target_id').all(owner);}
- return {get,set,list,cards,saveCard,exportCards};
+ function exportCards(owner:string){purgeExpiredCards();return db.prepare('SELECT activity_id,target_id,text,version FROM reconnection_cards WHERE owner_id=? ORDER BY activity_id,target_id').all(owner);}
+ purgeExpiredCards();
+ return {get,set,list,cards,saveCard,exportCards,purgeExpiredCards};
 }

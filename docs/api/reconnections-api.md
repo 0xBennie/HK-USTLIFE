@@ -31,3 +31,11 @@ Response: `{activity_id,target_id,mine:{text,version},peer:{text}|null}`. `peer`
 Cards may be cleared by their owner after the relationship is unavailable. Counterpart access stops at consent expiry or activity cancellation. Own export includes only the user's cards (including empty cleared rows), not the counterpart's shared details. Account/activity deletion cascades both directions. Existing snapshots or information already seen/copied cannot be remotely retracted; the future sharing confirmation must say this plainly.
 
 Acceptance so far: real SQLite tests and authenticated API tests cover no unilateral sharing, voluntary value only, correct recipient, outsider isolation, own-only export, withdraw/reconsent suppression, explicit clearing, stale version, block/unblock, expiry and cancelled activity. Native editor, sharing preview/confirmation, moderation/report handling for contact-card text, mutual notification and runtime acceptance remain required before product-level release. Contact cards are an initial contact channel; full in-app chat stays separately scoped.
+
+## Contact text retention (2026-10-04)
+
+Contact text is cleared when either consent expires, is absent/inactive, or no longer matches the consent version saved with the card. Clearing increments the card version and retains the empty row so stale edits conflict. Consent changes and blocking also retain their existing immediate clearing behavior.
+
+The store sweeps on startup and before card reads, writes and export. The local API additionally attempts a sweep every five minutes while running; the timer is released on shutdown and failures emit a warning for retry. Peer visibility still checks current eligibility on each read, independently of cleanup. An unavailable/stopped process cannot guarantee a wall-clock cleanup deadline; the next startup sweeps persisted records.
+
+This clears application-visible SQLite text, not copies previously viewed by recipients, SQLite free pages/WAL remnants or external backups. No secure-erasure claim is made. Native contact-card UI and runtime acceptance remain outstanding.

@@ -50,7 +50,12 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   const reconnections=createReconnections(db,now);
   const governance=createGovernanceStore(db,now,wall,social);
   const app = Fastify({ logger: false, bodyLimit: 32_768, trustProxy: false });
-  app.addHook('onClose', async () => { db.close(); });
+  const contactRetention=setInterval(()=>{
+    try { reconnections.purgeExpiredCards(); }
+    catch { process.emitWarning('Contact card retention sweep failed; retrying on next sweep.', {code:'CONTACT_RETENTION_FAILED'}); }
+  },5*60_000);
+  contactRetention.unref();
+  app.addHook('onClose', async () => { clearInterval(contactRetention); db.close(); });
   const localHost = (host: string | undefined) => /^((localhost)|(127\.0\.0\.1)|(\[::1\]))(:\d+)?$/.test(host ?? '');
   app.addHook('onRequest', async (request, reply) => {
     reply.header('Cache-Control', 'no-store').header('X-Content-Type-Options', 'nosniff');

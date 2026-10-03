@@ -57,3 +57,25 @@ it('does not return a formerly shared card after expiry or cancellation',()=>{
  clock=900000+7*86400000;expect(store.cards('b','event','a').peer).toBeNull();
  clock=1000000;db.prepare("UPDATE activities SET status='cancelled' WHERE id='event'").run();expect(store.cards('b','event','a').peer).toBeNull();
 });
+it('clears expired contact text in storage before export and preserves version history',()=>{
+ store.set('a','event','b',{version:0,willing:true,participated:true});store.set('b','event','a',{version:0,willing:true,participated:true});store.saveCard('a','event','b',{version:0,text:'Expires with consent'});
+ clock=900000+7*86400000;store.purgeExpiredCards();
+ expect(store.exportCards('a')[0]).toMatchObject({text:'',version:2});
+ store.purgeExpiredCards();expect(store.exportCards('a')[0].version).toBe(2);
+});
+it('cleans expired persisted cards on reopen and rejects an edit using the pre-cleanup version',()=>{
+ store.set('a','event','b',{version:0,willing:true,participated:true});store.set('b','event','a',{version:0,willing:true,participated:true});
+ store.saveCard('a','event','b',{version:0,text:'Private saved contact'});
+ db.close();clock=900000+7*86400000;db=openDatabase(dir);store=createReconnections(db,()=>clock);
+ expect(db.prepare('SELECT text,version FROM reconnection_cards').get()).toMatchObject({text:'',version:2});
+ expect(()=>store.saveCard('a','event','b',{version:1,text:''})).toThrow('Read the current contact card');
+});
+it('retains unexpired cards and clears both directions at expiry',()=>{
+ store.set('a','event','b',{version:0,willing:true,participated:true});store.set('b','event','a',{version:0,willing:true,participated:true});
+ store.saveCard('a','event','b',{version:0,text:'A contact'});store.saveCard('b','event','a',{version:0,text:'B contact'});
+ expect(store.purgeExpiredCards()).toBe(0);
+ // Changing time alone must trigger retention; avoid the consent-update trigger in the fixture.
+ clock=900000+7*86400000;
+ expect(store.exportCards('b')[0]).toMatchObject({text:'',version:2});
+ expect(store.cards('a','event','b')).toMatchObject({mine:{text:'',version:2},peer:null});
+});
