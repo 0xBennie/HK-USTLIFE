@@ -47,7 +47,7 @@ export function LoginScreen({ language, onGuest }: Props & {onGuest?:()=>void}) 
   const value=(icon:string,col:string,title:string,body:string)=><View style={{flexDirection:'row',alignItems:'center',gap:12}}><IconTile icon={icon} color={col} size={36}/><View style={{flex:1,gap:2}}><Text style={{fontSize:16,fontWeight:'600',color:c.text}}>{title}</Text><Text style={{fontSize:13,color:c.muted}}>{body}</Text></View></View>;
   return <View style={{gap:24}}>
     <View style={{paddingHorizontal:4,gap:8,paddingTop:12}}>
-      <Text style={{fontSize:13,fontWeight:'700',letterSpacing:1,color:c.accent}}>CAMPUS · HKUST</Text>
+      <Text style={{fontSize:13,fontWeight:'700',letterSpacing:1,color:c.accent}}>USTLIFE · HKUST</Text>
       <Text accessibilityRole="header" style={{fontSize:36,lineHeight:44,fontWeight:'800',color:c.text,letterSpacing:-0.5}}>{zh?'大学生活，\n从容一点。':'Campus life,\na little calmer.'}</Text>
       <Text style={{fontSize:16,lineHeight:24,color:c.muted}}>{zh?'截止、课表、校巴和活动，都在一个地方。':'Deadlines, classes, shuttles and plans in one place.'}</Text>
     </View>
@@ -90,7 +90,7 @@ export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExi
     return()=>{live=false;};},[page]);
   if(page==='profile')return <ProfileEditor profile={profile} language={language} onBack={()=>setPage('home')}/>;
   if(page==='school')return <SchoolSourcesScreen language={language} dark={dark} onBack={()=>setPage('home')}/>;
-  if(page==='reminders')return <View style={{gap:18}}><PageHeader onBack={()=>setPage('home')} backLabel={zh?'我的':'Me'} title={zh?'提醒':'Reminders'} subtitle={zh?'提醒只在这台手机上安排，你决定什么时候提醒。':'Reminders are scheduled on this phone only.'}/><ReminderSettings language={language} dark={dark}/></View>;
+  if(page==='reminders')return <View style={{gap:18}}><PageHeader onBack={()=>setPage('home')} backLabel={zh?'我的':'Me'} title={zh?'自动提醒':'Reminders'}/><ReminderSettings language={language} dark={dark}/></View>;
   if(page==='activities'||page==='saved')return <MyActivities language={language} mode={page==='activities'?'participating':'saved'} onBack={()=>setPage('home')} onActivity={onActivity}/>;
   const shownName=profile.display_name.trim()||profile.email.split('@')[0];
   const initials=[...shownName].slice(0,2).join('').toUpperCase();
@@ -110,7 +110,7 @@ export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExi
     </Pressable>)}</View></Stagger>
     <Stagger index={1}><ListGroup>
       <ListRow icon="ticket" tile="#A9824C" title={zh?'我的参与':'My activities'} subtitle={zh?'报名、候补与发起的活动':'Joined, waitlisted and hosted'} chevron onPress={()=>setPage('activities')}/>
-      <ListRow icon="bookmark" tile="#D98A1C" title={zh?'我的收藏':'Saved'} subtitle={zh?'收藏的活动':'Saved activities'} chevron onPress={()=>setPage('saved')}/>
+      <ListRow icon="bookmark" tile="#D98A1C" title={zh?'我的收藏':'Saved'} subtitle={zh?'活动与地点':'Activities and places'} chevron onPress={()=>setPage('saved')}/>
       <ListRow icon="graduation-cap" tile="#24467F" title={zh?'学校连接':'School connection'} subtitle={zh?'SIS 课表 · Canvas 截止 · 学校邮箱':'SIS · Canvas · school mail'} chevron onPress={()=>setPage('school')}/>
     </ListGroup></Stagger>
     <Stagger index={2}><ListGroup>
@@ -122,8 +122,8 @@ export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExi
     {exitError?<Notice tone="error" text={exitError instanceof ApiFailure&&exitError.code==='EXIT_REVIEW_REQUIRED'?(zh?'账户或未保存状态已变化，请重新检查后操作。':'The account or unsaved state changed. Review it before trying again.'):t.errors[exitError instanceof ApiFailure?exitError.code:'REQUEST_FAILED']??t.errors.REQUEST_FAILED}/>:null}
     <Stagger index={3}><ListGroup>
       <ListRow icon="download" tile="#2E9E5B" title={t.export} disabled={busy} onPress={() => action.run(async () => { const data = await session.request('/me/export'); if(action.isCurrent())await Share.share({ message: JSON.stringify(data, null, 2), title: t.export }); })}/>
-      <ListRow title={t.signOut} titleColor={c.accent} disabled={busy} onPress={() => onExit('sign-out')}/>
-      <ListRow title={t.delete} titleColor={c.danger} disabled={busy} onPress={() => onExit('delete')}/>
+      <ListRow icon="log-out" tile={c.gray} title={t.signOut} disabled={busy} onPress={() => onExit('sign-out')}/>
+      <ListRow icon="trash" tile={c.danger} title={t.delete} titleColor={c.danger} disabled={busy} onPress={() => onExit('delete')}/>
     </ListGroup></Stagger>
     <Text style={{textAlign:'center',fontSize:12,color:c.muted}}>{t.privacy}</Text>
   </View>;
