@@ -1,0 +1,11 @@
+# Local iOS Ruby toolchain recovery
+
+- Goal remains active. Worktree `/Users/bennie/.codex/worktrees/campus-school-sync/All in one HKUST`, branch `codex/campus-school-sync`, PMO base `b036e577a9d2769dcd0dbe4bd20e27a3e8c6881c`; prior HEAD `bfb5879`.
+- Root cause verified: macOS Ruby 2.6 references missing Ruby headers under Xcode 27 SDK; the previous nkf extension install could not compile. Did not repeat the failing system-Ruby command.
+- Downloaded official Ruby 3.4.11 and verified official SHA-256; LibYAML release C/headers compared with the checksum-verified official tag. Built static LibYAML and Ruby under `/Users/bennie/.codex/worktrees/campus-school-sync/toolchain`, using existing Homebrew OpenSSL 3.6.2. Build session 28232 completed exit 0. No global Ruby/PATH/Homebrew install change.
+- Runtime verification: isolated Ruby reports 3.4.11 (2026-09-23), arm64-darwin25; OpenSSL 3.6.2 and Psych LibYAML 0.2.5 load; Gem.dir resolves to task-local toolchain/gems. Build log: sibling `toolchain/build.log`.
+- Added `scripts/with-ios-toolchain.sh` wrapper (shell syntax checked) and `docs/development-ios-local-toolchain.md` with sources, hashes and layout. Wrapper runs one command and fails rather than falling back to system Ruby when missing.
+- CocoaPods install currently running: exec session **89654**, PID 65673 at last verification, exact command pinned to cocoapods 1.16.2 through isolated wrapper. Log `.local/school-sync/cocoapods-local-install.log`. Poll this handle; do not restart because redirected output is empty. Installation success is not yet established.
+- Dependency-reviewer package-risk evidence is UNKNOWN: risk MCP, endorctl and policy evaluator unavailable. No policy clearance/vulnerability verdict is claimed. Source checksum verification is separate from risk review.
+- iOS runtime session 57095 previously completed. iPhone 18 Pro device `79EDA71B-E32F-421A-986B-7FA991BB1B0A` booted successfully; bootstatus session 58034 exit 0. No Campus app build or runtime verification yet.
+- Next: poll 89654; verify pod version, install iOS pods via wrapper from apps/mobile/ios, then compile/run Campus on the booted simulator. Native generated project is ignored and reproducible via Expo prebuild. Continue remaining product scope after runtime gate; school permission still unresolved.
