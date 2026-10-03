@@ -55,7 +55,7 @@ function CampusApp() {
   }
   const [targetRevision,setTargetRevision]=useState(0);
   const [queuedReminder,setQueuedReminder]=useState<(NonNullable<ReturnType<typeof reminderTarget>>&{owner:string})|null>(null);
-  const [activityTarget,setActivityTarget]=useState<(DiscoveryTarget&{owner:string|null})|null>(null);
+  const [activityTarget,setActivityTarget]=useState<(DiscoveryTarget&{owner:string|null;returnTab?:0|3})|null>(null);
   const pages=useRef<((()=>void)|null)[]>([]);
   const scrollToTop=useCallback(()=>{requestAnimationFrame(()=>pages.current[2]?.());},[]);
   useEffect(()=>{Keyboard.dismiss();},[tab]);
@@ -64,8 +64,8 @@ function CampusApp() {
     const owner=state.profile?.id??null;
     confirmNavigation(guards.status(scene),language==='zh',()=>{if((session.snapshot().profile?.id??null)===owner)proceed();});
   }
-  const openActivity=(id:string)=>guardedOpen(2,()=>{setTargetRevision(v=>v+1);setActivityTarget({id,kind:'activity',owner:state.profile?.id??null});setTab(2);});
-  const openPost=(id:string)=>guardedOpen(2,()=>{setTargetRevision(v=>v+1);setActivityTarget({id,kind:'post',owner:state.profile?.id??null});setTab(2);});
+  const openActivity=(id:string)=>guardedOpen(2,()=>{setTargetRevision(v=>v+1);setActivityTarget({id,kind:'activity',owner:state.profile?.id??null,returnTab:tab===0||tab===3?tab:undefined});setTab(2);});
+  const openPost=(id:string)=>guardedOpen(2,()=>{setTargetRevision(v=>v+1);setActivityTarget({id,kind:'post',owner:state.profile?.id??null,returnTab:tab===0||tab===3?tab:undefined});setTab(2);});
   const dark = useColorScheme() === 'dark';
   const colors = palette[dark ? 'dark' : 'light'], t = strings[language];
   useEffect(() => { void session.restore(); }, []);
@@ -122,7 +122,7 @@ function CampusApp() {
           : index === 0 ? state.profile ? <StudyScreen key={state.profile.id} language={language} dark={dark} onActivity={openActivity} initialReminder={studyTarget?.owner===state.profile.id?studyTarget:null} />
           : <View style={styles.stack}><Text style={[styles.title,{color:colors.text}]}>{t.tabs[0]}</Text><Text style={[styles.body,{color:colors.muted}]}>{t.loginBody}</Text><NavigationRow icon="today" title={language==='zh'?'安排你的一天':'Plan your day'} subtitle={language==='zh'?'登录以保存课程、任务和私人日程':'Sign in to save classes, tasks and private plans'} onPress={()=>setTab(4)}/><NavigationRow icon="campus" title={language==='zh'?'逛逛校园':'Explore campus'} subtitle={language==='zh'?'路线、地点与服务，无需登录':'Routes, places and services. No sign-in needed.'} onPress={()=>setTab(1)}/></View>
           : index === 1 ? <CampusScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)}/>
-          : index === 2 ? <CommunityScreen key={`${state.profile?.id??'visitor'}:${targetRevision}`} language={language} dark={dark} onLogin={()=>setTab(4)} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} onDismissTarget={()=>setActivityTarget(null)} onNavigate={scrollToTop}/>
+          : index === 2 ? <CommunityScreen key={`${state.profile?.id??'visitor'}:${targetRevision}`} language={language} dark={dark} onLogin={()=>setTab(4)} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} onDismissTarget={()=>{const target=activityTarget;setActivityTarget(null);if(target?.owner===(state.profile?.id??null)&&target.returnTab!==undefined)setTab(target.returnTab);}} onNavigate={scrollToTop}/>
           : state.profile ? <InboxScreen key={state.profile.id} language={language} dark={dark} onActivity={openActivity} onPost={openPost}/>
           : <View style={styles.stack}><Text style={[styles.body,{color:colors.text}]}>{t.loginBody}</Text><Button onPress={()=>setTab(4)}>{t.signIn}</Button></View>}
       </TabScene></InputProtectionContext.Provider>)}

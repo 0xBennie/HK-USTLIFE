@@ -1,0 +1,57 @@
+{
+  "mechanism": "HTTP API organizer cancellation; participant native verification follows",
+  "id": "242cac03-4990-4c6f-9879-938d4d3ae6b7",
+  "status": "cancelled",
+  "mine": {
+    "is_organizer": false,
+    "participation": {
+      "activity_id": "242cac03-4990-4c6f-9879-938d4d3ae6b7",
+      "status": "cancelled",
+      "version": 4,
+      "queue_order": 2,
+      "joined_at": "2026-10-03T17:30:06.324Z",
+      "updated_at": "2026-10-03T17:32:55.333Z",
+      "waitlist_position": null
+    },
+    "bookmarked": false,
+    "calendar_saved": false,
+    "remind_minutes": null
+  },
+  "calendar": {
+    "from": "2026-10-06",
+    "to": "2026-10-07",
+    "timezone": "Asia/Hong_Kong",
+    "days": [
+      {
+        "date": "2026-10-06",
+        "events": [],
+        "tasks": []
+      }
+    ],
+    "undated_tasks": [],
+    "import_issues": [],
+    "school_connections": [
+      {
+        "provider": "sis",
+        "state": "approval_required",
+        "availability": "approval_required",
+        "version": 0,
+        "consent_version": null,
+        "last_attempt_at": null,
+        "last_success_at": null,
+        "scopes": []
+      },
+      {
+        "provider": "canvas",
+        "state": "approval_required",
+        "availability": "approval_required",
+        "version": 0,
+        "consent_version": null,
+        "last_attempt_at": null,
+        "last_success_at": null,
+        "scopes": []
+      }
+    ],
+    "school_issues": []
+  }
+}

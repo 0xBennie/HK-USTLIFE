@@ -1,0 +1,58 @@
+{
+  "mechanism": "HTTP API organizer mutation; participant native verification follows",
+  "id": "242cac03-4990-4c6f-9879-938d4d3ae6b7",
+  "version": 2,
+  "starts_at": "2026-10-06T07:00:00.000Z",
+  "ends_at": "2026-10-06T08:00:00.000Z",
+  "location": "新集合点（本地改期验收）",
+  "notifications": {
+    "items": [
+      {
+        "id": 7,
+        "kind": "activity_updated",
+        "activity": {
+          "id": "242cac03-4990-4c6f-9879-938d4d3ae6b7",
+          "title": "原生验收 · 安静自习"
+        },
+        "post": null,
+        "created_at": "2026-10-03T17:30:06.332Z",
+        "read_at": null
+      },
+      {
+        "id": 5,
+        "kind": "joined",
+        "activity": {
+          "id": "242cac03-4990-4c6f-9879-938d4d3ae6b7",
+          "title": "原生验收 · 安静自习"
+        },
+        "post": null,
+        "created_at": "2026-10-03T17:30:06.325Z",
+        "read_at": null
+      },
+      {
+        "id": 3,
+        "kind": "withdrawn",
+        "activity": {
+          "id": "242cac03-4990-4c6f-9879-938d4d3ae6b7",
+          "title": "原生验收 · 安静自习"
+        },
+        "post": null,
+        "created_at": "2026-10-03T17:26:50.732Z",
+        "read_at": null
+      },
+      {
+        "id": 1,
+        "kind": "joined",
+        "activity": {
+          "id": "242cac03-4990-4c6f-9879-938d4d3ae6b7",
+          "title": "原生验收 · 安静自习"
+        },
+        "post": null,
+        "created_at": "2026-10-03T17:25:47.949Z",
+        "read_at": null
+      }
+    ],
+    "next_cursor": null,
+    "unread": 4
+  }
+}
