@@ -5,7 +5,7 @@ import {api} from '../runtime';
 import type {Language} from '../strings';
 import type {PublicRoute,TransitArrivals,TransitCatalog,TransitStops} from '../../../../src/product/campus/public-transit-types';
 import {visibleTransitArrivals} from './transit-state';
-import {EmptyState,FilterPill,ListGroup,ListRow,Notice,PageHeader,PenIcon,PillRow,Skeleton,Stagger,usePenColors} from '../ui/Pen';
+import {EmptyState,FilterPill,ListGroup,ListRow,Notice,PageHeader,PenIcon,PillRow,Skeleton,Stagger,usePenColors,GlassChips,SearchField} from '../ui/Pen';
 const hkTime=(s:string)=>new Date(s).toLocaleTimeString('en-GB',{timeZone:'Asia/Hong_Kong',hour:'2-digit',minute:'2-digit',hour12:false});
 // Pen "public-transit" / "transit-detail" boards: route → boarding stop → live arrivals.
 export function PublicTransitScreen({language,onBack}:{language:Language;dark:boolean;onBack:()=>void}) {
@@ -43,7 +43,7 @@ export function PublicTransitScreen({language,onBack}:{language:Language;dark:bo
  const stopList=stops?.status==='available'?stops.stops.filter(s=>`${s.name.zh} ${s.name.en}`.toLowerCase().includes(query)):[];
  const badge=(r:PublicRoute)=><View style={{minWidth:52,paddingVertical:4,paddingHorizontal:6,borderRadius:8,alignItems:'center',backgroundColor:r.operator==='gmb'?c.green:c.danger}}><Text style={{fontSize:14,fontWeight:'800',color:'#FFFFFF'}}>{r.code}</Text></View>;
  const back=()=>{if(sequence!==null){setSequence(null);setArrivals(null);}else if(route){setRoute(null);setStops(null);setSearch('');}else onBack();};
- const searchBox=(placeholder:string)=><View style={{flexDirection:'row',alignItems:'center',gap:8,height:44,paddingHorizontal:12,borderRadius:12,backgroundColor:c.fill}}><PenIcon name="search" size={17} color={c.muted}/><TextInput accessibilityLabel={placeholder} value={search} onChangeText={setSearch} placeholder={placeholder} placeholderTextColor={c.muted} clearButtonMode="while-editing" style={{flex:1,fontSize:16,color:c.text}}/></View>;
+ const searchBox=(placeholder:string)=><SearchField value={search} onChangeText={setSearch} placeholder={placeholder}/>;
  if(route&&sequence!==null){
   const stopName=arrivals?.stop?.name[language]??stops?.stops.find(s=>s.sequence===sequence)?.name[language]??'';
   return <View style={{gap:18}}>
@@ -74,7 +74,7 @@ export function PublicTransitScreen({language,onBack}:{language:Language;dark:bo
  return <View style={{gap:18}}>
   <PageHeader onBack={back} backLabel={zh?'校园':'Campus'} title={zh?'九巴与绿色小巴':'KMB & minibuses'} subtitle={zh?'进出科大的巴士和小巴，实时到站':'Buses and minibuses serving HKUST, live'}/>
   {searchBox(zh?'路线号或目的地':'Route or destination')}
-  <PillRow>{([['',zh?'全部':'All'],['gmb',zh?'绿色小巴':'Minibus'],['kmb',zh?'九巴':'KMB']] as const).map(([v,l])=><FilterPill key={v} label={l} selected={operator===v} onPress={()=>setOperator(v)}/>)}</PillRow>
+  <GlassChips label={zh?'运营商':'Operator'} value={operator} onChange={v=>setOperator(v)} items={[{value:'' as const,label:zh?'全部':'All'},{value:'gmb' as const,label:zh?'绿色小巴':'Minibus'},{value:'kmb' as const,label:zh?'九巴':'KMB'}]}/>
   {error?<Notice tone="error" text={zh?'连接失败，请联网后重试。':'Connection failed.'} action={zh?'重试':'Retry'} onAction={()=>void refresh.current()}/>:null}
   {catalog?.issues.map(issue=><Notice key={`${issue.operator}:${issue.route_code}`} tone="warning" text={`${issue.operator.toUpperCase()} ${issue.route_code}: ${labels[issue.reason]}`}/>)}
   {!catalog&&busy?<><Skeleton/><Skeleton/><Skeleton/></>:null}

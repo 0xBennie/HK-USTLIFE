@@ -68,11 +68,11 @@ export function CampusScreen({language,dark,onLogin,name,onMe}:{language:Languag
  const savedPlaces=marks.filter(m=>m.target_kind==='place').map(m=>places.find(p=>p.id===m.target_id)).filter((p):p is Place=>!!p);
  const chipLabel=(r:ShuttleRoute)=>(r.name[language].split('→').pop()??'').trim();
  const byCat=(k:string)=>places.filter(p=>p.category===k);
- const names=(list:Place[])=>list.slice(0,2).map(p=>p.name[language].replace(/（.*?）|\(.*?\)/g,'').trim()).join(' · ');
+ const names=(list:Place[])=>[...new Set(list.map(p=>p.name[language].replace(/（.*?）|\(.*?\)/g,'').trim()))].slice(0,2).join(' · ');
  const tiles:[string,string,string,string,()=>void][]=[
   ['library',c.indigo,zh?'学习空间':'Study spaces',names(byCat('study')),()=>go({kind:'directory',category:'study'})],
   ['shopping-bag','#A9824C',zh?'吃喝与购物':'Food & shops',names(byCat('shop')),()=>go({kind:'directory',category:'shop'})],
-  ['life-buoy',c.accent,zh?'学生服务':'Student services',names(byCat('service')),()=>go({kind:'directory',category:'service'})],
+  ['life-buoy',c.blue,zh?'学生服务':'Student services',names(byCat('service')),()=>go({kind:'directory',category:'service'})],
   ['map',c.teal,zh?'找课室 ↗':'Find a room ↗',zh?'房间号 · Path Advisor':'Room no. · Path Advisor',()=>void Linking.openURL(PATH_ADVISOR)],
  ];
  return <View style={{gap:22}}>

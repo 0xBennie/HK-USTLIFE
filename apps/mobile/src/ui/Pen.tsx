@@ -49,10 +49,16 @@ export function Segmented<T extends string>({value,options,onChange,label}:{valu
 
 /** Pen filter "Pill": 34pt, radius 99, padding 7/14, 14/600. Selected pill is inverted. */
 export function FilterPill({label,selected,icon,onPress}:{label:string;selected?:boolean;icon?:PenIconName;onPress:()=>void}){
- const c=usePenColors(),{reduceMotion}=useAppearance();
- return <Pressable accessibilityRole="button" accessibilityState={{selected}} onPress={onPress} style={state=>[{minHeight:34,flexDirection:'row',alignItems:'center',gap:5,paddingVertical:7,paddingHorizontal:14,borderRadius:99,backgroundColor:selected?c.text:c.surface},pressFeedback(reduceMotion)(state)]}>
-  {icon?<PenIcon name={icon} size={13} color={selected?c.onAccent:c.text}/>:null}<Text style={{fontSize:14,lineHeight:20,fontWeight:'600',color:selected?c.onAccent:c.text}}>{label}</Text>
+ // Pen V5 chip: glass capsule; selected = navy-tinted lens with navy label.
+ const c=usePenColors(),{reduceMotion}=useAppearance(),dark=useColorScheme()==='dark',accent=dark?'#8FB0E8':NAVY;
+ return <Pressable accessibilityRole="button" accessibilityState={{selected}} onPress={()=>{feel.select();onPress();}} style={state=>[{minHeight:36,flexDirection:'row',alignItems:'center',gap:5,paddingVertical:8,paddingHorizontal:15,borderRadius:99,borderCurve:'continuous',backgroundColor:selected?(dark?'#FFFFFF1F':'#24467F17'):c.glass,borderWidth:1,borderColor:selected?(dark?'#FFFFFF26':'#24467F26'):'#FFFFFFCC',boxShadow:selected?undefined:'0 4px 12px #1B35660D'},pressFeedback(reduceMotion)(state)]}>
+  {icon?<PenIcon name={icon} size={13} color={selected?accent:c.text}/>:null}<Text style={{fontSize:14,lineHeight:20,fontWeight:selected?'700':'500',color:selected?accent:c.text}}>{label}</Text>
  </Pressable>;
+}
+/** Pen V5 search field: glass capsule with search glyph. */
+export function SearchField({value,onChangeText,placeholder,autoFocus}:{value:string;onChangeText:(v:string)=>void;placeholder:string;autoFocus?:boolean}){
+ const c=usePenColors();
+ return <GlassCapsule radius={24}><View style={{flexDirection:'row',alignItems:'center',gap:8,height:48,paddingHorizontal:16}}><PenIcon name="search" size={18} color={c.muted}/><TextInput accessibilityLabel={placeholder} autoFocus={autoFocus} value={value} onChangeText={onChangeText} placeholder={placeholder} placeholderTextColor={c.muted} returnKeyType="search" clearButtonMode="while-editing" style={{flex:1,fontSize:16,color:c.text}}/></View></GlassCapsule>;
 }
 export function PillRow({children}:{children:ReactNode}){return <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginHorizontal:-16}} contentContainerStyle={{paddingHorizontal:16,gap:8}}>{children}</ScrollView>;}
 
@@ -104,8 +110,8 @@ export function InitialAvatar({name,size=28}:{name:string;size?:number}){
 /** Pen "Primary action": 50pt pill, 17/600. */
 export function PrimaryButton({label,onPress,disabled,tone='accent',icon}:{label:string;onPress:()=>void;disabled?:boolean;tone?:'accent'|'soft';icon?:PenIconName}){
  // Pen V5: accent = tinted (prominent) Liquid Glass in HKUST navy; soft = regular glass. One accent per screen.
- const c=usePenColors(),{reduceMotion,reduceTransparency}=useAppearance(),prominent=tone!=='soft';
- const glass=liquidGlass&&!reduceTransparency,fg=prominent?'#FFFFFF':c.text;
+ const c=usePenColors(),{reduceMotion,reduceTransparency}=useAppearance(),prominent=tone!=='soft'&&!disabled;
+ const glass=liquidGlass&&!reduceTransparency,fg=prominent?'#FFFFFF':disabled?c.muted:c.text;
  return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={()=>{feel.tap();onPress();}} style={state=>[{flex:1,minHeight:54,borderRadius:99,borderCurve:'continuous',flexDirection:'row',gap:8,alignItems:'center',justifyContent:'center',paddingHorizontal:22,backgroundColor:glass?'transparent':prominent?NAVY:c.glass,borderWidth:glass?0:1,borderColor:prominent?'#FFFFFF26':'#FFFFFFCC',boxShadow:glass?undefined:prominent?'0 10px 24px #1B356645':'0 6px 18px #1B35661A',opacity:disabled?0.4:1},pressFeedback(reduceMotion)(state)]}>
   {glass?<GlassView pointerEvents="none" isInteractive glassEffectStyle="regular" tintColor={prominent?NAVY:undefined} style={{position:'absolute',inset:0,borderRadius:99}}/>:null}
   {icon?<PenIcon name={icon} size={18} strokeWidth={2.2} color={fg}/>:null}<Text style={{fontSize:17,lineHeight:23,fontWeight:'600',color:fg}}>{label}</Text></Pressable>;
@@ -119,7 +125,10 @@ export function TextAction({label,onPress,color,disabled}:{label:string;onPress:
 export function BottomBar({children}:{children:ReactNode}){
  // Pen V5 "Floating input bar": no full-width slab; children are floating glass capsules over content.
  const {reduceMotion}=useAppearance(),insets=useSafeAreaInsets();
- return <Reanimated.View entering={reduceMotion?undefined:materialize} style={{position:'absolute',left:0,right:0,bottom:0,paddingTop:8,paddingHorizontal:16,paddingBottom:Math.max(insets.bottom-6,12),gap:8}}>
+ const c=usePenColors();
+ return <Reanimated.View entering={reduceMotion?undefined:materialize} style={{position:'absolute',left:0,right:0,bottom:0,paddingTop:22,paddingHorizontal:16,paddingBottom:Math.max(insets.bottom-6,12),gap:8}}>
+  {/* Scroll-edge effect: content fades out beneath the floating glass controls so they stay legible. */}
+  <Svg pointerEvents="none" preserveAspectRatio="none" viewBox="0 0 1 1" style={{position:'absolute',top:0,left:0,right:0,bottom:0}}><Defs><SvgGradient id="edge" x1="0" y1="0" x2="0" y2="1"><Stop offset="0" stopColor={c.background} stopOpacity={0}/><Stop offset="0.45" stopColor={c.background} stopOpacity={0.85}/><Stop offset="1" stopColor={c.background} stopOpacity={0.97}/></SvgGradient></Defs><Rect x="0" y="0" width="1" height="1" fill="url(#edge)"/></Svg>
   {children}
  </Reanimated.View>;
 }
@@ -161,7 +170,7 @@ export function GlassChips<T extends string>({items,value,onChange,label,fill}:{
  const lens=useAnimatedStyle(()=>({opacity:x.value<0?0:1,width:w.value,transform:[{translateX:Math.max(0,x.value)}]}));
  const chips=<>
   <Reanimated.View pointerEvents="none" style={[{position:'absolute',left:0,top:4,bottom:4,borderRadius:18,backgroundColor:dark?'#FFFFFF1F':'#24467F14',borderWidth:1,borderColor:dark?'#FFFFFF26':'#FFFFFFD9'},lens]}/>
-  {items.map(it=>{const on=it.value===value;return <Pressable key={it.value} accessibilityRole="tab" accessibilityState={{selected:on}} onLayout={e=>{const {x:lx,width}=e.nativeEvent.layout;setLayouts(p=>p[it.value]?.x===lx&&p[it.value]?.w===width?p:{...p,[it.value]:{x:lx,w:width}});}} onPress={()=>{if(!on){feel.select();onChange(it.value);}}} style={{flex:fill?1:undefined,height:36,paddingHorizontal:16,alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:15,fontWeight:on?'700':'500',color:on?accent:c.text}}>{it.label}</Text></Pressable>;})}
+  {items.map(it=>{const on=it.value===value;return <Pressable key={it.value} accessibilityRole="tab" accessibilityState={{selected:on}} onLayout={e=>{const {x:lx,width}=e.nativeEvent.layout;setLayouts(p=>p[it.value]?.x===lx&&p[it.value]?.w===width?p:{...p,[it.value]:{x:lx,w:width}});}} onPress={()=>{if(!on){feel.select();onChange(it.value);}}} style={{flex:fill?1:undefined,height:36,paddingHorizontal:16,alignItems:'center',justifyContent:'center'}}><Text numberOfLines={1} style={{fontSize:15,fontWeight:on?'700':'500',color:on?accent:c.text}}>{it.label}</Text></Pressable>;})}
  </>;
  return <GlassCapsule radius={22} style={{alignSelf:fill?'stretch':'flex-start',maxWidth:'100%'}}>
   <View accessibilityRole="tablist" accessibilityLabel={label}>
@@ -177,7 +186,7 @@ export function PageHeader({title,eyebrow,subtitle,onBack,backLabel,right}:{titl
  const c=usePenColors();
  return <View style={{gap:14}}>
   {onBack||right?<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-   {onBack?<Pressable accessibilityRole="button" accessibilityLabel={backLabel??'Back'} hitSlop={8} onPress={onBack} style={({pressed})=>({flexDirection:'row',alignItems:'center',gap:2,paddingVertical:10,paddingLeft:10,paddingRight:16,borderRadius:99,backgroundColor:c.surface,boxShadow:'0 4px 14px #0000000F',opacity:pressed?0.6:1})}><PenIcon name="chevron-left" size={18} strokeWidth={2.4} color={c.text}/>{backLabel?<Text style={{fontSize:15,fontWeight:'600',color:c.text}}>{backLabel}</Text>:null}</Pressable>:<View/>}
+   {onBack?<CircleButton icon="chevron-left" label={backLabel??'Back'} onPress={onBack}/>:<View/>}
    {right?<View style={{flexDirection:'row',gap:10}}>{right}</View>:null}
   </View>:null}
   <View style={{paddingHorizontal:4,gap:4}}>

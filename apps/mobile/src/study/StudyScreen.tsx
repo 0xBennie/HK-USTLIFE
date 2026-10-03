@@ -7,6 +7,7 @@ import { ImportScreen } from './ImportScreen';
 import { useCallback,useEffect,useRef,useState,useSyncExternalStore } from 'react';
 import { ActionSheetIOS,Alert,Linking,Pressable,Text,View } from 'react-native';
 import {CheckCircle,CircleButton,EmptyState,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Segmented,Skeleton,Stagger,Surface} from '../ui/Pen';
+import {WeekGrid} from './WeekGrid';
 import {TodayHome,courseColor} from './TodayHome';
 import { session } from '../runtime';
 import { palette,styles } from '../theme';
@@ -79,7 +80,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
   const zh=language==='zh';
   function toggle(item:Extract<CalendarItem,{kind:'task'}>){const school='school_origin' in item?item.school_origin:null;void mutate(school?{path:`/school/records/${item.id}/personal`,method:'PATCH',body:{version:school.personal_version,completed:item.status==='open'},label:item.title}:{path:`/study/items/${item.id}`,method:'PATCH',body:{version:item.version,status:item.status==='open'?'done':'open'},label:item.title});}
   function addMenu(){
-    const kinds:[string,()=>void][]=[[zh?'截止 / 任务':'Deadline / task',()=>setEditor({kind:'task',courseId})],[zh?'日程':'Event',()=>setEditor({kind:'event',courseId})],[zh?'私人笔记':'Note',()=>setEditor({kind:'note',courseId})],[zh?'资料链接':'Link',()=>setEditor({kind:'material',courseId})],[zh?'课程':'Course',()=>setEditor({kind:'course',courseId})],[zh?'导入日历文件（ICS）':'Import calendar (ICS)',()=>setImporting(true)]];
+    const kinds:[string,()=>void][]=[[zh?'截止 / 任务':'Deadline / task',()=>setEditor({kind:'task',courseId})],[zh?'日程':'Event',()=>setEditor({kind:'event',courseId})],[zh?'私人笔记':'Note',()=>setEditor({kind:'note',courseId})],[zh?'资料链接':'Link',()=>setEditor({kind:'material',courseId})],[zh?'课程':'Course',()=>setEditor({kind:'course',courseId})]];
     ActionSheetIOS.showActionSheetWithOptions({title:zh?'添加':'Add',options:[...kinds.map(k=>k[0]),zh?'取消':'Cancel'],cancelButtonIndex:kinds.length},i=>{if(i<kinds.length&&!actionLocked)kinds[i][1]();});
   }
   function itemMenu(item:CalendarItem){
@@ -122,6 +123,8 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
       {item.body&&view!=='day'&&view!=='week'?<Text numberOfLines={2} style={{fontSize:14,lineHeight:20,color:colors.muted,marginTop:8,marginLeft:42}}>{item.body}</Text>:null}
     </Surface></Stagger>;
   }
+  // Week view starts on Monday; on a weekend the student cares about the coming week.
+  useEffect(()=>{if(view!=='week')return;const wd=new Date(date+'T00:00:00Z').getUTCDay();if(wd===0)setDate(shiftDate(date,1));else if(wd===6)setDate(shiftDate(date,2));else if(wd!==1)setDate(shiftDate(date,1-wd));},[view,date]);
   const status=actionMessage();
   if(schoolSources)return <SchoolSourcesScreen language={language} dark={dark} onBack={()=>{setSchoolSources(false);void load();}}/>;
   if(managingSources)return <SourceScreen language={language} dark={dark} onBack={()=>{setManagingSources(false);void load();}}/>;
@@ -137,22 +140,25 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
   const dayTitle=(d:string)=>{const today=dateInZone(new Date().toISOString(),zone);const wd=new Date(d+'T00:00:00Z').getUTCDay();const label=zh?`${Number(d.slice(5,7))} 月 ${Number(d.slice(8))} 日 周${'日一二三四五六'[wd]}`:new Date(d+'T00:00:00Z').toLocaleDateString('en-HK',{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'});return d===today?`${zh?'今天':'Today'} · ${label}`:label;};
   let n=0;
   return <View style={{gap:18}}>
-    <PageHeader onBack={()=>{setView('home');setCourseId(null);}} backLabel={zh?'今天':'Today'} title={view==='courses'?(zh?'课程':'Courses'):view==='all'?(courseId?courses.find(c=>c.id===courseId)?.title??t.all:(zh?'全部记录':'All records')):(zh?'日程':'Schedule')} subtitle={t.private}
-      right={<><CircleButton icon="ellipsis" label={zh?'更多设置':'More settings'} onPress={()=>ActionSheetIOS.showActionSheetWithOptions({options:[zh?'学校连接与同步':'School connections',zh?'管理导入来源':'Imported sources',`${t.zone}: ${zone}`,zh?'取消':'Cancel'],cancelButtonIndex:3},i=>{if(i===0)setSchoolSources(true);if(i===1)setManagingSources(true);if(i===2)ActionSheetIOS.showActionSheetWithOptions({options:['Asia/Hong_Kong','UTC','Europe/London','America/New_York',zh?'取消':'Cancel'],cancelButtonIndex:4},j=>{if(j<4)setZone(['Asia/Hong_Kong','UTC','Europe/London','America/New_York'][j]);});})}/><CircleButton icon="plus" label={zh?'添加':'Add'} onPress={addMenu}/></>}/>
-    <Segmented value={view} label={zh?'视图':'View'} options={(['day','week','courses','all'] as const).map(v=>({value:v,label:t[v]}))} onChange={v=>{setView(v);setCourseId(null);}}/>
+    <PageHeader onBack={()=>{setView('home');setCourseId(null);}} backLabel={zh?'今天':'Today'} title={view==='courses'?(zh?'课程':'Courses'):view==='all'?(courseId?courses.find(c=>c.id===courseId)?.title??t.all:(zh?'全部记录':'All records')):view==='week'?(zh?'本周课表':'This week'):(zh?'日程':'Schedule')} subtitle={t.private}
+      right={<><CircleButton icon="ellipsis" label={zh?'更多设置':'More settings'} onPress={()=>ActionSheetIOS.showActionSheetWithOptions({options:[zh?'学校连接与同步':'School connections',zh?'管理导入来源':'Imported sources',`${t.zone}: ${zone}`,zh?'导入其他日历（ICS）':'Import another calendar (ICS)',zh?'取消':'Cancel'],cancelButtonIndex:4},i=>{if(i===0)setSchoolSources(true);if(i===1)setManagingSources(true);if(i===3)setImporting(true);if(i===2)ActionSheetIOS.showActionSheetWithOptions({options:['Asia/Hong_Kong','UTC','Europe/London','America/New_York',zh?'取消':'Cancel'],cancelButtonIndex:4},j=>{if(j<4)setZone(['Asia/Hong_Kong','UTC','Europe/London','America/New_York'][j]);});})}/><CircleButton icon="plus" label={zh?'添加':'Add'} onPress={addMenu}/></>}/>
+    <Segmented value={view} label={zh?'视图':'View'} options={(['day','week','courses','all'] as const).map(v=>({value:v,label:v==='all'?(zh?'全部':'All'):t[v]}))} onChange={v=>{setView(v);setCourseId(null);}}/>
     {status?<Notice tone={needsReview||actionState.phase==='rejected'?'warning':'success'} text={status} action={needsReview?(zh?'核对':'Check'):undefined} onAction={()=>void actions.check()}/>:null}
     {error?<Notice tone="error" text={error} action={zh?'重试':'Retry'} onAction={()=>void load()}/>:null}
     {linkError?<Notice tone="error" text={linkError}/>:null}
     {view==='day'||view==='week'?<>
       <View style={{flexDirection:'row',alignItems:'center',gap:8}}>
-        <CircleButton variant="fill" icon="chevron-left" label={t.previous} onPress={()=>setDate(shiftDate(date,view==='week'?-7:-1))}/>
+        <CircleButton icon="chevron-left" label={t.previous} onPress={()=>setDate(shiftDate(date,view==='week'?-7:-1))}/>
         <Pressable accessibilityRole="button" onPress={()=>setDate(dateInZone(new Date().toISOString(),zone))} style={{flex:1,alignItems:'center'}}><Text style={{fontSize:17,fontWeight:'700',color:colors.text}}>{view==='week'?`${dayTitle(date).replace(/^今天 · |^Today · /,'')} – ${Number(shiftDate(date,6).slice(8))}${zh?' 日':''}`:dayTitle(date)}</Text><Text style={{fontSize:12,color:colors.accent}}>{zh?'回到今天':'Back to today'}</Text></Pressable>
-        <CircleButton variant="fill" icon="chevron-right" label={t.next} onPress={()=>setDate(shiftDate(date,view==='week'?7:1))}/>
+        <CircleButton icon="chevron-right" label={t.next} onPress={()=>setDate(shiftDate(date,view==='week'?7:1))}/>
       </View>
       {loading&&!sameRange?<><Skeleton/><Skeleton/></>:null}
       {!loading&&calendar?.import_issues.length?<Notice tone="warning" text={zh?'部分导入日程无法在此范围展开，请检查来源。':'Some imported schedules could not be expanded for this range.'} action={zh?'查看':'Review'} onAction={()=>setManagingSources(true)}/>:null}
-      {sameRange?calendar!.days.map(day=><View key={day.date} style={{gap:10}}>
-        {view==='week'?<Text style={{paddingHorizontal:4,fontSize:15,fontWeight:'700',color:colors.text}}>{dayTitle(day.date)}</Text>:null}
+      {sameRange&&view==='week'?<>
+        <WeekGrid days={calendar!.days} today={dateInZone(new Date().toISOString(),zone)} zh={zh} colorOf={id=>courseColor(courses,id)} codeOf={i=>courses.find(c=>c.id===i.course_id)?.code||i.title} onOpen={i=>itemMenu(i)} onDay={d=>{setDate(d);setView('day');}}/>
+        {calendar!.days.some(d=>d.tasks.length)?<View style={{gap:10}}><Text style={{paddingHorizontal:4,fontSize:20,fontWeight:'700',color:colors.text}}>{zh?'本周截止':'Due this week'}</Text>{calendar!.days.flatMap(d=>d.tasks).map(i=>renderItem(i,n++))}</View>:null}
+      </>:null}
+      {sameRange&&view==='day'?calendar!.days.map(day=><View key={day.date} style={{gap:10}}>
         {!day.events.length&&!day.tasks.length?(view==='day'?<EmptyState icon="sun" title={zh?'这天没有安排':'Nothing planned'} body={zh?'留点空白也很好。':'Some free time is good too.'}/>:<Text style={{paddingHorizontal:4,fontSize:14,color:colors.tertiary}}>{zh?'没有安排':'Free'}</Text>):null}
         {day.events.map(i=>renderItem(i,n++))}{day.tasks.map(i=>renderItem(i,n++))}
       </View>):null}

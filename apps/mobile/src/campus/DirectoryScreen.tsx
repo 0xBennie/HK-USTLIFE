@@ -6,7 +6,7 @@ import {api,session} from '../runtime';
 import type {Language} from '../strings';
 import type {directoryData} from '../../../../src/product/campus/directory-data';
 import {TargetActions,type CampusTarget} from './TargetActions';
-import {EmptyState,FilterPill,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PillRow,Skeleton,Stagger,Surface,usePenColors} from '../ui/Pen';
+import {EmptyState,FilterPill,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PillRow,Skeleton,Stagger,Surface,usePenColors,GlassChips,SearchField} from '../ui/Pen';
 type Entry=typeof directoryData[number]&{version:number;freshness:string};
 const meta=(cat:string,c:ReturnType<typeof usePenColors>):[string,string]=>cat==='study'?['library',c.indigo]:cat==='shop'?['shopping-bag','#A9824C']:['life-buoy',c.accent];
 // Pen "directory" / "place" boards in the V2 list style.
@@ -44,11 +44,8 @@ export function DirectoryScreen({language,onBack,onLogin,initialCategory,initial
  }
  return <View style={{gap:18}}>
   <PageHeader onBack={()=>navigate(onBack)} backLabel={zh?'校园':'Campus'} title={zh?'校园生活':'Campus life'} subtitle={zh?'找到地方，也找到它的使用方法。':'Find the place and how to use it.'}/>
-  <View style={{flexDirection:'row',alignItems:'center',gap:8,height:44,paddingHorizontal:12,borderRadius:12,backgroundColor:c.fill}}><PenIcon name="search" size={17} color={c.muted}/><TextInput accessibilityLabel={zh?'搜索地点或服务':'Search places'} value={q} onChangeText={setQ} placeholder={zh?'名称、楼层或服务':'Name, floor or service'} placeholderTextColor={c.muted} clearButtonMode="while-editing" style={{flex:1,fontSize:16,color:c.text}}/></View>
-  <PillRow>
-   {(['','study','shop','service'] as const).map(v=><FilterPill key={v} label={({'':zh?'全部':'All',study:zh?'学习':'Study',shop:zh?'吃喝购物':'Food & shops',service:zh?'服务':'Services'})[v]} selected={category===v} onPress={()=>setCategory(v)}/>)}
-   <FilterPill label={zh?'收藏':'Saved'} icon="bookmark" selected={onlySaved} onPress={()=>profile?setOnlySaved(!onlySaved):onLogin()}/>
-  </PillRow>
+  <SearchField value={q} onChangeText={setQ} placeholder={zh?'名称、楼层或服务':'Name, floor or service'}/>
+  <GlassChips label={zh?'分类':'Category'} value={onlySaved?'saved':category} onChange={v=>{if(v==='saved'){if(profile)setOnlySaved(true);else onLogin();}else{setOnlySaved(false);setCategory(v);}}} items={[{value:'',label:zh?'全部':'All'},{value:'study',label:zh?'学习':'Study'},{value:'shop',label:zh?'吃喝购物':'Food'},{value:'service',label:zh?'服务':'Services'},{value:'saved',label:zh?'收藏':'Saved'}]}/>
   {error?<Notice tone="error" text={zh?'更新失败，保留的资料可能过时。':'Refresh failed; information may be outdated.'} action={zh?'重试':'Retry'} onAction={()=>void load()}/>:null}
   {busy&&!entries.length?<><Skeleton/><Skeleton/></>:null}
   {!busy&&entries.length>0&&!visible.length?<EmptyState icon="search-x" title={zh?'没有匹配的地点':'No matching places'} body={zh?'换个关键词，或看看全部分类。':'Try another keyword or category.'}/>:null}

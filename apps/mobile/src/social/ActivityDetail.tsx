@@ -63,15 +63,14 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
  // Pen lAQTw "Bottom bar": calendar circle + one primary action + one quiet line. Replaces the tab bar while this page is open.
  const bar=!activity||recontact||editing?null:<BottomBar>
   <View style={{flexDirection:'row',alignItems:'center',gap:10}}>
-   {profile&&activity.status!=='cancelled'?<CircleButton variant="fill" icon={mine?.calendar_saved?'calendar-check':'calendar-plus'} color={mine?.calendar_saved?c.accent:c.text} disabled={frozen} label={mine?.calendar_saved?(zh?'已保存日程，点击移除':'In my calendar, tap to remove'):(zh?'保存到个人日程（不等于报名）':'Save to my calendar (does not join)')} onPress={()=>prefs({calendar_saved:!mine?.calendar_saved,remind_minutes:null})}/>:null}
+   {profile&&activity.status!=='cancelled'?<CircleButton icon={mine?.calendar_saved?'calendar-check':'calendar-plus'} color={mine?.calendar_saved?c.accent:c.text} disabled={frozen} label={mine?.calendar_saved?(zh?'已保存日程，点击移除':'In my calendar, tap to remove'):(zh?'保存到个人日程（不等于报名）':'Save to my calendar (does not join)')} onPress={()=>prefs({calendar_saved:!mine?.calendar_saved,remind_minutes:null})}/>:null}
    {!profile?<PrimaryButton label={zh?'登录后报名':'Sign in to join'} onPress={onLogin}/>
     :joinPending?<PrimaryButton tone="soft" label={zh?'查看操作进度':'View request status'} onPress={()=>setJoinVisible(true)}/>
     :canJoin?<PrimaryButton label={zh?'看看报名安排':'Review and join'} disabled={frozen} onPress={()=>{joinController.review(activity);setJoinVisible(true);}}/>
     :mine?.is_organizer&&!activity.started&&activity.status!=='cancelled'?<PrimaryButton tone="soft" label={zh?'修改时间与地点':'Edit time and place'} disabled={frozen} onPress={()=>setEditing(true)}/>
     :<PrimaryButton tone="soft" disabled label={part?`${participationLabel(part.status,zh)}${part.waitlist_position?` · ${zh?'第':'#'}${part.waitlist_position}${zh?' 位':''}`:''}`:statusText} onPress={()=>{}}/>}
+   {participating?<CircleButton icon="log-out" color={c.danger} disabled={frozen} label={part!.status==='waitlisted'?(zh?'退出候补':'Leave waitlist'):(zh?'退出报名':'Withdraw')} onPress={withdraw}/>:null}
   </View>
-  {participating?<TextAction color={c.danger} disabled={frozen} label={part!.status==='waitlisted'?(zh?'退出候补':'Leave waitlist'):(zh?'退出报名':'Withdraw')} onPress={withdraw}/>
-   :canJoin||!profile?<Text style={{minHeight:36,textAlign:'center',textAlignVertical:'center',paddingTop:7,fontSize:16,lineHeight:23,fontWeight:'600',color:c.muted}}>{zh?'候补按顺序递补，报名后可随时退出':'Waitlist moves in order; you can withdraw anytime'}</Text>:null}
  </BottomBar>;
  useSceneBottomBar(bar);
  if(recontact)return <ReconnectionScreen activityId={id} peer={recontact} language={language} dark={dark} onBack={()=>{setRecontact(null);void load();}}/>;

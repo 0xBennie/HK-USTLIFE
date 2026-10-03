@@ -2,14 +2,12 @@ import {useHideTabBar} from '../navigation/SceneOverlay';
 import {StudySaveController,type StudyWrite} from './save-controller';
 import {reviewRequired} from '../write-receipt';
 import {useInputProtection} from '../navigation/InputProtection';
-import {ReminderPicker} from '../reminders/ReminderControls';
 import { useEffect,useMemo,useRef,useState,useSyncExternalStore } from 'react';
-import { ScrollView,Text,View } from 'react-native';
-import { Button } from '../ui/Primitives';
-import { Input } from '../ui/Primitives';
+import { ActionSheetIOS,Text,TextInput,View } from 'react-native';
+import {CircleButton,FormField,FormGroup,GlassChips,ListGroup,ListRow,Notice,PrimaryButton,Surface,SwitchRow,usePenColors} from '../ui/Pen';
+import {DateTimeField} from '../ui/DateTimeField';
 import { ApiFailure } from '../api';
 import { session } from '../runtime';
-import { palette,styles } from '../theme';
 import type { Language } from '../strings';
 import type { Course,StudyItem,CalendarItem } from './types';
 import { studyStrings } from './strings';
@@ -20,7 +18,7 @@ export function StudyForm({editor,courses,language,dark,onSaved,onBack}:{editor:
  useHideTabBar();
   const alive=useRef(true);
   useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
-  const t=studyStrings[language],colors=palette[dark?'dark':'light'],existing=editor.record;
+  const t=studyStrings[language],existing=editor.record;
   const imported=existing&&'import_origin' in existing?existing:undefined;
   const initial=existing && 'kind' in existing?existing:undefined;
   const [title,setTitle]=useState(existing?.title ?? '');
@@ -42,10 +40,6 @@ export function StudyForm({editor,courses,language,dark,onSaved,onBack}:{editor:
   const mustReview=reviewRequired(saveState.error);
   const protectInput=useInputProtection({title,body,code,courseId,location,url,allDay,start,end,dueMode,due,remindMinutes},busy,uncertain,language==='zh');
   const change=<T,>(set:(v:T)=>void,value:T)=>{if(!frozen)set(value);};
-  const field=(label:string,value:string,onChange:(v:string)=>void,multiline=false,placeholder?:string)=><View style={styles.smallStack}>
-    <Text style={[styles.body,{color:colors.text}]}>{label}</Text>
-    <Input accessibilityLabel={label} value={value} editable={!frozen} onChangeText={v=>change(onChange,v)} multiline={multiline} placeholder={placeholder} autoCapitalize="none" style={[styles.input,{color:colors.text,borderColor:colors.border},multiline?{minHeight:112,textAlignVertical:'top'}:{}]} />
-  </View>;
   async function save() {
     if(controller.snapshot().phase==='submitting')return;setError('');
     try {
@@ -78,33 +72,46 @@ export function StudyForm({editor,courses,language,dark,onSaved,onBack}:{editor:
       else if(failure.error)throw failure.error;
     } catch(e) { if(alive.current)setError(e instanceof ApiFailure?(e.code==='VERSION_CONFLICT'?t.conflict:e.status===400?t.invalid:t.saveError):t.invalid); }
   }
-  return <View style={styles.stack}>
-    <Button variant="ghost" isDisabled={busy} onPress={()=>protectInput(onBack)}>{t.back}</Button>
-    <Text style={[styles.heading,{color:colors.text}]}>{existing?t.edit:t.add} · {t[editor.kind]}</Text>
-    {field(t.name,title,setTitle)}
-    {editor.kind==='course'?field(t.code,code,setCode):imported?<Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'仅修改这一次日程，不影响其他周次。':'Edit this occurrence only; other dates stay unchanged.'}</Text>:<View style={styles.smallStack}>
-      <Text style={[styles.body,{color:colors.text}]}>{t.courseChoice}</Text>
-      <ScrollView horizontal><View style={styles.row}>
-        <Button variant={courseId===null?'primary':'secondary'} isDisabled={frozen} onPress={()=>change(setCourseId,null)}>{courseId===null?'✓ ':''}{t.noCourse}</Button>
-        {courses.map(c=><Button key={c.id} variant={courseId===c.id?'primary':'secondary'} isDisabled={frozen} onPress={()=>change(setCourseId,c.id)}>{courseId===c.id?'✓ ':''}{c.code||c.title}</Button>)}
-      </View></ScrollView>
-    </View>}
-    {editor.kind==='event'?<>
-      <Button variant="secondary" isDisabled={frozen} onPress={()=>{setAllDay(!allDay);setStart('');setEnd('');}}>{allDay?`✓ ${t.allDay}`:t.timed}</Button>
-      <Text style={[styles.caption,{color:colors.muted}]}>{t.format}</Text>
-      {field(allDay?t.date:t.start,start,setStart,false,allDay?'2026-10-05':'2026-10-05 09:00')}
-      {field(allDay?t.endDate:t.end,end,setEnd)}
-      {field(t.location,location,setLocation)}
-    </>:null}
-    {editor.kind==='task'?<>
-      <Text style={[styles.body,{color:colors.text}]}>{t.due}</Text>
-      {(['none','date','time'] as const).map(mode=><Button key={mode} variant={dueMode===mode?'primary':'secondary'} isDisabled={frozen} onPress={()=>{setDueMode(mode);setDue('');}}>{dueMode===mode?'✓ ':''}{mode==='none'?t.noDue:mode==='date'?t.dateDue:t.timeDue}</Button>)}
-      {dueMode!=='none'?<><Text style={[styles.caption,{color:colors.muted}]}>{t.format}</Text>{field(dueMode==='date'?t.dueDate:t.dueTime,due,setDue,false,dueMode==='date'?'2026-10-05':'2026-10-05 17:00')}</>:null}
-    </>:null}
-    {(editor.kind==='event'&&!allDay)||(editor.kind==='task'&&dueMode==='time')?<ReminderPicker value={remindMinutes} onChange={value=>change(setRemindMinutes,value)} language={language} dark={dark} disabled={frozen}/>:null}
-    {editor.kind==='material'?field(t.url,url,setUrl,false,'https://…'):null}
-    {field(t.body,body,setBody,true)}
-    {error?<Text accessibilityRole="alert" style={[styles.body,{color:colors.danger}]}>{error}</Text>:null}
-    {mustReview?<Button variant="secondary" onPress={()=>protectInput(onBack)}>{language==='zh'?'返回核对已保存的安排':'Go back to check saved plans'}</Button>:<Button isDisabled={frozen&&!uncertain || !title.trim()} onPress={save}>{busy?t.loading:uncertain?(language==='zh'?'重试确认保存结果':'Retry to confirm save'):t.save}</Button>}
+  // Pen board "V5 / 添加截止" (Q5QFX): title card, course / due / reminder rows, quick due chips, notes, one prominent save.
+  const zh=language==='zh',c=usePenColors();
+  const kindTitle=editor.kind==='task'?(zh?'截止':'deadline'):t[editor.kind];
+  const today=hongKongInput(new Date().toISOString()).slice(0,10);
+  const addDays=(d:string,n:number)=>new Date(Date.parse(d+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);
+  const wd=new Date(today+'T00:00:00Z').getUTCDay(),friday=addDays(today,(5-wd+7)%7);
+  const quick:[string,string][]=[[zh?'今晚 23:59':'Tonight 23:59',`${today} 23:59`],[zh?'明天 23:59':'Tomorrow 23:59',`${addDays(today,1)} 23:59`],[zh?'周五 17:00':'Fri 17:00',`${friday} 17:00`]];
+  const remindLabel=(m:number|null)=>m===null?(zh?'不提醒':'None'):m===0?(zh?'准时':'At time'):m<60?(zh?`提前 ${m} 分钟`:`${m} min before`):m<1440?(zh?`提前 ${m/60} 小时`:`${m/60} h before`):(zh?`提前 ${m/1440} 天`:`${m/1440} d before`);
+  const pickCourse=()=>{if(frozen)return;const opts=[t.noCourse,...courses.map(x=>x.code||x.title),zh?'取消':'Cancel'];ActionSheetIOS.showActionSheetWithOptions({options:opts,cancelButtonIndex:opts.length-1},i=>{if(i===0)setCourseId(null);else if(i<opts.length-1)setCourseId(courses[i-1].id);});};
+  const pickRemind=()=>{if(frozen)return;const mins:(number|null)[]=[null,0,10,30,60,1440];const opts=[...mins.map(remindLabel),zh?'取消':'Cancel'];ActionSheetIOS.showActionSheetWithOptions({options:opts,cancelButtonIndex:opts.length-1},i=>{if(i<mins.length)setRemindMinutes(mins[i]);});};
+  const linked=courses.find(x=>x.id===courseId);
+  const timed=(editor.kind==='event'&&!allDay)||(editor.kind==='task'&&dueMode==='time');
+  return <View style={{gap:16}}>
+    <View style={{flexDirection:'row',alignItems:'center',minHeight:48}}>
+      <CircleButton icon="x" label={zh?'取消':'Cancel'} disabled={busy} onPress={()=>protectInput(onBack)}/>
+      <Text style={{flex:1,textAlign:'center',fontSize:17,fontWeight:'700',color:c.text}}>{existing?(zh?`编辑${kindTitle}`:`Edit ${kindTitle}`):(zh?`添加${kindTitle}`:`Add ${kindTitle}`)}</Text>
+      <CircleButton variant="prominent" icon="check" label={t.save} disabled={(frozen&&!uncertain)||!title.trim()||mustReview} onPress={()=>void save()}/>
+    </View>
+    <Surface padding={16} style={{gap:6}}>
+      <Text style={{fontSize:13,fontWeight:'600',color:c.muted}}>{editor.kind==='course'?(zh?'课程名称':'Course name'):(zh?'标题':'Title')}</Text>
+      <TextInput accessibilityLabel={t.name} value={title} editable={!frozen} onChangeText={v=>change(setTitle,v)} placeholder={editor.kind==='task'?(zh?'例如 Lab 5: Linked lists':'e.g. Lab 5: Linked lists'):editor.kind==='event'?(zh?'例如 小组讨论':'e.g. Group meeting'):''} placeholderTextColor={c.tertiary} style={{fontSize:21,lineHeight:28,fontWeight:'700',color:c.text,paddingVertical:2}}/>
+    </Surface>
+    {editor.kind==='course'?<FormGroup><FormField label={t.code} value={code} onChangeText={v=>change(setCode,v)} editable={!frozen} autoCapitalize="characters"/></FormGroup>:null}
+    {editor.kind!=='course'?<View style={{gap:10}}>
+      <ListGroup>
+        {imported?null:<ListRow icon="book-open" tile="#56647D" title={zh?'课程':'Course'} value={linked?(linked.code||linked.title):t.noCourse} chevron disabled={frozen} onPress={pickCourse}/>}
+        {editor.kind==='task'?<DateTimeField label={zh?'截止':'Due'} value={dueMode==='none'?'':due} mode={dueMode==='date'?'date':'datetime'} clearable disabled={frozen} tile="#E5484D" onChange={v=>{if(frozen)return;if(!v){setDueMode('none');setDue('');}else{setDueMode(v.length>10?'time':'date');setDue(v);}}}/>:null}
+        {editor.kind==='event'?<>
+          <DateTimeField label={allDay?(zh?'日期':'Date'):(zh?'开始':'Starts')} value={start} mode={allDay?'date':'datetime'} disabled={frozen} tile="#24467F" onChange={v=>change(setStart,v)}/>
+          <DateTimeField label={zh?'结束':'Ends'} value={end} mode={allDay?'date':'datetime'} clearable disabled={frozen} tile="#4F6F8C" onChange={v=>change(setEnd,v)}/>
+        </>:null}
+        {timed?<ListRow icon="bell" tile="#D98A1C" title={zh?'提醒':'Reminder'} value={remindLabel(remindMinutes)} chevron disabled={frozen} onPress={pickRemind}/>:null}
+      </ListGroup>
+      {editor.kind==='task'?<GlassChips label={zh?'快捷截止':'Quick due'} value={(dueMode==='time'?quick.find(q=>q[1]===due)?.[1]:undefined)??''} onChange={v=>{if(!frozen){setDueMode('time');setDue(v);if(remindMinutes===null)setRemindMinutes(60);}}} items={quick.map(([label,v])=>({value:v,label}))}/>:null}
+      {editor.kind==='event'?<FormGroup><SwitchRow label={t.allDay} value={allDay} disabled={frozen} onValueChange={v=>{setAllDay(v);setStart('');setEnd('');}}/><FormField label={t.location} value={location} onChangeText={v=>change(setLocation,v)} editable={!frozen} placeholder={zh?'例如 Room 2465':'e.g. Room 2465'}/></FormGroup>:null}
+      {editor.kind==='material'?<FormGroup><FormField label={t.url} value={url} onChangeText={v=>change(setUrl,v)} editable={!frozen} placeholder="https://…" autoCapitalize="none" keyboardType="url"/></FormGroup>:null}
+      {imported?<Text style={{paddingHorizontal:16,fontSize:12,color:c.muted}}>{zh?'仅修改这一次日程，不影响其他周次。':'Edit this occurrence only; other dates stay unchanged.'}</Text>:null}
+    </View>:null}
+    <FormGroup><FormField label={editor.kind==='course'?(zh?'说明':'Description'):(zh?'备注':'Notes')} value={body} onChangeText={v=>change(setBody,v)} editable={!frozen} multiline placeholder={editor.kind==='task'?(zh?'例如 上传 .cpp 到 Canvas，附运行截图':'e.g. Upload .cpp to Canvas'):''}/></FormGroup>
+    {error?<Notice tone={uncertain?'warning':'error'} text={error}/>:null}
+    {mustReview?<PrimaryButton tone="soft" label={zh?'返回核对已保存的安排':'Go back to check saved plans'} onPress={()=>protectInput(onBack)}/>:<PrimaryButton label={busy?t.loading:uncertain?(zh?'重试确认保存结果':'Retry to confirm save'):editor.kind==='task'?(zh?'保存截止':'Save deadline'):t.save} disabled={(frozen&&!uncertain)||!title.trim()} onPress={()=>void save()}/>}
   </View>;
 }
