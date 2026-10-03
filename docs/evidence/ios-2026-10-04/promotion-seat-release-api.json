@@ -1,0 +1,18 @@
+{
+  "mechanism": "Seat holder withdrew through authenticated local HTTP; promoted peer must be verified in existing native session",
+  "id": "453be85b-4df7-4750-9ced-30b51006ec45",
+  "counts": {
+    "confirmed": 1,
+    "waitlisted": 0,
+    "remaining": 0
+  },
+  "seat_holder": {
+    "activity_id": "453be85b-4df7-4750-9ced-30b51006ec45",
+    "status": "withdrawn",
+    "version": 2,
+    "queue_order": 1,
+    "joined_at": "2026-10-03T17:35:46.300Z",
+    "updated_at": "2026-10-03T18:17:35.163Z",
+    "waitlist_position": null
+  }
+}

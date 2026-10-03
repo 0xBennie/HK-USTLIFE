@@ -1,0 +1,86 @@
+Window: "iPhone 18 Pro", App: Device Hub.
+0 standard window iPhone 18 Pro – iOS 27.0, ID: com.apple.dt.DeviceKit.DeviceManagementWindow-AppWindow-1, Secondary Actions: Raise
+	1 split group
+		2 split group com.apple.dt.DeviceKit.DeviceManagementWindow-AppWindow-1, SidebarNavigationSplitView
+			3 scroll area
+				4 list Sidebar
+					5 row (selectable) Description: Available, Value: Expanded
+					6 row (selected) Description: iphone.gen3, Value: iPhone 18 Pro
+27.0
+Simulator
+			7 search text field (settable) Search
+				8 button Search
+			9 splitter (disabled, settable, float) 248
+			10 container
+				11 container
+					12 button Description: Switch to English, Secondary Actions: Cancel
+					13 text Description: 香港科技大学 · 清水湾 · 开发预览, Secondary Actions: Cancel
+					14 button Description: 返回, Secondary Actions: Cancel
+					15 button Description: 刷新, Secondary Actions: Cancel
+					16 text Description: 本地演示活动 · 登录用户可见，非在籍认证, Secondary Actions: Cancel
+					17 text Description: 原生验收 · 候补递补, Secondary Actions: Cancel
+					18 text Description: 开放报名, Secondary Actions: Cancel
+					19 text Description: 时间、地点与参与方式, Secondary Actions: Cancel
+					20 text Description: 2026-10-07 14:00 → 2026-10-07 15:00 HKT, Secondary Actions: Cancel
+					21 text Description: 本地测试集合点, Secondary Actions: Cancel
+					22 text Secondary Actions: Cancel, Description: 组织者: 原生验收账户
+已确认 1/1 · 候补 0
+					23 text Description: 名额不含组织者。候补按加入顺序自动递补，可随时退出。, Secondary Actions: Cancel
+					24 text Description: 普通话 · 安静共处, Secondary Actions: Cancel
+					25 text Description: 免费, Secondary Actions: Cancel
+					26 button Description: 举报／屏蔽, Secondary Actions: Cancel
+					27 text Description: 报名已确认, Secondary Actions: Cancel
+					28 button Description: 退出报名／候补, Secondary Actions: Cancel
+					29 button Description: 收藏活动, Secondary Actions: Cancel
+					30 button Description: ✓ 已保存日程，点击移除, Secondary Actions: Cancel
+					31 text Description: 提醒时间, Secondary Actions: Cancel
+					32 element Description: ✓ 不提醒, Secondary Actions: Cancel
+					33 button Description: 准时, Secondary Actions: Cancel
+					34 button Description: 提前 10 分钟, Secondary Actions: Cancel
+					35 button Description: 提前 30 分钟, Secondary Actions: Cancel
+					36 button Description: 提前 60 分钟, Secondary Actions: Cancel
+					37 text Description: 保存后生效；需在“我的”中开启本机提醒并允许通知。, Secondary Actions: Cancel
+					38 text Description: 活动讨论, Secondary Actions: Cancel
+					39 Group Description: 发表评论 询问条件、集合方式……, Secondary Actions: Cancel, Scroll Right
+					40 text Description: 评论与活动具有相同可见范围。, Secondary Actions: Cancel
+					41 button (disabled) Description: 发布评论, Secondary Actions: Cancel
+					42 text Description: 还没有评论。, Secondary Actions: Cancel
+					43 element Description: 今天, Secondary Actions: Cancel
+					44 element Description: 校园, Secondary Actions: Cancel
+					45 element (selected) Description: 发现, Secondary Actions: Cancel
+					46 element Description: 消息, Secondary Actions: Cancel
+					47 element Description: 我的, Secondary Actions: Cancel
+					48 image Description: Gear Shape, Filled, ID: gearshape.fill, Secondary Actions: Cancel
+				49 button Description: Home, ID: app.grid.3x3
+				50 button Description: Screenshot, ID: camera.viewfinder
+				51 button Description: Record, ID: record.circle
+				52 button Rotate Left
+	53 toolbar
+		54 menu button Add, Help: Add Device, ID: plus
+		55 toggle button Description: Filter, Help: Sort and Filter, Value: off
+		56 button Description: Hide Sidebar, Secondary Actions: Increment, Decrement, Delete, Cancel
+		57 toggle button Description: Capture Keyboard, Value: off
+		58 toggle button Description: Resize mode, Help: Enter resize mode, Value: off
+		59 Zoom
+			60 radio button Description: Zoom Out, Value: 0, ID: minus.magnifyingglass
+			61 radio button Description: arrowtriangles.up.right.down.left.magnifyingglass, Help: Zoom to Fit, Value: 0
+			62 radio button Description: Zoom To Actual Size, Help: Physical Size, Value: 1, ID: 1.magnifyingglass
+			63 radio button Description: Zoom In, Value: 0, ID: plus.magnifyingglass
+		64 button Description: Open in New Window, Secondary Actions: Increment, Decrement, Delete, Cancel, Move previous, Move next, Remove from toolbar
+		65 menu button More, Help: More Actions, ID: ellipsis
+		66 radio button Description: Edit, Help: Settings, Value: 0, ID: slider.horizontal.3
+		67 radio button Description: text.document, Help: Reports, Value: 0
+		68 radio button Description: Info, Value: 0, ID: info
+	69 close button
+	70 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	71 minimize button
+	72 text iPhone 18 Pro iOS 27.0
+73 menu bar
+	74 Device Hub
+	75 File
+	76 Edit
+	77 View
+	78 Device
+	79 Controls
+	80 Window
+	81 Help

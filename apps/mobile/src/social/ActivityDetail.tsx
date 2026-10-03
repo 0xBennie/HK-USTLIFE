@@ -70,7 +70,7 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
    <Text style={[styles.caption,{color:c.muted}]}>{zh?'时间、地点与参与方式':'Time, place and participation'}</Text>
    <Text style={[styles.body,{color:c.text}]}>{dateTimeInZone(activity.starts_at,'Asia/Hong_Kong')} → {dateTimeInZone(activity.ends_at,'Asia/Hong_Kong')} HKT</Text>
    <Text style={[styles.body,{color:c.text}]}>{activity.location}</Text>
-   <Text style={[styles.body,{color:c.text}]}>{zh?'组织者':'Organizer'}: {activity.organizer.display_name}\n{zh?'已确认':'Confirmed'} {activity.counts.confirmed}/{activity.capacity} · {zh?'候补':'Waitlist'} {activity.counts.waitlisted}</Text>
+   <Text style={[styles.body,{color:c.text}]}>{zh?'组织者':'Organizer'}: {activity.organizer.display_name}{'\n'}{zh?'已确认':'Confirmed'} {activity.counts.confirmed}/{activity.capacity} · {zh?'候补':'Waitlist'} {activity.counts.waitlisted}</Text>
    <Text style={[styles.caption,{color:c.muted}]}>{zh?'名额不含组织者。候补按加入顺序自动递补，可随时退出。':'Places exclude the organizer. Waitlist promotion is automatic in join order; you can withdraw.'}</Text>
    <Text style={[styles.body,{color:c.text}]}>{activity.languages.map(l=>l==='en'?'English':l==='yue'?(zh?'粤语':'Cantonese'):(zh?'普通话':'Mandarin')).join(' / ')} · {activity.interaction==='quiet'?(zh?'安静共处':'Quiet company'):activity.interaction==='casual'?(zh?'随意交流':'Casual conversation'):(zh?'主动讨论／协作':'Active collaboration')}</Text>
    <Text style={[styles.body,{color:c.text}]}>{activity.cost_minor===0?(zh?'免费':'Free'):`HK$ ${(activity.cost_minor/100).toFixed(2)} ${zh?'／人（仅费用说明，不收款）':'per person (informational, no payment collected)'}`}</Text>
