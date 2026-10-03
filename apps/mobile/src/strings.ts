@@ -1,7 +1,7 @@
 export type Language = 'zh' | 'en';
 export const strings = {
   zh: {
-    tabs: ['今天', '校园', '发现', '消息', '我的'], brand: '在科大，好好生活', campus: '香港科技大学 · 清水湾',
+    tabs: ['今天', '校园', '校园墙', '消息', '我的'], brand: '在科大，好好生活', campus: '香港科技大学 · 清水湾',
     dev: '本地开发版 · 数据仅供测试', loginTitle: '欢迎来到 Campus', loginBody: '登录后保存自己的安排。浏览校园信息不需要公开课表，也不需要参与社交。',
     email: '邮箱', sendCode: '获取开发验证码', code: '六位验证码', signIn: '登录', resend: '重新获取', changeEmail: '更换邮箱',
     localMail: '当前不会发送真实邮件。验证码保存在电脑的本地开发收件箱，使用启动说明中的命令查看。',
@@ -15,7 +15,7 @@ export const strings = {
     errors: { RATE_LIMITED: '请求太频繁，请稍后再试。', INVALID_CODE: '验证码不正确。', CHALLENGE_UNAVAILABLE: '验证码已过期或使用，请重新获取。', REAUTH_REQUIRED: '请先退出并重新登录，再删除账户。', INVALID_INPUT: '请检查填写的内容。', ACCOUNT_RESTRICTED: '此账户已受限。', NETWORK_ERROR: '连接失败，请检查网络和本机后端。', STORAGE_ERROR: '无法保存登录状态，请重试。', REQUEST_FAILED: '操作未完成，请重试。' } as Record<string, string>,
   },
   en: {
-    tabs: ['Today', 'Campus', 'Discover', 'Inbox', 'Me'], brand: 'Make room for campus life', campus: 'HKUST · Clear Water Bay',
+    tabs: ['Today', 'Campus', 'Wall', 'Inbox', 'Me'], brand: 'Make room for campus life', campus: 'HKUST · Clear Water Bay',
     dev: 'Local development · Test data only', loginTitle: 'Welcome to Campus', loginBody: 'Sign in to keep your own plans. Browse campus information without sharing your timetable or joining social activities.',
     email: 'Email', sendCode: 'Get development code', code: 'Six-digit code', signIn: 'Sign in', resend: 'Request another code', changeEmail: 'Change email',
     localMail: 'No real email is sent. Your code is stored in the computer’s local development inbox. See the startup guide for the read command.',

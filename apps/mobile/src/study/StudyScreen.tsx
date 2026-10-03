@@ -1,15 +1,13 @@
-import {Icon} from '../ui/Icon';
 import {useInputProtection} from '../navigation/InputProtection';
 import {StudyActionController,type StudyAction} from './action-controller';
 import {useSceneFocus} from '../navigation/TabScene';
-import {participationLabel} from '../social/shared';
 import {SchoolSourcesScreen} from './SchoolSourcesScreen';
 import { SourceScreen } from './SourceScreen';
 import { ImportScreen } from './ImportScreen';
 import { useCallback,useEffect,useRef,useState,useSyncExternalStore } from 'react';
-import { ActivityIndicator,Alert,Linking,Pressable,ScrollView,Text,View } from 'react-native';
-import { Button, Disclosure, SegmentedControl } from '../ui/Primitives';
-import { Card } from '../ui/Primitives';
+import { ActionSheetIOS,Alert,Linking,Pressable,Text,View } from 'react-native';
+import {CheckCircle,CircleButton,EmptyState,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Segmented,Skeleton,Stagger,Surface} from '../ui/Pen';
+import {TodayHome,courseColor} from './TodayHome';
 import { session } from '../runtime';
 import { palette,styles } from '../theme';
 import type { Language } from '../strings';
@@ -26,13 +24,13 @@ async function allPages<T>(path:string) {
   } while(cursor);
   return items;
 }
-export function StudyScreen({language,dark,onActivity,initialReminder}:{language:Language;dark:boolean;onActivity:(id:string)=>void;initialReminder?:{id:string;date:string}|null}) {
+export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,onInbox,initialReminder}:{name?:string;onMe?:()=>void;language:Language;dark:boolean;onActivity:(id:string)=>void;onPost:(id:string)=>void;onCampus:()=>void;onInbox:()=>void;initialReminder?:{id:string;date:string}|null}) {
  const sceneActive=useSceneFocus();
   const t=studyStrings[language],colors=palette[dark?'dark':'light'];
   const [managingSources,setManagingSources]=useState(false);
   const [schoolSources,setSchoolSources]=useState(false);
   const [importing,setImporting]=useState(false);
-  const [view,setView]=useState<'day'|'week'|'courses'|'all'>('day');
+  const [view,setView]=useState<'home'|'day'|'week'|'courses'|'all'>('home');
   const [date,setDate]=useState(()=>dateInZone(new Date().toISOString()));
   const [zone,setZone]=useState('Asia/Hong_Kong'),[choosingZone,setChoosingZone]=useState(false);
   const [courses,setCourses]=useState<Course[]>([]),[items,setItems]=useState<StudyItem[]>([]),[calendar,setCalendar]=useState<Calendar|null>(null);
@@ -48,7 +46,7 @@ export function StudyScreen({language,dark,onActivity,initialReminder}:{language
     try {
       const [nextCourses,nextItems,nextCalendar]=await Promise.all([
         allPages<Course>('/study/courses'),allPages<StudyItem>('/study/items'),
-        session.request<Calendar>(`/me/calendar?from=${date}&to=${shiftDate(date,view==='week'?7:1)}&timezone=${encodeURIComponent(zone)}`),
+        session.request<Calendar>(`/me/calendar?from=${view==='home'?dateInZone(new Date().toISOString()):date}&to=${shiftDate(view==='home'?dateInZone(new Date().toISOString()):date,view==='week'?7:1)}&timezone=${encodeURIComponent(view==='home'?'Asia/Hong_Kong':zone)}`),
       ]);
       if(current!==generation.current||!alive.current)return false;
       setCourses(nextCourses);setCourseId(old=>old&&nextCourses.some(c=>c.id===old)?old:null);setItems(nextItems);setCalendar(nextCalendar);return true;
@@ -78,83 +76,97 @@ export function StudyScreen({language,dark,onActivity,initialReminder}:{language
     const collection='kind' in record?'items':'courses';
     Alert.alert(t.confirmDelete,collection==='courses'?t.detach:record.title,[{text:t.cancel,style:'cancel'},{text:t.remove,style:'destructive',onPress:()=>{if(!alive.current||actionLocked)return;void mutate({path:`/study/${collection}/${record.id}`,method:'DELETE',body:{version:record.version},label:record.title});}}]);
   }
-  function renderItem(item:CalendarItem) {
-    const school='school_origin' in item?item.school_origin:null;
-    const linked=courses.find(c=>c.id===item.course_id);
-    const detail=item.kind==='event'?(item.all_day?`${item.start_date} · ${t.allDayLabel}${item.end_date?` → ${item.end_date}`:''}`:`${dateTimeInZone(item.starts_at!,zone)} → ${item.ends_at?dateTimeInZone(item.ends_at,zone):t.unknownEnd}`)
-      :item.kind==='task'?(item.due_date??(item.due_at?dateTimeInZone(item.due_at,zone):t.undated)):item.kind==='material'?item.url:'';
-    return <Card key={item.id} style={[styles.card,{backgroundColor:colors.surface}]}>
-      <Text style={[styles.caption,{color:colors.muted}]}>{t[item.kind]}{linked?` · ${linked.code||linked.title}`:''}{'status' in item?` · ${t[item.status]}`:''}</Text>
-      <View style={{flexDirection:'row',alignItems:'flex-start',gap:12}}>{item.kind==='task'?<Pressable accessibilityRole="checkbox" accessibilityLabel={`${item.title} · ${item.status==='open'?t.complete:t.reopen}`} accessibilityState={{checked:item.status==='done',disabled:actionLocked,busy:busy&&actionState.label===item.title}} disabled={actionLocked} onPress={()=>void mutate(school?{path:`/school/records/${item.id}/personal`,method:'PATCH',body:{version:school.personal_version,completed:item.status==='open'},label:item.title}:{path:`/study/items/${item.id}`,method:'PATCH',body:{version:item.version,status:item.status==='open'?'done':'open'},label:item.title})} style={({pressed})=>({minWidth:44,minHeight:44,alignItems:'center',justifyContent:'center',opacity:pressed||actionLocked?0.5:1})}><View style={{width:26,height:26,borderRadius:13,borderWidth:1.5,borderColor:item.status==='done'?colors.accent:colors.muted,backgroundColor:item.status==='done'?colors.accent:'transparent',alignItems:'center',justifyContent:'center'}}>{item.status==='done'?<Icon name="check" color={dark?'#001C38':'white'} size={18}/>:null}</View></Pressable>:null}<Text style={[styles.heading,{color:colors.text,flex:1,flexShrink:1,textDecorationLine:item.kind==='task'&&item.status==='done'?'line-through':'none'}]}>{item.title}</Text></View>
-      {detail?<Text selectable style={[styles.body,{color:colors.muted}]}>{detail}</Text>:null}
-      {item.kind==='event'&&item.location?<Text style={[styles.body,{color:colors.muted}]}>{item.location}</Text>:null}
-      {item.body?<Text selectable style={[styles.body,{color:colors.text}]}>{item.body}</Text>:null}
-      {school?<View style={styles.stack}>
-        <Text style={[styles.caption,{color:colors.accent}]}>{school.provider==='sis'?'SIS · ':'Canvas · '}{language==='zh'?'学校来源':'School source'}</Text>
-        <Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?`最近读取 ${dateTimeInZone(school.source_seen_at,zone)}`:`Last read ${dateTimeInZone(school.source_seen_at,zone)}`}</Text>
-        {school.stale?<Text accessibilityRole="alert" style={[styles.caption,{color:colors.danger}]}>{language==='zh'?'当前保留上次成功同步的安排，可能已有变化。恢复连接并核对后，再启用这条系统提醒。':'This is the last successful snapshot and may have changed. This source reminder is suspended until sync is healthy.'}</Text>:null}
-        {item.kind==='task'?<Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'勾选只记录自己的完成情况，不代表已向 Canvas 提交。':'Checking this records personal completion, not submission to Canvas.'}</Text>:null}
-        {school.notes?<><Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'我的备注 · 仅自己可见':'My notes · private'}</Text><Text selectable style={[styles.body,{color:colors.text}]}>{school.notes}</Text></>:null}
-      </View>:<Disclosure title={language==='zh'?'查看与管理':'View & manage'}>
-      {'activity_origin' in item?<><Text style={[styles.body,{color:colors.text}]}>{participationLabel(item.activity_origin.participation,language==='zh')}</Text><Button variant="secondary" onPress={()=>onActivity(item.activity_origin.id)}>{language==='zh'?'查看活动／管理参与':'View activity / manage participation'}</Button></>:<>
-
-      {item.kind==='event'&&!('import_origin' in item)?<Button variant="secondary" isDisabled={actionLocked} onPress={()=>mutate({path:`/study/items/${item.id}`,method:'PATCH',body:{version:item.version,status:item.status==='active'?'cancelled':'active'},label:item.title})}>{item.status==='active'?t.cancelEvent:t.restoreEvent}</Button>:null}
-      {item.kind==='material'?<Button variant="secondary" onPress={()=>void openResource(item.url)}>{t.viewLink}</Button>:null}
-      {!('import_origin' in item)?<><Button variant="ghost" isDisabled={actionLocked} onPress={()=>setEditor({kind:item.kind,record:item})}>{t.edit}</Button>
-      <Button variant="ghost" isDisabled={actionLocked} onPress={()=>remove(item)}>{t.remove}</Button></>:<><Button variant="ghost" isDisabled={actionLocked} onPress={()=>setEditor({kind:'event',record:item})}>{language==='zh'?'修改这一次':'Edit this occurrence'}</Button><Button variant="secondary" isDisabled={actionLocked} onPress={()=>mutate({path:`/calendar/series/${item.import_origin.series_id}/occurrence/status`,method:'PATCH',body:{version:item.version,recurrence_id:item.recurrence_id,status:'cancelled'},label:item.title})}>{language==='zh'?'取消这一次':'Cancel this occurrence'}</Button><Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?`导入来源：${item.import_origin.source_name}${item.source_status==='tentative'?' · 源日程暂定':''} · 尚未确认参与`:`Imported from ${item.import_origin.source_name}${item.source_status==='tentative'?' · tentative source event':''} · participation unconfirmed`}</Text>{item.source_occurrence_missing?<Text style={[styles.caption,{color:colors.danger}]}>{language==='zh'?'来源已无此日程；按你的选择保留个人安排。':'This occurrence is no longer in the source; your private change was retained.'}</Text>:null}</>}</>}
-      </Disclosure>}
-    </Card>;
+  const zh=language==='zh';
+  function toggle(item:Extract<CalendarItem,{kind:'task'}>){const school='school_origin' in item?item.school_origin:null;void mutate(school?{path:`/school/records/${item.id}/personal`,method:'PATCH',body:{version:school.personal_version,completed:item.status==='open'},label:item.title}:{path:`/study/items/${item.id}`,method:'PATCH',body:{version:item.version,status:item.status==='open'?'done':'open'},label:item.title});}
+  function addMenu(){
+    const kinds:[string,()=>void][]=[[zh?'截止 / 任务':'Deadline / task',()=>setEditor({kind:'task',courseId})],[zh?'日程':'Event',()=>setEditor({kind:'event',courseId})],[zh?'私人笔记':'Note',()=>setEditor({kind:'note',courseId})],[zh?'资料链接':'Link',()=>setEditor({kind:'material',courseId})],[zh?'课程':'Course',()=>setEditor({kind:'course',courseId})],[zh?'导入日历文件（ICS）':'Import calendar (ICS)',()=>setImporting(true)]];
+    ActionSheetIOS.showActionSheetWithOptions({title:zh?'添加':'Add',options:[...kinds.map(k=>k[0]),zh?'取消':'Cancel'],cancelButtonIndex:kinds.length},i=>{if(i<kinds.length&&!actionLocked)kinds[i][1]();});
   }
+  function itemMenu(item:CalendarItem){
+    const opts:[string,()=>void,boolean?][]=[];
+    if('activity_origin' in item)opts.push([zh?'查看活动':'View activity',()=>onActivity(item.activity_origin.id)]);
+    else if('school_origin' in item){}
+    else if('import_origin' in item){opts.push([zh?'修改这一次':'Edit this occurrence',()=>setEditor({kind:'event',record:item})]);opts.push([zh?'取消这一次':'Cancel this occurrence',()=>void mutate({path:`/calendar/series/${item.import_origin.series_id}/occurrence/status`,method:'PATCH',body:{version:item.version,recurrence_id:item.recurrence_id,status:'cancelled'},label:item.title}),true]);}
+    else {
+      if(item.kind==='material')opts.push([t.viewLink,()=>void openResource(item.url)]);
+      opts.push([t.edit,()=>setEditor({kind:item.kind,record:item})]);
+      if(item.kind==='event')opts.push([item.status==='active'?t.cancelEvent:t.restoreEvent,()=>void mutate({path:`/study/items/${item.id}`,method:'PATCH',body:{version:item.version,status:item.status==='active'?'cancelled':'active'},label:item.title})]);
+      opts.push([t.remove,()=>remove(item),true]);
+    }
+    if(!opts.length)return;
+    const destructive=opts.findIndex(o=>o[2]);
+    ActionSheetIOS.showActionSheetWithOptions({title:item.title,options:[...opts.map(o=>o[0]),zh?'取消':'Cancel'],cancelButtonIndex:opts.length,destructiveButtonIndex:destructive>=0?destructive:undefined},i=>{if(i<opts.length&&!actionLocked)opts[i][1]();});
+  }
+  function renderItem(item:CalendarItem,index:number) {
+    const school='school_origin' in item?item.school_origin:null;
+    const linked=courses.find(c=>c.id===item.course_id),col=courseColor(courses,item.course_id);
+    const when=item.kind==='event'?(item.all_day?(zh?'全天':'All day'):`${dateTimeInZone(item.starts_at!,zone).slice(11)}${item.ends_at?'–'+dateTimeInZone(item.ends_at,zone).slice(11):''}`)
+      :item.kind==='task'?(item.due_date??(item.due_at?dateTimeInZone(item.due_at,zone).slice(5):t.undated)):'';
+    const icon=item.kind==='event'?('activity_origin' in item?'users':'calendar-days'):item.kind==='note'?'notebook-pen':item.kind==='material'?'link':'circle-check';
+    const done=item.kind==='task'&&item.status==='done',cancelled=item.kind==='event'&&item.status==='cancelled';
+    return <Stagger key={item.id} index={index}><Surface padding={14} onPress={()=>item.kind==='task'&&!school?setEditor({kind:'task',record:item}):itemMenu(item)} label={item.title}>
+      <View style={{flexDirection:'row',alignItems:'center',gap:12}}>
+        {item.kind==='task'?<CheckCircle checked={done} disabled={actionLocked} label={`${item.title} · ${done?t.reopen:t.complete}`} onPress={()=>toggle(item)}/>:<IconTile icon={icon} color={item.kind==='event'?col:item.kind==='note'?colors.orange:colors.teal}/>}
+        <View style={{flex:1,gap:3}}>
+          <Text numberOfLines={2} style={{fontSize:16,lineHeight:22,fontWeight:'500',color:done||cancelled?colors.muted:colors.text,textDecorationLine:done||cancelled?'line-through':'none'}}>{item.title}</Text>
+          <View style={{flexDirection:'row',alignItems:'center',gap:6,flexWrap:'wrap'}}>
+            {linked?<View style={{paddingVertical:2,paddingHorizontal:7,borderRadius:6,backgroundColor:col+'1F'}}><Text style={{fontSize:11,fontWeight:'700',color:col}}>{linked.code||linked.title}</Text></View>:null}
+            {school?<Text style={{fontSize:12,fontWeight:'600',color:colors.accent}}>{school.provider==='sis'?'SIS':'Canvas'}{school.stale?(zh?' · 待更新':' · stale'):''}</Text>:'import_origin' in item?<Text style={{fontSize:12,color:colors.muted}}>{item.import_origin.source_name}</Text>:null}
+            {item.kind==='event'&&item.location?<Text numberOfLines={1} style={{fontSize:12,color:colors.muted}}>{item.location}</Text>:null}
+            {cancelled?<Text style={{fontSize:12,fontWeight:'600',color:colors.danger}}>{t.cancelled}</Text>:null}
+          </View>
+        </View>
+        {when?<Text style={{fontSize:14,fontWeight:'500',color:colors.muted}}>{when}</Text>:null}
+        {!school&&item.kind!=='task'?<Pressable accessibilityRole="button" accessibilityLabel={zh?'更多操作':'More actions'} hitSlop={10} onPress={()=>itemMenu(item)}><PenIcon name="ellipsis" size={18} color={colors.tertiary}/></Pressable>:null}
+      </View>
+      {item.body&&view!=='day'&&view!=='week'?<Text numberOfLines={2} style={{fontSize:14,lineHeight:20,color:colors.muted,marginTop:8,marginLeft:42}}>{item.body}</Text>:null}
+    </Surface></Stagger>;
+  }
+  const status=actionMessage();
   if(schoolSources)return <SchoolSourcesScreen language={language} dark={dark} onBack={()=>{setSchoolSources(false);void load();}}/>;
   if(managingSources)return <SourceScreen language={language} dark={dark} onBack={()=>{setManagingSources(false);void load();}}/>;
   if(importing)return <ImportScreen language={language} dark={dark} onBack={()=>setImporting(false)} onSaved={()=>{setImporting(false);void load();}}/>;
   if(editor)return <StudyForm editor={editor} courses={courses} language={language} dark={dark} onBack={()=>setEditor(null)} onSaved={()=>{setEditor(null);void load();}} />;
-  return <View style={styles.stack}>
-    {initialReminder?<Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'已打开提醒对应日期。请以下方最新安排为准；已取消或删除的内容不会恢复。':'Opened the reminder date. The current plans below take precedence; cancelled or deleted items are not restored.'}</Text>:null}
-    <Text style={[styles.title,{color:colors.text}]}>{language==='zh'?'今天':'Today'}</Text>
-    <Text style={[styles.caption,{color:colors.muted}]}>{t.private}</Text>
-    <Text style={[styles.caption,{color:colors.muted}]}>{calendar?.school_connections?.map(c=>`${c.provider==='sis'?'SIS':'Canvas'} · ${c.state==='connected'?(language==='zh'?'已同步':'Synced'):c.state==='partial'?(language==='zh'?'部分覆盖':'Partial coverage'):c.state==='revoked'?(language==='zh'?'已撤销':'Revoked'):c.state==='reauth_required'?(language==='zh'?'需要重新授权':'Reconnect required'):(language==='zh'?'尚未完整同步':'Not fully synced')}`).join(' / ')??(language==='zh'?'学校来源尚未完成同步；当前安排不代表完整正式课表。':'School sources are not fully synced; these plans do not represent a complete timetable.')}</Text>
-    <SegmentedControl value={view} label={language==='zh'?'日历视图':'Calendar view'} options={(['day','week','courses','all'] as const).map(v=>({value:v,label:t[v]}))} disabled={actionLocked} onChange={v=>{setView(v);setCourseId(null);}}/>
-    <View style={styles.row}><Button variant="secondary" isDisabled={actionLocked} onPress={()=>setEditor({kind:'task',courseId})}>{t.add} {t.task}</Button><Button variant="secondary" isDisabled={actionLocked} onPress={()=>setEditor({kind:'event',courseId})}>{t.add} {t.event}</Button></View>
-    <Disclosure title={language==='zh'?'更多记录与日历设置':'More records & calendar settings'}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}><View style={styles.row}>{(['note','material','course'] as const).map(kind=><Button key={kind} variant="secondary" isDisabled={actionLocked} onPress={()=>setEditor({kind,courseId})}>{t.add} {t[kind]}</Button>)}</View></ScrollView>
-      <Button variant="secondary" isDisabled={actionLocked} onPress={()=>setImporting(true)}>{language==='zh'?'备用方式：导入 ICS 日历':'Alternative: import an ICS calendar'}</Button>
-      <Button variant="ghost" isDisabled={actionLocked} onPress={()=>setSchoolSources(true)}>{language==='zh'?'学校连接与私人设置':'School connections and private settings'}</Button>
-      <Button variant="ghost" isDisabled={actionLocked} onPress={()=>setManagingSources(true)}>{language==='zh'?'管理导入来源':'Manage imported sources'}</Button>
-      <Button variant="ghost" isDisabled={actionLocked} onPress={()=>setChoosingZone(!choosingZone)}>{t.zone}: {zone}</Button>
-      {choosingZone?(['Asia/Hong_Kong','UTC','Europe/London','America/New_York'].map(value=><Button key={value} variant={value===zone?'primary':'secondary'} isDisabled={actionLocked} onPress={()=>{setZone(value);setChoosingZone(false);}}>{value===zone?'✓ ':''}{value}</Button>)):null}
-    </Disclosure>
-    {error?<Text accessibilityRole="alert" style={[styles.body,{color:colors.danger}]}>{error}</Text>:null}
-    {actionMessage()?<Text accessibilityRole={needsReview||actionState.phase==='rejected'?'alert':undefined} accessibilityLiveRegion="polite" style={[styles.body,{color:needsReview||actionState.phase==='rejected'?colors.danger:colors.accent}]}>{actionMessage()}</Text>:null}
-    {busy?<Text accessibilityLiveRegion="polite" style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'正在处理，请稍候…':'Working, please wait…'}</Text>:null}
-    {linkError?<Text accessibilityRole="alert" style={[styles.body,{color:colors.danger}]}>{linkError}</Text>:null}
-    {error&&(items.length||calendar)?<Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'下方保留的是上次读取的记录，可能不是最新状态。':'The retained records below are from the last successful read and may be out of date.'}</Text>:null}
-    <Button variant="ghost" isDisabled={loading||busy} onPress={()=>needsReview?void actions.check():void load()}>{needsReview?(language==='zh'?'读取最新记录，核对结果':'Read latest records to check result'):t.refresh}</Button>
-    {loading?<ActivityIndicator color={colors.accent} accessibilityLabel={t.loading}/>:null}
+  if(view==='home')return <View style={{gap:16}}>
+    {status?<Notice tone={needsReview||actionState.phase==='rejected'?'warning':'success'} text={status} action={needsReview?(zh?'核对':'Check'):undefined} onAction={()=>void actions.check()}/>:null}
+    <TodayHome name={name} onMe={onMe} language={language} courses={courses} items={items} calendar={calendar} loading={loading} error={error} busy={actionLocked}
+      onToggle={toggle} onOpenTask={task=>setEditor({kind:'task',record:task})} onAdd={addMenu} onManage={v=>{setDate(dateInZone(new Date().toISOString(),zone));setCourseId(null);setView(v);}}
+      onActivity={onActivity} onPost={onPost} onCampus={onCampus} onInbox={onInbox} onSchool={()=>setSchoolSources(true)} onRetry={()=>void load()}/>
+  </View>;
+  const sameRange=calendar&&calendar.from===date&&calendar.to===shiftDate(date,view==='week'?7:1)&&calendar.timezone===zone;
+  const dayTitle=(d:string)=>{const today=dateInZone(new Date().toISOString(),zone);const wd=new Date(d+'T00:00:00Z').getUTCDay();const label=zh?`${Number(d.slice(5,7))} 月 ${Number(d.slice(8))} 日 周${'日一二三四五六'[wd]}`:new Date(d+'T00:00:00Z').toLocaleDateString('en-HK',{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'});return d===today?`${zh?'今天':'Today'} · ${label}`:label;};
+  let n=0;
+  return <View style={{gap:18}}>
+    <PageHeader onBack={()=>{setView('home');setCourseId(null);}} backLabel={zh?'今天':'Today'} title={view==='courses'?(zh?'课程':'Courses'):view==='all'?(courseId?courses.find(c=>c.id===courseId)?.title??t.all:(zh?'全部记录':'All records')):(zh?'日程':'Schedule')} subtitle={t.private}
+      right={<><CircleButton icon="ellipsis" label={zh?'更多设置':'More settings'} onPress={()=>ActionSheetIOS.showActionSheetWithOptions({options:[zh?'学校连接与同步':'School connections',zh?'管理导入来源':'Imported sources',`${t.zone}: ${zone}`,zh?'取消':'Cancel'],cancelButtonIndex:3},i=>{if(i===0)setSchoolSources(true);if(i===1)setManagingSources(true);if(i===2)ActionSheetIOS.showActionSheetWithOptions({options:['Asia/Hong_Kong','UTC','Europe/London','America/New_York',zh?'取消':'Cancel'],cancelButtonIndex:4},j=>{if(j<4)setZone(['Asia/Hong_Kong','UTC','Europe/London','America/New_York'][j]);});})}/><CircleButton icon="plus" label={zh?'添加':'Add'} onPress={addMenu}/></>}/>
+    <Segmented value={view} label={zh?'视图':'View'} options={(['day','week','courses','all'] as const).map(v=>({value:v,label:t[v]}))} onChange={v=>{setView(v);setCourseId(null);}}/>
+    {status?<Notice tone={needsReview||actionState.phase==='rejected'?'warning':'success'} text={status} action={needsReview?(zh?'核对':'Check'):undefined} onAction={()=>void actions.check()}/>:null}
+    {error?<Notice tone="error" text={error} action={zh?'重试':'Retry'} onAction={()=>void load()}/>:null}
+    {linkError?<Notice tone="error" text={linkError}/>:null}
     {view==='day'||view==='week'?<>
-      <Text style={[styles.heading,{color:colors.text}]}>{date}{view==='week'?` — ${shiftDate(date,6)}`:''}</Text>
-      <View style={styles.row}><Button variant="secondary" isDisabled={actionLocked} onPress={()=>setDate(shiftDate(date,view==='week'?-7:-1))}>{t.previous}</Button><Button variant="secondary" isDisabled={actionLocked} onPress={()=>setDate(shiftDate(date,view==='week'?7:1))}>{t.next}</Button></View>
-      <Button variant="ghost" isDisabled={actionLocked} onPress={()=>setDate(dateInZone(new Date().toISOString(),zone))}>{t.today}</Button>
-      {!loading&&calendar?.import_issues.length?<Text accessibilityRole="alert" style={[styles.body,{color:colors.danger}]}>{language==='zh'?'部分导入日程无法在此范围展开，请检查来源。':'Some imported schedules could not be expanded for this range. Review their sources.'}</Text>:null}
-      {!loading&&calendar&&calendar.from===date&&calendar.to===shiftDate(date,view==='week'?7:1)&&calendar.timezone===zone?calendar.days.map(day=><View key={day.date} style={styles.stack}>
-        {view==='week'?<Text style={[styles.heading,{color:colors.text}]}>{day.date}</Text>:null}
-        {!day.events.length&&!day.tasks.length?<Text style={[styles.body,{color:colors.muted}]}>{t.empty}</Text>:null}
-        {day.events.map(renderItem)}{day.tasks.map(renderItem)}
+      <View style={{flexDirection:'row',alignItems:'center',gap:8}}>
+        <CircleButton variant="fill" icon="chevron-left" label={t.previous} onPress={()=>setDate(shiftDate(date,view==='week'?-7:-1))}/>
+        <Pressable accessibilityRole="button" onPress={()=>setDate(dateInZone(new Date().toISOString(),zone))} style={{flex:1,alignItems:'center'}}><Text style={{fontSize:17,fontWeight:'700',color:colors.text}}>{view==='week'?`${dayTitle(date).replace(/^今天 · |^Today · /,'')} – ${Number(shiftDate(date,6).slice(8))}${zh?' 日':''}`:dayTitle(date)}</Text><Text style={{fontSize:12,color:colors.accent}}>{zh?'回到今天':'Back to today'}</Text></Pressable>
+        <CircleButton variant="fill" icon="chevron-right" label={t.next} onPress={()=>setDate(shiftDate(date,view==='week'?7:1))}/>
+      </View>
+      {loading&&!sameRange?<><Skeleton/><Skeleton/></>:null}
+      {!loading&&calendar?.import_issues.length?<Notice tone="warning" text={zh?'部分导入日程无法在此范围展开，请检查来源。':'Some imported schedules could not be expanded for this range.'} action={zh?'查看':'Review'} onAction={()=>setManagingSources(true)}/>:null}
+      {sameRange?calendar!.days.map(day=><View key={day.date} style={{gap:10}}>
+        {view==='week'?<Text style={{paddingHorizontal:4,fontSize:15,fontWeight:'700',color:colors.text}}>{dayTitle(day.date)}</Text>:null}
+        {!day.events.length&&!day.tasks.length?(view==='day'?<EmptyState icon="sun" title={zh?'这天没有安排':'Nothing planned'} body={zh?'留点空白也很好。':'Some free time is good too.'}/>:<Text style={{paddingHorizontal:4,fontSize:14,color:colors.tertiary}}>{zh?'没有安排':'Free'}</Text>):null}
+        {day.events.map(i=>renderItem(i,n++))}{day.tasks.map(i=>renderItem(i,n++))}
       </View>):null}
-      {!loading&&calendar&&calendar.from===date&&calendar.to===shiftDate(date,view==='week'?7:1)&&calendar.timezone===zone&&calendar.undated_tasks.length?<View style={styles.stack}><Text style={[styles.heading,{color:colors.text}]}>{t.undated}</Text>{calendar.undated_tasks.map(renderItem)}</View>:null}
+      {sameRange&&calendar!.undated_tasks.length?<View style={{gap:10}}><Text style={{paddingHorizontal:4,fontSize:15,fontWeight:'700',color:colors.text}}>{t.undated}</Text>{calendar!.undated_tasks.map(i=>renderItem(i,n++))}</View>:null}
     </>:null}
     {view==='courses'?<>
-      <Text style={[styles.caption,{color:colors.muted}]}>{t.manual}</Text>
-      {!courses.length&&!loading?<Text style={[styles.body,{color:colors.muted}]}>{t.empty}</Text>:null}
-      {courses.map(c=><Card key={c.id} style={[styles.card,{backgroundColor:colors.surface}]}><Text style={[styles.heading,{color:colors.text}]}>{c.title}</Text><Text style={[styles.body,{color:colors.muted}]}>{c.code}</Text>{c.description?<Text style={[styles.body,{color:colors.text}]}>{c.description}</Text>:null}
-        <Button variant="secondary" isDisabled={actionLocked} onPress={()=>{setCourseId(c.id);setView('all');}}>{t.all}</Button>
-        <Button variant="ghost" isDisabled={actionLocked} onPress={()=>setEditor({kind:'course',record:c})}>{t.edit}</Button><Button variant="ghost" isDisabled={actionLocked} onPress={()=>remove(c)}>{t.remove}</Button>
-      </Card>)}
+      {!courses.length&&!loading?<EmptyState icon="library" title={zh?'还没有课程':'No courses yet'} body={zh?'登录学校账号后自动同步，也可以手动添加。':'Sync with your HKUST account, or add one.'} action={zh?'添加课程':'Add course'} onAction={()=>setEditor({kind:'course'})}/>:null}
+      <ListGroup>{courses.map(c=><ListRow key={c.id} icon="book-open" tile={courseColor(courses,c.id)} title={c.code||c.title} subtitle={c.code?c.title:c.description||undefined} value={`${items.filter(i=>i.course_id===c.id).length}`} chevron onPress={()=>{setCourseId(c.id);setView('all');}}/>)}</ListGroup>
+      {courseId===null&&courses.length?<Text style={{paddingHorizontal:16,fontSize:12,color:colors.muted}}>{t.manual}</Text>:null}
     </>:null}
     {view==='all'?<>
-      {courseId?<Text style={[styles.heading,{color:colors.text}]}>{courses.find(c=>c.id===courseId)?.title}</Text>:null}
-      {!items.filter(i=>!courseId||i.course_id===courseId).length&&!loading?<Text style={[styles.body,{color:colors.muted}]}>{t.empty}</Text>:null}
-      {items.filter(i=>!courseId||i.course_id===courseId).map(renderItem)}
+      {courseId?<View style={{flexDirection:'row',gap:10}}><View style={{flex:1}}><PrimaryButton tone="soft" label={t.edit} onPress={()=>{const c=courses.find(x=>x.id===courseId);if(c)setEditor({kind:'course',record:c});}}/></View><View style={{flex:1}}><PrimaryButton tone="soft" label={t.remove} onPress={()=>{const c=courses.find(x=>x.id===courseId);if(c)remove(c);}}/></View></View>:null}
+      {!items.filter(i=>!courseId||i.course_id===courseId).length&&!loading?<EmptyState icon="inbox" title={t.empty}/>:null}
+      {items.filter(i=>!courseId||i.course_id===courseId).map(i=>renderItem(i,n++))}
     </>:null}
   </View>;
 }

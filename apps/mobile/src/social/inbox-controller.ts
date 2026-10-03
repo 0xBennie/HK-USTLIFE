@@ -82,4 +82,18 @@ export class InboxController {
    return false;
   }finally{if(epoch===this.epoch)this.set({phase:'idle'});}
  }
+ /** Mark every notification read; unread count and loaded rows update together on success. */
+ async markAll(){
+  if(this.state.phase!=='idle'||this.state.unread===0)return false;
+  const epoch=++this.epoch;
+  this.set({phase:'marking',error:null,notice:null});
+  try{
+   const ack=await this.request<{read:number;unread:number}>('/me/notifications/read-all',{method:'POST',body:{}});
+   if(epoch!==this.epoch)return false;
+   if(!integer(ack?.read)||ack.unread!==0)throw new ApiFailure(502,'INVALID_READ_RESPONSE','Missing read-all acknowledgement.');
+   const at=new Date().toISOString();
+   this.set({items:this.state.items.map(item=>item.read_at?item:{...item,read_at:at}),unread:0,pendingRead:null,notice:'read'});return true;
+  }catch(error){if(epoch===this.epoch)this.set({error});return false;}
+  finally{if(epoch===this.epoch)this.set({phase:'idle'});}
+ }
 }

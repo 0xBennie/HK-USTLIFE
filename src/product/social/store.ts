@@ -138,6 +138,7 @@ export function createSocialStore(db:DatabaseSync,now:()=>number,reconnections=c
   const unread=Number(db.prepare('SELECT COUNT(*) AS n FROM notifications WHERE owner_id=? AND read_at IS NULL').get(user)!.n);
   return {id,read:true,read_at:stamp(Number(saved.read_at)),unread};
  });}
+ function markAllRead(user:string){return transaction(db,()=>{reconnections.purgeNotices(user);const r=db.prepare('UPDATE notifications SET read_at=? WHERE owner_id=? AND read_at IS NULL').run(now(),user);return {read:Number(r.changes),unread:0};});}
  function calendar(user:string):ActivityCalendarEvent[]{
   const rows=db.prepare(select+" JOIN activity_preferences p ON p.activity_id=a.id WHERE p.user_id=? AND p.calendar_saved=1 AND a.status!='cancelled' AND a.moderation_state='visible' AND u.banned_at IS NULL AND "+unblockedSql('a.organizer_id')).all(user,user,user) as Row[];
   return rows.map(row=>{const a=get(row.id,user),state=a.mine!.is_organizer?'organizer':a.mine!.participation?.status??'not_joined';return {id:'activity:'+a.id,kind:'event',title:a.title,body:a.description,location:a.location,timezone:a.timezone,starts_at:a.starts_at,ends_at:a.ends_at,start_date:null,end_date:null,all_day:false,status:'active',course_id:null,remind_minutes:a.mine!.remind_minutes,version:a.version,created_at:a.created_at,updated_at:a.updated_at,activity_origin:{id:a.id,participation:state}};});
@@ -191,5 +192,5 @@ export function createSocialStore(db:DatabaseSync,now:()=>number,reconnections=c
   });
  }
  function exportAll(user:string){reconnections.purgeNotices(user);return {activities:(db.prepare(select+' WHERE a.organizer_id=?').all(user) as Row[]).map(r=>({id:r.id,...JSON.parse(r.payload),status:r.status,version:r.version,is_demo:true})),participations:db.prepare('SELECT activity_id,status,queue_order,version,joined_at,updated_at FROM activity_participations WHERE user_id=?').all(user),preferences:db.prepare('SELECT activity_id,bookmarked,calendar_saved,remind_minutes FROM activity_preferences WHERE user_id=?').all(user),comments:db.prepare('SELECT id,activity_id,body,created_at FROM activity_comments WHERE author_id=?').all(user),notifications:db.prepare('SELECT id,activity_id,post_id,kind,created_at,read_at,reconnection_target FROM notifications WHERE owner_id=?').all(user)};}
- return {adminGet,adminList,adminHistory,adminChange,create,get,list,join,withdraw,update,cancel,remove,setPreferences,roster,comment,comments,addComment,deleteComment,notifications,markRead,calendar,deleteAccount,disconnectUsers,restrictActivity,restrictUser,exportAll};
+ return {adminGet,adminList,adminHistory,adminChange,create,get,list,join,withdraw,update,cancel,remove,setPreferences,roster,comment,comments,addComment,deleteComment,notifications,markRead,markAllRead,calendar,deleteAccount,disconnectUsers,restrictActivity,restrictUser,exportAll};
 }

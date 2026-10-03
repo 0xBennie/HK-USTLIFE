@@ -13,27 +13,30 @@ import { CampusScreen } from './src/campus/CampusScreen';
 import './global.css';
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AppState, ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Pressable, Text, useColorScheme, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { HeroUINativeProvider } from 'heroui-native/provider';
 import { Button, NavigationRow } from './src/ui/Primitives';
 import { AppearanceProvider, useAppearance } from './src/ui/Appearance';
-import { Icon } from './src/ui/Icon';
-import { BlurView } from 'expo-blur';
-import type { IconName } from '../../src/design/icons';
+import { Aurora, FloatingTabBar, ListGroup, ListRow, type PenIconName } from './src/ui/Pen';
+import { SceneOverlayStore, useOverlayPresent } from './src/navigation/SceneOverlay';
 import { StatusBar } from 'expo-status-bar';
 import { session,reminders } from './src/runtime';
 import { LoginScreen, ProfileScreen } from './src/screens/AccountScreen';
 import { strings, type Language } from './src/strings';
 import { palette, styles } from './src/theme';
 import { StudyScreen } from './src/study/StudyScreen';
+import { GuestHome } from './src/study/TodayHome';
 
 function CampusApp() {
   const state = useSyncExternalStore(session.subscribe, session.snapshot);
   const [language, setLanguage] = useState<Language>('zh');
   const [tab, setTab] = useState(0);
-  const {reduceTransparency}=useAppearance();
-  const icons:IconName[]=['today','campus','discover','inbox','person'];
+  // Pen "Component / Tab bar" lucide glyphs.
+  const icons:PenIconName[]=['calendar-days','map','messages-square','inbox','user-round'];
+  const insets=useSafeAreaInsets();
+  const overlays=useRef([0,1,2,3,4].map(()=>new SceneOverlayStore())).current;
+  const pushed=useOverlayPresent(overlays[tab]);
   const [studyTarget,setStudyTarget]=useState<{id:string;date:string;owner:string}|null>(null);
   const [safetyOpen,setSafetyOpen]=useState(false);
   const guards=useRef(new NavigationProtections()).current;
@@ -98,15 +101,10 @@ function CampusApp() {
     return()=>subscription.remove();
   },[state.status,state.profile?.id]);
   useEffect(() => { if (state.profile) setLanguage(state.profile.language); }, [state.profile?.id]);
-  return <SafeAreaView style={[styles.flex, { backgroundColor: colors.background }]}>
+  return <SafeAreaView edges={['left','right']} style={[styles.flex, { backgroundColor: colors.background }]}>
     <StatusBar style={dark ? 'light' : 'dark'} />
-    <View style={styles.header}>
-      <View style={styles.row}>
-        <Text style={[styles.caption, { color: colors.muted }]}>{t.campus} · {language==='zh'?'开发预览':'Development'}</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel={language === 'zh' ? 'Switch to English' : '切换至中文'} style={styles.language} onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')}><Text style={{ color: colors.accent }}>{language === 'zh' ? 'EN' : '中文'}</Text></Pressable>
-      </View>
-    </View>
-    {queuedReminder&&queuedReminder.owner===state.profile?.id?<View style={styles.smallStack}><Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'提醒已保留，当前输入没有被覆盖。':'Reminder kept. Your current input is unchanged.'}</Text><Button variant="secondary" onPress={()=>guardedOpen(queuedReminder.kind==='activity'?2:0,()=>{
+    <Aurora/>
+    {queuedReminder&&queuedReminder.owner===state.profile?.id?<View style={[styles.smallStack,{paddingTop:insets.top,paddingHorizontal:16}]}><Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'提醒已保留，当前输入没有被覆盖。':'Reminder kept. Your current input is unchanged.'}</Text><Button variant="secondary" onPress={()=>guardedOpen(queuedReminder.kind==='activity'?2:0,()=>{
       const owner=state.profile?.id;if(!owner)return;
       if(queuedReminder.kind==='activity'){setTargetRevision(v=>v+1);setActivityTarget({kind:'activity',id:queuedReminder.id,owner});setTab(2);}
       else{setStudyTarget({id:queuedReminder.id,date:queuedReminder.date,owner});setTab(0);}
@@ -114,27 +112,21 @@ function CampusApp() {
     })}>{language==='zh'?'查看这条提醒':'Open this reminder'}</Button><Button variant="ghost" onPress={()=>setQueuedReminder(null)}>{language==='zh'?'忽略':'Dismiss'}</Button></View>:null}
     <KeyboardAvoidingView behavior="padding" style={styles.flex}>
       <View key={state.profile?.id??state.status} style={styles.flex}>
-      {[0,1,2,3,4].map(index=><InputProtectionContext.Provider key={index} value={{guards,scene:index}}><TabScene active={tab===index} pageRef={value=>{pages.current[index]=value;}} contentContainerStyle={styles.page}>
+      {[0,1,2,3,4].map(index=><InputProtectionContext.Provider key={index} value={{guards,scene:index}}><TabScene active={tab===index} pageRef={value=>{pages.current[index]=value;}} contentContainerStyle={styles.page} overlay={overlays[index]}>
         {index === 4 ? state.status === 'loading' ? <View style={styles.stack}><ActivityIndicator color={colors.accent} /><Text style={{ color: colors.text }}>{t.loading}</Text></View>
           : state.status === 'error' ? <View style={styles.stack}><Text accessibilityRole="alert" style={[styles.body, { color: colors.danger }]}>{t.errors[state.error ?? ''] ?? t.network}</Text><Button onPress={() => session.restore()}>{t.retry}</Button></View>
-          : state.profile ? safetyOpen?<GovernanceScreen key={state.profile.id} language={language} dark={dark} onBack={()=>setSafetyOpen(false)}/>:<View style={styles.stack}><ProfileScreen key={state.profile.id} profile={state.profile} language={language} dark={dark} exitBusy={exitState.busy} exitError={exitState.error} onExit={requestAccountExit}/><ReminderSettings language={language} dark={dark}/><NavigationRow icon="lock" title={language==='zh'?'举报与屏蔽':'Reports & blocked users'} onPress={()=>guardedOpen(4,()=>setSafetyOpen(true))}/></View>
-          : <LoginScreen language={language} dark={dark} />
-          : index === 0 ? state.profile ? <StudyScreen key={state.profile.id} language={language} dark={dark} onActivity={openActivity} initialReminder={studyTarget?.owner===state.profile.id?studyTarget:null} />
-          : <View style={styles.stack}><Text style={[styles.title,{color:colors.text}]}>{t.tabs[0]}</Text><Text style={[styles.body,{color:colors.muted}]}>{t.loginBody}</Text><NavigationRow icon="today" title={language==='zh'?'安排你的一天':'Plan your day'} subtitle={language==='zh'?'登录以保存课程、任务和私人日程':'Sign in to save classes, tasks and private plans'} onPress={()=>setTab(4)}/><NavigationRow icon="campus" title={language==='zh'?'逛逛校园':'Explore campus'} subtitle={language==='zh'?'路线、地点与服务，无需登录':'Routes, places and services. No sign-in needed.'} onPress={()=>setTab(1)}/></View>
-          : index === 1 ? <CampusScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)}/>
-          : index === 2 ? <CommunityScreen key={`${state.profile?.id??'visitor'}:${targetRevision}`} language={language} dark={dark} onLogin={()=>setTab(4)} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} onDismissTarget={()=>{const target=activityTarget;setActivityTarget(null);if(target?.owner===(state.profile?.id??null)&&target.returnTab!==undefined)setTab(target.returnTab);}} onNavigate={scrollToTop}/>
-          : state.profile ? <InboxScreen key={state.profile.id} language={language} dark={dark} onActivity={openActivity} onPost={openPost}/>
-          : <View style={styles.stack}><Text style={[styles.body,{color:colors.text}]}>{t.loginBody}</Text><Button onPress={()=>setTab(4)}>{t.signIn}</Button></View>}
+          : state.profile ? safetyOpen?<GovernanceScreen key={state.profile.id} language={language} dark={dark} onBack={()=>setSafetyOpen(false)}/>:<ProfileScreen key={state.profile.id} profile={state.profile} language={language} dark={dark} exitBusy={exitState.busy} exitError={exitState.error} onExit={requestAccountExit} onLanguage={()=>setLanguage(language==='zh'?'en':'zh')} onSafety={()=>guardedOpen(4,()=>setSafetyOpen(true))} onActivity={openActivity}/>
+          : <LoginScreen language={language} dark={dark} onGuest={()=>setTab(1)}/>
+          : index === 0 ? state.profile ? <StudyScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost} onCampus={()=>setTab(1)} onInbox={()=>setTab(3)} initialReminder={studyTarget?.owner===state.profile.id?studyTarget:null} />
+          : <GuestHome language={language} title={t.tabs[0]} onLogin={()=>setTab(4)} onCampus={()=>setTab(1)}/>
+          : index === 1 ? <CampusScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)}/>
+          : index === 2 ? <CommunityScreen key={`${state.profile?.id??'visitor'}:${targetRevision}`} language={language} dark={dark} onLogin={()=>setTab(4)} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onDismissTarget={()=>{const target=activityTarget;setActivityTarget(null);if(target?.owner===(state.profile?.id??null)&&target.returnTab!==undefined)setTab(target.returnTab);}} onNavigate={scrollToTop}/>
+          : state.profile ? <InboxScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost}/>
+          : <GuestHome language={language} title={t.tabs[3]} inbox onLogin={()=>setTab(4)} onCampus={()=>setTab(1)}/>}
       </TabScene></InputProtectionContext.Provider>)}
       </View>
     </KeyboardAvoidingView>
-    <View accessibilityRole="tablist" style={[styles.tabs, { borderTopColor: colors.border, backgroundColor: colors.surface, overflow:'hidden' }]}>
-      {!reduceTransparency?<BlurView pointerEvents="none" intensity={60} tint={dark?'dark':'light'} style={{position:'absolute',inset:0}}/>:null}
-      {t.tabs.map((label, index) => <Pressable key={index} accessibilityRole="tab" accessibilityState={{ selected: tab === index }} accessibilityLabel={label} onPress={() => setTab(index)} style={styles.tab}>
-        <Icon name={icons[index]} color={tab===index?colors.accent:colors.muted}/>
-        <Text style={[styles.tabLabel, { color: tab === index ? colors.accent : colors.muted }]}>{label}</Text>
-      </Pressable>)}
-    </View>
+    {!pushed?<FloatingTabBar tabs={t.tabs.map((label,index)=>({label,icon:icons[index]}))} selected={tab} onSelect={setTab}/>:null}
   </SafeAreaView>;
 }
 export default function App() {

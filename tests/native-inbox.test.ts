@@ -79,6 +79,14 @@ it('keeps authoritative read acknowledgements owner-scoped and repeated reads st
  expect(await api(`/me/notifications/${id}/read`,{method:'PATCH',body:{}})).toEqual(saved);expect(saved).toMatchObject({id,read:true,unread:1});expect((await other<InboxPage>('/me/notifications')).unread).toBe(1);
 });
 
+it('marks every owned notification read in one step without touching other accounts',async()=>{
+ seed(3);seed(2,otherOwner);const c=new InboxController(client(first));
+ await c.refresh();expect(c.snapshot().unread).toBe(3);
+ expect(await c.markAll()).toBe(true);expect(c.snapshot().unread).toBe(0);expect(c.snapshot().items.every(x=>x.read_at!==null)).toBe(true);
+ expect(await c.markAll()).toBe(false);
+ expect((await client(first)<InboxPage>('/me/notifications')).unread).toBe(0);expect((await client(second)<InboxPage>('/me/notifications')).unread).toBe(2);
+});
+
 it('ignores late callbacks after the account-bound controller is invalidated',async()=>{
  seed(2);const api=client(first),release=Promise.withResolvers<void>(),started=Promise.withResolvers<void>();
  const c=new InboxController(async(p,o)=>{if(o?.method==='PATCH'){started.resolve();await release.promise;}return api(p,o);});

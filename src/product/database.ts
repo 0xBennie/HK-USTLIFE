@@ -298,6 +298,9 @@ const migrations = [{ version: 1, sql: `
 ` }, { version: 17, sql: `
  ALTER TABLE affair_instances ADD COLUMN reported_at INTEGER;
  ALTER TABLE affair_instances ADD COLUMN outcome_recorded_at INTEGER;
+` }, { version: 18, sql: `
+ ALTER TABLE wall_posts ADD COLUMN topic TEXT NOT NULL DEFAULT 'share' CHECK(topic IN ('question','share','buddy','market'));
+ UPDATE wall_posts SET topic='question' WHERE kind='help';
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

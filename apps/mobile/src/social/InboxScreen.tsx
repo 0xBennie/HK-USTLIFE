@@ -1,35 +1,51 @@
+// Pen board "V3 / 消息" (dqbRa): unread hero, Today / Earlier glass groups, mark-all in the top bar.
 import {useSceneFocus} from '../navigation/TabScene';
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {ReconnectionScreen} from './ReconnectionScreen';
 import {InboxController} from './inbox-controller';
-import {AppState,Text,View} from 'react-native';
-import { Button } from '../ui/Primitives';
-import { Card } from '../ui/Primitives';
+import {AppState,View} from 'react-native';
 import {session} from '../runtime';
-import {palette,styles} from '../theme';
 import type {Language} from '../strings';
 import type {ActivityNotification} from '../../../../src/product/social/types';
 import {socialError} from './shared';
 import {ApiFailure} from '../api';
 import {dateTimeInZone} from '../study/dates';
-export function InboxScreen({language,dark,onActivity,onPost}:{language:Language;dark:boolean;onActivity:(id:string)=>void;onPost:(id:string)=>void}){
+import {CircleButton,EmptyState,Hero,ListGroup,ListRow,Notice,Section,Skeleton,Stagger,Surface,TopBar,ViewAll,usePenColors,type PenIconName} from '../ui/Pen';
+const kindMeta:Record<ActivityNotification['kind'],[PenIconName,string]>={
+ joined:['circle-check','#2E9E5B'],promoted:['party-popper','#2E9E5B'],waitlisted:['hourglass','#56647D'],withdrawn:['log-out','#8E8E93'],
+ activity_updated:['clock-alert','#D98A1C'],activity_cancelled:['calendar-x','#E5484D'],activity_removed:['trash','#8E8E93'],
+ comment:['message-circle','#8E8E93'],post_reply:['message-square-reply','#24467F'],post_resolved:['circle-check-big','#2E9E5B'],reconnection_mutual:['users','#A9824C'],
+};
+const hkDay=(iso:string)=>dateTimeInZone(iso,'Asia/Hong_Kong').slice(0,10);
+export function InboxScreen({language,dark,name,onMe,onActivity,onPost}:{language:Language;dark:boolean;name?:string;onMe?:()=>void;onActivity:(id:string)=>void;onPost:(id:string)=>void}){
  const sceneActive=useSceneFocus();
  const [reconnection,setReconnection]=useState<ActivityNotification['reconnection']>(undefined);
- const zh=language==='zh',c=palette[dark?'dark':'light'];
+ const zh=language==='zh',c=usePenColors();
  const controller=useRef(new InboxController((path,options)=>session.request(path,options))).current;
  const state=useSyncExternalStore(controller.subscribe,controller.snapshot);
- const {items,cursor,unread,phase,error,stale,loaded,pendingRead,notice}=state,busy=phase!=='idle';
+ const {items,cursor,unread,phase,error,stale,loaded,pendingRead}=state,busy=phase!=='idle';
  useEffect(()=>()=>controller.invalidate(),[controller]);
  useEffect(()=>{if(!sceneActive)return;void controller.refresh();const listener=AppState.addEventListener('change',value=>{if(value==='active')void controller.refresh();});return()=>listener.remove();},[sceneActive,controller]);
- const labels:Record<ActivityNotification['kind'],string>={reconnection_mutual:zh?'再次同行有更新，请核对当前选择':'Meet-again update; check your current choice',joined:zh?'报名状态已更新':'Signup updated',waitlisted:zh?'你已加入候补':'You joined the waitlist',promoted:zh?'候补已递补，报名确认':'Your waitlist place is now confirmed',withdrawn:zh?'退出状态已更新':'Withdrawal updated',activity_updated:zh?'活动有变更，请核对时间与条件':'Activity changed; review time and requirements',activity_cancelled:zh?'活动已取消，保存的日程已移除':'Activity cancelled; saved schedule removed',activity_removed:zh?'活动内容已删除':'Activity content removed',comment:zh?'活动讨论有新评论':'New activity comment',post_reply:zh?'你的帖子有新回复':'New reply to your post',post_resolved:zh?'你回复的问题已解决':'A question you replied to is resolved'};
+ const labels:Record<ActivityNotification['kind'],string>={reconnection_mutual:zh?'再次同行有新进展':'Meet-again update',joined:zh?'报名已确认':'You’re in',waitlisted:zh?'已加入候补':'On the waitlist',promoted:zh?'候补转正，报名成功':'Off the waitlist — you’re in',withdrawn:zh?'已退出活动':'You left',activity_updated:zh?'活动时间或安排有变化':'Activity changed',activity_cancelled:zh?'活动已取消':'Activity cancelled',activity_removed:zh?'活动已被删除':'Activity removed',comment:zh?'活动讨论有新评论':'New comment',post_reply:zh?'有人回复了你的帖子':'New reply to your post',post_resolved:zh?'你回复的问题已解决':'A question you answered is solved'};
+
  if(reconnection)return <ReconnectionScreen activityId={reconnection.activity_id} peer={{id:reconnection.target_id,display_name:reconnection.display_name}} language={language} dark={dark} backLabel={zh?'返回消息':'Back to messages'} onBack={()=>{setReconnection(undefined);void controller.refresh();}}/>;
- return <View style={styles.stack}><Text style={[styles.title,{color:c.text}]}>{zh?'消息':'Messages'}</Text><Text style={[styles.body,{color:c.muted}]}>{loaded?`${unread} ${zh?'条未读消息':'unread updates'}`:busy?(zh?'正在读取消息':'Loading messages'):(zh?'尚未读取消息':'Messages not loaded')}</Text><Text style={[styles.caption,{color:c.muted}]}>{zh?'站内消息。系统推送尚未接入。':'In-app messages. Remote push is not connected.'}</Text><Button variant="secondary" isDisabled={busy} onPress={()=>void controller.refresh()}>{busy?(zh?'更新中…':'Updating…'):(zh?'刷新消息':'Refresh messages')}</Button>
-  {error?<Text accessibilityRole="alert" style={[styles.body,{color:c.danger}]}>{error instanceof ApiFailure&&[401,403,404,410,429].includes(error.status)?socialError(error,language):pendingRead!==null?(zh?'标为已读的结果尚未确认。可以重试同一条标记，或刷新查看当前状态。':'The read status is unconfirmed. Retry the same mark, or refresh to check its current state.'):(zh?'消息暂时无法更新。已加载内容仍然保留，请重试。':'Messages could not update. Loaded messages are retained. Please retry.')}</Text>:null}
-  {stale?<Text style={[styles.caption,{color:c.muted}]}>{zh?'下方为上次读取的消息，未读数与内容可能已变化。刷新成功后再打开相关内容。':'These are previously loaded messages. Counts and content may have changed. Refresh successfully before opening linked content.'}</Text>:null}
-  {pendingRead!==null&&!busy?<Button variant="secondary" onPress={()=>void controller.markRead(pendingRead)}>{zh?'重试标为已读':'Retry marking as read'}</Button>:null}
-  {notice?<Text accessibilityLiveRegion="polite" style={[styles.caption,{color:c.accent}]}>{notice==='read'?(zh?'已标为已读，当前消息列表保留。':'Marked as read. Your loaded messages are retained.'):(zh?'已读取最新消息，请核对当前已读状态。':'Latest messages loaded. Check the current read status.')}</Text>:null}
-  {!busy&&!error&&!items.length?<Text style={[styles.body,{color:c.muted}]}>{zh?'目前没有消息。':'No messages yet.'}</Text>:null}
-  {items.map(m=><Card key={m.id} style={[styles.card,{backgroundColor:c.surface}]}><Text style={[styles.caption,{color:c.muted}]}>{m.read_at?(zh?'已读':'Read'):(zh?'未读':'Unread')} · {dateTimeInZone(m.created_at,'Asia/Hong_Kong')} HKT</Text><Text style={[styles.heading,{color:c.text}]}>{labels[m.kind]}</Text>{m.reconnection?<><Text style={[styles.body,{color:c.text}]}>{m.reconnection.display_name}</Text><Button variant="secondary" isDisabled={stale||busy} onPress={()=>setReconnection(m.reconnection)}>{zh?'查看再次同行':'View meet-again choice'}</Button></>:m.activity?<><Text style={[styles.body,{color:c.text}]}>{m.activity.title}</Text><Button variant="secondary" isDisabled={stale} onPress={()=>onActivity(m.activity!.id)}>{zh?'查看最新活动状态':'View latest activity state'}</Button></>:m.post?<><Text style={[styles.body,{color:c.text}]}>{m.post.title}</Text><Button variant="secondary" isDisabled={stale} onPress={()=>onPost(m.post!.id)}>{zh?'查看帖子与回复':'View post and replies'}</Button></>:<Text style={[styles.body,{color:c.muted}]}>{zh?'内容已删除或当前不可查看。':'Content was removed or is no longer visible.'}</Text>}{!m.read_at?<Button variant="ghost" isDisabled={busy||pendingRead!==null} onPress={()=>void controller.markRead(m.id)}>{phase==='marking'&&pendingRead===m.id?(zh?'正在标记…':'Marking…'):(zh?'标为已读':'Mark as read')}</Button>:null}</Card>)}
-  {cursor?<Button variant="secondary" isDisabled={busy||stale} onPress={()=>void controller.more()}>{phase==='loading-more'?(zh?'正在加载较早消息…':'Loading earlier messages…'):(zh?'加载较早消息':'Load earlier messages')}</Button>:null}
+ const today=hkDay(new Date().toISOString());
+ const when=(iso:string)=>{const d=dateTimeInZone(iso,'Asia/Hong_Kong');if(d.slice(0,10)===today)return d.slice(11,16);const days=Math.round((Date.parse(today)-Date.parse(d.slice(0,10)))/86400000);if(days===1)return zh?'昨天':'Yesterday';if(days<7)return new Date(iso).toLocaleDateString(zh?'zh-CN':'en-GB',{weekday:'short',timeZone:'Asia/Hong_Kong'});return d.slice(5,10);};
+ function open(m:ActivityNotification){
+  if(!m.read_at)void controller.markRead(m.id);
+  if(m.reconnection)setReconnection(m.reconnection);else if(m.activity)onActivity(m.activity.id);else if(m.post)onPost(m.post.id);
+ }
+ const row=(m:ActivityNotification)=>{const [icon,tile]=kindMeta[m.kind];const target=m.reconnection?.display_name??m.activity?.title??m.post?.title;
+  return <ListRow key={m.id} icon={icon} tile={tile} title={labels[m.kind]} titleColor={m.read_at?c.muted:undefined} subtitle={target??(zh?'内容已删除或不可查看':'No longer available')} value={when(m.created_at)} accessory={m.read_at?undefined:<View accessibilityLabel={zh?'未读':'Unread'} style={{width:9,height:9,borderRadius:5,backgroundColor:'#24467F'}}/>} disabled={stale||(!target&&!!m.read_at)} onPress={()=>target?open(m):void controller.markRead(m.id)}/>;};
+ const fresh=items.filter(m=>hkDay(m.created_at)===today),older=items.filter(m=>hkDay(m.created_at)!==today);
+ return <View style={{gap:18}}>
+  <TopBar name={name} onAvatar={onMe} title={zh?'消息':'Inbox'} right={<CircleButton icon="check-check" label={zh?'全部标为已读':'Mark all read'} disabled={busy||unread===0} onPress={()=>void controller.markAll()}/>}/>
+  <Hero label={zh?'未读':'Unread'} value={loaded?String(unread):'–'} unit={zh?'条':undefined} chip={unread?(zh?'报名、活动变化和回复':'Signups, changes and replies'):(zh?'都看完了':'All caught up')} chipIcon={unread?'bell':'check'} chipColor={unread?undefined:'#2E9E5B'}/>
+  {error?<Notice tone="error" text={error instanceof ApiFailure&&[401,403,404,410,429].includes(error.status)?socialError(error,language):pendingRead!==null?(zh?'标为已读的结果尚未确认。':'Read status unconfirmed.'):(zh?'消息暂时无法更新，已加载内容仍保留。':'Could not update; loaded messages kept.')} action={pendingRead!==null?(zh?'重试':'Retry'):(zh?'刷新':'Refresh')} onAction={()=>pendingRead!==null?void controller.markRead(pendingRead):void controller.refresh()}/>:null}
+  {stale?<Notice tone="warning" text={zh?'以下是上次读取的消息，刷新成功后再打开。':'Showing earlier messages; refresh before opening.'}/>:null}
+  {!loaded&&busy?<><Skeleton height={200} radius={28}/><Skeleton height={140} radius={28}/></>:null}
+  {loaded&&!items.length?<Surface><EmptyState icon="inbox" title={zh?'还没有消息':'No messages yet'} body={zh?'报名活动、在校园墙发帖后，回复和变化会出现在这里。':'Replies and activity changes show up here.'}/></Surface>:null}
+  {fresh.length?<Stagger index={0}><Section title={zh?'今天':'Today'}><ListGroup>{fresh.map(row)}</ListGroup></Section></Stagger>:null}
+  {older.length?<Stagger index={1}><Section title={zh?'更早':'Earlier'}><ListGroup>{older.map(row)}{cursor?<ViewAll label={phase==='loading-more'?(zh?'正在加载…':'Loading…'):(zh?'加载更早消息':'Load earlier')} onPress={()=>void controller.more()}/>:null}</ListGroup></Section></Stagger>:null}
  </View>;
 }

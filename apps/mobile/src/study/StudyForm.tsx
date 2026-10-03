@@ -1,3 +1,4 @@
+import {useHideTabBar} from '../navigation/SceneOverlay';
 import {StudySaveController,type StudyWrite} from './save-controller';
 import {reviewRequired} from '../write-receipt';
 import {useInputProtection} from '../navigation/InputProtection';
@@ -16,6 +17,7 @@ import { hongKongInput,newWriteKey,editedInstant } from './dates';
 
 export type Editor = {kind:'course'|StudyItem['kind'];record?:Course|CalendarItem;courseId?:string|null};
 export function StudyForm({editor,courses,language,dark,onSaved,onBack}:{editor:Editor;courses:Course[];language:Language;dark:boolean;onSaved:()=>void;onBack:()=>void}) {
+ useHideTabBar();
   const alive=useRef(true);
   useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
   const t=studyStrings[language],colors=palette[dark?'dark':'light'],existing=editor.record;

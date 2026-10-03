@@ -1,3 +1,4 @@
+import {useHideTabBar} from '../navigation/SceneOverlay';
 import {writeReceipt,ensureReplayable,writeRejected,reviewRequired,type WriteReceipt} from '../write-receipt';
 import {useInputProtection} from '../navigation/InputProtection';
 import {useEffect,useRef,useState} from 'react';
@@ -12,6 +13,7 @@ import type {Activity,ActivityInput} from '../../../../src/product/social/types'
 import {hongKongInput,parseHongKongInput,newWriteKey} from '../study/dates';
 import {socialError} from './shared';
 export function ActivityForm({initial,language,dark,onBack,onSaved}:{initial?:Activity;language:Language;dark:boolean;onBack:()=>void;onSaved:(id:string)=>void}){
+ useHideTabBar();
  const zh=language==='zh',c=palette[dark?'dark':'light'];
  const [title,setTitle]=useState(initial?.title??''),[description,setDescription]=useState(initial?.description??''),[location,setLocation]=useState(initial?.location??'');
  const [start,setStart]=useState(hongKongInput(initial?.starts_at??null)),[end,setEnd]=useState(hongKongInput(initial?.ends_at??null)),[capacity,setCapacity]=useState(String(initial?.capacity??4));
