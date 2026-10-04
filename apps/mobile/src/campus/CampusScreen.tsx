@@ -13,7 +13,7 @@ import {api,session} from '../runtime';
 import type {Language} from '../strings';
 import type {ShuttleRoute,ShuttleDepartures} from '../../../../src/product/campus/shuttle';
 import type {directoryData} from '../../../../src/product/campus/directory-data';
-import {CircleButton,EmptyState,Hero,HeroActions,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,TopBar,ViewAll,usePenColors,GlassChips} from '../ui/Pen';
+import {CircleButton,EmptyState,Hero,HeroActions,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,TopBar,ViewAll,usePenColors,GlassChips,ProgressRing} from '../ui/Pen';
 
 // Pen board "V2 / 校园 / 我的下一班" (gWkUE): search, my next ride with live alternatives, affairs, saved, campus life.
 type Catalog={routes:ShuttleRoute[];freshness:string;refresh_due_at:string};
@@ -117,13 +117,6 @@ export function CampusScreen({language,dark,onLogin,name,onMe}:{language:Languag
  </View>;
 }
 function formatDay(date:string,zh:boolean){const wd=new Date(date+'T00:00:00Z').getUTCDay();return zh?`周${'日一二三四五六'[wd]}`:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][wd];}
-function ProgressRing({done,total}:{done:number;total:number}){
- const c=usePenColors(),pct=total?done/total:0,size=46,stroke=5,r=(size-stroke)/2,circ=2*Math.PI*r;
- return <View style={{width:size,height:size,alignItems:'center',justifyContent:'center'}}>
-  <Svg width={size} height={size} style={{position:'absolute',transform:[{rotate:'-90deg'}]}}><Circle cx={size/2} cy={size/2} r={r} stroke={c.fill} strokeWidth={stroke} fill="none"/><Circle cx={size/2} cy={size/2} r={r} stroke={pct>=1?c.green:c.orange} strokeWidth={stroke} fill="none" strokeLinecap="round" strokeDasharray={`${circ*pct} ${circ}`}/></Svg>
-  <Text style={{fontSize:12,fontWeight:'700',color:c.text}}>{done}/{total}</Text>
- </View>;
-}
 function RouteList({catalog,language,onBack,onRoute,onTransit}:{catalog:Catalog|null;language:Language;onBack:()=>void;onRoute:(id:string)=>void;onTransit:()=>void}){
  const zh=language==='zh',c=usePenColors();
  const all=catalog?.routes??[],out=all.filter(r=>r.id.startsWith('campus-to-')||r.id.endsWith('-to-east-point-city')),inbound=all.filter(r=>!out.includes(r));

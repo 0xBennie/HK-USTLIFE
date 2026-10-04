@@ -371,3 +371,12 @@ export function GlassFill({radius,tint,interactive}:{radius?:number;tint?:string
  return <BlurView pointerEvents="none" intensity={70} tint={dark?'dark':'light'} style={{position:'absolute',inset:0,borderRadius:radius,overflow:'hidden'}}/>;
 }
 export const hasLiquidGlass=liquidGlass;
+
+/** Step progress ring (campus affairs, guides). */
+export function ProgressRing({done,total}:{done:number;total:number}){
+ const c=usePenColors(),pct=total?done/total:0,size=46,stroke=5,r=(size-stroke)/2,circ=2*Math.PI*r;
+ return <View style={{width:size,height:size,alignItems:'center',justifyContent:'center'}}>
+  <Svg width={size} height={size} style={{position:'absolute',transform:[{rotate:'-90deg'}]}}><Circle cx={size/2} cy={size/2} r={r} stroke={c.fill} strokeWidth={stroke} fill="none"/><Circle cx={size/2} cy={size/2} r={r} stroke={pct>=1?c.green:c.orange} strokeWidth={stroke} fill="none" strokeLinecap="round" strokeDasharray={`${circ*pct} ${circ}`}/></Svg>
+  <Text style={{fontSize:12,fontWeight:'700',color:c.text}}>{done}/{total}</Text>
+ </View>;
+}
