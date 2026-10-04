@@ -1,3 +1,4 @@
+import {PlainField} from '../ui/PlainField';
 import {DepartureBoard} from './DepartureBoard';
 import {usePageTop} from '../navigation/TabScene';
 import {AcademicsScreen,BookingScreen,ClubsScreen,GradesScreen,HallScreen,ServicesScreen,TimeMatchScreen} from '../life/LifeScreens';
@@ -14,7 +15,7 @@ import {DirectoryScreen} from './DirectoryScreen';
 import {TargetActions} from './TargetActions';
 import {liveAlternatives,type LiveOption} from './live';
 import {useEffect,useMemo,useRef,useState,useSyncExternalStore} from 'react';
-import {AppState,Linking,Pressable,ScrollView,Text,TextInput,View} from 'react-native';
+import {AppState,Linking,Pressable,ScrollView,Text,View} from 'react-native';
 import Svg,{Circle} from 'react-native-svg';
 import {api,session} from '../runtime';
 import type {Language} from '../strings';
@@ -101,7 +102,7 @@ export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{la
   <TopBar name={name} onAvatar={onMe} title={zh?'校园':'Campus'} right={<CircleButton icon={searching?'x':'search'} label={zh?'搜索':'Search'} onPress={()=>{setSearching(!searching);setQ('');}}/>}/>
   {searching?<View style={{flexDirection:'row',alignItems:'center',gap:8,height:48,paddingHorizontal:14,borderRadius:24,backgroundColor:c.surface,boxShadow:'0 2px 12px #00000008'}}>
    <PenIcon name="search" size={18} color={c.muted}/>
-   <TextInput autoFocus accessibilityLabel={zh?'搜索地点、路线或房间号':'Search places, routes or room numbers'} value={q} onChangeText={setQ} placeholder={zh?'地点、路线、办事，或房间号':'Places, routes, services or room no.'} placeholderTextColor={c.muted} returnKeyType="search" clearButtonMode="while-editing" style={{flex:1,fontSize:17,color:c.text}}/>
+   <PlainField autoFocus accessibilityLabel={zh?'搜索地点、路线或房间号':'Search places, routes or room numbers'} value={q} onChangeText={setQ} placeholder={zh?'地点、路线、办事，或房间号':'Places, routes, services or room no.'} returnKeyType="search" clearButtonMode="while-editing" fontSize={17}/>
   </View>:null}
   {query?<View style={{gap:10}}>
    {roomLike?<ListGroup><ListRow icon="map" tile={c.teal} title={zh?`在 Path Advisor 找 ${q.trim().toUpperCase()}`:`Find ${q.trim().toUpperCase()} in Path Advisor`} subtitle={zh?'学校官方课室导航 · 显示电梯和路线':'Official HKUST room finder'} chevron onPress={()=>void Linking.openURL(PATH_ADVISOR)}/></ListGroup>:null}

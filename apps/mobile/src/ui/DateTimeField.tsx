@@ -24,7 +24,7 @@ export function DateTimeField({label,value,onChange,mode,disabled,icon='calendar
   {open?<PickerSheet zh={zh} title={label} value={value} mode={mode} clearable={clearable} onClose={()=>setOpen(false)} onDone={v=>{onChange(v);setOpen(false);}}/>:null}
  </>;
 }
-function PickerSheet({zh,title,value,mode,clearable,onClose,onDone}:{zh:boolean;title:string;value:string;mode:'date'|'datetime';clearable?:boolean;onClose:()=>void;onDone:(v:string)=>void}){
+export function PickerSheet({zh,title,value,mode,clearable,onClose,onDone}:{zh:boolean;title:string;value:string;mode:'date'|'datetime';clearable?:boolean;onClose:()=>void;onDone:(v:string)=>void}){
  const c=usePenColors(),{reduceMotion}=useAppearance(),today=hkToday();
  const [date,setDate]=useState(value.slice(0,10)||today);
  const [hour,setHour]=useState(value.length>11?Number(value.slice(11,13)):9);

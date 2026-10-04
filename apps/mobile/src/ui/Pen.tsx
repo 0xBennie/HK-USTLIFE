@@ -19,7 +19,10 @@ import {useAppearance} from './Appearance';
 
 // Pen boards name lucide icons in kebab case ("calendar-days"); lucide-react-native exports them in PascalCase.
 export type PenIconName=string;
-const glyph=(name:string):LucideIcon=>(icons as Record<string,LucideIcon>)[name.split('-').map(p=>p[0].toUpperCase()+p.slice(1)).join('')]??icons.Circle;
+// lucide 1.x renamed the face icons that Pen boards still call smile/frown/meh/laugh/angry/annoyed.
+const renamed:Record<string,string>={smile:'face-slightly-smiling','smile-plus':'face-slightly-smiling-plus',frown:'face-slightly-frowning',meh:'face-neutral',laugh:'face-grinning',angry:'face-angry',annoyed:'face-expressionless'};
+const missing=new Set<string>();
+const glyph=(name:string):LucideIcon=>{const found=(icons as Record<string,LucideIcon>)[(renamed[name]??name).split('-').map(p=>p[0].toUpperCase()+p.slice(1)).join('')];if(!found&&__DEV__&&!missing.has(name)){missing.add(name);console.warn(`PenIcon: no lucide icon "${name}"`);}return found??icons.Circle;};
 export function PenIcon({name,color,size=19,strokeWidth=2}:{name:PenIconName;color:string;size?:number;strokeWidth?:number}){const Glyph=glyph(name);return <Glyph color={color} size={size} strokeWidth={strokeWidth} accessible={false}/>;}
 export const usePenColors=():Colors=>palette[useColorScheme()==='dark'?'dark':'light'];
 

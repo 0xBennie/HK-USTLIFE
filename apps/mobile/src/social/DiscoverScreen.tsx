@@ -21,15 +21,17 @@ type Filters={q:string;kind:string;interaction:string;language:string;mine:strin
 const emptyFilters:Filters={q:'',kind:'',interaction:'',language:'',mine:'',from:'',to:''};
 
 const relative=(iso:string,zh:boolean)=>{const d=Math.round((Date.parse(iso.slice(0,10))-Date.parse(new Date(Date.now()+8*3600e3).toISOString().slice(0,10)))/864e5);const t=cardDateTime(iso).slice(6);return d<=0?(zh?`今天 ${t}`:`Today ${t}`):d===1?(zh?`明天 ${t}`:`Tomorrow ${t}`):zh?`${d} 天后`:`in ${d}d`;};
+/** Only a live place is a status: confirmed in green, waitlisted in orange; withdrawn or cancelled shows nothing. */
+const activeStatus=(a:Activity,zh:boolean)=>{const p=a.mine?.participation?.status;return p==='confirmed'?{label:participationLabel(p,zh),color:'#2E9E5B'}:p==='waitlisted'?{label:participationLabel(p,zh),color:'#D98A1C'}:null;};
 /** V3 featured card (Plasma "Offers"): full-bleed photo, white time pill, title over a soft dark fade. */
 function FeaturedCard({activity:a,zh,onOpen}:{activity:Activity;zh:boolean;onOpen:()=>void}){
  const {reduceMotion}=useAppearance();
- const status=a.mine?.participation?participationLabel(a.mine.participation.status,zh):null;
+ const status=activeStatus(a,zh);
  return <Pressable accessibilityRole="button" accessibilityLabel={`${a.title}, ${cardDateTime(a.starts_at)}, ${a.location}`} onPress={onOpen} style={({pressed})=>({width:284,height:340,borderRadius:30,borderCurve:'continuous',overflow:'hidden',transform:[{scale:pressed&&!reduceMotion?0.98:1}]})}>
   <Image source={activityCover(a)} resizeMode="cover" accessible={false} style={{position:'absolute',width:'100%',height:'100%'}}/>
   <Svg style={{position:'absolute',width:'100%',height:'100%'}}><Defs><LinearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><Stop offset="0.45" stopColor="#000000" stopOpacity={0}/><Stop offset="1" stopColor="#000000" stopOpacity={0.62}/></LinearGradient></Defs><Rect width="100%" height="100%" fill="url(#fade)"/></Svg>
   <View style={{flex:1,padding:18,justifyContent:'space-between'}}>
-   <View style={{flexDirection:'row',gap:6}}><View style={{paddingVertical:6,paddingHorizontal:12,borderRadius:99,backgroundColor:'#FFFFFF'}}><Text style={{fontSize:14,fontWeight:'600',color:'#0B0B0C'}}>{relative(a.starts_at,zh)}</Text></View>{status?<View style={{paddingVertical:6,paddingHorizontal:12,borderRadius:99,backgroundColor:'#2E9E5B'}}><Text style={{fontSize:14,fontWeight:'600',color:'#FFFFFF'}}>{status}</Text></View>:null}</View>
+   <View style={{flexDirection:'row',gap:6}}><View style={{paddingVertical:6,paddingHorizontal:12,borderRadius:99,backgroundColor:'#FFFFFF'}}><Text style={{fontSize:14,fontWeight:'600',color:'#0B0B0C'}}>{relative(a.starts_at,zh)}</Text></View>{status?<View style={{paddingVertical:6,paddingHorizontal:12,borderRadius:99,backgroundColor:status.color}}><Text style={{fontSize:14,fontWeight:'600',color:'#FFFFFF'}}>{status.label}</Text></View>:null}</View>
    <View style={{gap:4}}>
     <Text numberOfLines={2} style={{fontSize:25,lineHeight:31,fontWeight:'700',color:'#FFFFFF',letterSpacing:-0.4}}>{a.title}</Text>
     <Text numberOfLines={2} style={{fontSize:15,lineHeight:21,color:'#FFFFFFD9'}}>{interactionLabel(a.interaction,zh)} · {a.location} · {a.counts.confirmed}/{a.capacity} {zh?'人':''}</Text>
@@ -39,12 +41,12 @@ function FeaturedCard({activity:a,zh,onOpen}:{activity:Activity;zh:boolean;onOpe
 }
 /** V3 list row (Plasma transactions): round photo, title and time, places on the right. */
 function ActivityRow({activity:a,zh,last,onOpen}:{activity:Activity;zh:boolean;last:boolean;onOpen:()=>void}){
- const c=usePenColors(),full=a.counts.remaining<=0,status=a.mine?.participation?participationLabel(a.mine.participation.status,zh):null;
+ const c=usePenColors(),full=a.counts.remaining<=0,status=activeStatus(a,zh);
  return <Pressable accessibilityRole="button" accessibilityLabel={a.title} onPress={onOpen} style={({pressed})=>({flexDirection:'row',alignItems:'center',gap:14,paddingLeft:18,opacity:pressed?0.6:1})}>
   <Image source={activityCover(a)} style={{width:48,height:48,borderRadius:24}}/>
   <View style={{flex:1,flexDirection:'row',alignItems:'center',gap:10,paddingVertical:14,paddingRight:18,borderBottomWidth:last?0:0.5,borderBottomColor:c.border}}>
    <View style={{flex:1,gap:3}}><Text numberOfLines={1} style={{fontSize:17,fontWeight:'500',color:c.text}}>{a.title}</Text><Text numberOfLines={1} style={{fontSize:14,color:c.muted}}>{relative(a.starts_at,zh)} · {a.location}</Text></View>
-   <View style={{alignItems:'flex-end',gap:2}}><Text style={{fontSize:16,fontWeight:'600',color:status?c.green:full?c.orange:c.text,fontVariant:['tabular-nums']}}>{status??(full?(zh?'可候补':'Waitlist'):`${a.counts.confirmed}/${a.capacity}`)}</Text><Text style={{fontSize:12,color:c.muted}}>{a.cost_minor?`HK$ ${(a.cost_minor/100).toFixed(0)}`:(zh?'免费':'Free')}</Text></View>
+   <View style={{alignItems:'flex-end',gap:2}}><Text style={{fontSize:16,fontWeight:'600',color:status?status.color:full?c.orange:c.text,fontVariant:['tabular-nums']}}>{status?.label??(full?(zh?'可候补':'Waitlist'):`${a.counts.confirmed}/${a.capacity}`)}</Text><Text style={{fontSize:12,color:c.muted}}>{a.cost_minor?`HK$ ${(a.cost_minor/100).toFixed(0)}`:(zh?'免费':'Free')}</Text></View>
   </View>
  </Pressable>;
 }

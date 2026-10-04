@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
-import {Alert,Text,View} from 'react-native';
+import {Alert,Pressable,Text,View} from 'react-native';
 import { Button } from '../ui/Primitives';
 import { Input } from '../ui/Primitives';
 import {session} from '../runtime';
@@ -13,7 +13,7 @@ import {validSafetyReceipt,type SafetyWrite} from './safety-receipt';
 import {newWriteKey} from '../study/dates';
 import {wallError} from './wall-shared';
 export const reportReasonLabel=(reason:ReportReason,zh:boolean)=>({spam:zh?'垃圾信息':'Spam',harassment:zh?'骚扰／攻击':'Harassment',privacy:zh?'个人隐私':'Privacy',misinformation:zh?'错误或误导信息':'Misleading information',other:zh?'其他问题':'Other concern'}[reason]);
-export function SafetyActions({target,author,language,dark,onChanged,disabled=false,onPendingChange}:{target:ReportTarget|null;author:{id:string;display_name:string};language:Language;dark:boolean;onChanged:()=>void;disabled?:boolean;onPendingChange?:(pending:boolean)=>void}){
+export function SafetyActions({target,author,language,dark,onChanged,disabled=false,onPendingChange,quiet=false}:{quiet?:boolean|'inline';target:ReportTarget|null;author:{id:string;display_name:string};language:Language;dark:boolean;onChanged:()=>void;disabled?:boolean;onPendingChange?:(pending:boolean)=>void}){
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile,zh=language==='zh',c=palette[dark?'dark':'light'];
  const [open,setOpen]=useState(false),[reason,setReason]=useState<ReportReason>('other'),[details,setDetails]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[sent,setSent]=useState(false);
  const pending=useRef<SafetyWrite|null>(null),lock=useRef(false),alive=useRef(true);
@@ -31,7 +31,9 @@ export function SafetyActions({target,author,language,dark,onChanged,disabled=fa
  function report(){if(frozen||!target)return;pending.current={path:'/reports',method:'POST',body:{target,reason,details},key:newWriteKey()};void run();}
  function block(){Alert.alert(zh?'屏蔽这位用户？':'Block this user?',zh?'这会撤回双方再次同行意愿并清空分享的联系方式；解除屏蔽不会恢复。双方登录后不再看到彼此发布的内容。如果你们是活动组织者与参与者，将退出对应报名／候补并移除收藏及日程；解封不会自动恢复。共同参加别人组织的活动仍可能相遇。公开内容仍可由访客查看。':'This withdraws mutual reconnection consent and clears shared contact cards; unblocking does not restore them. Signed-in views hide content between you. Organizer–participant relationships are withdrawn and saved activities/calendars removed; unblocking does not restore them. You may still attend another person’s activity together. Public content remains visible to visitors.',[{text:zh?'返回':'Go back',style:'cancel'},{text:zh?'确认屏蔽':'Block',style:'destructive',onPress:()=>{if(lock.current||pending.current)return;pending.current={path:`/me/blocks/${author.id}`,method:'PUT',body:{},key:newWriteKey()};void run();}}]);}
  return <View style={styles.smallStack}>
-  <Button variant="ghost" isDisabled={frozen} onPress={()=>setOpen(!open)}>{open?(zh?'收起':'Close'):(zh?'举报／屏蔽':'Report / block')}</Button>
+  {/* quiet: Pen V6 small grey text — centred page footer, or 'inline' under a comment (V6 / 活动讨论); otherwise the original ghost button. */}
+  {quiet?<Pressable accessibilityRole="button" disabled={frozen} hitSlop={quiet==='inline'?12:8} onPress={()=>setOpen(!open)} style={{alignSelf:quiet==='inline'?'flex-start':'center',paddingVertical:quiet==='inline'?0:6}}><Text style={{fontSize:quiet==='inline'?12:13,fontWeight:'500',color:c.muted}}>{open?(zh?'收起':'Close'):(zh?'举报或屏蔽':'Report or block')}</Text></Pressable>
+  :<Button variant="ghost" isDisabled={frozen} onPress={()=>setOpen(!open)}>{open?(zh?'收起':'Close'):(zh?'举报／屏蔽':'Report / block')}</Button>}
   {sent?<Text accessibilityRole="alert" style={[styles.caption,{color:c.muted}]}>{zh?'举报已保存，可在“我的”查看处理进度。':'Report saved. Track it in My account.'}</Text>:null}
   {error?<Text accessibilityRole="alert" style={[styles.body,{color:c.danger}]}>{error}</Text>:null}
   {pending.current?<Button isDisabled={busy||disabled} onPress={()=>void run()}>{zh?'重试确认操作':'Retry to confirm'}</Button>:null}

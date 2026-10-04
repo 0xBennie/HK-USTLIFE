@@ -1,9 +1,10 @@
 import {feel} from '../ui/feel';
 import {ClassmateScreen,CompanyScreen} from '../life/SocialExtras';
 import {usePageTop} from '../navigation/TabScene';
+import {PlainField} from '../ui/PlainField';
 import {useSceneFocus} from '../navigation/TabScene';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
-import {AppState,Pressable,Text,TextInput,View} from 'react-native';
+import {AppState,Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import {EmptyState,FilterPill,Notice,PenIcon,PillRow,Skeleton,Stagger,ViewAll,usePenColors,GlassChips} from '../ui/Pen';
 import {WallPostCard,topicMeta,topicOf} from './wall-ui';
@@ -55,7 +56,7 @@ export function WallScreen({language,dark,onLogin,initialId,onDismissTarget,onNa
   </View>
   <View style={{flexDirection:'row',alignItems:'center',gap:8,height:46,paddingHorizontal:16,borderRadius:23,backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder}}>
    <PenIcon name="search" size={17} color={c.muted}/>
-   <TextInput accessibilityLabel={zh?'搜索校园墙':'Search campus wall'} value={q} onChangeText={setQ} onSubmitEditing={()=>setFilters({...filters,q})} returnKeyType="search" maxLength={120} placeholder={zh?'搜索问题、搭子、二手…':'Search questions, buddies, items…'} placeholderTextColor={c.muted} clearButtonMode="while-editing" style={{flex:1,fontSize:16,color:c.text}}/>
+   <PlainField accessibilityLabel={zh?'搜索校园墙':'Search campus wall'} value={q} onChangeText={setQ} onSubmitEditing={()=>setFilters({...filters,q})} returnKeyType="search" maxLength={120} placeholder={zh?'搜索问题、搭子、二手…':'Search questions, buddies, items…'} clearButtonMode="while-editing" fontSize={16}/>
   </View>
   {hot&&!filters.q&&!topicFilter&&hot.reply_count>0?<Pressable accessibilityRole="button" onPress={()=>setSelected(hot.id)} style={{flexDirection:'row',alignItems:'center',gap:12,paddingVertical:14,paddingHorizontal:16,borderRadius:22,backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder}}>
    <View style={{width:34,height:34,borderRadius:17,backgroundColor:'#E5484D1F',alignItems:'center',justifyContent:'center'}}><PenIcon name="flame" size={18} color="#E5484D"/></View>
