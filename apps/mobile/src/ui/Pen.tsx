@@ -31,9 +31,10 @@ const pressFeedback=(reduceMotion:boolean,base=1)=>({pressed}:{pressed:boolean})
 /** Pen "Button plus" / overlay nav buttons: 38pt circle, 19pt glyph, 1pt/4 blur shadow. */
 export function CircleButton({icon,label,onPress,variant='surface',color,disabled}:{icon:PenIconName;label:string;onPress:()=>void;variant?:'surface'|'overlay'|'fill'|'prominent';color?:string;disabled?:boolean}){
  const c=usePenColors(),{reduceMotion}=useAppearance(),dark=useColorScheme()==='dark';
- const prominent=variant==='prominent'&&!disabled,glass=variant!=='fill'&&liquidGlass;
+ // Disabled keeps its colours at 45% and drops the native glass (opacity on glass is unreliable), like PrimaryButton.
+ const prominent=variant==='prominent',glass=variant!=='fill'&&liquidGlass&&!disabled;
  const background=glass?'transparent':prominent?NAVY:variant==='overlay'?(dark?'#1C1C1ED9':'#FFFFFFE6'):variant==='fill'?c.fill:c.surface;
- return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{disabled}} disabled={disabled} hitSlop={4} onPress={()=>{feel.tap();onPress();}} style={state=>[{width:44,height:44,borderRadius:22,alignItems:'center',justifyContent:'center',backgroundColor:background,boxShadow:variant==='fill'||glass?undefined:'0 4px 14px #0000000F'},pressFeedback(reduceMotion,disabled?0.45:1)(state)]}>{glass?prominent?<GlassView pointerEvents="none" isInteractive glassEffectStyle="regular" tintColor={NAVY} style={{position:'absolute',inset:0,borderRadius:22}}/>:<GlassFill radius={22}/>:null}<PenIcon name={icon} size={20} strokeWidth={2.2} color={prominent?"#FFFFFF":variant==="prominent"?c.muted:color??c.text}/></Pressable>;
+ return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{disabled}} disabled={disabled} hitSlop={4} onPress={()=>{feel.tap();onPress();}} style={state=>[{width:44,height:44,borderRadius:22,alignItems:'center',justifyContent:'center',backgroundColor:background,boxShadow:variant==='fill'||glass?undefined:'0 4px 14px #0000000F'},pressFeedback(reduceMotion,disabled?0.45:1)(state)]}>{glass?prominent?<GlassView pointerEvents="none" isInteractive glassEffectStyle="regular" tintColor={NAVY} style={{position:'absolute',inset:0,borderRadius:22}}/>:<GlassFill radius={22}/>:null}<PenIcon name={icon} size={20} strokeWidth={2.2} color={prominent?"#FFFFFF":color??c.text}/></Pressable>;
 }
 
 /** Pen "Large title": 13/600 eyebrow, 34/700 title, optional circle action. */

@@ -6,7 +6,9 @@ import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react'
 import {ActionSheetIOS,Alert,AppState,Pressable,Share,Text,TextInput,View} from 'react-native';
 import {useSceneBottomBar} from '../navigation/SceneOverlay';
 import {BottomBar,CircleButton,EmptyState,Notice,PenIcon,Skeleton,Stagger,Surface,ViewAll,usePenColors,GlassCapsule} from '../ui/Pen';
-import {GradientAvatar,TopicPill,relativeTime,topicMeta,topicOf} from './wall-ui';
+import {GradientAvatar,StatusChip,TopicPill,relativeTime,topicMeta,topicOf,visibilityText} from './wall-ui';
+// Pen "V6 / 帖子详情" (kSIaN): post, replies (own ones deletable, others quietly reportable), a floating reply
+// bar while the post is open, and the author's menu (edit / solve or close / delete).
 const replyCopy={
  question:{zh:['友善回复，帮到下一个人…','说说你知道的，帮到下一个人。'],en:['Reply kindly…','Share what you know.']},
  buddy:{zh:['我也想去 / 还有位置吗…','第一个报名的人，往往就是新朋友。'],en:['I’m in / still a spot?','Be the first to join.']},
@@ -36,14 +38,14 @@ export function WallDetail({id,language,dark,onBack,onNavigate}:{id:string;langu
   const generation=++epoch.current;setBusy(true);setError('');
   try{const [current,page]=await Promise.all([session.request<WallPost>(`/posts/${id}`),session.request<{items:WallReply[];next_cursor:number|null}>(`/posts/${id}/replies`+(before?`?cursor=${before}`:''))]);
    if(alive.current&&generation===epoch.current){setPost(current);setReplies(old=>before?[...old,...page.items.filter(x=>!old.some(y=>y.id===x.id))]:page.items);setCursor(page.next_cursor);}
-  }catch(e){if(alive.current&&generation===epoch.current){setPost(null);setReplies([]);setCursor(null);setError(afterWrite&&(!(e instanceof ApiFailure)||e.status===0||e.status>=500)?(zh?'操作已保存，但帖子详情暂时无法刷新。请稍后刷新，勿重复发布。':'The change was saved, but the post could not refresh. Refresh later; do not publish it again.'):wallError(e,language));}}
+  }catch(e){if(alive.current&&generation===epoch.current){setPost(null);setReplies([]);setCursor(null);setError(afterWrite&&(!(e instanceof ApiFailure)||e.status===0||e.status>=500)?(zh?'已保存，但帖子还没刷新。':'Saved, but the post hasn’t refreshed yet.'):wallError(e,language,'read'));}}
   finally{if(alive.current&&generation===epoch.current)setBusy(false);}
  },[id,language]);
  useEffect(()=>{if(!sceneActive||editing)return;if(!pending.current&&!lock.current)void load();const listener=AppState.addEventListener('change',s=>{if(s==='active'&&!lock.current&&!pending.current)void load();});return()=>{epoch.current++;listener.remove();};},[load,editing,sceneActive]);
  async function run(){if(lock.current||!pending.current)return;lock.current=true;setBusy(true);setError('');const request=pending.current;
   try{ensureReplayable(request,request.method);await session.request(request.path,{method:request.method,body:request.body,idempotencyKey:request.key});
    if(alive.current){pending.current=null;request.after?.();if(request.method!=='DELETE'||request.path!==`/posts/${id}`)await load(undefined,true);}
-  }catch(e){if(alive.current){if(writeRejected(e)){pending.current=null;if(e.status===404||e.status===410){setPost(null);setReplies([]);setCursor(null);}}setReviewOnly(reviewRequired(e));setError(wallError(e,language));}}
+  }catch(e){if(alive.current){if(writeRejected(e)){pending.current=null;if(e.status===404||e.status===410){setPost(null);setReplies([]);setCursor(null);}}setReviewOnly(reviewRequired(e));setError(wallError(e,language,request.method==='POST'&&request.path.endsWith('/replies')?'reply':'write'));}}
   finally{lock.current=false;if(alive.current)setBusy(false);}
  }
  function act(suffix:string,method:string,body:unknown,after?:()=>void){if(lock.current||pending.current)return;epoch.current++;pending.current={path:`/posts/${id}${suffix}`,method,...writeReceipt(body,newWriteKey()),after};void run();}
@@ -72,12 +74,12 @@ export function WallDetail({id,language,dark,onBack,onNavigate}:{id:string;langu
    <Stagger index={0}><View style={{gap:12,padding:18,borderRadius:28,backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder,boxShadow:'0 10px 30px #0000000F'}}>
     <View style={{flexDirection:'row',alignItems:'center',gap:10}}>
      <GradientAvatar name={post.author.display_name} size={44}/>
-     <View style={{flex:1,gap:1}}><View style={{flexDirection:'row',alignItems:'center',gap:5}}><Text style={{fontSize:16,fontWeight:'700',color:c.text}}>{post.author.display_name}</Text>{post.visibility==='members'?<PenIcon name="badge-check" size={14} color="#24467F"/>:null}</View><Text style={{fontSize:12,color:c.muted}}>{relativeTime(post.created_at,zh)} · {post.visibility==='public'?(zh?'公开':'Public'):(zh?'仅同学可见':'Members only')}</Text></View>
+     <View style={{flex:1,gap:1}}><Text style={{fontSize:16,fontWeight:'700',color:c.text}}>{post.author.display_name}</Text><Text style={{fontSize:12,color:c.muted}}>{relativeTime(post.created_at,zh)} · {visibilityText(post.visibility,zh)}</Text></View>
      <TopicPill topic={topic} zh={zh}/>
     </View>
     <Text selectable style={{fontSize:22,lineHeight:30,fontWeight:'700',color:c.text}}>{post.title}</Text>
     <Text selectable style={{fontSize:16,lineHeight:25,color:c.text}}>{post.body}</Text>
-    {post.status!=='open'?<View style={{alignSelf:'flex-start',flexDirection:'row',alignItems:'center',gap:5,paddingVertical:5,paddingHorizontal:11,borderRadius:99,backgroundColor:post.status==='resolved'?'#2E9E5B1F':c.fill}}><PenIcon name={post.status==='resolved'?'circle-check':'lock'} size={13} color={post.status==='resolved'?'#2E9E5B':c.muted}/><Text style={{fontSize:12,fontWeight:'700',color:post.status==='resolved'?'#2E9E5B':c.muted}}>{postStatus(post.status,zh)}</Text></View>:null}
+    {post.status!=='open'?<View style={{alignSelf:'flex-start'}}><StatusChip status={post.status} zh={zh}/></View>:null}
    </View></Stagger>
    <View style={{flexDirection:'row',alignItems:'center',paddingHorizontal:4}}><Text style={{flex:1,fontSize:17,fontWeight:'700',color:c.text}}>{zh?`${post.reply_count} 条回复`:`${post.reply_count} replies`}</Text></View>
    {!replies.length?<Surface><EmptyState icon="message-circle" title={zh?'还没有回复':'No replies yet'} body={post.status==='open'?(zh?replyCopy[topicOf(post)].zh[1]:replyCopy[topicOf(post)].en[1]):(zh?'作者已暂停新回复。':'Replies are closed.')}/></Surface>:

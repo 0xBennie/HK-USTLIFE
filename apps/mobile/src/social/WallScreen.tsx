@@ -12,7 +12,7 @@ import {api,session} from '../runtime';
 import {palette,styles} from '../theme';
 import type {Language} from '../strings';
 import type {WallPost} from '../../../../src/product/social/wall-types';
-import {dateTimeInZone} from '../study/dates';
+import {dateInZone} from '../study/dates';
 import {wallError,postStatus} from './wall-shared';
 import {WallForm} from './WallForm';
 import {WallDetail} from './WallDetail';
@@ -34,7 +34,7 @@ export function WallScreen({language,dark,initialId,onDismissTarget,onNavigate,o
   const query=new URLSearchParams();if(filters.q)query.set('q',filters.q);if(filters.kind)query.set('kind',filters.kind);if(filters.topic)query.set('topic',filters.topic);if(filters.mine)query.set('mine','true');if(next)query.set('cursor',next);
   const page=await session.request<{items:WallPost[];next_cursor:string|null}>('/posts?'+query.toString());
   if(generation===epoch.current){setItems(old=>next?[...old,...page.items.filter(x=>!old.some(y=>y.id===x.id))]:page.items);setCursor(page.next_cursor);}
- }catch(e){if(generation===epoch.current){setItems([]);setCursor(null);setError(wallError(e,language));}}finally{if(generation===epoch.current){lock.current=false;setBusy(false);}}},[filters,language]);
+ }catch(e){if(generation===epoch.current){setItems([]);setCursor(null);setError(wallError(e,language,'list'));}}finally{if(generation===epoch.current){lock.current=false;setBusy(false);}}},[filters,language]);
  useEffect(()=>{if(!sceneActive||selected||creating)return;void load();const listener=AppState.addEventListener('change',s=>{if(s==='active')void load();});return()=>{epoch.current++;lock.current=false;listener.remove();};},[load,selected,creating,sceneActive]);
  usePageTop(`${company}${person?.id}${selected}${creating}`);
  if(creating)return <WallForm language={language} dark={dark} onBack={()=>setCreating(false)} onSaved={id=>{setCreating(false);setSelected(id);}}/>;
@@ -42,7 +42,9 @@ export function WallScreen({language,dark,initialId,onDismissTarget,onNavigate,o
  if(person)return <ClassmateScreen zh={zh} author={person} onBack={()=>setPerson(null)} onOpenPost={id=>{setPerson(null);setSelected(id);}}/>;
  if(selected)return <WallDetail key={selected} id={selected} language={language} dark={dark} onNavigate={onNavigate} onBack={()=>{setSelected(null);onDismissTarget();}}/>;
  const topicFilter=filters.kind==='help'?'question':filters.topic??'';
- const hot=items.filter(p=>p.status==='open').sort((a,b)=>b.reply_count-a.reply_count)[0];
+ // "今日热议" only looks at posts made today (Hong Kong); with none, the card is not shown (Pen "V6 / 校园墙").
+ const today=dateInZone(new Date().toISOString());
+ const hot=items.filter(p=>p.status==='open'&&dateInZone(p.created_at)===today).sort((a,b)=>b.reply_count-a.reply_count)[0];
  const pickTopic=(t:string)=>setFilters({...filters,kind:t==='question'?'help':'',topic:t&&t!=='question'?t:undefined});
  return <View style={{gap:16}}>
   <View style={{flexDirection:'row',justifyContent:'space-between'}}>

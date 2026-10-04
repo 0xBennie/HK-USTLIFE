@@ -12,6 +12,7 @@ import type {Language} from '../strings';
 import type {WallPost,WallTopic} from '../../../../src/product/social/wall-types';
 import {newWriteKey} from '../study/dates';
 import {wallError} from './wall-shared';
+// Pen "V6 / 发帖" (M6vKMj): topic, title and body, who can see it (fixed after posting), posting as your nickname.
 export function WallForm({initial,language,dark,onBack,onSaved}:{initial?:WallPost;language:Language;dark:boolean;onBack:()=>void;onSaved:(id:string)=>void}){
  useHideTabBar();
  const zh=language==='zh',c=usePenColors();
@@ -44,10 +45,10 @@ export function WallForm({initial,language,dark,onBack,onSaved}:{initial?:WallPo
    <Text style={{alignSelf:'flex-end',fontSize:12,color:c.tertiary}}>{body.length}/5000</Text>
   </View>
   {!initial?<ListGroup>
-   <ListRow icon="eye" tile={c.teal} title={zh?'谁能看到':'Who can see'} value={visibility==='members'?(zh?'科大同学（登录）':'Signed-in members'):(zh?'所有人':'Everyone')} chevron onPress={()=>setVisibility(visibility==='members'?'public':'members')}/>
+   <ListRow icon="eye" tile={c.teal} title={zh?'谁能看到':'Who can see'} value={visibility==='members'?(zh?'仅科大同学':'HKUST students only'):(zh?'所有人（不登录也能看）':'Everyone, even signed out')} chevron onPress={()=>setVisibility(visibility==='members'?'public':'members')}/>
    <ListRow icon="user-round-pen" tile={c.orange} title={zh?'发布身份':'Posting as'} value={zh?'你的昵称':'Your display name'}/>
   </ListGroup>:null}
-  <Text style={{paddingHorizontal:16,fontSize:12,color:c.muted}}>{zh?'可见范围发布后固定。你的私人课表不会附在帖子里。':'Visibility is fixed after posting. Your timetable is never attached.'}</Text>
+  <Text style={{paddingHorizontal:16,fontSize:12,color:c.muted}}>{zh?'可见范围发布后不能改。你的私人课表不会附在帖子里。':'Visibility can’t change after posting. Your timetable is never attached.'}</Text>
   {reviewOnly?<Notice tone="warning" text={zh?'请返回列表核对已保存内容。':'Go back and check what was saved.'} action={zh?'返回':'Back'} onAction={back}/>:null}
   {error?<Notice tone="error" text={error}/>:null}
  </View>;

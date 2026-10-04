@@ -3,15 +3,19 @@ import {Alert} from 'react-native';
 import {NavigationProtections,protectionFor,type NavigationProtection} from './protection';
 export const InputProtectionContext=createContext<{guards:NavigationProtections;scene:number}|null>(null);
 
+// Pen "V6 / 离开确认（系统弹窗）" (hFxMD): short, plain confirmations when leaving an edit.
 export function confirmNavigation(status:NavigationProtection,zh:boolean,proceed:()=>void){
  if(status==='clear'){proceed();return;}
  if(status==='busy'){
-  Alert.alert(zh?'正在处理':'Request in progress',zh?'请等待本次操作返回，避免丢失确认结果。':'Wait for this request to return before leaving.');return;
+  Alert.alert(zh?'正在提交':'Submitting',zh?'等这一步完成再离开。':'Wait for this to finish before leaving.',[{text:zh?'好':'OK'}]);return;
  }
- Alert.alert(status==='uncertain'?(zh?'结果尚未确认':'Result unconfirmed'):(zh?'离开编辑？':'Leave this edit?'),status==='uncertain'?(zh?'操作可能已保存。离开后请先刷新核对，避免重复创建。':'The change may already be saved. Check the latest records before creating another.'):(zh?'切换底部标签可以保留这份输入。返回或打开另一条内容会放弃尚未保存的修改。':'Switching bottom tabs keeps your input. Going back or opening another item discards unsaved changes.'),[
-  {text:zh?'继续编辑／核对':'Stay here',style:'cancel'},
-  {text:status==='uncertain'?(zh?'离开并稍后核对':'Leave and check later'):(zh?'放弃修改':'Discard changes'),style:'destructive',onPress:proceed},
- ]);
+ if(status==='uncertain'){
+  Alert.alert(zh?'结果还没确认':'Not confirmed yet',zh?'可能已经保存了。离开后先刷新看看，别重复提交。':'It may already be saved. Refresh after leaving; don’t submit it again.',[
+   {text:zh?'留在这里':'Stay',style:'cancel'},{text:zh?'离开':'Leave',style:'destructive',onPress:proceed}]);
+  return;
+ }
+ Alert.alert(zh?'放弃修改？':'Discard changes?',zh?'这页还有没保存的修改。':'This page has unsaved changes.',[
+  {text:zh?'继续编辑':'Keep editing',style:'cancel'},{text:zh?'放弃修改':'Discard',style:'destructive',onPress:proceed}]);
 }
 /** Compare with initial form data; only the risk level is registered, never the form text. */
 export function useInputProtection(value:unknown,busy:boolean,uncertain:boolean,zh:boolean){

@@ -1,4 +1,4 @@
-// Shared pieces for Pen boards "V3 / 校园墙", "V3 / Wall post card", "V3 / 帖子详情", "V3 / 发帖".
+// Shared pieces for Pen boards "V6 / 校园墙" (ddOiF), "V6 / 帖子详情" (kSIaN), "V6 / 发帖" (M6vKMj).
 import {Image,Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import type {WallPost,WallTopic} from '../../../../src/product/social/wall-types';
@@ -27,16 +27,22 @@ export function relativeTime(iso:string,zh:boolean){
  if(m<1)return zh?'刚刚':'now';if(m<60)return zh?`${m} 分钟前`:`${m}m`;const h=Math.round(m/60);if(h<24)return zh?`${h} 小时前`:`${h}h`;
  const d=Math.round(h/24);return d<7?(zh?`${d} 天前`:`${d}d`):dateTimeInZone(iso,'Asia/Hong_Kong').slice(5,10);
 }
+export const visibilityText=(v:WallPost['visibility'],zh:boolean)=>v==='members'?(zh?'仅同学可见':'Classmates only'):(zh?'所有人可见':'Everyone');
+/** Resolved = green check, closed = grey lock (Pen "V6 / 帖子详情" · 其他状态). Open posts show nothing. */
+export function StatusChip({status,zh}:{status:WallPost['status'];zh:boolean}){
+ const c=usePenColors();if(status==='open')return null;const done=status==='resolved',col=done?'#2E9E5B':c.muted;
+ return <View style={{flexDirection:'row',alignItems:'center',gap:4,paddingVertical:4,paddingHorizontal:10,borderRadius:99,backgroundColor:done?'#2E9E5B1F':c.fill}}><PenIcon name={done?'circle-check':'lock'} size={13} color={col}/><Text style={{fontSize:12,fontWeight:'700',color:col}}>{done?(zh?'已解决':'Solved'):(zh?'已结束':'Closed')}</Text></View>;
+}
 export function TopicPill({topic,zh}:{topic:WallTopic;zh:boolean}){const t=topicMeta[topic];return <View style={{paddingVertical:5,paddingHorizontal:11,borderRadius:99,backgroundColor:t.color+'1F'}}><Text style={{fontSize:12,fontWeight:'700',color:t.color}}>{zh?t.zh:t.en}</Text></View>;}
-/** Pen "V3 / Wall post card". */
+/** Pen "V6 / 校园墙" post card: who and when, topic, title, body, replies and status — nothing the server doesn’t have. */
 export function WallPostCard({post,zh,onOpen,cover,onAuthor}:{post:WallPost;zh:boolean;onOpen:()=>void;cover?:number;onAuthor?:()=>void}){
  const c=usePenColors(),{reduceMotion}=useAppearance(),topic=topicOf(post);
  return <Pressable accessibilityRole="button" accessibilityLabel={`${post.title}, ${post.author.display_name}`} onPress={onOpen} style={({pressed})=>({gap:12,padding:18,borderRadius:28,borderCurve:'continuous',backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder,boxShadow:'0 10px 30px #0000000F',transform:[{scale:pressed&&!reduceMotion?0.985:1}]})}>
   <View style={{flexDirection:'row',alignItems:'center',gap:10}}>
    <Pressable accessibilityRole="button" accessibilityLabel={post.author.display_name} disabled={!onAuthor} onPress={onAuthor} hitSlop={6}><GradientAvatar name={post.author.display_name}/></Pressable>
    <View style={{flex:1,gap:1}}>
-    <View style={{flexDirection:'row',alignItems:'center',gap:5}}><Text numberOfLines={1} style={{fontSize:15,fontWeight:'700',color:c.text}}>{post.author.display_name}</Text>{post.visibility==='members'?<PenIcon name="badge-check" size={14} color="#24467F"/>:null}</View>
-    <Text style={{fontSize:12,color:c.muted}}>{relativeTime(post.created_at,zh)}{post.visibility==='members'?(zh?' · 仅同学可见':' · members'):''}</Text>
+    <Text numberOfLines={1} style={{fontSize:15,fontWeight:'700',color:c.text}}>{post.author.display_name}</Text>
+    <Text style={{fontSize:12,color:c.muted}}>{relativeTime(post.created_at,zh)} · {visibilityText(post.visibility,zh)}</Text>
    </View>
    <TopicPill topic={topic} zh={zh}/>
   </View>
@@ -45,9 +51,8 @@ export function WallPostCard({post,zh,onOpen,cover,onAuthor}:{post:WallPost;zh:b
   {cover?<Image source={cover} resizeMode="cover" style={{width:'100%',height:180,borderRadius:20}}/>:null}
   <View style={{flexDirection:'row',alignItems:'center',gap:18}}>
    <View style={{flexDirection:'row',alignItems:'center',gap:5}}><PenIcon name="message-circle" size={18} color={c.muted}/><Text style={{fontSize:13,fontWeight:'600',color:c.muted}}>{post.reply_count}</Text></View>
-   <View style={{flexDirection:'row',alignItems:'center',gap:5}}><PenIcon name="eye" size={18} color={c.muted}/><Text style={{fontSize:13,fontWeight:'600',color:c.muted}}>{post.visibility==='public'?(zh?'公开':'Public'):(zh?'同学':'Members')}</Text></View>
    <View style={{flex:1}}/>
-   {post.status==='resolved'?<View style={{flexDirection:'row',alignItems:'center',gap:4,paddingVertical:4,paddingHorizontal:10,borderRadius:99,backgroundColor:'#2E9E5B1F'}}><PenIcon name="circle-check" size={13} color="#2E9E5B"/><Text style={{fontSize:12,fontWeight:'700',color:'#2E9E5B'}}>{zh?'已解决':'Solved'}</Text></View>:post.status==='closed'?<Text style={{fontSize:12,fontWeight:'600',color:c.muted}}>{zh?'已结束':'Closed'}</Text>:null}
+   <StatusChip status={post.status} zh={zh}/>
   </View>
  </Pressable>;
 }

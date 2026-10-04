@@ -6,7 +6,6 @@ import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import {FilterPill,Notice,PenIcon,PillRow,PrimaryButton,TextAction,ViewAll,usePenColors} from '../ui/Pen';
 import {useAppearance} from '../ui/Appearance';
 import {session} from '../runtime';
-import {ApiFailure} from '../api';
 import {styles} from '../theme';
 import type {Language} from '../strings';
 import type {Activity} from '../../../../src/product/social/types';
@@ -75,7 +74,7 @@ export function DiscoverScreen({language,dark,initialId,onDismissTarget,onNaviga
   const query=new URLSearchParams({limit:'20'});for(const [key,value]of Object.entries(applied))if(value)query.set(key,key==='from'||key==='to'?parseHongKongInput(value)!:value);if(next)query.set('cursor',next);
   const page=await session.request<{items:Activity[];next_cursor:string|null}>('/activities?'+query.toString());
   if(generation===epoch.current){setItems(old=>next?[...old,...page.items.filter(x=>!old.some(y=>y.id===x.id))]:page.items);setCursor(page.next_cursor);}
- }catch(e){if(generation===epoch.current){setItems([]);setCursor(null);setError(e instanceof Error&&!(e instanceof ApiFailure)?(zh?'时间格式应为 YYYY-MM-DD HH:mm。':'Use YYYY-MM-DD HH:mm for the time window.'):socialError(e,language));}}finally{if(generation===epoch.current){lock.current=false;setBusy(false);}}},[applied,language]);
+ }catch(e){if(generation===epoch.current){setItems([]);setCursor(null);setError(socialError(e,language,'read'));}}finally{if(generation===epoch.current){lock.current=false;setBusy(false);}}},[applied,language]);
  useEffect(()=>{if(!sceneActive||selected||creating)return;void load();const listener=AppState.addEventListener('change',state=>{if(state==='active')void load();});return()=>{epoch.current++;lock.current=false;listener.remove();};},[load,selected,creating,sceneActive]);
  if(official)return <OfficialEventsScreen zh={zh} onBack={()=>setOfficial(false)}/>;
  if(creating)return <ActivityForm language={language} dark={dark} onBack={()=>setCreating(false)} onSaved={id=>{setCreating(false);setSelected(id);}}/>;
