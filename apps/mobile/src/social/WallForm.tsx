@@ -3,7 +3,7 @@ import {writeReceipt,ensureReplayable,writeRejected,reviewRequired,type WriteRec
 import {useInputProtection} from '../navigation/InputProtection';
 import {useEffect,useRef,useState} from 'react';
 import {Alert,Pressable,Text,TextInput,View} from 'react-native';
-import {ListGroup,ListRow,Notice,PenIcon,usePenColors} from '../ui/Pen';
+import {ListGroup,ListRow,Notice,PenIcon,usePenColors,CircleButton} from '../ui/Pen';
 import {topicMeta} from './wall-ui';
 import { Button } from '../ui/Primitives';
 import { Input } from '../ui/Primitives';
@@ -35,11 +35,11 @@ export function WallForm({initial,language,dark,onBack,onSaved}:{initial?:WallPo
  const ph:Record<WallTopic,[string,string]>={question:[zh?'有人知道 LG1 晚上几点关吗？':'Anyone know when LG1 closes?',zh?'说说你的情况，越具体越容易得到好回答…':'Add details; specific questions get better answers…'],buddy:[zh?'周六西贡徒步，还差 2 人':'Hiking Sai Kung on Saturday, need 2 more',zh?'时间、地点、节奏、想找什么样的搭子…':'Time, place, pace, who you are looking for…'],market:[zh?'出 MATH 2411 教材，HK$ 80':'Selling MATH 2411 textbook, HK$ 80',zh?'成色、价格、面交地点…':'Condition, price, where to meet…'],share:[zh?'今天的海边很好看':'The seaside was lovely today',zh?'想分享点什么…':'What would you like to share…']};
  return <View style={{gap:16}}>
   <View style={{flexDirection:'row',alignItems:'center'}}>
-   <Pressable accessibilityRole="button" disabled={busy} onPress={back} hitSlop={10}><Text style={{fontSize:17,color:c.muted}}>{zh?'取消':'Cancel'}</Text></Pressable>
+   <CircleButton icon="x" label={zh?'取消':'Cancel'} disabled={busy} onPress={back}/>
    <Text style={{flex:1,textAlign:'center',fontSize:17,fontWeight:'700',color:c.text}}>{initial?(zh?'编辑帖子':'Edit post'):(zh?'发到校园墙':'Post to the wall')}</Text>
-   <Pressable accessibilityRole="button" disabled={busy||reviewOnly||!title.trim()||!body.trim()} onPress={()=>void save()} style={{paddingVertical:8,paddingHorizontal:16,borderRadius:99,backgroundColor:c.accent,opacity:busy||reviewOnly||!title.trim()||!body.trim()?0.35:1}}><Text style={{fontSize:15,fontWeight:'700',color:c.onAccent}}>{busy?'…':pending.current?(zh?'重试':'Retry'):initial?(zh?'保存':'Save'):(zh?'发布':'Post')}</Text></Pressable>
+   <CircleButton variant="prominent" icon={pending.current?'rotate-cw':initial?'check':'arrow-up'} label={pending.current?(zh?'重试':'Retry'):initial?(zh?'保存':'Save'):(zh?'发布':'Post')} disabled={busy||reviewOnly||!title.trim()||!body.trim()} onPress={()=>void save()}/>
   </View>
-  {!initial?<View style={{flexDirection:'row',gap:8}}>{(['question','buddy','market','share'] as const).map(t=>{const m=topicMeta[t],on=topic===t;return <Pressable key={t} accessibilityRole="button" accessibilityState={{selected:on}} disabled={frozen} onPress={()=>setTopic(t)} style={{flex:1,alignItems:'center',gap:6,paddingVertical:12,borderRadius:20,backgroundColor:on?m.color+'1F':c.surface,borderWidth:on?1.5:1,borderColor:on?m.color:c.glassBorder}}><PenIcon name={m.icon} size={22} color={on?m.color:c.muted}/><Text style={{fontSize:13,fontWeight:'700',color:on?m.color:c.text}}>{zh?m.zh:m.en}</Text></Pressable>;})}</View>:null}
+  {!initial?<View style={{flexDirection:'row',gap:8}}>{(['question','buddy','market','share'] as const).map(t=>{const m=topicMeta[t],on=topic===t;return <Pressable key={t} accessibilityRole="button" accessibilityState={{selected:on}} disabled={frozen} onPress={()=>setTopic(t)} style={{flex:1,alignItems:'center',gap:6,paddingVertical:12,borderRadius:20,backgroundColor:on?m.color+'1F':c.surface,borderWidth:0,boxShadow:on?undefined:'0 4px 14px #1B35660D'}}><PenIcon name={m.icon} size={22} color={on?m.color:c.muted}/><Text style={{fontSize:13,fontWeight:'700',color:on?m.color:c.text}}>{zh?m.zh:m.en}</Text></Pressable>;})}</View>:null}
   <View style={{gap:8,padding:18,minHeight:240,borderRadius:28,backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder}}>
    <TextInput accessibilityLabel={zh?'帖子标题':'Post title'} value={title} onChangeText={setTitle} maxLength={160} editable={!frozen} placeholder={ph[topic][0]} placeholderTextColor={c.tertiary} style={{fontSize:20,lineHeight:27,fontWeight:'700',color:c.text}}/>
    <TextInput accessibilityLabel={zh?'帖子正文':'Post body'} value={body} onChangeText={setBody} maxLength={5000} editable={!frozen} multiline placeholder={ph[topic][1]} placeholderTextColor={c.tertiary} style={{flex:1,minHeight:150,fontSize:16,lineHeight:24,color:c.text,textAlignVertical:'top'}}/>
