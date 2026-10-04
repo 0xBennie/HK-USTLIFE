@@ -79230,14 +79230,17 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "text",
-                  "id": "vuk0m",
-                  "name": "取消",
-                  "fill": "$g-muted",
-                  "content": "取消",
-                  "fontFamily": "Noto Sans SC",
-                  "fontSize": 17,
-                  "fontWeight": "normal"
+                  "id": "zohid",
+                  "type": "ref",
+                  "ref": "dHHhX",
+                  "name": "Cancel",
+                  "width": 44,
+                  "height": 44,
+                  "descendants": {
+                    "Q018hB": {
+                      "icon": "x"
+                    }
+                  }
                 },
                 {
                   "type": "text",
@@ -79254,24 +79257,34 @@
                 },
                 {
                   "type": "frame",
-                  "id": "QwkuO",
+                  "id": "dsMuE",
                   "name": "Post",
-                  "fill": "$g-ink",
-                  "cornerRadius": 99,
-                  "padding": [
-                    8,
-                    16
-                  ],
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$g-lg-tint",
+                  "cornerRadius": 22,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#1B356640",
+                    "offset": {
+                      "x": 0,
+                      "y": 8
+                    },
+                    "blur": 20
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
                   "children": [
                     {
-                      "type": "text",
-                      "id": "yyh04",
-                      "name": "发布",
-                      "fill": "$g-on-ink",
-                      "content": "发布",
-                      "fontFamily": "Noto Sans SC",
-                      "fontSize": 15,
-                      "fontWeight": "700"
+                      "type": "icon",
+                      "id": "H5TUt",
+                      "name": "i",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "arrow-up",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
                     }
                   ]
                 }
