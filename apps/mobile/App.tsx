@@ -16,9 +16,8 @@ import { AppState, ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Pre
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { HeroUINativeProvider } from 'heroui-native/provider';
-import { Button, NavigationRow } from './src/ui/Primitives';
 import { AppearanceProvider, useAppearance } from './src/ui/Appearance';
-import { Aurora, FloatingTabBar, ListGroup, ListRow, type PenIconName } from './src/ui/Pen';
+import { Aurora, FloatingTabBar, ListGroup, ListRow, Notice, type PenIconName } from './src/ui/Pen';
 import { SceneOverlayStore, useOverlayPresent } from './src/navigation/SceneOverlay';
 import { StatusBar } from 'expo-status-bar';
 import { session,reminders } from './src/runtime';
@@ -111,7 +110,7 @@ function CampusApp() {
     <KeyboardAvoidingView behavior="padding" style={styles.flex}>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.page, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }]}>
         {state.status === 'loading' ? <View style={[styles.stack,{paddingTop:120,alignItems:'center'}]}><ActivityIndicator color={colors.accent} /></View>
-          : state.status === 'error' ? <View style={styles.stack}><Text accessibilityRole="alert" style={[styles.body, { color: colors.danger }]}>{t.errors[state.error ?? ''] ?? t.network}</Text><Button onPress={() => session.restore()}>{t.retry}</Button></View>
+          : state.status === 'error' ? <Notice tone="error" text={t.errors[state.error ?? ''] ?? t.network} action={t.retry} onAction={() => void session.restore()}/>
           : <LoginScreen language={language} dark={dark}/>}
       </ScrollView>
     </KeyboardAvoidingView>
@@ -119,23 +118,24 @@ function CampusApp() {
   return <SafeAreaView edges={['left','right']} style={[styles.flex, { backgroundColor: colors.background }]}>
     <StatusBar style={dark ? 'light' : 'dark'} />
     <Aurora/>
-    {queuedReminder&&queuedReminder.owner===state.profile?.id?<View style={[styles.smallStack,{paddingTop:insets.top,paddingHorizontal:16}]}><Text style={[styles.caption,{color:colors.muted}]}>{language==='zh'?'提醒已保留，当前输入没有被覆盖。':'Reminder kept. Your current input is unchanged.'}</Text><Button variant="secondary" onPress={()=>guardedOpen(queuedReminder.kind==='activity'?2:0,()=>{
+    {/* Pen "V5 / 自动提醒（当前可用）" · 其他状态: a reminder opened while the student is typing waits here. */}
+    {queuedReminder&&queuedReminder.owner===state.profile?.id?<View style={{paddingTop:insets.top,paddingHorizontal:16}}><Notice tone="info" icon="bell" text={language==='zh'?'提醒已保留，你填写的内容没有被覆盖。':'Reminder kept — your input wasn’t replaced.'} action={language==='zh'?'查看':'Open'} onAction={()=>guardedOpen(queuedReminder.kind==='activity'?2:0,()=>{
       const owner=state.profile?.id;if(!owner)return;
       if(queuedReminder.kind==='activity'){setTargetRevision(v=>v+1);setActivityTarget({kind:'activity',id:queuedReminder.id,owner});setTab(2);}
       else{setStudyTarget({id:queuedReminder.id,date:queuedReminder.date,owner});setTab(0);}
       setQueuedReminder(null);
-    })}>{language==='zh'?'查看这条提醒':'Open this reminder'}</Button><Button variant="ghost" onPress={()=>setQueuedReminder(null)}>{language==='zh'?'忽略':'Dismiss'}</Button></View>:null}
+    })} secondary={language==='zh'?'忽略':'Dismiss'} onSecondary={()=>setQueuedReminder(null)}/></View>:null}
     <KeyboardAvoidingView behavior="padding" style={styles.flex}>
       <View key={state.profile?.id??state.status} style={styles.flex}>
       {[0,1,2,3,4].map(index=><InputProtectionContext.Provider key={index} value={{guards,scene:index}}><TabScene active={tab===index} pageRef={value=>{pages.current[index]=value;}} contentContainerStyle={styles.page} overlay={overlays[index]}>
         {index === 4 ? state.status === 'loading' ? <View style={styles.stack}><ActivityIndicator color={colors.accent} /><Text style={{ color: colors.text }}>{t.loading}</Text></View>
-          : state.status === 'error' ? <View style={styles.stack}><Text accessibilityRole="alert" style={[styles.body, { color: colors.danger }]}>{t.errors[state.error ?? ''] ?? t.network}</Text><Button onPress={() => session.restore()}>{t.retry}</Button></View>
+          : state.status === 'error' ? <Notice tone="error" text={t.errors[state.error ?? ''] ?? t.network} action={t.retry} onAction={() => void session.restore()}/>
           : state.profile ? safetyOpen?<GovernanceScreen key={state.profile.id} language={language} dark={dark} onBack={()=>setSafetyOpen(false)}/>:<ProfileScreen key={state.profile.id} profile={state.profile} language={language} dark={dark} exitBusy={exitState.busy} exitError={exitState.error} onExit={requestAccountExit} onLanguage={()=>setLanguage(language==='zh'?'en':'zh')} onSafety={()=>guardedOpen(4,()=>setSafetyOpen(true))} onActivity={openActivity}/>
           : null
           : index === 0 ? state.profile ? <StudyScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost} onCampus={()=>setTab(1)} onInbox={()=>setTab(3)} initialReminder={studyTarget?.owner===state.profile.id?studyTarget:null} />
           : null
-          : index === 1 ? <CampusScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onPost={openPost} onWall={()=>setTab(2)}/>
-          : index === 2 ? <CommunityScreen key={`${state.profile?.id??'visitor'}:${targetRevision}`} language={language} dark={dark} onLogin={()=>setTab(4)} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onDismissTarget={()=>{const target=activityTarget;setActivityTarget(null);if(target?.owner===(state.profile?.id??null)&&target.returnTab!==undefined)setTab(target.returnTab);}} onNavigate={scrollToTop}/>
+          : index === 1 ? <CampusScreen key={state.profile?.id} language={language} dark={dark} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onPost={openPost} onWall={()=>setTab(2)}/>
+          : index === 2 ? <CommunityScreen key={`${state.profile?.id}:${targetRevision}`} language={language} dark={dark} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onDismissTarget={()=>{const target=activityTarget;setActivityTarget(null);if(target?.owner===(state.profile?.id??null)&&target.returnTab!==undefined)setTab(target.returnTab);}} onNavigate={scrollToTop}/>
           : state.profile ? <InboxScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost}/>
           : null}
       </TabScene></InputProtectionContext.Provider>)}

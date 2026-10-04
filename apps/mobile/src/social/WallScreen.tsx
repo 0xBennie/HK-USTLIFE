@@ -8,9 +8,6 @@ import {AppState,Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import {EmptyState,FilterPill,Notice,PenIcon,PillRow,Skeleton,Stagger,ViewAll,usePenColors,GlassChips} from '../ui/Pen';
 import {WallPostCard,topicMeta,topicOf} from './wall-ui';
-import { Button, SegmentedControl } from '../ui/Primitives';
-import { Card } from '../ui/Primitives';
-import { Input } from '../ui/Primitives';
 import {api,session} from '../runtime';
 import {palette,styles} from '../theme';
 import type {Language} from '../strings';
@@ -19,7 +16,7 @@ import {dateTimeInZone} from '../study/dates';
 import {wallError,postStatus} from './wall-shared';
 import {WallForm} from './WallForm';
 import {WallDetail} from './WallDetail';
-export function WallScreen({language,dark,onLogin,initialId,onDismissTarget,onNavigate,onDepthChange,createRequest=0,onActivities=()=>{}}:{language:Language;dark:boolean;onLogin:()=>void;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void;onDepthChange?:(nested:boolean)=>void;createRequest?:number;onActivities?:()=>void}){
+export function WallScreen({language,dark,initialId,onDismissTarget,onNavigate,onDepthChange,createRequest=0,onActivities=()=>{}}:{language:Language;dark:boolean;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void;onDepthChange?:(nested:boolean)=>void;createRequest?:number;onActivities?:()=>void}){
  const sceneActive=useSceneFocus();
  const zh=language==='zh',c=usePenColors(),profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [company,setCompany]=useState<string|null>(null),[employer,setEmployer]=useState<Promo|null>(null),[person,setPerson]=useState<{id:string;display_name:string}|null>(null);
@@ -31,7 +28,7 @@ export function WallScreen({language,dark,onLogin,initialId,onDismissTarget,onNa
  useEffect(onNavigate,[selected,creating,onNavigate]);
  // The Discover large-title plus button opens the post form (Pen MjoHv).
  const created=useRef(createRequest);
- useEffect(()=>{if(createRequest===created.current)return;created.current=createRequest;if(profile)setCreating(true);else onLogin();},[createRequest]);
+ useEffect(()=>{if(createRequest===created.current)return;created.current=createRequest;setCreating(true);},[createRequest]);
  useEffect(()=>{onDepthChange?.(selected!==null||creating);},[selected,creating,onDepthChange]);
  const load=useCallback(async(next?:string)=>{if(next&&lock.current)return;lock.current=true;const generation=++epoch.current;setBusy(true);setError('');try{
   const query=new URLSearchParams();if(filters.q)query.set('q',filters.q);if(filters.kind)query.set('kind',filters.kind);if(filters.topic)query.set('topic',filters.topic);if(filters.mine)query.set('mine','true');if(next)query.set('cursor',next);
@@ -43,7 +40,7 @@ export function WallScreen({language,dark,onLogin,initialId,onDismissTarget,onNa
  if(creating)return <WallForm language={language} dark={dark} onBack={()=>setCreating(false)} onSaved={id=>{setCreating(false);setSelected(id);}}/>;
  if(company)return <CompanyScreen zh={zh} id={company} onBack={()=>setCompany(null)}/>;
  if(person)return <ClassmateScreen zh={zh} author={person} onBack={()=>setPerson(null)} onOpenPost={id=>{setPerson(null);setSelected(id);}}/>;
- if(selected)return <WallDetail key={selected} id={selected} language={language} dark={dark} onLogin={onLogin} onNavigate={onNavigate} onBack={()=>{setSelected(null);onDismissTarget();}}/>;
+ if(selected)return <WallDetail key={selected} id={selected} language={language} dark={dark} onNavigate={onNavigate} onBack={()=>{setSelected(null);onDismissTarget();}}/>;
  const topicFilter=filters.kind==='help'?'question':filters.topic??'';
  const hot=items.filter(p=>p.status==='open').sort((a,b)=>b.reply_count-a.reply_count)[0];
  const pickTopic=(t:string)=>setFilters({...filters,kind:t==='question'?'help':'',topic:t&&t!=='question'?t:undefined});
@@ -66,7 +63,7 @@ export function WallScreen({language,dark,onLogin,initialId,onDismissTarget,onNa
   <GlassChips label={zh?'帖子范围':'Posts'} value={filters.mine?'mine':'all'} onChange={v=>setFilters({...filters,mine:v==='mine'})} items={[{value:'all',label:zh?'最新':'Latest'},...(profile?[{value:'mine' as const,label:zh?'我发的':'Mine'}]:[])] as {value:'all'|'mine';label:string}[]}/>
   {error?<Notice tone="error" text={error} action={zh?'重试':'Retry'} onAction={()=>void load()}/>:null}
   {busy&&!items.length?<><Skeleton height={220} radius={28}/><Skeleton height={160} radius={28}/></>:null}
-  {!busy&&!error&&!items.length?<EmptyState icon="messages-square" title={zh?'这里还很安静':'It is quiet here'} body={zh?'问第一个问题，或者约个搭子。':'Ask the first question or find a buddy.'} action={zh?'发一条':'Post'} onAction={()=>profile?setCreating(true):onLogin()}/>:null}
+  {!busy&&!error&&!items.length?<EmptyState icon="messages-square" title={zh?'这里还很安静':'It is quiet here'} body={zh?'问第一个问题，或者约个搭子。':'Ask the first question or find a buddy.'} action={zh?'发一条':'Post'} onAction={()=>setCreating(true)}/>:null}
   {items.map((p,i)=><View key={p.id} style={{gap:16}}>
    <Stagger index={i}><WallPostCard post={p} zh={zh} onOpen={()=>setSelected(p.id)} onAuthor={p.is_mine?undefined:()=>setPerson(p.author)}/></Stagger>
    {i===0&&employer&&!topicFilter&&!filters.mine?<SponsoredCard zh={zh} employer={employer} onOpen={()=>setCompany(employer.id)}/>:null}

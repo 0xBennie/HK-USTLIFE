@@ -5,7 +5,7 @@ import {SafetyActions} from './SafetyActions';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {ActionSheetIOS,Alert,AppState,Pressable,Share,Text,TextInput,View} from 'react-native';
 import {useSceneBottomBar} from '../navigation/SceneOverlay';
-import {BottomBar,CircleButton,EmptyState,Notice,PenIcon,PrimaryButton,Skeleton,Stagger,Surface,ViewAll,usePenColors,GlassCapsule} from '../ui/Pen';
+import {BottomBar,CircleButton,EmptyState,Notice,PenIcon,Skeleton,Stagger,Surface,ViewAll,usePenColors,GlassCapsule} from '../ui/Pen';
 import {GradientAvatar,TopicPill,relativeTime,topicMeta,topicOf} from './wall-ui';
 const replyCopy={
  question:{zh:['友善回复，帮到下一个人…','说说你知道的，帮到下一个人。'],en:['Reply kindly…','Share what you know.']},
@@ -13,9 +13,6 @@ const replyCopy={
  market:{zh:['问问成色、价格或约个时间…','有兴趣就留言，约在校内当面交易更安心。'],en:['Ask about condition or price…','Meet on campus to trade safely.']},
  share:{zh:['说点什么…','留下你的看法。'],en:['Say something…','Leave your thoughts.']},
 } as const;
-import { Button } from '../ui/Primitives';
-import { Card } from '../ui/Primitives';
-import { Input } from '../ui/Primitives';
 import {session} from '../runtime';
 import {ApiFailure} from '../api';
 import {palette,styles} from '../theme';
@@ -25,7 +22,7 @@ import {dateTimeInZone,newWriteKey} from '../study/dates';
 import {wallError,postStatus} from './wall-shared';
 import {WallForm} from './WallForm';
 type Pending=WriteReceipt&{path:string;method:string;after?:()=>void};
-export function WallDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:string;language:Language;dark:boolean;onBack:()=>void;onLogin:()=>void;onNavigate:()=>void}){
+export function WallDetail({id,language,dark,onBack,onNavigate}:{id:string;language:Language;dark:boolean;onBack:()=>void;onNavigate:()=>void}){
  const sceneActive=useSceneFocus();
  const zh=language==='zh',c=usePenColors(),profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [post,setPost]=useState<WallPost|null>(null),[replies,setReplies]=useState<WallReply[]>([]),[cursor,setCursor]=useState<number|null>(null);
@@ -92,7 +89,6 @@ export function WallDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:stri
      <SafetyActions quiet="inline" target={{kind:'reply',id:String(r.id)}} author={r.author} language={language} dark={dark} disabled={frozen} onChanged={()=>void load()}/>
     </View>
    </View></Stagger>)}{cursor?<View style={{borderTopWidth:0.5,borderTopColor:c.border}}><ViewAll label={zh?'加载较早回复':'Earlier replies'} onPress={()=>void load(cursor)}/></View>:null}</View>}
-   {!profile?<View style={{flexDirection:'row'}}><PrimaryButton label={zh?'登录后回复':'Sign in to reply'} onPress={onLogin}/></View>:null}
    {!owner?<SafetyActions target={{kind:'post',id:post.id}} author={post.author} language={language} dark={dark} disabled={frozen} onChanged={()=>void load()}/>:null}
   </>:null}
  </View>;

@@ -38,7 +38,7 @@ const hkDate=()=>new Date(Date.now()+8*3600e3).toISOString().slice(0,10);
 const stopName=(s:string)=>s.replace(/\s*\((?:see|please)[^)]*\)\s*/i,' ').trim();
 /** Same wording as the 校园 departure card: minutes under 90, otherwise hours. */
 const waitText=(m:number,zh:boolean)=>m<=0?(zh?'即将开出':'Now'):m<=90?(zh?`${m} 分钟后`:`in ${m} min`):(zh?`约 ${Math.floor(m/60)} 小时后`:`in ~${Math.floor(m/60)} h`);
-export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{language:Language;dark:boolean;onLogin:()=>void;name?:string;onMe?:()=>void;onPost?:(id:string)=>void;onWall?:()=>void}) {
+export function CampusScreen({language,dark,name,onMe,onPost,onWall}:{language:Language;dark:boolean;name?:string;onMe?:()=>void;onPost?:(id:string)=>void;onWall?:()=>void}) {
  const zh=language==='zh',c=usePenColors(),sceneActive=useSceneFocus(),navigate=useSceneNavigation(zh);
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [page,setPage]=useState<Page>({kind:'home'});
@@ -83,9 +83,9 @@ export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{la
  if(page.kind==='dining')return <DiningScreen zh={zh} onBack={home} onShops={()=>go({kind:'directory',category:'shop'})}/>;
  if(page.kind==='transit')return <TransitHub zh={zh} onBack={home} onRoute={(routeId,sequence)=>go({kind:'transit-stop',routeId,sequence})} onShuttle={id=>go({kind:'route',id})}/>;
  if(page.kind==='transit-stop')return <PublicTransitScreen language={language} dark={dark} initial={{routeId:page.routeId,sequence:page.sequence}} onBack={()=>go({kind:'transit'})}/>;
- if(page.kind==='directory')return <DirectoryScreen language={language} dark={dark} onBack={home} onLogin={onLogin} initialCategory={page.category} initialId={page.placeId}/>;
- if(page.kind==='affairs')return <AffairsScreen language={language} dark={dark} onBack={home} onLogin={onLogin} initialInstance={page.instance}/>;
- if(page.kind==='route')return <RouteDetail id={page.id} language={language} dark={dark} onBack={()=>go({kind:'routes'})} onLogin={onLogin}/>;
+ if(page.kind==='directory')return <DirectoryScreen language={language} dark={dark} onBack={home} initialCategory={page.category} initialId={page.placeId}/>;
+ if(page.kind==='affairs')return <AffairsScreen language={language} dark={dark} onBack={home} initialInstance={page.instance}/>;
+ if(page.kind==='route')return <RouteDetail id={page.id} language={language} dark={dark} onBack={()=>go({kind:'routes'})}/>;
  if(page.kind==='routes')return <RouteList catalog={catalog} language={language} onBack={home} onRoute={id=>go({kind:'route',id})} onTransit={()=>go({kind:'transit'})}/>;
  const route=outbound.find(r=>r.id===routeId);
  const first=departures?.upcoming[0];
@@ -159,7 +159,7 @@ function RouteList({catalog,language,onBack,onRoute,onTransit}:{catalog:Catalog|
  </View>;
 }
 // Pen board "13 / Shuttle route" (n71ixQ).
-function RouteDetail({id,language,dark,onBack,onLogin}:{id:string;language:Language;dark:boolean;onBack:()=>void;onLogin:()=>void}){
+function RouteDetail({id,language,dark,onBack}:{id:string;language:Language;dark:boolean;onBack:()=>void}){
  const zh=language==='zh',c=usePenColors(),active=useSceneFocus();
  const [d,setD]=useState<ShuttleDepartures|null>(null),[error,setError]=useState(false);
  useEffect(()=>{if(!active)return;let live=true;const load=()=>api.request<ShuttleDepartures>(`/transport/routes/${id}/departures`).then(v=>{if(live){setD(v);setError(false);}}).catch(()=>{if(live)setError(true);});void load();const t=setInterval(load,60000);return()=>{live=false;clearInterval(t);};},[id,active]);
@@ -182,7 +182,7 @@ function RouteDetail({id,language,dark,onBack,onLogin}:{id:string;language:Langu
     <ListRow icon="info" tile={c.gray} title={zh?'数据来源与更新时间':'Source & freshness'} subtitle={`${zh?'核对于':'Checked'} ${dateTimeInZone(d.source.retrieved_at,'Asia/Hong_Kong').slice(0,10)} · ${d.route.valid_from} — ${d.route.valid_to}`} chevron onPress={()=>void Linking.openURL(d.source.url)}/>
    </ListGroup>
    <Text style={{paddingHorizontal:16,fontSize:12,lineHeight:17,color:c.muted}}>{zh?'上车需出示校方认可的证件或二维码；本 App 不能代替乘车验证。':'Show school-recognized ID or QR when boarding; this app is not a boarding pass.'}</Text>
-   <TargetActions key={id} target={{target_kind:'shuttle',target_id:id}} language={language} dark={dark} onLogin={onLogin}/>
+   <TargetActions key={id} target={{target_kind:'shuttle',target_id:id}} language={language} dark={dark}/>
   </>:null}
  </View>;
 }

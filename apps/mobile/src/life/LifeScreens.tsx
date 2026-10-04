@@ -76,7 +76,7 @@ export function GradesScreen({zh,onBack}:Base){
  const save=(course:string,grade:string,term:string)=>void session.request('/me/grades',{method:'POST',body:{course,term,grade}}).then(()=>{feel.success();setPick(course.toUpperCase().replace(/^([A-Z]{4})\s?/,'$1 '));setRev(v=>v+1);Alert.alert(zh?'谢谢！':'Thanks!',zh?'你的成绩已匿名计入。':'Saved anonymously.');}).catch(()=>Alert.alert(zh?'保存失败，请检查课程代码。':'Could not save.'));
  // Three short native steps (course → grade → term) so nobody has to remember an input format.
  const sheet=(title:string,options:string[],done:(i:number)=>void)=>ActionSheetIOS.showActionSheetWithOptions({title,options:[...options,zh?'取消':'Cancel'],cancelButtonIndex:options.length},i=>{if(i<options.length)done(i);});
- const contribute=()=>{if(!session.snapshot().profile){Alert.alert(zh?'登录后才能贡献':'Sign in first');return;}Alert.prompt(zh?'哪门课？':'Which course?',zh?'匿名保存，满 10 人后才公开。':'Saved anonymously; shown at n ≥ 10.',[{text:zh?'取消':'Cancel',style:'cancel'},{text:zh?'下一步':'Next',onPress:(v?:string)=>{const m=/^\s*([A-Za-z]{4})\s?(\d{4}[A-Za-z]?)\s*$/.exec(v??'');if(!m){Alert.alert(zh?'课程代码不对':'Invalid course code',zh?'例如：COMP 2011':'e.g. COMP 2011');return;}const course=`${m[1].toUpperCase()} ${m[2].toUpperCase()}`;
+ const contribute=()=>{Alert.prompt(zh?'哪门课？':'Which course?',zh?'匿名保存，满 10 人后才公开。':'Saved anonymously; shown at n ≥ 10.',[{text:zh?'取消':'Cancel',style:'cancel'},{text:zh?'下一步':'Next',onPress:(v?:string)=>{const m=/^\s*([A-Za-z]{4})\s?(\d{4}[A-Za-z]?)\s*$/.exec(v??'');if(!m){Alert.alert(zh?'课程代码不对':'Invalid course code',zh?'例如：COMP 2011':'e.g. COMP 2011');return;}const course=`${m[1].toUpperCase()} ${m[2].toUpperCase()}`;
   sheet(zh?`${course} · 你的成绩`:`${course} · your grade`,GRADES,g=>{const terms=gradeTerms();sheet(zh?'哪个学期？':'Which term?',terms,t=>save(course,GRADES[g],terms[t]));});}}],'plain-text',pick??(q.trim().toUpperCase()||''));};
  const aShare=dist?.bars?dist.bars.slice(0,3).reduce((s,b)=>s+b.share,0):0;
  return <View style={{gap:16}}>
@@ -144,7 +144,7 @@ export function ClubsScreen({zh,onBack}:Base){
  const c=usePenColors();
  const [q,setQ]=useState(''),[cat,setCat]=useState('all'),[clubs,setClubs]=useState<Club[]|null>(null);
  useEffect(()=>{void (session.snapshot().profile?session:api).request<Club[]>('/clubs').then(setClubs).catch(()=>setClubs([]));},[]);
- const toggle=(x:Club)=>{if(!session.snapshot().profile){Alert.alert(zh?'登录后关注':'Sign in to follow');return;}feel.select();setClubs(l=>l?.map(y=>y.id===x.id?{...y,following:!y.following,followers:y.followers+(y.following?-1:1)}:y)??null);void session.request<Club>(`/me/clubs/${x.id}`,{method:'PUT',body:{following:!x.following}}).then(n=>setClubs(l=>l?.map(y=>y.id===n.id?n:y)??null)).catch(()=>setClubs(l=>l?.map(y=>y.id===x.id?x:y)??null));};
+ const toggle=(x:Club)=>{feel.select();setClubs(l=>l?.map(y=>y.id===x.id?{...y,following:!y.following,followers:y.followers+(y.following?-1:1)}:y)??null);void session.request<Club>(`/me/clubs/${x.id}`,{method:'PUT',body:{following:!x.following}}).then(n=>setClubs(l=>l?.map(y=>y.id===n.id?n:y)??null)).catch(()=>setClubs(l=>l?.map(y=>y.id===x.id?x:y)??null));};
  const list=(clubs??[]).filter(x=>(cat==='all'||CLUB_FILTER[cat]?.includes(x.category))&&`${x.name}${x.tags}`.toLowerCase().includes(q.trim().toLowerCase()));
  const top=[...(clubs??[])].sort((a,b)=>b.followers-a.followers)[0];
  return <View style={{gap:16}}>

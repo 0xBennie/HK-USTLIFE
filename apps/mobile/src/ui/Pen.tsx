@@ -230,7 +230,7 @@ export function IconTile({icon,color,size=30}:{icon:PenIconName;color:string;siz
  return <View style={{width:size,height:size,borderRadius:size/2,backgroundColor:color.slice(0,7)+(dark?'38':'1F'),alignItems:'center',justifyContent:'center'}}><PenIcon name={icon} size={size*0.5} strokeWidth={2.2} color={dark?'#FFFFFFE6':color.slice(0,7)}/></View>;
 }
 /** Inline notice: success / warning / error with an optional action. */
-export function Notice({tone='info',text,action,onAction,icon:custom}:{tone?:'info'|'success'|'warning'|'error';text:string;action?:string;onAction?:()=>void;icon?:PenIconName}){
+export function Notice({tone='info',text,action,onAction,icon:custom,secondary,onSecondary}:{tone?:'info'|'success'|'warning'|'error';text:string;action?:string;onAction?:()=>void;icon?:PenIconName;secondary?:string;onSecondary?:()=>void}){
  const c=usePenColors();
  const col=tone==='success'?c.green:tone==='warning'?c.orange:tone==='error'?c.danger:c.accent;
  const icon=custom??(tone==='success'?'circle-check':tone==='warning'?'triangle-alert':tone==='error'?'circle-alert':'info');
@@ -238,6 +238,7 @@ export function Notice({tone='info',text,action,onAction,icon:custom}:{tone?:'in
   <PenIcon name={icon} size={18} color={col}/>
   <Text style={{flex:1,fontSize:14,lineHeight:20,color:c.text}}>{text}</Text>
   {action?<Pressable hitSlop={8} onPress={onAction} accessibilityRole="button"><Text style={{fontSize:14,fontWeight:'600',color:col}}>{action}</Text></Pressable>:null}
+  {secondary?<Pressable hitSlop={8} onPress={onSecondary} accessibilityRole="button"><Text style={{fontSize:14,fontWeight:'600',color:c.muted}}>{secondary}</Text></Pressable>:null}
  </View>;
 }
 export function EmptyState({icon,title,body,action,onAction}:{icon:PenIconName;title:string;body?:string;action?:string;onAction?:()=>void}){

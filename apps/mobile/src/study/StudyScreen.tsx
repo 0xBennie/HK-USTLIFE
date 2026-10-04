@@ -65,13 +65,13 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
   useInputProtection(null,busy,needsReview,language==='zh');
   async function mutate(action:StudyAction){if(!alive.current)return;await actions.submit(action);}
   async function openResource(url:string){setLinkError('');try{await Linking.openURL(url);}catch{if(alive.current)setLinkError(language==='zh'?'未能打开资料链接，请检查网址或稍后重试。':'Could not open the resource. Check the URL or try again.');}}
+  // Pen "V6 / 本周课表" · 其他情况: a successful save shows no banner (the list updates and the tap gives haptic
+  // feedback); only an unconfirmed result or a refused save explains itself, briefly.
   function actionMessage(){
-    const label=actionState.label;
-    if(actionState.phase==='saved')return language==='zh'?`已保存并刷新：${label}`:`Saved and refreshed: ${label}`;
-    if(actionState.phase==='refresh-needed')return language==='zh'?`已保存「${label}」，但列表刷新失败。请刷新记录，不必再次提交。`:`Saved “${label}”, but the list could not refresh. Refresh the records; do not submit again.`;
-    if(actionState.phase==='uncertain')return language==='zh'?`「${label}」的结果尚待核对，或记录已被修改。先读取最新记录，再决定下一步。`:`The result for “${label}” is unconfirmed, or the record changed. Read the latest records before another action.`;
-    if(actionState.phase==='reviewed')return language==='zh'?'已读取最新记录。请核对当前状态，再决定是否需要继续操作。':'Latest records loaded. Review their current state before deciding on another action.';
-    if(actionState.phase==='rejected')return language==='zh'?`未保存「${label}」。请检查内容或重新登录后再试。`:`“${label}” was not saved. Check the content or sign in again.`;
+    const label=actionState.label,zh=language==='zh';
+    if(actionState.phase==='refresh-needed')return zh?`已保存「${label}」，列表还没更新。`:`Saved “${label}”; the list hasn’t updated yet.`;
+    if(actionState.phase==='uncertain')return zh?`「${label}」的结果还没确认。`:`“${label}” isn’t confirmed yet.`;
+    if(actionState.phase==='rejected')return zh?`没保存「${label}」，请检查内容后再试。`:`“${label}” wasn’t saved. Check it and try again.`;
     return '';
   }
   function remove(record:Course|StudyItem) {
@@ -136,7 +136,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
   if(importing)return <ImportScreen language={language} dark={dark} onBack={()=>setImporting(false)} onSaved={()=>{setImporting(false);void load();}}/>;
   if(editor)return <StudyForm editor={editor} courses={courses} language={language} dark={dark} onBack={()=>setEditor(null)} onSaved={()=>{setEditor(null);void load();}} />;
   if(view==='home')return <View style={{gap:16}}>
-    {status?<Notice tone={needsReview||actionState.phase==='rejected'?'warning':'success'} text={status} action={needsReview?(zh?'核对':'Check'):undefined} onAction={()=>void actions.check()}/>:null}
+    {status?<Notice tone={actionState.phase==='rejected'?'error':'warning'} text={status} action={actionState.phase==='refresh-needed'?(zh?'刷新':'Refresh'):actionState.phase==='uncertain'?(zh?'核对':'Check'):undefined} onAction={()=>void actions.check()}/>:null}
     <TodayHome name={name} onMe={onMe} language={language} courses={courses} items={items} calendar={calendar} loading={loading} error={error} busy={actionLocked}
       onToggle={toggle} onPostpone={postpone} onOpenTask={task=>setEditor({kind:'task',record:task})} onAdd={addMenu} onManage={v=>{setDate(dateInZone(new Date().toISOString(),zone));setCourseId(null);setView(v);}}
       onActivity={onActivity} onPost={onPost} onCampus={onCampus} onInbox={onInbox} onSchool={()=>setSchoolSources(true)} onRetry={()=>void load()}/>
@@ -148,7 +148,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
     <PageHeader onBack={()=>{setView('home');setCourseId(null);}} backLabel={zh?'今天':'Today'} title={view==='courses'?(zh?'课程':'Courses'):view==='all'?(courseId?courses.find(c=>c.id===courseId)?.title??t.all:(zh?'全部记录':'All records')):view==='week'?(zh?'本周课表':'This week'):(zh?'日程':'Schedule')} subtitle={t.private}
       right={<><CircleButton icon="ellipsis" label={zh?'更多设置':'More settings'} onPress={()=>ActionSheetIOS.showActionSheetWithOptions({options:[zh?'学校连接与同步':'School connections',zh?'导入的日历':'Imported calendars',zh?`显示时区：${zoneLabel(zone,zh)}`:`Time zone: ${zoneLabel(zone,zh)}`,zh?'导入日历文件':'Import a calendar file',zh?'取消':'Cancel'],cancelButtonIndex:4},i=>{if(i===0)setSchoolSources(true);if(i===1)setManagingSources(true);if(i===3)setImporting(true);if(i===2)ActionSheetIOS.showActionSheetWithOptions({title:zh?'课表按哪个时区显示':'Show the calendar in',options:[...ZONES.map(z=>zoneLabel(z,zh)),zh?'取消':'Cancel'],cancelButtonIndex:ZONES.length},j=>{if(j<ZONES.length)setZone(ZONES[j]);});})}/><CircleButton icon="plus" label={zh?'添加':'Add'} onPress={addMenu}/></>}/>
     <Segmented value={view} label={zh?'视图':'View'} options={(['day','week','courses','all'] as const).map(v=>({value:v,label:v==='all'?(zh?'全部':'All'):t[v]}))} onChange={v=>{setView(v);setCourseId(null);}}/>
-    {status?<Notice tone={needsReview||actionState.phase==='rejected'?'warning':'success'} text={status} action={needsReview?(zh?'核对':'Check'):undefined} onAction={()=>void actions.check()}/>:null}
+    {status?<Notice tone={actionState.phase==='rejected'?'error':'warning'} text={status} action={actionState.phase==='refresh-needed'?(zh?'刷新':'Refresh'):actionState.phase==='uncertain'?(zh?'核对':'Check'):undefined} onAction={()=>void actions.check()}/>:null}
     {error?<Notice tone="error" text={error} action={zh?'重试':'Retry'} onAction={()=>void load()}/>:null}
     {linkError?<Notice tone="error" text={linkError}/>:null}
     {view==='day'||view==='week'?<>

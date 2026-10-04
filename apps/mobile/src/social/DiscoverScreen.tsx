@@ -59,7 +59,7 @@ const dayHeader=(key:string,zh:boolean)=>{const today=new Date(Date.now()+8*3600
 /** Group by Hong Kong start date, keeping time order. */
 const byDay=(list:Activity[])=>{const groups=new Map<string,Activity[]>();for(const a of [...list].sort((x,y)=>Date.parse(x.starts_at)-Date.parse(y.starts_at))){const k=hk(a.starts_at).toISOString().slice(0,10);groups.set(k,[...(groups.get(k)??[]),a]);}return [...groups];};
 
-export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,onNavigate,onDepthChange,createRequest=0}:{language:Language;dark:boolean;onLogin:()=>void;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void;onDepthChange?:(nested:boolean)=>void;createRequest?:number}){
+export function DiscoverScreen({language,dark,initialId,onDismissTarget,onNavigate,onDepthChange,createRequest=0}:{language:Language;dark:boolean;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void;onDepthChange?:(nested:boolean)=>void;createRequest?:number}){
  const sceneActive=useSceneFocus();
  const zh=language==='zh',c=usePenColors(),profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [selected,setSelected]=useState<string|null>(initialId),[creating,setCreating]=useState(false),[filtersOpen,setFiltersOpen]=useState(false),[official,setOfficial]=useState(false);
@@ -70,7 +70,7 @@ export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,
  useEffect(()=>{onDepthChange?.(selected!==null||creating||official);},[selected,creating,official,onDepthChange]);
  // The Discover large-title plus button (Pen MjoHv) starts an activity.
  const created=useRef(createRequest);
- useEffect(()=>{if(createRequest===created.current)return;created.current=createRequest;if(profile)setCreating(true);else onLogin();},[createRequest]);
+ useEffect(()=>{if(createRequest===created.current)return;created.current=createRequest;setCreating(true);},[createRequest]);
  const load=useCallback(async(next?:string)=>{if(lock.current&&next)return;lock.current=true;const generation=++epoch.current;setBusy(true);setError('');try{
   const query=new URLSearchParams({limit:'20'});for(const [key,value]of Object.entries(applied))if(value)query.set(key,key==='from'||key==='to'?parseHongKongInput(value)!:value);if(next)query.set('cursor',next);
   const page=await session.request<{items:Activity[];next_cursor:string|null}>('/activities?'+query.toString());
@@ -79,7 +79,7 @@ export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,
  useEffect(()=>{if(!sceneActive||selected||creating)return;void load();const listener=AppState.addEventListener('change',state=>{if(state==='active')void load();});return()=>{epoch.current++;lock.current=false;listener.remove();};},[load,selected,creating,sceneActive]);
  if(official)return <OfficialEventsScreen zh={zh} onBack={()=>setOfficial(false)}/>;
  if(creating)return <ActivityForm language={language} dark={dark} onBack={()=>setCreating(false)} onSaved={id=>{setCreating(false);setSelected(id);}}/>;
- if(selected)return <ActivityDetail key={selected} id={selected} language={language} dark={dark} onLogin={onLogin} onNavigate={onNavigate} onBack={()=>{setSelected(null);onDismissTarget();}}/>;
+ if(selected)return <ActivityDetail key={selected} id={selected} language={language} dark={dark} onNavigate={onNavigate} onBack={()=>{setSelected(null);onDismissTarget();}}/>;
  // Interaction pills apply immediately; "筛选" opens the V6 filter sheet (Pen s99lg) for everything else.
  const quick=(interaction:string)=>{const next={...applied,interaction};setFilters(next);setApplied(next);};
  const filtered=JSON.stringify(applied)!==JSON.stringify(emptyFilters);
@@ -101,7 +101,7 @@ export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,
    <Text style={{fontSize:21,lineHeight:30,fontWeight:'700',color:c.text}}>{zh?'暂时没有合适的':'Nothing fits right now'}</Text>
    <Text style={{fontSize:15,lineHeight:22,color:c.muted,textAlign:'center'}}>{zh?'放宽一点条件，或发起自己的小计划。':'Loosen a condition, or start a small plan of your own.'}</Text>
    {filtered?<View style={{flexDirection:'row',alignSelf:'stretch',marginTop:8}}><PrimaryButton label={zh?'清除筛选':'Clear filters'} onPress={()=>{setFilters(emptyFilters);setApplied(emptyFilters);}}/></View>:null}
-   <TextAction color={c.accent} label={zh?'发起一个小计划':'Start a small plan'} onPress={()=>profile?setCreating(true):onLogin()}/>
+   <TextAction color={c.accent} label={zh?'发起一个小计划':'Start a small plan'} onPress={()=>setCreating(true)}/>
   </View>:null}
   {items.length?<View style={{gap:12}}>
    <Text style={{paddingHorizontal:4,fontSize:20,fontWeight:'700',color:c.text}}>{zh?'即将开始':'Coming up'}</Text>

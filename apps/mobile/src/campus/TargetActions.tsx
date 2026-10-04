@@ -8,10 +8,11 @@ import {CampusActionsController,type CampusTarget} from './action-controller';
 import type {Language} from '../strings';
 import {FormField,FormGroup,ListGroup,ListRow,Notice,PrimaryButton,usePenColors} from '../ui/Pen';
 export type {CampusTarget} from './action-controller';
-type Props={target:CampusTarget;language:Language;dark:boolean;onLogin:()=>void;onChanged?:()=>void};
+type Props={target:CampusTarget;language:Language;dark:boolean;onChanged?:()=>void};
 export function TargetActions(props:Props){
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
- if(!profile)return <ListGroup><ListRow icon="bookmark" tile="#D98A1C" title={props.language==='zh'?'登录后收藏或提交纠错':'Sign in to save or suggest a fix'} chevron onPress={props.onLogin}/></ListGroup>;
+ // The app is behind the school-email sign-in, so a profile is always present here.
+ if(!profile)return null;
  return <PersonalActions key={`${profile.id}:${props.target.target_kind}:${props.target.target_id}`} {...props}/>;
 }
 function PersonalActions({target,language,onChanged}:Props){

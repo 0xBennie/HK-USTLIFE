@@ -23,7 +23,7 @@ import {ActivityJoinController} from './activity-join';
 import {JoinActivitySheet} from './JoinActivitySheet';
 import {costText,dayTitle,hhmm,hk,timeSpan} from './activity-time';
 type Pending=WriteReceipt&{path:string;method:string;after?:()=>void};
-export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:string;language:Language;dark:boolean;onBack:()=>void;onLogin:()=>void;onNavigate:()=>void}){
+export function ActivityDetail({id,language,dark,onBack,onNavigate}:{id:string;language:Language;dark:boolean;onBack:()=>void;onNavigate:()=>void}){
  const sceneActive=useSceneFocus();
  const zh=language==='zh',c=usePenColors(),insets=useSafeAreaInsets(),profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [activity,setActivity]=useState<Activity|null>(null),[comments,setComments]=useState<ActivityComment[]>([]),[cursor,setCursor]=useState<number|null>(null),[roster,setRoster]=useState<(Participation&{user:{id:string;display_name:string}})[]>([]);
@@ -112,7 +112,7 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
     <CircleButton variant="overlay" icon="chevron-left" label={zh?'返回发现':'Back to Discover'} onPress={()=>protectInput(onBack)}/>
     {activity?<View style={{flexDirection:'row',gap:10}}>
      <CircleButton variant="overlay" icon="share" label={zh?'分享活动':'Share activity'} onPress={()=>void Share.share({message:`${activity.title}\n${dateRange(activity.starts_at,activity.ends_at,zh)} · ${activity.location}`})}/>
-     <CircleButton variant="overlay" icon={mine?.bookmarked?'bookmark-check':'bookmark'} color={mine?.bookmarked?c.accent:undefined} disabled={!!profile&&frozen} label={mine?.bookmarked?(zh?'已收藏，点击移除':'Bookmarked, tap to remove'):(zh?'收藏活动':'Bookmark activity')} onPress={()=>profile?prefs({bookmarked:!mine?.bookmarked}):onLogin()}/>
+     <CircleButton variant="overlay" icon={mine?.bookmarked?'bookmark-check':'bookmark'} color={mine?.bookmarked?c.accent:undefined} disabled={frozen} label={mine?.bookmarked?(zh?'已收藏，点击移除':'Bookmarked, tap to remove'):(zh?'收藏活动':'Bookmark activity')} onPress={()=>prefs({bookmarked:!mine?.bookmarked})}/>
     </View>:null}
    </View>
   </View>

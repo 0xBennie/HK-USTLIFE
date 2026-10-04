@@ -11,7 +11,7 @@ import {EmptyState,FilterPill,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIc
 type Entry=typeof directoryData[number]&{version:number;freshness:string};
 const meta=(cat:string,c:ReturnType<typeof usePenColors>):[string,string]=>cat==='study'?['library',c.indigo]:cat==='shop'?['shopping-bag','#A9824C']:['life-buoy',c.accent];
 // Pen "directory" / "place" boards in the V2 list style.
-export function DirectoryScreen({language,onBack,onLogin,initialCategory,initialId}:{language:Language;dark:boolean;onBack:()=>void;onLogin:()=>void;initialCategory?:string;initialId?:string}) {
+export function DirectoryScreen({language,onBack,initialCategory,initialId}:{language:Language;dark:boolean;onBack:()=>void;initialCategory?:string;initialId?:string}) {
  const sceneActive=useSceneFocus();
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const zh=language==='zh',c=usePenColors();
@@ -39,14 +39,14 @@ export function DirectoryScreen({language,onBack,onLogin,initialCategory,initial
      <Text style={{fontSize:12,color:c.muted}}>{zh?'现在是否开放、有没有位置：未知，请以现场为准。':'Open now / availability: unknown — check on site.'}</Text>
     </Surface>
     <Surface style={{gap:8}}><View style={{flexDirection:'row',alignItems:'center',gap:10}}><IconTile icon={icon} color={col}/><Text style={{fontSize:16,fontWeight:'600',color:c.text}}>{zh?'这里可以做什么':'What it’s for'}</Text></View><Text selectable style={{fontSize:15,lineHeight:23,color:c.muted}}>{selected.description[language]}</Text><Text style={{fontSize:12,color:c.tertiary}}>{zh?'最近核对':'Last checked'} {dateTimeInZone(selected.source.retrieved_at,'Asia/Hong_Kong').slice(0,10)}</Text></Surface>
-    <TargetActions key={selected.id} target={{target_kind:'place',target_id:selected.id}} language={language} dark={false} onLogin={onLogin} onChanged={()=>void load()}/>
+    <TargetActions key={selected.id} target={{target_kind:'place',target_id:selected.id}} language={language} dark={false} onChanged={()=>void load()}/>
    </>}
   </View>;
  }
  return <View style={{gap:18}}>
   <PageHeader onBack={()=>navigate(onBack)} backLabel={zh?'校园':'Campus'} title={zh?'校园生活':'Campus life'} subtitle={zh?'找到地方，也找到它的使用方法。':'Find the place and how to use it.'}/>
   <SearchField value={q} onChangeText={setQ} placeholder={zh?'名称、楼层或服务':'Name, floor or service'}/>
-  <GlassChips label={zh?'分类':'Category'} value={onlySaved?'saved':category} onChange={v=>{if(v==='saved'){if(profile)setOnlySaved(true);else onLogin();}else{setOnlySaved(false);setCategory(v);}}} items={[{value:'',label:zh?'全部':'All'},{value:'study',label:zh?'学习':'Study'},{value:'shop',label:zh?'吃喝购物':'Food'},{value:'service',label:zh?'服务':'Services'},{value:'saved',label:zh?'收藏':'Saved'}]}/>
+  <GlassChips label={zh?'分类':'Category'} value={onlySaved?'saved':category} onChange={v=>{if(v==='saved')setOnlySaved(true);else{setOnlySaved(false);setCategory(v);}}} items={[{value:'',label:zh?'全部':'All'},{value:'study',label:zh?'学习':'Study'},{value:'shop',label:zh?'吃喝购物':'Food'},{value:'service',label:zh?'服务':'Services'},{value:'saved',label:zh?'收藏':'Saved'}]}/>
   {error?<Notice tone="error" text={zh?'更新失败，保留的资料可能过时。':'Refresh failed; information may be outdated.'} action={zh?'重试':'Retry'} onAction={()=>void load()}/>:null}
   {busy&&!entries.length?<><Skeleton/><Skeleton/></>:null}
   {!busy&&entries.length>0&&!visible.length?<EmptyState icon="search-x" title={zh?'没有匹配的地点':'No matching places'} body={zh?'换个关键词，或看看全部分类。':'Try another keyword or category.'}/>:null}

@@ -5,8 +5,6 @@ import {useEffect,useRef,useState} from 'react';
 import {Alert,Pressable,Text,TextInput,View} from 'react-native';
 import {ListGroup,ListRow,Notice,PenIcon,usePenColors,CircleButton} from '../ui/Pen';
 import {topicMeta} from './wall-ui';
-import { Button } from '../ui/Primitives';
-import { Input } from '../ui/Primitives';
 import {session} from '../runtime';
 import {ApiFailure} from '../api';
 import {palette,styles} from '../theme';

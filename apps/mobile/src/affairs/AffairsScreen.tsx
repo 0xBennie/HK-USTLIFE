@@ -14,7 +14,7 @@ import {useSceneBottomBar} from '../navigation/SceneOverlay';
 import {newWriteKey,dateTimeInZone} from '../study/dates';
 import {AcceptRevisionController,AffairController,sameValue,type AffairDetail} from './controller';
 import {CreateAffairController} from './create-controller';
-type Props={language:Language;dark:boolean;onBack:()=>void;onLogin:()=>void;initialInstance?:string};
+type Props={language:Language;dark:boolean;onBack:()=>void;initialInstance?:string};
 type Step=Template['steps'][number];
 
 async function openOfficial(url:string){const u=new URL(url);if(u.protocol!=='https:'||u.username||u.password||!(u.hostname==='hkust.edu.hk'||u.hostname.endsWith('.hkust.edu.hk')))throw Error('Unsupported source');await Linking.openURL(url);}

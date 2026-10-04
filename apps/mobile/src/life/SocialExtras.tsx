@@ -92,7 +92,7 @@ export function CompanyScreen({zh,onBack,id}:Base&{id:string}){
  const [co,setCo]=useState<Employer|null>(null),[error,setError]=useState(false);
  useEffect(()=>{void (session.snapshot().profile?session:api).request<Employer>(`/employers/${id}`).then(setCo).catch(()=>setError(true));},[id]);
  const apply=(j:Employer['jobs'][number])=>Alert.alert(zh?`投递「${j.title}」？`:`Apply to ${j.title}?`,zh?'会打开企业的官方投递页面，你的资料不会自动发送。':'Opens the official careers page; nothing is sent automatically.',[{text:zh?'取消':'Cancel',style:'cancel'},{text:zh?'去投递':'Continue',onPress:()=>{feel.tap();void Linking.openURL(j.apply_url);}}]);
- const rsvp=(t:Employer['talks'][number])=>{if(!session.snapshot().profile){Alert.alert(zh?'登录后报名':'Sign in first');return;}feel.success();void session.request<Employer['talks'][number]>(`/me/talks/${t.id}`,{method:'PUT',body:{going:!t.rsvp}}).then(n=>setCo(o=>o?{...o,talks:o.talks.map(x=>x.id===n.id?n:x)}:o));};
+ const rsvp=(t:Employer['talks'][number])=>{feel.success();void session.request<Employer['talks'][number]>(`/me/talks/${t.id}`,{method:'PUT',body:{going:!t.rsvp}}).then(n=>setCo(o=>o?{...o,talks:o.talks.map(x=>x.id===n.id?n:x)}:o));};
  if(error)return <View style={{gap:18}}><LifeTop zh={zh} title={zh?'企业':'Employer'} onBack={onBack}/><Surface><EmptyState icon="briefcase" title={zh?'暂时无法读取':'Unavailable'}/></Surface></View>;
  if(!co)return <View style={{gap:18}}><LifeTop zh={zh} title={zh?'企业':'Employer'} onBack={onBack}/><Skeleton height={240} radius={30}/></View>;
  return <View style={{gap:18}}>

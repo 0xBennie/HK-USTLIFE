@@ -11,7 +11,7 @@ export const studyStrings = {
     complete:'标记完成',reopen:'重新打开',done:'已完成',open:'待完成',active:'有效',cancelled:'已取消',cancelEvent:'取消日程',restoreEvent:'恢复日程',
     unknownEnd:'结束时间未提供',undated:'暂未设置截止',viewLink:'打开资料',manual:'本人维护 · 不代表学校正式选课',
     loading:'正在读取…',error:'读取失败，原有记录未清空。请重试。',conflict:'这条记录已经发生变化。请返回刷新后重新编辑；本次输入尚未保存。',
-    invalid:'请检查标题、日期、时间和网址。',saveError:'保存未完成，输入已保留。可以重试。',signIn:'登录后管理自己的学习安排',login:'前往登录',
+    invalid:'请检查标题、日期、时间和网址。',saveError:'保存未完成，输入已保留。可以重试。',
     allDayLabel:'全天',unconfirmed:'记录已提交，正在刷新列表。',
   },
   en: {
@@ -26,7 +26,7 @@ export const studyStrings = {
     complete:'Mark done',reopen:'Reopen',done:'Done',open:'To do',active:'Active',cancelled:'Cancelled',cancelEvent:'Cancel schedule',restoreEvent:'Restore schedule',
     unknownEnd:'End time not provided',undated:'No deadline yet',viewLink:'Open resource',manual:'Personally maintained · Not official enrolment',
     loading:'Loading…',error:'Could not refresh. Existing records were kept. Please retry.',conflict:'This record changed. Go back, refresh, and edit the latest version. Your current draft has not been saved.',
-    invalid:'Check the title, dates, times and URL.',saveError:'Could not save. Your draft is kept; try again.',signIn:'Sign in to manage your own learning plans',login:'Go to sign in',
+    invalid:'Check the title, dates, times and URL.',saveError:'Could not save. Your draft is kept; try again.',
     allDayLabel:'All day',unconfirmed:'Record saved; refreshing your list.',
   },
 };
