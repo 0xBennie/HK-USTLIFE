@@ -25,14 +25,15 @@ const glyph=(name:string):LucideIcon=>{const found=(icons as unknown as Record<s
 export function PenIcon({name,color,size=19,strokeWidth=2}:{name:PenIconName;color:string;size?:number;strokeWidth?:number}){const Glyph=glyph(name);return <Glyph color={color} size={size} strokeWidth={strokeWidth} accessible={false}/>;}
 export const usePenColors=():Colors=>palette[useColorScheme()==='dark'?'dark':'light'];
 
-const pressFeedback=(reduceMotion:boolean)=>({pressed}:{pressed:boolean})=>({opacity:pressed?0.6:1,transform:[{scale:pressed&&!reduceMotion?0.97:1}]});
+// `base` carries the disabled opacity; a separate opacity in the same style array would be overridden by this one.
+const pressFeedback=(reduceMotion:boolean,base=1)=>({pressed}:{pressed:boolean})=>({opacity:(pressed?0.6:1)*base,transform:[{scale:pressed&&!reduceMotion?0.97:1}]});
 
 /** Pen "Button plus" / overlay nav buttons: 38pt circle, 19pt glyph, 1pt/4 blur shadow. */
 export function CircleButton({icon,label,onPress,variant='surface',color,disabled}:{icon:PenIconName;label:string;onPress:()=>void;variant?:'surface'|'overlay'|'fill'|'prominent';color?:string;disabled?:boolean}){
  const c=usePenColors(),{reduceMotion}=useAppearance(),dark=useColorScheme()==='dark';
  const prominent=variant==='prominent'&&!disabled,glass=variant!=='fill'&&liquidGlass;
  const background=glass?'transparent':prominent?NAVY:variant==='overlay'?(dark?'#1C1C1ED9':'#FFFFFFE6'):variant==='fill'?c.fill:c.surface;
- return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{disabled}} disabled={disabled} hitSlop={4} onPress={()=>{feel.tap();onPress();}} style={state=>[{width:44,height:44,borderRadius:22,alignItems:'center',justifyContent:'center',backgroundColor:background,boxShadow:variant==='fill'||glass?undefined:'0 4px 14px #0000000F',opacity:disabled?0.4:1},pressFeedback(reduceMotion)(state)]}>{glass?prominent?<GlassView pointerEvents="none" isInteractive glassEffectStyle="regular" tintColor={NAVY} style={{position:'absolute',inset:0,borderRadius:22}}/>:<GlassFill radius={22}/>:null}<PenIcon name={icon} size={20} strokeWidth={2.2} color={prominent?"#FFFFFF":variant==="prominent"?c.muted:color??c.text}/></Pressable>;
+ return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{disabled}} disabled={disabled} hitSlop={4} onPress={()=>{feel.tap();onPress();}} style={state=>[{width:44,height:44,borderRadius:22,alignItems:'center',justifyContent:'center',backgroundColor:background,boxShadow:variant==='fill'||glass?undefined:'0 4px 14px #0000000F'},pressFeedback(reduceMotion,disabled?0.45:1)(state)]}>{glass?prominent?<GlassView pointerEvents="none" isInteractive glassEffectStyle="regular" tintColor={NAVY} style={{position:'absolute',inset:0,borderRadius:22}}/>:<GlassFill radius={22}/>:null}<PenIcon name={icon} size={20} strokeWidth={2.2} color={prominent?"#FFFFFF":variant==="prominent"?c.muted:color??c.text}/></Pressable>;
 }
 
 /** Pen "Large title": 13/600 eyebrow, 34/700 title, optional circle action. */
@@ -121,9 +122,10 @@ export function InitialAvatar({name,size=28}:{name:string;size?:number}){
 /** Pen "Primary action": 50pt pill, 17/600. */
 export function PrimaryButton({label,onPress,disabled,tone='accent',icon,iconAfter}:{label:string;onPress:()=>void;disabled?:boolean;tone?:'accent'|'soft';icon?:PenIconName;iconAfter?:boolean}){
  // Pen V5: accent = tinted (prominent) Liquid Glass in HKUST navy; soft = regular glass. One accent per screen.
- const c=usePenColors(),{reduceMotion,reduceTransparency}=useAppearance(),prominent=tone!=='soft'&&!disabled;
- const glass=liquidGlass&&!reduceTransparency,fg=prominent?'#FFFFFF':disabled?c.muted:c.text;
- return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={()=>{feel.tap();onPress();}} style={state=>[{flex:1,minHeight:54,borderRadius:99,borderCurve:'continuous',flexDirection:'row',gap:8,alignItems:'center',justifyContent:'center',paddingHorizontal:22,backgroundColor:glass?'transparent':prominent?NAVY:c.glass,borderWidth:glass?0:1,borderColor:prominent?'#FFFFFF26':'#FFFFFFCC',boxShadow:glass?undefined:prominent?'0 10px 24px #1B356645':'0 6px 18px #1B35661A',opacity:disabled?0.4:1},pressFeedback(reduceMotion)(state)]}>
+ // Disabled: the same colours, flat (no glass), at 45% (Pen "Preview primary" in r1S0Aq, "Input / Disabled").
+ const c=usePenColors(),{reduceMotion,reduceTransparency}=useAppearance(),prominent=tone!=='soft';
+ const glass=liquidGlass&&!reduceTransparency&&!disabled,fg=prominent?'#FFFFFF':c.text;
+ return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={()=>{feel.tap();onPress();}} style={state=>[{flex:1,minHeight:54,borderRadius:99,borderCurve:'continuous',flexDirection:'row',gap:8,alignItems:'center',justifyContent:'center',paddingHorizontal:22,backgroundColor:glass?'transparent':prominent?NAVY:c.glass,borderWidth:glass?0:1,borderColor:prominent?'#FFFFFF26':'#FFFFFFCC',boxShadow:glass||disabled?undefined:prominent?'0 10px 24px #1B356645':'0 6px 18px #1B35661A'},pressFeedback(reduceMotion,disabled?0.45:1)(state)]}>
   {glass?<GlassView pointerEvents="none" isInteractive glassEffectStyle="regular" tintColor={prominent?NAVY:undefined} style={{position:'absolute',inset:0,borderRadius:99}}/>:null}
   {icon&&!iconAfter?<PenIcon name={icon} size={18} strokeWidth={2.2} color={fg}/>:null}<Text style={{fontSize:17,lineHeight:23,fontWeight:'600',color:fg}}>{label}</Text>{icon&&iconAfter?<PenIcon name={icon} size={18} strokeWidth={2.2} color={fg}/>:null}</Pressable>;
 }
@@ -228,10 +230,10 @@ export function IconTile({icon,color,size=30}:{icon:PenIconName;color:string;siz
  return <View style={{width:size,height:size,borderRadius:size/2,backgroundColor:color.slice(0,7)+(dark?'38':'1F'),alignItems:'center',justifyContent:'center'}}><PenIcon name={icon} size={size*0.5} strokeWidth={2.2} color={dark?'#FFFFFFE6':color.slice(0,7)}/></View>;
 }
 /** Inline notice: success / warning / error with an optional action. */
-export function Notice({tone='info',text,action,onAction}:{tone?:'info'|'success'|'warning'|'error';text:string;action?:string;onAction?:()=>void}){
+export function Notice({tone='info',text,action,onAction,icon:custom}:{tone?:'info'|'success'|'warning'|'error';text:string;action?:string;onAction?:()=>void;icon?:PenIconName}){
  const c=usePenColors();
  const col=tone==='success'?c.green:tone==='warning'?c.orange:tone==='error'?c.danger:c.accent;
- const icon=tone==='success'?'circle-check':tone==='warning'?'triangle-alert':tone==='error'?'circle-alert':'info';
+ const icon=custom??(tone==='success'?'circle-check':tone==='warning'?'triangle-alert':tone==='error'?'circle-alert':'info');
  return <View accessibilityRole={tone==='error'||tone==='warning'?'alert':undefined} accessibilityLiveRegion="polite" style={{flexDirection:'row',alignItems:'center',gap:10,padding:12,paddingHorizontal:14,borderRadius:14,backgroundColor:col+'1A'}}>
   <PenIcon name={icon} size={18} color={col}/>
   <Text style={{flex:1,fontSize:14,lineHeight:20,color:c.text}}>{text}</Text>
