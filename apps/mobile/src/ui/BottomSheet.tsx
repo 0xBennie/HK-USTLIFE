@@ -13,10 +13,8 @@ export function BottomSheet({visible,onClose,closeLabel,header,children}:{visibl
  const shift=useRef(new Animated.Value(height)).current,shade=useRef(new Animated.Value(0)).current;
  const close=useRef(onClose);close.current=onClose;
  useEffect(()=>{
-  if(visible){
-   setMounted(true);shift.setValue(reduceMotion?0:height);
-   Animated.parallel([Animated.timing(shade,{toValue:1,duration:200,useNativeDriver:true}),reduceMotion?Animated.timing(shift,{toValue:0,duration:0,useNativeDriver:true}):Animated.spring(shift,{toValue:0,damping:30,stiffness:280,useNativeDriver:true})]).start();
-  }else if(mounted){
+  if(visible){shift.setValue(reduceMotion?0:height);shade.setValue(0);setMounted(true);}
+  else if(mounted){
    Animated.parallel([Animated.timing(shade,{toValue:0,duration:180,useNativeDriver:true}),Animated.timing(shift,{toValue:reduceMotion?0:height,duration:reduceMotion?0:220,easing:Easing.in(Easing.cubic),useNativeDriver:true})]).start(()=>setMounted(false));
   }
  // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -27,7 +25,11 @@ export function BottomSheet({visible,onClose,closeLabel,header,children}:{visibl
   onPanResponderRelease:(_,g)=>{if(g.dy>110||g.vy>1.1)close.current();else Animated.spring(shift,{toValue:0,damping:30,stiffness:280,useNativeDriver:true}).start();},
   onPanResponderTerminate:()=>{Animated.spring(shift,{toValue:0,useNativeDriver:true}).start();},
  })).current;
- return <Modal visible={mounted} transparent animationType="none" statusBarTranslucent onRequestClose={onClose}>
+ // Animate in only once the modal is on screen, so the native driver has mounted views to move.
+ // (On the iOS Simulator RN divides native animation time by the simulator's drag coefficient,
+ // so with Slow Animations / automation it runs 10x slower there; devices always use 1.)
+ const enter=()=>Animated.parallel([Animated.timing(shade,{toValue:1,duration:200,useNativeDriver:true}),Animated.timing(shift,{toValue:0,duration:reduceMotion?0:320,easing:Easing.bezier(0.2,0.9,0.25,1),useNativeDriver:true})]).start();
+ return <Modal visible={mounted} transparent animationType="none" statusBarTranslucent onShow={enter} onRequestClose={onClose}>
   <Animated.View style={[StyleSheet.absoluteFill,{backgroundColor:'#0B0B0C66',opacity:shade}]}><Pressable accessibilityRole="button" accessibilityLabel={closeLabel} style={{flex:1}} onPress={onClose}/></Animated.View>
   <Animated.View accessibilityViewIsModal style={{position:'absolute',left:0,right:0,bottom:0,maxHeight:height-insets.top-8,borderTopLeftRadius:28,borderTopRightRadius:28,borderCurve:'continuous',backgroundColor:c.background,paddingBottom:Math.max(insets.bottom,12),transform:[{translateY:shift}]}}>
    <View {...pan.panHandlers}>

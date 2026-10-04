@@ -1,4 +1,4 @@
-import {PlainField} from '../ui/PlainField';
+import {PlainField} from '../ui/Pen';
 import {DepartureBoard} from './DepartureBoard';
 import {usePageTop} from '../navigation/TabScene';
 import {AcademicsScreen,BookingScreen,ClubsScreen,GradesScreen,HallScreen,ServicesScreen,TimeMatchScreen} from '../life/LifeScreens';

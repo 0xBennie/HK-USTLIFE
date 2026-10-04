@@ -17,6 +17,7 @@ import {socialError,participationLabel} from './shared';
 import {activityCover,cardDateTime,interactionLabel,languageLabel} from './covers';
 import {ActivityForm} from './ActivityForm';
 import {ActivityDetail} from './ActivityDetail';
+import {costText,dayTitle,hhmm,hk} from './activity-time';
 type Filters={q:string;kind:string;interaction:string;language:string;mine:string;from:string;to:string};
 const emptyFilters:Filters={q:'',kind:'',interaction:'',language:'',mine:'',from:'',to:''};
 
@@ -39,17 +40,27 @@ function FeaturedCard({activity:a,zh,onOpen}:{activity:Activity;zh:boolean;onOpe
   </View>
  </Pressable>;
 }
-/** V3 list row (Plasma transactions): round photo, title and time, places on the right. */
-function ActivityRow({activity:a,zh,last,onOpen}:{activity:Activity;zh:boolean;last:boolean;onOpen:()=>void}){
- const c=usePenColors(),full=a.counts.remaining<=0,status=activeStatus(a,zh);
- return <Pressable accessibilityRole="button" accessibilityLabel={a.title} onPress={onOpen} style={({pressed})=>({flexDirection:'row',alignItems:'center',gap:14,paddingLeft:18,opacity:pressed?0.6:1})}>
-  <Image source={activityCover(a)} style={{width:48,height:48,borderRadius:24}}/>
-  <View style={{flex:1,flexDirection:'row',alignItems:'center',gap:10,paddingVertical:14,paddingRight:18,borderBottomWidth:last?0:0.5,borderBottomColor:c.border}}>
-   <View style={{flex:1,gap:3}}><Text numberOfLines={1} style={{fontSize:17,fontWeight:'500',color:c.text}}>{a.title}</Text><Text numberOfLines={1} style={{fontSize:14,color:c.muted}}>{relative(a.starts_at,zh)} · {a.location}</Text></View>
-   <View style={{alignItems:'flex-end',gap:2}}><Text style={{fontSize:16,fontWeight:'600',color:status?status.color:full?c.orange:c.text,fontVariant:['tabular-nums']}}>{status?.label??(full?(zh?'可候补':'Waitlist'):`${a.counts.confirmed}/${a.capacity}`)}</Text><Text style={{fontSize:12,color:c.muted}}>{a.cost_minor?`HK$ ${(a.cost_minor/100).toFixed(0)}`:(zh?'免费':'Free')}</Text></View>
+/** Pen "V6 / 全部活动（按日期分组）" (H4f7id) row: time first, bold title, place · host, then status and price tags. */
+function DayRow({activity:a,zh,first,onOpen}:{activity:Activity;zh:boolean;first:boolean;onOpen:()=>void}){
+ const c=usePenColors(),status=activeStatus(a,zh),plain:[string,string]=[c.fill,c.text];
+ const tags:[string,[string,string]][]=[];
+ if(status)tags.push([status.label,a.mine?.participation?.status==='confirmed'?['#2E9E5B1F','#2E9E5B']:['#D98A1C1F','#B8741A']]);
+ else if(a.status==='open'&&!a.started)tags.push(a.counts.remaining>0?[zh?`还剩 ${a.counts.remaining} 位`:`${a.counts.remaining} left`,plain]:[zh?'已满 · 可候补':'Full · waitlist',['#D98A1C1F','#B8741A']]);
+ tags.push([costText(a.cost_minor,zh),plain]);
+ return <Pressable accessibilityRole="button" accessibilityLabel={`${hhmm(a.starts_at)} ${a.title}, ${a.location}`} onPress={onOpen} style={({pressed})=>({flexDirection:'row',gap:12,paddingVertical:14,paddingHorizontal:16,borderTopWidth:first?0:0.5,borderTopColor:c.border,opacity:pressed?0.6:1})}>
+  <Text numberOfLines={1} style={{width:52,paddingTop:1,fontSize:16,fontWeight:'700',color:c.text,fontVariant:['tabular-nums']}}>{hhmm(a.starts_at)}</Text>
+  <View style={{flex:1,gap:3}}>
+   <Text numberOfLines={2} style={{fontSize:16,fontWeight:'600',color:c.text}}>{a.title}</Text>
+   <Text numberOfLines={1} style={{fontSize:13,color:c.muted}}>{a.location} · {zh?`${a.organizer.display_name} 发起`:`by ${a.organizer.display_name}`}</Text>
+   <View style={{flexDirection:'row',flexWrap:'wrap',gap:6,paddingTop:4}}>{tags.map(([label,[bg,fg]])=><View key={label} style={{paddingVertical:3,paddingHorizontal:8,borderRadius:99,backgroundColor:bg}}><Text style={{fontSize:12,fontWeight:'600',color:fg}}>{label}</Text></View>)}</View>
   </View>
+  <Image source={activityCover(a)} accessible={false} style={{width:48,height:48,borderRadius:12}}/>
  </Pressable>;
 }
+/** Hong Kong day key ("2026-10-05") → "今天 · 10 月 5 日 星期一". */
+const dayHeader=(key:string,zh:boolean)=>{const today=new Date(Date.now()+8*3600e3).toISOString().slice(0,10),diff=Math.round((Date.parse(key)-Date.parse(today))/864e5),title=dayTitle(key+'T00:00:00+08:00',zh);return diff===0?(zh?`今天 · ${title}`:`Today · ${title}`):diff===1?(zh?`明天 · ${title}`:`Tomorrow · ${title}`):title;};
+/** Group by Hong Kong start date, keeping time order. */
+const byDay=(list:Activity[])=>{const groups=new Map<string,Activity[]>();for(const a of [...list].sort((x,y)=>Date.parse(x.starts_at)-Date.parse(y.starts_at))){const k=hk(a.starts_at).toISOString().slice(0,10);groups.set(k,[...(groups.get(k)??[]),a]);}return [...groups];};
 
 export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,onNavigate,onDepthChange,createRequest=0}:{language:Language;dark:boolean;onLogin:()=>void;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void;onDepthChange?:(nested:boolean)=>void;createRequest?:number}){
  const sceneActive=useSceneFocus();
@@ -108,9 +119,15 @@ export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,
    <Text style={{paddingHorizontal:4,fontSize:20,fontWeight:'700',color:c.text}}>{zh?'即将开始':'Coming up'}</Text>
    <ScrollView horizontal showsHorizontalScrollIndicator={false} decelerationRate="fast" snapToInterval={296} style={{marginHorizontal:-16}} contentContainerStyle={{paddingHorizontal:16,gap:12}}>{items.slice(0,5).map(a=><FeaturedCard key={a.id} activity={a} zh={zh} onOpen={()=>setSelected(a.id)}/>)}</ScrollView>
   </View>:null}
-  {items.length?<View style={{gap:12}}>
+  {items.length?<View style={{gap:8}}>
    <Text style={{paddingHorizontal:4,fontSize:20,fontWeight:'700',color:c.text}}>{zh?'全部活动':'All activities'}</Text>
-   <View style={{backgroundColor:c.surface,borderRadius:24,overflow:'hidden',boxShadow:'0 2px 12px #00000008'}}>{items.map((a,i)=><ActivityRow key={a.id} activity={a} zh={zh} last={i===items.length-1&&!cursor} onOpen={()=>setSelected(a.id)}/>)}{cursor?<View style={{borderTopWidth:0.5,borderTopColor:c.border}}><ViewAll label={zh?'加载更多':'Load more'} onPress={()=>void load(cursor)}/></View>:null}</View>
+   {byDay(items).map(([day,list],g,groups)=><View key={day} style={{gap:8,paddingTop:g?6:0}}>
+    <Text style={{paddingHorizontal:4,fontSize:13,fontWeight:'600',color:c.muted}}>{dayHeader(day,zh)}</Text>
+    <View style={{backgroundColor:c.surface,borderRadius:20,overflow:'hidden'}}>
+     {list.map((a,i)=><DayRow key={a.id} activity={a} zh={zh} first={i===0} onOpen={()=>setSelected(a.id)}/>)}
+     {g===groups.length-1&&cursor?<View style={{borderTopWidth:0.5,borderTopColor:c.border}}><ViewAll label={zh?'加载更多':'Load more'} onPress={()=>void load(cursor)}/></View>:null}
+    </View>
+   </View>)}
   </View>:null}
   {items.length?<Text style={[styles.caption,{fontSize:12,textAlign:'center',color:c.muted}]}>{zh?'示例内容 · 不代表真实开放的活动':'Sample content · Not real open activities'}</Text>:null}
  </View>;

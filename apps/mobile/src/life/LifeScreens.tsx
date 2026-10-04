@@ -150,7 +150,8 @@ export function ClubsScreen({zh,onBack}:Base){
  return <View style={{gap:16}}>
   <LifeTop zh={zh} title={zh?'社团与组织':'Clubs'} onBack={onBack}/>
   <SearchField value={q} onChangeText={setQ} placeholder={zh?'搜索社团或标签':'Search clubs or tags'}/>
-  <GlassChips label={zh?'分类':'Category'} value={cat} onChange={setCat} items={[{value:'all',label:zh?'全部':'All'},{value:'sport',label:zh?'运动':'Sport'},{value:'culture',label:zh?'文化':'Arts'},{value:'interest',label:zh?'兴趣':'Interest'},{value:'faculty',label:zh?'院系':'Faculty'},{value:'house',label:zh?'舍堂':'Halls'}]}/>
+  {/* Pen "V6 / 分类显示真实数量" (R64Nw): each category shows how many SU societies it has. */}
+  <GlassChips label={zh?'分类':'Category'} value={cat} onChange={setCat} items={([['all',zh?'全部':'All'],['sport',zh?'运动':'Sport'],['culture',zh?'文化':'Arts'],['interest',zh?'兴趣':'Interest'],['faculty',zh?'院系':'Faculty'],['house',zh?'舍堂':'Halls']] as const).map(([value,label])=>({value,label,count:clubs?.length?clubs.filter(x=>value==='all'||CLUB_FILTER[value]?.includes(x.category)).length:undefined}))}/>
   {top&&top.followers>0&&cat==='all'&&!q?<View style={{height:170,borderRadius:28,overflow:'hidden'}}>
    <Image source={covers.clubs} resizeMode="cover" style={{position:'absolute',width:'100%',height:'100%'}}/>
    <View style={{flex:1,justifyContent:'space-between',padding:16,backgroundColor:'#00000040'}}>

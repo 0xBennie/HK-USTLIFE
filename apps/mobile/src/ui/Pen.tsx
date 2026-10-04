@@ -12,17 +12,16 @@ import Reanimated,{FadeIn,ZoomIn} from 'react-native-reanimated';
 import Svg,{Circle,Defs,LinearGradient as SvgGradient,RadialGradient,Rect,Stop} from 'react-native-svg';
 import {BlurView} from 'expo-blur';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import * as icons from 'lucide-react-native/icons';
+// The package root also exports lucide's legacy names (Smile, Building2…) that Pen boards still use.
+import * as icons from 'lucide-react-native';
 import type {LucideIcon} from 'lucide-react-native';
 import {palette,TAB_BAR_HEIGHT,type Colors} from '../theme';
 import {useAppearance} from './Appearance';
 
 // Pen boards name lucide icons in kebab case ("calendar-days"); lucide-react-native exports them in PascalCase.
 export type PenIconName=string;
-// lucide 1.x renamed the face icons that Pen boards still call smile/frown/meh/laugh/angry/annoyed.
-const renamed:Record<string,string>={smile:'face-slightly-smiling','smile-plus':'face-slightly-smiling-plus',frown:'face-slightly-frowning',meh:'face-neutral',laugh:'face-grinning',angry:'face-angry',annoyed:'face-expressionless'};
 const missing=new Set<string>();
-const glyph=(name:string):LucideIcon=>{const found=(icons as Record<string,LucideIcon>)[(renamed[name]??name).split('-').map(p=>p[0].toUpperCase()+p.slice(1)).join('')];if(!found&&__DEV__&&!missing.has(name)){missing.add(name);console.warn(`PenIcon: no lucide icon "${name}"`);}return found??icons.Circle;};
+const glyph=(name:string):LucideIcon=>{const found=(icons as unknown as Record<string,LucideIcon>)[name.split('-').map(p=>p[0].toUpperCase()+p.slice(1)).join('')];if(!found&&__DEV__&&!missing.has(name)){missing.add(name);console.warn(`PenIcon: no lucide icon "${name}"`);}return found??icons.Circle;};
 export function PenIcon({name,color,size=19,strokeWidth=2}:{name:PenIconName;color:string;size?:number;strokeWidth?:number}){const Glyph=glyph(name);return <Glyph color={color} size={size} strokeWidth={strokeWidth} accessible={false}/>;}
 export const usePenColors=():Colors=>palette[useColorScheme()==='dark'?'dark':'light'];
 
@@ -58,10 +57,19 @@ export function FilterPill({label,selected,icon,onPress}:{label:string;selected?
   {icon?<PenIcon name={icon} size={13} color={selected?accent:c.text}/>:null}<Text style={{fontSize:14,lineHeight:20,fontWeight:selected?'700':'500',color:selected?accent:c.text}}>{label}</Text>
  </Pressable>;
 }
+// Search fields draw their own placeholder: while a Chinese keyboard is active, iOS draws a native
+// placeholder lower than the typed text (clipped in short fields).
+export function PlainField({placeholder,fontSize,value,...rest}:Omit<TextInputProps,'style'|'placeholderTextColor'>&{placeholder:string;fontSize:number;value:string}){
+ const c=usePenColors();
+ return <View style={{flex:1,height:44,justifyContent:'center'}}>
+  {!value?<View pointerEvents="none" style={{position:'absolute',left:0,right:0}}><Text numberOfLines={1} style={{fontSize,color:c.muted}}>{placeholder}</Text></View>:null}
+  <TextInput {...rest} value={value} accessibilityHint={placeholder} style={{height:44,padding:0,fontSize,color:c.text}}/>
+ </View>;
+}
 /** Pen V5 search field: glass capsule with search glyph. */
 export function SearchField({value,onChangeText,placeholder,autoFocus}:{value:string;onChangeText:(v:string)=>void;placeholder:string;autoFocus?:boolean}){
  const c=usePenColors();
- return <GlassCapsule radius={24}><View style={{flexDirection:'row',alignItems:'center',gap:8,height:48,paddingHorizontal:16}}><PenIcon name="search" size={18} color={c.muted}/><TextInput accessibilityLabel={placeholder} autoFocus={autoFocus} value={value} onChangeText={onChangeText} placeholder={placeholder} placeholderTextColor={c.muted} returnKeyType="search" clearButtonMode="while-editing" style={{flex:1,fontSize:16,color:c.text}}/></View></GlassCapsule>;
+ return <GlassCapsule radius={24}><View style={{flexDirection:'row',alignItems:'center',gap:8,height:48,paddingHorizontal:16}}><PenIcon name="search" size={18} color={c.muted}/><PlainField accessibilityLabel={placeholder} autoFocus={autoFocus} value={value} onChangeText={onChangeText} placeholder={placeholder} returnKeyType="search" clearButtonMode="while-editing" fontSize={16}/></View></GlassCapsule>;
 }
 export function PillRow({children}:{children:ReactNode}){return <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginHorizontal:-16}} contentContainerStyle={{paddingHorizontal:16,gap:8}}>{children}</ScrollView>;}
 
@@ -111,13 +119,13 @@ export function InitialAvatar({name,size=28}:{name:string;size?:number}){
 }
 
 /** Pen "Primary action": 50pt pill, 17/600. */
-export function PrimaryButton({label,onPress,disabled,tone='accent',icon}:{label:string;onPress:()=>void;disabled?:boolean;tone?:'accent'|'soft';icon?:PenIconName}){
+export function PrimaryButton({label,onPress,disabled,tone='accent',icon,iconAfter}:{label:string;onPress:()=>void;disabled?:boolean;tone?:'accent'|'soft';icon?:PenIconName;iconAfter?:boolean}){
  // Pen V5: accent = tinted (prominent) Liquid Glass in HKUST navy; soft = regular glass. One accent per screen.
  const c=usePenColors(),{reduceMotion,reduceTransparency}=useAppearance(),prominent=tone!=='soft'&&!disabled;
  const glass=liquidGlass&&!reduceTransparency,fg=prominent?'#FFFFFF':disabled?c.muted:c.text;
  return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={()=>{feel.tap();onPress();}} style={state=>[{flex:1,minHeight:54,borderRadius:99,borderCurve:'continuous',flexDirection:'row',gap:8,alignItems:'center',justifyContent:'center',paddingHorizontal:22,backgroundColor:glass?'transparent':prominent?NAVY:c.glass,borderWidth:glass?0:1,borderColor:prominent?'#FFFFFF26':'#FFFFFFCC',boxShadow:glass?undefined:prominent?'0 10px 24px #1B356645':'0 6px 18px #1B35661A',opacity:disabled?0.4:1},pressFeedback(reduceMotion)(state)]}>
   {glass?<GlassView pointerEvents="none" isInteractive glassEffectStyle="regular" tintColor={prominent?NAVY:undefined} style={{position:'absolute',inset:0,borderRadius:99}}/>:null}
-  {icon?<PenIcon name={icon} size={18} strokeWidth={2.2} color={fg}/>:null}<Text style={{fontSize:17,lineHeight:23,fontWeight:'600',color:fg}}>{label}</Text></Pressable>;
+  {icon&&!iconAfter?<PenIcon name={icon} size={18} strokeWidth={2.2} color={fg}/>:null}<Text style={{fontSize:17,lineHeight:23,fontWeight:'600',color:fg}}>{label}</Text>{icon&&iconAfter?<PenIcon name={icon} size={18} strokeWidth={2.2} color={fg}/>:null}</Pressable>;
 }
 export function TextAction({label,onPress,color,disabled}:{label:string;onPress:()=>void;color?:string;disabled?:boolean}){
  const c=usePenColors();
@@ -165,7 +173,7 @@ export function FloatingTabBar({tabs,selected,onSelect,badges}:{tabs:{label:stri
  </View>;
 }
 /** Pen "V5 / Glass chip row": glass capsule of options; a lens slides to the selection. Scrolls when options overflow. */
-export function GlassChips<T extends string>({items,value,onChange,label,fill}:{items:{value:T;label:string}[];value:T;onChange:(v:T)=>void;label:string;fill?:boolean}){
+export function GlassChips<T extends string>({items,value,onChange,label,fill}:{items:{value:T;label:string;count?:number}[];value:T;onChange:(v:T)=>void;label:string;fill?:boolean}){
  const c=usePenColors(),dark=useColorScheme()==='dark',{reduceMotion}=useAppearance(),accent=dark?'#8FB0E8':NAVY;
  const [layouts,setLayouts]=useState<Record<string,{x:number;w:number}>>({});
  const x=useSharedValue(-1),w=useSharedValue(0);
@@ -173,7 +181,7 @@ export function GlassChips<T extends string>({items,value,onChange,label,fill}:{
  const lens=useAnimatedStyle(()=>({opacity:x.value<0?0:1,width:w.value,transform:[{translateX:Math.max(0,x.value)}]}));
  const chips=<>
   <Reanimated.View pointerEvents="none" style={[{position:'absolute',left:0,top:4,bottom:4,borderRadius:18,backgroundColor:dark?'#FFFFFF1F':'#24467F14',borderWidth:1,borderColor:dark?'#FFFFFF26':'#FFFFFFD9'},lens]}/>
-  {items.map(it=>{const on=it.value===value;return <Pressable key={it.value} accessibilityRole="tab" accessibilityState={{selected:on}} onLayout={e=>{const {x:lx,width}=e.nativeEvent.layout;setLayouts(p=>p[it.value]?.x===lx&&p[it.value]?.w===width?p:{...p,[it.value]:{x:lx,w:width}});}} onPress={()=>{if(!on){feel.select();onChange(it.value);}}} style={{flex:fill?1:undefined,height:36,paddingHorizontal:16,alignItems:'center',justifyContent:'center'}}><Text numberOfLines={1} style={{fontSize:15,fontWeight:on?'700':'500',color:on?accent:c.text}}>{it.label}</Text></Pressable>;})}
+  {items.map(it=>{const on=it.value===value;return <Pressable key={it.value} accessibilityRole="tab" accessibilityState={{selected:on}} onLayout={e=>{const {x:lx,width}=e.nativeEvent.layout;setLayouts(p=>p[it.value]?.x===lx&&p[it.value]?.w===width?p:{...p,[it.value]:{x:lx,w:width}});}} onPress={()=>{if(!on){feel.select();onChange(it.value);}}} style={{flex:fill?1:undefined,height:36,paddingHorizontal:16,alignItems:'center',justifyContent:'center'}}><Text numberOfLines={1} style={{fontSize:15,fontWeight:on?'700':'500',color:on?accent:c.text}}>{it.label}{it.count!=null?<Text style={{fontSize:13,fontWeight:'500',color:on?accent:c.muted,fontVariant:['tabular-nums']}}>{` ${it.count}`}</Text>:null}</Text></Pressable>;})}
  </>;
  return <GlassCapsule radius={22} style={{alignSelf:fill?'stretch':'flex-start',maxWidth:'100%'}}>
   <View accessibilityRole="tablist" accessibilityLabel={label}>
