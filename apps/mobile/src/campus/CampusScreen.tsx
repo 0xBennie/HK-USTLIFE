@@ -9,6 +9,7 @@ import {useSceneNavigation} from '../navigation/InputProtection';
 import {PublicTransitScreen} from './PublicTransitScreen';
 import {TransitHub} from './TransitHub';
 import {LibraryNow} from './LibraryNow';
+import {DiningScreen} from './DiningScreen';
 import {DirectoryScreen} from './DirectoryScreen';
 import {TargetActions} from './TargetActions';
 import {liveAlternatives,type LiveOption} from './live';
@@ -25,7 +26,7 @@ import {CircleButton,EmptyState,Hero,HeroActions,IconTile,ListGroup,ListRow,Noti
 type Catalog={routes:ShuttleRoute[];freshness:string;refresh_due_at:string};
 type Place=typeof directoryData[number]&{version:number;freshness:string};
 type Affair={id:string;template:{title:{zh:string;en:string};steps:{id:string;text:{zh:string;en:string}}[]};step_checks:Record<string,boolean>;personal_due:{kind:'date';date:string}|{kind:'time';at:string}|null;requires_review:boolean};
-type Page={kind:'home'}|{kind:'route';id:string}|{kind:'routes'}|{kind:'directory';category?:string;placeId?:string}|{kind:'transit'}|{kind:'transit-stop';routeId:string;sequence:number}|{kind:'affairs'}|{kind:'life';screen:'services'|'academics'|'grades'|'booking'|'timematch'|'clubs'|'hall'|'market'|'school'};
+type Page={kind:'home'}|{kind:'route';id:string}|{kind:'routes'}|{kind:'directory';category?:string;placeId?:string}|{kind:'transit'}|{kind:'dining'}|{kind:'transit-stop';routeId:string;sequence:number}|{kind:'affairs'}|{kind:'life';screen:'services'|'academics'|'grades'|'booking'|'timematch'|'clubs'|'hall'|'market'|'school'};
 const PATH_ADVISOR='https://pathadvisor.ust.hk/';
 const destinationKey=(id:string)=>id.replace(/^campus-to-/,'');
 const minutesUntil=(scheduled:string)=>Math.round((Date.parse(scheduled)-Date.now())/60000);
@@ -73,6 +74,7 @@ export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{la
    case 'hall':return <HallScreen zh={zh0} onBack={back}/>;
    case 'market':return <MarketScreen zh={zh0} onBack={back} onOpenPost={id=>onPost?.(id)} onCompose={()=>onWall?.()}/>;
   }}
+ if(page.kind==='dining')return <DiningScreen zh={zh} onBack={home} onShops={()=>go({kind:'directory',category:'shop'})}/>;
  if(page.kind==='transit')return <TransitHub zh={zh} onBack={home} onRoute={(routeId,sequence)=>go({kind:'transit-stop',routeId,sequence})} onShuttle={id=>go({kind:'route',id})}/>;
  if(page.kind==='transit-stop')return <PublicTransitScreen language={language} dark={dark} initial={{routeId:page.routeId,sequence:page.sequence}} onBack={()=>go({kind:'transit'})}/>;
  if(page.kind==='directory')return <DirectoryScreen language={language} dark={dark} onBack={home} onLogin={onLogin} initialCategory={page.category} initialId={page.placeId}/>;
@@ -91,7 +93,7 @@ export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{la
  const names=(list:Place[])=>[...new Set(list.map(p=>p.name[language].replace(/（.*?）|\(.*?\)/g,'').trim()))].slice(0,2).join(' · ');
  const tiles:[string,string,string,string,()=>void][]=[
   ['library',c.indigo,zh?'学习空间':'Study spaces',names(byCat('study')),()=>go({kind:'directory',category:'study'})],
-  ['shopping-bag','#A9824C',zh?'吃喝与购物':'Food & shops',names(byCat('shop')),()=>go({kind:'directory',category:'shop'})],
+  ['shopping-bag','#A9824C',zh?'吃喝与购物':'Food & shops',names(byCat('shop')),()=>go({kind:'dining'})],
   ['life-buoy',c.blue,zh?'学生服务':'Student services',names(byCat('service')),()=>go({kind:'directory',category:'service'})],
   ['map',c.teal,zh?'找课室 ↗':'Find a room ↗',zh?'房间号 · Path Advisor':'Room no. · Path Advisor',()=>void Linking.openURL(PATH_ADVISOR)],
  ];
