@@ -3,6 +3,7 @@ import {mkdtempSync,readFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createProductApp} from '../src/product/app.js';
+import {openDatabase} from '../src/product/database.js';
 // Monday 2026-10-05 08:00 HKT
 const T0=Date.parse('2026-10-05T00:00:00Z');
 let dir:string,app:ReturnType<typeof createProductApp>,a:string,b:string;
@@ -43,6 +44,12 @@ it('follows clubs and RSVPs to employer talks for the signed-in student only',as
  const list=(await call('GET','/clubs',a)).json().data;expect(list.length).toBeGreaterThan(60);expect(list.find((c:{id:string})=>c.id==='su-72')).toMatchObject({category:'department',url:'https://hkustsu.hkust.edu.hk/societies/about/72'});
  const f=(await call('PUT','/me/clubs/su-72',a,{following:true})).json().data;expect(f).toMatchObject({following:true,followers:1});
  expect((await call('GET','/clubs',b)).json().data.find((c:{id:string})=>c.id==='su-72')).toMatchObject({following:false,followers:1});
- const t=(await call('PUT','/me/talks/nova-talk',a,{going:true})).json().data;expect(t).toMatchObject({rsvp:true,going:1});
- expect((await call('GET','/employers/nova',a)).json().data).toMatchObject({sample:true,jobs:[{id:'nova-intern'},{id:'nova-grad'}]});
+ // A fresh database has no placeholder employers.
+ expect((await call('GET','/employers',a)).json().data).toEqual([]);
+ const db=openDatabase(dir);
+ db.prepare("INSERT INTO employers(id,name,tagline,verified,is_sample,created_at) VALUES ('acme','Acme Test Co','test fixture',1,0,0)").run();
+ db.prepare("INSERT INTO employer_jobs(id,employer_id,title,detail,apply_url,sort) VALUES ('acme-job','acme','Intern','Summer','https://example.test/apply',1)").run();
+ db.prepare("INSERT INTO employer_talks(id,employer_id,title,venue,starts_at) VALUES ('acme-talk','acme','Info session','LT-A',?)").run(T0+864e5);db.close();
+ const t=(await call('PUT','/me/talks/acme-talk',a,{going:true})).json().data;expect(t).toMatchObject({rsvp:true,going:1});
+ expect((await call('GET','/employers/acme',a)).json().data).toMatchObject({sample:false,verified:true,jobs:[{id:'acme-job'}]});
 });

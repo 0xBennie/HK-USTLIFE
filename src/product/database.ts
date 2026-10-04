@@ -355,6 +355,12 @@ const migrations = [{ version: 1, sql: `
  DROP TABLE clubs;
  CREATE TABLE clubs (id TEXT PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', url TEXT, summary TEXT NOT NULL DEFAULT '', source TEXT NOT NULL DEFAULT 'hkustsu');
  CREATE TABLE club_follows (club_id TEXT NOT NULL REFERENCES clubs(id) ON DELETE CASCADE, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, created_at INTEGER NOT NULL, PRIMARY KEY(club_id,user_id));
+` }, { version: 24, sql: `
+ -- No placeholder companies: employers appear only once a real, verified organisation is added.
+ DELETE FROM talk_rsvps WHERE talk_id IN (SELECT t.id FROM employer_talks t JOIN employers e ON e.id=t.employer_id WHERE e.is_sample=1);
+ DELETE FROM employer_talks WHERE employer_id IN (SELECT id FROM employers WHERE is_sample=1);
+ DELETE FROM employer_jobs WHERE employer_id IN (SELECT id FROM employers WHERE is_sample=1);
+ DELETE FROM employers WHERE is_sample=1;
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {
