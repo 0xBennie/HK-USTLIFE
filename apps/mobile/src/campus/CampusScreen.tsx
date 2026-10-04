@@ -8,6 +8,7 @@ import {useSceneFocus} from '../navigation/TabScene';
 import {useSceneNavigation} from '../navigation/InputProtection';
 import {PublicTransitScreen} from './PublicTransitScreen';
 import {TransitHub} from './TransitHub';
+import {LibraryNow} from './LibraryNow';
 import {DirectoryScreen} from './DirectoryScreen';
 import {TargetActions} from './TargetActions';
 import {liveAlternatives,type LiveOption} from './live';
@@ -125,6 +126,7 @@ export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{la
     <PenIcon name="chevron-right" size={16} color={c.tertiary}/>
    </View></Surface></Stagger>;})}</Section>:null}
   {savedPlaces.length?<Section title={zh?'我的常用':'Saved'}><ListGroup>{savedPlaces.map(p=><ListRow key={p.id} icon={p.category==='study'?'book-open':p.category==='shop'?'shopping-bag':'package'} tile={p.category==='study'?c.indigo:p.category==='shop'?'#A9824C':c.orange} title={p.name[language]} subtitle={p.location[language]} chevron onPress={()=>go({kind:'directory',placeId:p.id})}/>)}</ListGroup></Section>:null}
+  <LibraryNow zh={zh} active={sceneActive&&page.kind==='home'}/>
   <Section title={zh?'校园生活':'Campus life'} link={zh?'全部服务':'All services'} onLink={()=>go({kind:'life',screen:'services'})}>
    {[tiles.slice(0,2),tiles.slice(2)].map((row,r)=><View key={r} style={{flexDirection:'row',gap:10}}>{row.map(([icon,col,t,s,on])=><Pressable key={t} accessibilityRole="button" accessibilityLabel={t} onPress={on} style={({pressed})=>({flex:1,gap:14,padding:14,borderRadius:18,backgroundColor:c.surface,opacity:pressed?0.7:1})}>
     <IconTile icon={icon} color={col} size={36}/>
