@@ -85820,6 +85820,501 @@
           "fontWeight": "normal"
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "pvPTj",
+      "x": 6352,
+      "y": 25200,
+      "name": "V5 / 办事指南",
+      "clip": true,
+      "width": 393,
+      "height": 860,
+      "fill": "$g-bg",
+      "layout": "vertical",
+      "gap": 18,
+      "padding": [
+        62,
+        16,
+        40,
+        16
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "HzOOa",
+          "name": "Top",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "N4pit",
+              "type": "ref",
+              "ref": "dHHhX",
+              "name": "Back",
+              "width": 44,
+              "height": 44,
+              "descendants": {
+                "Q018hB": {
+                  "icon": "chevron-left"
+                }
+              }
+            },
+            {
+              "id": "h5YzN8",
+              "type": "ref",
+              "ref": "dHHhX",
+              "name": "Refresh",
+              "width": 44,
+              "height": 44,
+              "descendants": {
+                "Q018hB": {
+                  "icon": "refresh-cw"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "yIbXZ",
+          "name": "Head",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 6,
+          "padding": [
+            0,
+            4
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "a7ijS",
+              "name": "t",
+              "fill": "$g-ink",
+              "content": "办事指南",
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "DtD8x",
+              "name": "s",
+              "fill": "$g-muted",
+              "content": "找到步骤，留好自己的进度。官方说明为准。",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "LU86y",
+          "name": "sec1",
+          "fill": "$g-ink",
+          "content": "我的进度",
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "700"
+        },
+        {
+          "type": "frame",
+          "id": "fOczR",
+          "name": "Progress card",
+          "width": "fill_container",
+          "fill": "$g-content",
+          "cornerRadius": 28,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#1B356614",
+            "offset": {
+              "x": 0,
+              "y": 10
+            },
+            "blur": 30
+          },
+          "gap": 14,
+          "padding": 18,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "onUyT",
+              "name": "Ring",
+              "width": 52,
+              "height": 52,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "TFpHz",
+                  "x": 0,
+                  "y": 0,
+                  "name": "track",
+                  "innerRadius": 0.84,
+                  "fill": "#D98A1C1F",
+                  "width": 52,
+                  "height": 52
+                },
+                {
+                  "type": "ellipse",
+                  "id": "I1WVBT",
+                  "x": 0,
+                  "y": 0,
+                  "name": "prog",
+                  "innerRadius": 0.84,
+                  "startAngle": -90,
+                  "sweepAngle": 240,
+                  "fill": "#D98A1C",
+                  "width": 52,
+                  "height": 52
+                },
+                {
+                  "type": "frame",
+                  "id": "LSkoY",
+                  "x": 0,
+                  "y": 0,
+                  "name": "lab",
+                  "width": 52,
+                  "height": 52,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rggpi",
+                      "name": "n",
+                      "fill": "$g-ink",
+                      "content": "2/3",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "XWvyp",
+              "name": "c",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "zATF5",
+                  "name": "t",
+                  "fill": "$g-ink",
+                  "content": "图书续借",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "J6iCN",
+                  "name": "s",
+                  "fill": "$g-muted",
+                  "content": "下一步：确认新的到期日 · 10 月 8 日前",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "zCYPj",
+              "name": "chev",
+              "width": 16,
+              "height": 16,
+              "icon": "chevron-right",
+              "library": "lucide",
+              "fill": "$g-faint"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "a3fHQf",
+          "name": "sec2",
+          "fill": "$g-ink",
+          "content": "全部指南",
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "700"
+        },
+        {
+          "type": "frame",
+          "id": "xuJEd",
+          "name": "Guides",
+          "width": "fill_container",
+          "fill": "$g-content",
+          "cornerRadius": 28,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#1B356614",
+            "offset": {
+              "x": 0,
+              "y": 10
+            },
+            "blur": 30
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "c1mDeW",
+              "name": "Row 图书续借",
+              "width": "fill_container",
+              "gap": 14,
+              "padding": [
+                14,
+                18
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bkGKl",
+                  "name": "tile",
+                  "width": 40,
+                  "height": 40,
+                  "fill": "#24467F1F",
+                  "cornerRadius": 20,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "UilOx",
+                      "name": "i",
+                      "width": 19,
+                      "height": 19,
+                      "icon": "book-open-check",
+                      "library": "lucide",
+                      "fill": "#24467F"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Eeg7a",
+                  "name": "c",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WT1GP",
+                      "name": "t",
+                      "fill": "$g-ink",
+                      "content": "图书续借",
+                      "fontFamily": "Inter",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PZbuh",
+                      "name": "s",
+                      "fill": "$g-muted",
+                      "content": "3 步 · 图书馆",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "h2RIc",
+                  "name": "chev",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "$g-faint"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "W6rWP",
+              "name": "Row 加退选课",
+              "width": "fill_container",
+              "gap": 14,
+              "padding": [
+                14,
+                18
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "T03MlA",
+                  "name": "tile",
+                  "width": 40,
+                  "height": 40,
+                  "fill": "#56647D1F",
+                  "cornerRadius": 20,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "aC6RZ",
+                      "name": "i",
+                      "width": 19,
+                      "height": 19,
+                      "icon": "calendar-range",
+                      "library": "lucide",
+                      "fill": "#56647D"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "QIcT3",
+                  "name": "c",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "R0OnDm",
+                      "name": "t",
+                      "fill": "$g-ink",
+                      "content": "加退选课",
+                      "fontFamily": "Inter",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "XUAAJ",
+                      "name": "s",
+                      "fill": "$g-muted",
+                      "content": "3 步 · 教务处 SIS",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "AqebJ",
+                  "name": "chev",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "$g-faint"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "AGPfn",
+              "name": "Row 补办学生证",
+              "width": "fill_container",
+              "gap": 14,
+              "padding": [
+                14,
+                18
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "fwwfw",
+                  "name": "tile",
+                  "width": 40,
+                  "height": 40,
+                  "fill": "#A9824C1F",
+                  "cornerRadius": 20,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "OqRMV",
+                      "name": "i",
+                      "width": 19,
+                      "height": 19,
+                      "icon": "id-card",
+                      "library": "lucide",
+                      "fill": "#A9824C"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "C1NRsQ",
+                  "name": "c",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HcTy1",
+                      "name": "t",
+                      "fill": "$g-ink",
+                      "content": "补办学生证",
+                      "fontFamily": "Inter",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "httsX",
+                      "name": "s",
+                      "fill": "$g-muted",
+                      "content": "4 步 · 学生事务处",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "Sg8KY",
+                  "name": "chev",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "$g-faint"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "OmxvJ",
+          "name": "foot",
+          "fill": "$g-muted",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "说明来自学校公开页面；个人资格或期限请以官方系统为准。",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        }
+      ]
     }
   ],
   "themes": {
