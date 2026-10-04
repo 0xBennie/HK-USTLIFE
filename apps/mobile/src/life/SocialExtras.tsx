@@ -83,7 +83,6 @@ export function DataApiScreen({zh,onBack}:Base){
    <ListRow icon="message-square-text" tile="#56647D" title={zh?'5 个好用的提问':'5 great prompts'} subtitle={zh?'"帮我排一下这周的复习时间"':'"Plan my revision this week"'} chevron onPress={()=>Alert.alert(zh?'5 个好用的提问':'Prompts',zh?'1. 我这周有哪些截止？\n2. 下一班去坑口的车几点？\n3. 帮我把 Lab 5 拆成三步\n4. 周三下午哪里有空研讨室？\n5. 把今天的安排读给我听':'1. What’s due this week?\n2. Next bus to Hang Hau?\n3. Split Lab 5 into steps\n4. Free study rooms Wed pm?\n5. Read me today’s plan')}/>
    <ListRow icon="code" tile="#4F6F8C" title={zh?'开发者接口':'Developer endpoints'} subtitle={endpoints.map(e=>e[0]).join(' · ')} chevron onPress={()=>Alert.alert(zh?'开发者接口（只读）':'Endpoints (read-only)',`${base}\n\n`+endpoints.map(([p,d])=>`GET ${p}  ${d}`).join('\n')+`\n\nAuthorization: Bearer ustl_…`)}/>
   </ListGroup></Section>
-  <Text style={{textAlign:'center',fontSize:12,color:c.muted}}>{zh?'钥匙只能读取课表、截止、消息、校巴和校园墙；服务器只保存它的哈希。':'Keys can only read; the server stores only a hash.'}</Text>
  </View>;
 }
 
