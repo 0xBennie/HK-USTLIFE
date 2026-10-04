@@ -3,9 +3,7 @@ import {OfficialEventsScreen,OfficialEventsSection} from './OfficialEvents';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {AppState,Image,Pressable,ScrollView,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
-import { Button } from '../ui/Primitives';
-import { Input } from '../ui/Primitives';
-import {FilterPill,PenIcon,PillRow,PrimaryButton,TextAction,ViewAll,usePenColors} from '../ui/Pen';
+import {FilterPill,Notice,PenIcon,PillRow,PrimaryButton,TextAction,ViewAll,usePenColors} from '../ui/Pen';
 import {useAppearance} from '../ui/Appearance';
 import {session} from '../runtime';
 import {ApiFailure} from '../api';
@@ -14,12 +12,11 @@ import type {Language} from '../strings';
 import type {Activity} from '../../../../src/product/social/types';
 import {parseHongKongInput} from '../study/dates';
 import {socialError,participationLabel} from './shared';
-import {activityCover,cardDateTime,interactionLabel,languageLabel} from './covers';
+import {activityCover,cardDateTime,interactionLabel} from './covers';
 import {ActivityForm} from './ActivityForm';
 import {ActivityDetail} from './ActivityDetail';
+import {ActivityFilterSheet,emptyFilters,type Filters} from './ActivityFilterSheet';
 import {costText,dayTitle,hhmm,hk} from './activity-time';
-type Filters={q:string;kind:string;interaction:string;language:string;mine:string;from:string;to:string};
-const emptyFilters:Filters={q:'',kind:'',interaction:'',language:'',mine:'',from:'',to:''};
 
 const relative=(iso:string,zh:boolean)=>{const d=Math.round((Date.parse(hk(iso).toISOString().slice(0,10))-Date.parse(new Date(Date.now()+8*3600e3).toISOString().slice(0,10)))/864e5);const t=cardDateTime(iso).slice(6);return d<=0?(zh?`今天 ${t}`:`Today ${t}`):d===1?(zh?`明天 ${t}`:`Tomorrow ${t}`):zh?`${d} 天后`:`in ${d}d`;};
 /** Only a live place is a status: confirmed in green, waitlisted in orange; withdrawn or cancelled shows nothing. */
@@ -83,31 +80,22 @@ export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,
  if(official)return <OfficialEventsScreen zh={zh} onBack={()=>setOfficial(false)}/>;
  if(creating)return <ActivityForm language={language} dark={dark} onBack={()=>setCreating(false)} onSaved={id=>{setCreating(false);setSelected(id);}}/>;
  if(selected)return <ActivityDetail key={selected} id={selected} language={language} dark={dark} onLogin={onLogin} onNavigate={onNavigate} onBack={()=>{setSelected(null);onDismissTarget();}}/>;
- const choose=(key:keyof Filters,value:string)=>setFilters({...filters,[key]:value});
- // Interaction pills apply immediately, as on the board; the 筛选 pill opens the remaining conditions.
- const quick=(interaction:string)=>{const next={...filters,interaction};setFilters(next);setApplied(next);};
+ // Interaction pills apply immediately; "筛选" opens the V6 filter sheet (Pen s99lg) for everything else.
+ const quick=(interaction:string)=>{const next={...applied,interaction};setFilters(next);setApplied(next);};
  const filtered=JSON.stringify(applied)!==JSON.stringify(emptyFilters);
- const options=(key:keyof Filters,values:[string,string][])=> <PillRow>{values.map(([value,label])=><FilterPill key={value} label={label} selected={filters[key]===value} onPress={()=>choose(key,value)}/>)}</PillRow>;
+ // Conditions not already visible as a highlighted quick pill.
+ const hidden=Object.entries(applied).filter(([k,v])=>v&&!(k==='interaction'&&(v==='quiet'||v==='casual'))).length;
  return <View style={{gap:18}}>
   <OfficialEventsSection zh={zh} onAll={()=>setOfficial(true)}/>
   <PillRow>
-   <FilterPill label={zh?'全部':'All'} selected={!applied.interaction} onPress={()=>quick('')}/>
+   {/* 全部 = no conditions at all; tapping it clears everything, including the sheet's. */}
+   <FilterPill label={zh?'全部':'All'} selected={!filtered} onPress={()=>{setFilters(emptyFilters);setApplied(emptyFilters);}}/>
    <FilterPill label={interactionLabel('quiet',zh)} selected={applied.interaction==='quiet'} onPress={()=>quick('quiet')}/>
    <FilterPill label={interactionLabel('casual',zh)} selected={applied.interaction==='casual'} onPress={()=>quick('casual')}/>
-   <FilterPill label={zh?'筛选':'Filters'} icon="sliders-horizontal" selected={filtersOpen} onPress={()=>setFiltersOpen(!filtersOpen)}/>
+   <FilterPill label={hidden?(zh?`筛选 · ${hidden}`:`Filters · ${hidden}`):(zh?'筛选':'Filters')} icon="sliders-horizontal" selected={hidden>0} onPress={()=>setFiltersOpen(true)}/>
   </PillRow>
-  {filtersOpen?<View style={{gap:12,padding:16,borderRadius:14,backgroundColor:c.surface}}>
-   <Input accessibilityLabel={zh?'搜索标题或地点':'Search title or place'} value={filters.q} onChangeText={v=>choose('q',v)} placeholder={zh?'标题／地点':'Title / place'}/>
-   {options('kind',[['',zh?'全部类型':'All types'],['activity',zh?'活动':'Activities'],['study',zh?'学习组队':'Study groups']])}
-   {options('language',[['',zh?'所有语言':'All languages'],['zh',zh?'普通话':'Mandarin'],['en','English'],['yue',zh?'粤语':'Cantonese']])}
-   {options('interaction',[['',zh?'所有方式':'Any style'],['quiet',interactionLabel('quiet',zh)],['casual',interactionLabel('casual',zh)],['active',interactionLabel('active',zh)]])}
-   {profile?options('mine',[['',zh?'发现活动':'Discover'],['organized',zh?'我组织的':'Organized'],['participating',zh?'我的参与':'Participating'],['saved',zh?'收藏／日程':'Saved']]):null}
-   <Text style={{fontSize:13,lineHeight:19,color:c.muted}}>{zh?'可选：香港时间窗口（YYYY-MM-DD HH:mm）。不会分享你的课表。':'Optional Hong Kong time window (YYYY-MM-DD HH:mm). Your timetable is not shared.'}</Text>
-   <Input accessibilityLabel={zh?'时间窗开始':'Window start'} value={filters.from} onChangeText={v=>choose('from',v)} placeholder="2026-10-05 10:00"/>
-   <Input accessibilityLabel={zh?'时间窗结束':'Window end'} value={filters.to} onChangeText={v=>choose('to',v)} placeholder="2026-10-05 18:00"/>
-   <View style={{flexDirection:'row'}}><PrimaryButton label={zh?'查看结果':'Show results'} disabled={busy} onPress={()=>{setFiltersOpen(false);if(JSON.stringify(filters)===JSON.stringify(applied))void load();else setApplied({...filters});}}/></View>
-  </View>:null}
-  {error?<View style={{gap:8,padding:16,borderRadius:14,backgroundColor:c.surface}}><Text accessibilityRole="alert" style={{fontSize:15,lineHeight:22,color:c.danger}}>{error}</Text><Button variant="secondary" isDisabled={busy} onPress={()=>void load()}>{zh?'重试':'Try again'}</Button></View>:null}
+  <ActivityFilterSheet visible={filtersOpen} zh={zh} value={applied} showMine={!!profile} onClose={()=>setFiltersOpen(false)} onApply={f=>{setFiltersOpen(false);setFilters(f);if(JSON.stringify(f)===JSON.stringify(applied))void load();else setApplied(f);}}/>
+  {error?<Notice tone="error" text={error} action={zh?'重试':'Try again'} onAction={()=>void load()}/>:null}
   {!busy&&!error&&!items.length?<View style={{alignItems:'center',gap:10,paddingVertical:28}}>
    <PenIcon name="search-x" size={44} strokeWidth={1.8} color={c.muted}/>
    <Text style={{fontSize:21,lineHeight:30,fontWeight:'700',color:c.text}}>{zh?'暂时没有合适的':'Nothing fits right now'}</Text>

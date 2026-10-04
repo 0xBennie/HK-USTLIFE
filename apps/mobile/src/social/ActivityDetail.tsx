@@ -8,14 +8,12 @@ import {ActionSheetIOS,Alert,AppState,Image,Pressable,Share,Text,TextInput,View}
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useSceneBottomBar} from '../navigation/SceneOverlay';
-import {BottomBar,CircleButton,GlassCapsule,InitialAvatar,ListGroup,ListRow,PenIcon,PrimaryButton,usePenColors,type PenIconName} from '../ui/Pen';
+import {BottomBar,CircleButton,GlassCapsule,InitialAvatar,ListGroup,ListRow,Notice,PenIcon,PrimaryButton,Skeleton,usePenColors,type PenIconName} from '../ui/Pen';
 import {GradientAvatar} from './wall-ui';
 import {feel} from '../ui/feel';
 import {activityCover,dateRange,interactionLabel} from './covers';
-import { Button } from '../ui/Primitives';
 import {session} from '../runtime';
 import {ApiFailure} from '../api';
-import {styles} from '../theme';
 import type {Language} from '../strings';
 import type {Activity,ActivityComment,Participation} from '../../../../src/product/social/types';
 import {dateTimeInZone,newWriteKey} from '../study/dates';
@@ -84,7 +82,7 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
    <Text style={{fontSize:17,fontWeight:'700',color:c.text}}>{activity.title}</Text>
    <Text style={{fontSize:13,lineHeight:18,color:c.muted}}>{zh?'只围绕这次活动交流，不强迫添加好友。':'Talk about this activity only — no friend requests.'}</Text>
   </View>
-  {error?<View style={{gap:8,padding:16,borderRadius:14,backgroundColor:c.surface}}><Text accessibilityRole="alert" style={{fontSize:15,lineHeight:22,color:c.danger}}>{error}</Text>{pending.current&&!reviewOnly?<Button isDisabled={busy} onPress={()=>void perform()}>{zh?'重试确认操作结果':'Retry to confirm action'}</Button>:null}</View>:null}
+  {error?<Notice tone="error" text={error} action={pending.current&&!reviewOnly&&!busy?(zh?'再试一次':'Try again'):undefined} onAction={()=>void perform()}/>:null}
   {!comments.length?<View style={{paddingVertical:18,paddingHorizontal:16,gap:4,borderRadius:20,backgroundColor:c.surface}}>
    <Text style={{fontSize:15,fontWeight:'600',color:c.text}}>{zh?'还没有评论':'No comments yet'}</Text>
    {commentsOpen?<Text style={{fontSize:13,lineHeight:18,color:c.muted}}>{zh?'有问题可以在这里问发起人和同行的人。':'Ask the host and the others here.'}</Text>:null}
@@ -118,8 +116,7 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
     </View>:null}
    </View>
   </View>
-  {reviewOnly?<Button variant="secondary" onPress={()=>protectInput(onBack)}>{zh?'返回列表核对已保存内容':'Return to check saved content'}</Button>:null}
-  {error?<View style={{gap:8,padding:16,borderRadius:14,backgroundColor:c.surface}}><Text accessibilityRole="alert" style={{fontSize:15,lineHeight:22,color:c.danger}}>{error}</Text>{pending.current&&!reviewOnly?<Button isDisabled={busy} onPress={()=>void perform()}>{zh?'重试确认操作结果':'Retry to confirm action'}</Button>:<Button variant="secondary" isDisabled={frozen} onPress={()=>void load()}>{zh?'重新读取':'Reload'}</Button>}</View>:null}
+  {error?<Notice tone="error" text={error} action={reviewOnly?(zh?'返回列表核对':'Back to check'):pending.current?(busy?undefined:(zh?'再试一次':'Try again')):frozen?undefined:(zh?'重新读取':'Reload')} onAction={()=>reviewOnly?protectInput(onBack):pending.current?void perform():void load()}/>:null}
   {joinPending?<View style={{padding:16,borderRadius:14,backgroundColor:c.tint}}><Text accessibilityRole="alert" style={{fontSize:15,lineHeight:22,color:c.text}}>{joinState.phase==='submitting'?(zh?'正在核对报名结果…':'Checking your signup…'):(zh?'有一笔报名结果尚未确认。':'One signup result is still unconfirmed.')}</Text></View>:null}
   {activity?<>
    {/* Pen "V6 / 活动详情（报名卡）" (Czib6): tags, title, host, date tile, place, one state-driven registration card. */}
@@ -195,7 +192,7 @@ export function ActivityDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:
     <PenIcon name="chevron-right" size={16} color={c.muted}/>
    </Pressable>
    <SafetyActions quiet target={{kind:'activity',id:activity.id}} author={activity.organizer} language={language} dark={dark} disabled={frozen} onChanged={()=>void load()}/>
-  </>:busy?<Text style={[styles.body,{color:c.muted,textAlign:'center'}]}>{zh?'正在读取…':'Loading…'}</Text>:null}
+  </>:busy?<View accessibilityLabel={zh?'正在读取':'Loading'} style={{gap:14}}><Skeleton height={96} radius={20}/><Skeleton height={150} radius={24}/></View>:null}
   <JoinActivitySheet visible={joinVisible} controller={joinController} state={joinState} language={language} dark={dark} onClose={()=>{setJoinVisible(false);if(joinController.snapshot().phase==='result')void load(true);}} onRefresh={()=>{setJoinVisible(false);void load();}}/>
  </View>;
 }
