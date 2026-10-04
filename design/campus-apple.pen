@@ -13975,7 +13975,7 @@
       "id": "DCTVp",
       "x": 3460,
       "y": 420,
-      "name": "welcome / 大学生活，\n从容一点。",
+      "name": "welcome（已废弃：见 V5 / 登录入口（学校邮箱））",
       "theme": {
         "mode": "light"
       },
@@ -58413,7 +58413,7 @@
       "id": "TCURr",
       "x": 1520,
       "y": 22000,
-      "name": "V2 / 今天 / 第一次使用（学校账号登录）",
+      "name": "V2 / 今天 / 第一次使用（已废弃：取消访客模式，入口改为 V5 / 登录入口）",
       "clip": true,
       "width": 393,
       "height": 951,
@@ -58518,7 +58518,7 @@
                   "fill": "$campus-muted",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "用 HKUST 账号登录后，课表、Canvas 作业和截止、成绩会自动同步。密码只在学校官方登录页输入，我们看不到，也不保存。",
+                  "content": "用学校邮箱收验证码登录。连接 Canvas 和学校日历后，作业、截止和课程会自动同步。",
                   "lineHeight": 1.45,
                   "fontFamily": "Noto Sans SC",
                   "fontSize": 15,
@@ -58586,7 +58586,7 @@
                               "id": "U7sKVU",
                               "name": "T",
                               "fill": "$campus-text",
-                              "content": "课表与选课",
+                              "content": "学校日历",
                               "fontFamily": "Noto Sans SC",
                               "fontSize": 16,
                               "fontWeight": "600"
@@ -58598,7 +58598,7 @@
                               "fill": "$campus-muted",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "SIS · 上课时间、课室、候补位置",
+                              "content": "Outlook、Google、iCloud · 课程和会议自动进来",
                               "fontFamily": "Noto Sans SC",
                               "fontSize": 12,
                               "fontWeight": "normal"
@@ -58621,7 +58621,7 @@
                               "id": "S88HB",
                               "name": "L",
                               "fill": "$ios-green",
-                              "content": "自动",
+                              "content": "可用",
                               "fontFamily": "Noto Sans SC",
                               "fontSize": 12,
                               "fontWeight": "600"
@@ -58689,7 +58689,7 @@
                               "fill": "$campus-muted",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "截止日期、作业要求、课程公告",
+                              "content": "粘贴 Canvas 令牌 · 截止日期自动进来",
                               "fontFamily": "Noto Sans SC",
                               "fontSize": 12,
                               "fontWeight": "normal"
@@ -58712,7 +58712,7 @@
                               "id": "X5KW8q",
                               "name": "L",
                               "fill": "$ios-green",
-                              "content": "自动",
+                              "content": "可用",
                               "fontFamily": "Noto Sans SC",
                               "fontSize": 12,
                               "fontWeight": "600"
@@ -58768,7 +58768,7 @@
                               "id": "WWMsY",
                               "name": "T",
                               "fill": "$campus-text",
-                              "content": "学校邮箱",
+                              "content": "课表、成绩、学校邮箱",
                               "fontFamily": "Noto Sans SC",
                               "fontSize": 16,
                               "fontWeight": "600"
@@ -58780,7 +58780,7 @@
                               "fill": "$campus-muted",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "重要邮件和里面的截止",
+                              "content": "SIS 与 Microsoft 365 需要学校授权",
                               "fontFamily": "Noto Sans SC",
                               "fontSize": 12,
                               "fontWeight": "normal"
@@ -58803,7 +58803,7 @@
                               "id": "W9cxT",
                               "name": "L",
                               "fill": "$ios-orange",
-                              "content": "测试中",
+                              "content": "待学校开放",
                               "fontFamily": "Noto Sans SC",
                               "fontSize": 12,
                               "fontWeight": "600"
@@ -58831,7 +58831,7 @@
                       "id": "E2AbM",
                       "name": "L",
                       "fill": "#FFFFFF",
-                      "content": "用 HKUST 账号登录",
+                      "content": "用学校邮箱登录",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 17,
                       "fontWeight": "600"
@@ -58900,7 +58900,7 @@
                       "id": "WFdHH",
                       "name": "T",
                       "fill": "$campus-text",
-                      "content": "会话只留在你的手机",
+                      "content": "你的数据由你控制",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 15,
                       "fontWeight": "600"
@@ -58912,7 +58912,7 @@
                       "fill": "$campus-muted",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "同步在手机上完成；服务器只收到整理好的课程和截止，不会收到密码或登录凭证",
+                      "content": "Canvas 令牌加密保存，只用来读取作业；随时在「学校连接」里断开并删除",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 12,
                       "fontWeight": "normal"
@@ -61410,7 +61410,7 @@
                       "id": "rysj8",
                       "name": "L",
                       "fill": "$g-muted",
-                      "content": "九巴与绿色小巴",
+                      "content": "全部交通",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 16,
                       "fontWeight": "500"
@@ -84355,7 +84355,7 @@
               "fill": "$g-muted",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "登录一次 HKUST 账号，课表、截止和邮件自动同步。",
+              "content": "连接 Canvas 和学校日历，作业、截止和课程自动同步。",
               "fontFamily": "Inter",
               "fontSize": 15,
               "fontWeight": "normal"
@@ -86206,6 +86206,4193 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "vmgSM",
+      "x": 1960,
+      "y": 22000,
+      "name": "V2 / 今天 / 已登录未连接（真实能力）",
+      "clip": true,
+      "width": 393,
+      "height": 951,
+      "fill": "$campus-background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "pA3Qs",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar"
+        },
+        {
+          "type": "frame",
+          "id": "xUQvY",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 22,
+          "padding": [
+            6,
+            16,
+            24,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "bZUQV",
+              "name": "Large title",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                4,
+                4,
+                0,
+                4
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ZuRfN",
+                  "name": "Eyebrow",
+                  "fill": "$campus-muted",
+                  "content": "10 月 5 日 · 星期一",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "REj5l",
+                  "name": "Title",
+                  "fill": "$campus-text",
+                  "content": "今天",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 34,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.5
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VXvzR",
+              "name": "Setup card",
+              "width": "fill_container",
+              "fill": "$campus-surface",
+              "cornerRadius": 22,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000014",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 20
+              },
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                20,
+                18
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WbbQj",
+                  "name": "T",
+                  "fill": "$campus-text",
+                  "content": "连接一次，今天的事都在这里",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 22,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "S7wNnJ",
+                  "name": "S",
+                  "fill": "$campus-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "连接 Canvas 和学校日历后，作业、截止和课程会自动同步。",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "dsnUG",
+                  "name": "Sources",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": [
+                    12,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "v86eM",
+                      "name": "Source Canvas 作业与截止",
+                      "width": "fill_container",
+                      "fill": "$campus-background",
+                      "cornerRadius": 16,
+                      "stroke": "#007AFF40",
+                      "gap": 12,
+                      "padding": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "rFkVj",
+                          "name": "Tile",
+                          "width": 36,
+                          "height": 36,
+                          "fill": "#5856D6",
+                          "cornerRadius": 10,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "HPfVO",
+                              "name": "graduation-cap",
+                              "width": 20,
+                              "height": 20,
+                              "icon": "calendar-days",
+                              "library": "lucide",
+                              "fill": "#FFFFFF"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "DGr2x",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "q2q6ax",
+                              "name": "T",
+                              "fill": "$campus-text",
+                              "content": "学校日历",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "a2qSzQ",
+                              "name": "S",
+                              "fill": "$campus-muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Outlook、Google、iCloud · 课程和会议自动进来",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Y34HNO",
+                          "name": "Badge",
+                          "fill": "#34C7591F",
+                          "cornerRadius": 99,
+                          "padding": [
+                            4,
+                            9
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "NntWp",
+                              "name": "L",
+                              "fill": "$ios-green",
+                              "content": "可用",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Tpi71",
+                      "name": "Source Outlook 学校邮箱",
+                      "width": "fill_container",
+                      "fill": "$campus-background",
+                      "cornerRadius": 16,
+                      "gap": 12,
+                      "padding": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "DM3N9",
+                          "name": "Tile",
+                          "width": 36,
+                          "height": 36,
+                          "fill": "#E4472B",
+                          "cornerRadius": 10,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "VddeC",
+                              "name": "mail",
+                              "width": 20,
+                              "height": 20,
+                              "icon": "graduation-cap",
+                              "library": "lucide",
+                              "fill": "#FFFFFF"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "WDDIJ",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "VZld8",
+                              "name": "T",
+                              "fill": "$campus-text",
+                              "content": "Canvas 作业与截止",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "QIg85",
+                              "name": "S",
+                              "fill": "$campus-muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "粘贴 Canvas 令牌 · 截止日期自动进来",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bMqHJ",
+                          "name": "Badge",
+                          "fill": "#34C7591F",
+                          "cornerRadius": 99,
+                          "padding": [
+                            4,
+                            9
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Wef4e",
+                              "name": "L",
+                              "fill": "$ios-green",
+                              "content": "可用",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fdwiR",
+                      "name": "Source 课表",
+                      "width": "fill_container",
+                      "fill": "$campus-background",
+                      "cornerRadius": 16,
+                      "gap": 12,
+                      "padding": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Dhya6",
+                          "name": "Tile",
+                          "width": 36,
+                          "height": 36,
+                          "fill": "#0078D4",
+                          "cornerRadius": 10,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "iCNMG",
+                              "name": "calendar-days",
+                              "width": 20,
+                              "height": 20,
+                              "icon": "mail",
+                              "library": "lucide",
+                              "fill": "#FFFFFF"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "lcvi7",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "dvX8U",
+                              "name": "T",
+                              "fill": "$campus-text",
+                              "content": "课表、成绩、学校邮箱",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "W3DgWT",
+                              "name": "S",
+                              "fill": "$campus-muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "SIS 与 Microsoft 365 需要学校授权",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "wjhIe",
+                          "name": "Badge",
+                          "fill": "#FF95001F",
+                          "cornerRadius": 99,
+                          "padding": [
+                            4,
+                            9
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "eW4KC",
+                              "name": "L",
+                              "fill": "$ios-orange",
+                              "content": "待学校开放",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "AW3bh",
+                  "name": "Primary",
+                  "width": "fill_container",
+                  "height": 50,
+                  "fill": "$campus-accent",
+                  "cornerRadius": 99,
+                  "gap": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "REYxg",
+                      "name": "L",
+                      "fill": "#FFFFFF",
+                      "content": "连接 Canvas 和日历",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 17,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "K0BI2K",
+                  "name": "Secondary",
+                  "fill": "$campus-accent",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "先自己添加一项",
+                  "textAlign": "center",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Z0QFmu",
+              "name": "Privacy",
+              "width": "fill_container",
+              "fill": "$campus-surface",
+              "cornerRadius": 16,
+              "gap": 12,
+              "padding": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AZDkX",
+                  "name": "Tile",
+                  "width": 30,
+                  "height": 30,
+                  "fill": "$ios-indigo",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "giiMm",
+                      "name": "lock",
+                      "width": 17,
+                      "height": 17,
+                      "icon": "lock",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KUV4Z",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "IFkH0",
+                      "name": "T",
+                      "fill": "$campus-text",
+                      "content": "你的数据由你控制",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "R8oUG2",
+                      "name": "S",
+                      "fill": "$campus-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Canvas 令牌加密保存，只用来读取作业；随时在「学校连接」里断开并删除",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "F5F6BU",
+              "name": "Next ride",
+              "width": "fill_container",
+              "fill": "$campus-surface",
+              "cornerRadius": 16,
+              "gap": 12,
+              "padding": [
+                12,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "oTDRr",
+                  "name": "Tile",
+                  "width": 30,
+                  "height": 30,
+                  "fill": "$ios-teal",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "OTDnV",
+                      "name": "bus",
+                      "width": 17,
+                      "height": 17,
+                      "icon": "bus",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xM6rP",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "D9NL07",
+                      "name": "T",
+                      "fill": "$campus-text",
+                      "content": "选一条常坐的路线",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Q4Wyq",
+                      "name": "S",
+                      "fill": "$campus-muted",
+                      "content": "不用登录，下一班车会显示在这里",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "u7Y5eF",
+                  "name": "chevron-right",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "$campus-tertiary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "GPK0R",
+          "type": "ref",
+          "ref": "C2KuRh",
+          "name": "Tab bar",
+          "layoutPosition": "absolute",
+          "x": 16,
+          "y": 875,
+          "descendants": {
+            "kCoRC": {
+              "fill": "#7676801A"
+            },
+            "UCxT8": {
+              "fill": "$campus-accent"
+            },
+            "q7oky": {
+              "fill": "$campus-accent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "wpfpa",
+      "x": 14200,
+      "y": 25200,
+      "name": "V6 / 交通 · 地图与路线",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#E9EEF2",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "HQBtz",
+          "x": 0,
+          "y": 0,
+          "name": "Map",
+          "width": 393,
+          "height": 310,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "assets/map-hkust.png",
+            "mode": "cover"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "MDI5K",
+          "x": 16,
+          "y": 58,
+          "name": "Menu",
+          "width": 52,
+          "height": 52,
+          "fill": "#FFFFFFD9",
+          "cornerRadius": 26,
+          "stroke": "#FFFFFF",
+          "strokeWidth": 1,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0B1A3326",
+            "offset": {
+              "x": 0,
+              "y": 6
+            },
+            "blur": 18
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "BSpJg",
+              "width": 22,
+              "height": 22,
+              "icon": "list",
+              "library": "lucide",
+              "fill": "#0B0B0C"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "MFd9m",
+          "x": 325,
+          "y": 58,
+          "name": "Locate",
+          "width": 52,
+          "height": 52,
+          "fill": "#FFFFFFD9",
+          "cornerRadius": 26,
+          "stroke": "#FFFFFF",
+          "strokeWidth": 1,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0B1A3326",
+            "offset": {
+              "x": 0,
+              "y": 6
+            },
+            "blur": 18
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "SO8mA",
+              "width": 22,
+              "height": 22,
+              "icon": "locate-fixed",
+              "library": "lucide",
+              "fill": "#0B0B0C"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Z3083",
+          "x": 0,
+          "y": 286,
+          "name": "Sheet",
+          "width": 393,
+          "height": 566,
+          "fill": "#FFFFFF",
+          "cornerRadius": [
+            28,
+            28,
+            0,
+            0
+          ],
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0B1A331F",
+            "offset": {
+              "x": 0,
+              "y": -6
+            },
+            "blur": 24
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            10,
+            20,
+            0,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "mwQng",
+              "name": "Grabber",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AQeR1",
+                  "width": 40,
+                  "height": 5,
+                  "fill": "#D4D7DD",
+                  "cornerRadius": 3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "sQ0MB",
+              "name": "Search",
+              "width": "fill_container",
+              "height": 46,
+              "fill": "#F2F4F7",
+              "cornerRadius": 23,
+              "gap": 8,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "zfvtP",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "search",
+                  "library": "lucide",
+                  "fill": "#7A7A80"
+                },
+                {
+                  "type": "text",
+                  "id": "ffPcU",
+                  "fill": "#7A7A80",
+                  "content": "搜索路线 / 车站",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 16
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "QH6AA",
+              "name": "Head",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MhYZQ",
+                  "fill": "#0B0B0C",
+                  "content": "从科大出发",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 28,
+                  "fontWeight": "800"
+                },
+                {
+                  "type": "frame",
+                  "id": "q8jqr1",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "dLZZX",
+                      "width": 8,
+                      "height": 8,
+                      "fill": "#2E9E5B",
+                      "cornerRadius": 4
+                    },
+                    {
+                      "type": "text",
+                      "id": "mM8ck",
+                      "fill": "#2E9E5B",
+                      "content": "实时",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "e8fYXK",
+              "name": "Route 11M",
+              "width": "fill_container",
+              "stroke": "#E3E5EA",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "layout": "vertical",
+              "gap": 4,
+              "padding": [
+                10,
+                0,
+                14,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "HmqfC",
+                  "fill": "#2E9E5B",
+                  "content": "11M",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 30,
+                  "fontWeight": "800",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "FA6ZV",
+                  "name": "Row 坑口站",
+                  "width": "fill_container",
+                  "padding": [
+                    6,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QIALz",
+                      "name": "dest",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "z87gcu",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Ln3px",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "u2vCU",
+                              "fill": "#0B0B0C",
+                              "content": "坑口站",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 18,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "MsYKT",
+                          "fill": "#7A7A80",
+                          "content": "科大北站上车",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dv403",
+                      "name": "eta",
+                      "gap": 4,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lmlv5",
+                          "fill": "#2E9E5B",
+                          "content": "5",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 34,
+                          "fontWeight": "800",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "g8Oi3D",
+                          "fill": "#7A7A80",
+                          "content": "分钟",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GF82o",
+              "name": "Route 91M",
+              "width": "fill_container",
+              "stroke": "#E3E5EA",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "layout": "vertical",
+              "gap": 4,
+              "padding": [
+                10,
+                0,
+                14,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "m8eBxl",
+                  "fill": "#E5484D",
+                  "content": "91M",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 30,
+                  "fontWeight": "800",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "b6xoFq",
+                  "name": "Row 宝林",
+                  "width": "fill_container",
+                  "padding": [
+                    6,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "SCS4k",
+                      "name": "dest",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "f0RBNZ",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "A2FppW",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "B3NQJZ",
+                              "fill": "#0B0B0C",
+                              "content": "宝林",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 18,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "v5Chp",
+                          "fill": "#7A7A80",
+                          "content": "科大北上车",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nzu2Z",
+                      "name": "eta",
+                      "gap": 4,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yttUY",
+                          "fill": "#E5484D",
+                          "content": "9",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 34,
+                          "fontWeight": "800",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "rUubZ",
+                          "fill": "#7A7A80",
+                          "content": "分钟",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hsOC6",
+                  "name": "Row 钻石山站",
+                  "width": "fill_container",
+                  "padding": [
+                    6,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "F2JeKg",
+                      "name": "dest",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "zzcba",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g1gbuL",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "BFNqm",
+                              "fill": "#0B0B0C",
+                              "content": "钻石山站",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 18,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "f8cKcI",
+                          "fill": "#7A7A80",
+                          "content": "科大南上车",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mjPLX",
+                      "name": "eta",
+                      "gap": 4,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "P7TiQ",
+                          "fill": "#E5484D",
+                          "content": "17",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 34,
+                          "fontWeight": "800",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "GunmS",
+                          "fill": "#7A7A80",
+                          "content": "分钟",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mGYyL",
+              "name": "Route 校巴",
+              "width": "fill_container",
+              "stroke": "#E3E5EA",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "layout": "vertical",
+              "gap": 4,
+              "padding": [
+                10,
+                0,
+                14,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "LlTNM",
+                  "fill": "#24467F",
+                  "content": "校巴",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 30,
+                  "fontWeight": "800",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "CbTa0",
+                  "name": "Row 坑口",
+                  "width": "fill_container",
+                  "padding": [
+                    6,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "aJWnn",
+                      "name": "dest",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "zFWE5",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "U3Y8Eh",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "IIyjw",
+                              "fill": "#0B0B0C",
+                              "content": "坑口",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 18,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "eh3Jl",
+                          "fill": "#7A7A80",
+                          "content": "明珠楼上车 · 学生",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PFxQG",
+                      "name": "eta",
+                      "gap": 4,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qdskl",
+                          "fill": "#7A7A80",
+                          "content": "时刻表",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "goGUJ",
+                          "fill": "#24467F",
+                          "content": "18:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 34,
+                          "fontWeight": "800",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "mD5AX",
+                          "fill": "#7A7A80",
+                          "content": "周一",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "CT7FL",
+              "name": "Route 港铁 · 坑口站",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": [
+                10,
+                0,
+                14,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "IBJcT",
+                  "fill": "#56647D",
+                  "content": "港铁 · 坑口站",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 30,
+                  "fontWeight": "800",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "C4afE",
+                  "name": "Row 宝琳",
+                  "width": "fill_container",
+                  "padding": [
+                    6,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "HSmSq",
+                      "name": "dest",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "GNZIU",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "X3SWlM",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "omkBq",
+                              "fill": "#0B0B0C",
+                              "content": "宝琳",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 18,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "lsqwp",
+                          "fill": "#7A7A80",
+                          "content": "1 号月台",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fV9eA",
+                      "name": "eta",
+                      "gap": 4,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WHtnJ",
+                          "fill": "#56647D",
+                          "content": "0",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 34,
+                          "fontWeight": "800",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "l1ihW",
+                          "fill": "#7A7A80",
+                          "content": "即将到站",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xdAIv",
+                  "name": "Row 北角",
+                  "width": "fill_container",
+                  "padding": [
+                    6,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "KDYei",
+                      "name": "dest",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "rzaoT",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hjgup",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "jOypv",
+                              "fill": "#0B0B0C",
+                              "content": "北角",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 18,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "OOQTf",
+                          "fill": "#7A7A80",
+                          "content": "2 号月台",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "i5OOk",
+                      "name": "eta",
+                      "gap": 4,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ADT4h",
+                          "fill": "#56647D",
+                          "content": "4",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 34,
+                          "fontWeight": "800",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "bzNa7",
+                          "fill": "#7A7A80",
+                          "content": "分钟",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "G5OqX6",
+          "x": 150,
+          "y": 118,
+          "name": "Pin 科大北站",
+          "fill": "#FFFFFFE6",
+          "cornerRadius": 99,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0B1A3333",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 12
+          },
+          "gap": 6,
+          "padding": [
+            5,
+            10,
+            5,
+            5
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "oVEL3",
+              "width": 22,
+              "height": 22,
+              "fill": "#24467F",
+              "cornerRadius": 11,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "g4qoWR",
+                  "width": 13,
+                  "height": 13,
+                  "icon": "bus",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "m32OIy",
+              "fill": "#0B0B0C",
+              "content": "科大北站",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 12,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "FpD3v",
+          "x": 176,
+          "y": 214,
+          "name": "Pin 科大南",
+          "fill": "#FFFFFFE6",
+          "cornerRadius": 99,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0B1A3333",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 12
+          },
+          "gap": 6,
+          "padding": [
+            5,
+            10,
+            5,
+            5
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "MBEmC",
+              "width": 22,
+              "height": 22,
+              "fill": "#24467F",
+              "cornerRadius": 11,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "PB75p",
+                  "width": 13,
+                  "height": 13,
+                  "icon": "bus",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "LRbuV",
+              "fill": "#0B0B0C",
+              "content": "科大南",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 12,
+              "fontWeight": "700"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nk8OO",
+      "x": 14650,
+      "y": 25200,
+      "name": "V6 / 交通 · 选择交通方式",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#E9EEF2",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "o1vkd4",
+          "x": 0,
+          "y": 0,
+          "name": "Map",
+          "width": 393,
+          "height": 852,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "assets/map-hkust.png",
+            "mode": "cover"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "tFqLP",
+          "x": 16,
+          "y": 58,
+          "name": "Menu",
+          "width": 52,
+          "height": 52,
+          "fill": "#24467F",
+          "cornerRadius": 26,
+          "stroke": "#24467F",
+          "strokeWidth": 1,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0B1A3326",
+            "offset": {
+              "x": 0,
+              "y": 6
+            },
+            "blur": 18
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "DP7rZ",
+              "width": 22,
+              "height": 22,
+              "icon": "x",
+              "library": "lucide",
+              "fill": "#FFFFFF"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "xAmib",
+          "x": 325,
+          "y": 58,
+          "name": "Locate",
+          "width": 52,
+          "height": 52,
+          "fill": "#FFFFFFD9",
+          "cornerRadius": 26,
+          "stroke": "#FFFFFF",
+          "strokeWidth": 1,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0B1A3326",
+            "offset": {
+              "x": 0,
+              "y": 6
+            },
+            "blur": 18
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "WJoa8",
+              "width": 22,
+              "height": 22,
+              "icon": "locate-fixed",
+              "library": "lucide",
+              "fill": "#0B0B0C"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "k7NiQ",
+          "x": 0,
+          "y": 732,
+          "name": "Sheet",
+          "width": 393,
+          "height": 120,
+          "fill": "#FFFFFF",
+          "cornerRadius": [
+            28,
+            28,
+            0,
+            0
+          ],
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0B1A331F",
+            "offset": {
+              "x": 0,
+              "y": -6
+            },
+            "blur": 24
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            10,
+            20,
+            0,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "j3TIRF",
+              "name": "Grabber",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "gKg6t",
+                  "width": 40,
+                  "height": 5,
+                  "fill": "#D4D7DD",
+                  "cornerRadius": 3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Svlzl",
+              "name": "Search",
+              "width": "fill_container",
+              "height": 46,
+              "fill": "#F2F4F7",
+              "cornerRadius": 23,
+              "gap": 8,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "qiVwN",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "search",
+                  "library": "lucide",
+                  "fill": "#7A7A80"
+                },
+                {
+                  "type": "text",
+                  "id": "yoXOQ",
+                  "fill": "#7A7A80",
+                  "content": "搜索路线 / 车站",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 16
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZyNcJ",
+          "x": 20,
+          "y": 124,
+          "name": "Mode 全部",
+          "gap": 12,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "CHtEl",
+              "width": 46,
+              "height": 46,
+              "fill": "#0B0B0C",
+              "cornerRadius": 23,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A3333",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 14
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "eA8A0",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "layers",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "l0jNvq",
+              "fill": "#FFFFFF",
+              "cornerRadius": 99,
+              "stroke": "#24467F",
+              "strokeWidth": 1.5,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A331F",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "padding": [
+                8,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nEWox",
+                  "fill": "#24467F",
+                  "content": "全部",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Hc1fa",
+          "x": 20,
+          "y": 184,
+          "name": "Mode 科大校巴",
+          "gap": 12,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "zNKUe",
+              "width": 46,
+              "height": 46,
+              "fill": "#24467F",
+              "cornerRadius": 23,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A3333",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 14
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "C7cFuL",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "bus",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MrYXz",
+              "fill": "#FFFFFFD9",
+              "cornerRadius": 99,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A331F",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "padding": [
+                8,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qW5zU",
+                  "fill": "#0B0B0C",
+                  "content": "科大校巴",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "YETEp",
+          "x": 20,
+          "y": 244,
+          "name": "Mode 九巴",
+          "gap": 12,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "wtOV0",
+              "width": 46,
+              "height": 46,
+              "fill": "#E5484D",
+              "cornerRadius": 23,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A3333",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 14
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "zf664",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "bus-front",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BfzMw",
+              "fill": "#FFFFFFD9",
+              "cornerRadius": 99,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A331F",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "padding": [
+                8,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "rrDNV",
+                  "fill": "#0B0B0C",
+                  "content": "九巴",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "p6VKX",
+          "x": 20,
+          "y": 304,
+          "name": "Mode 绿色小巴",
+          "gap": 12,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "xaJnY",
+              "width": 46,
+              "height": 46,
+              "fill": "#2E9E5B",
+              "cornerRadius": 23,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A3333",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 14
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "z2stDV",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "bus",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "b0d1H",
+              "fill": "#FFFFFFD9",
+              "cornerRadius": 99,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A331F",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "padding": [
+                8,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "QO2Ix",
+                  "fill": "#0B0B0C",
+                  "content": "绿色小巴",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "iiYiU",
+          "x": 20,
+          "y": 364,
+          "name": "Mode 港铁",
+          "gap": 12,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "xa0AM",
+              "width": 46,
+              "height": 46,
+              "fill": "#56647D",
+              "cornerRadius": 23,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A3333",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 14
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "s3OFjb",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "train-front",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MtDN1",
+              "fill": "#FFFFFFD9",
+              "cornerRadius": 99,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A331F",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "padding": [
+                8,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "OFeNI",
+                  "fill": "#0B0B0C",
+                  "content": "港铁",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "gr33p",
+      "x": 3900,
+      "y": 420,
+      "name": "V5 / 登录入口（学校邮箱）",
+      "theme": {
+        "mode": "light"
+      },
+      "metadata": {
+        "type": "campus-screen",
+        "key": "welcome",
+        "stage": "MVP",
+        "module": "App"
+      },
+      "clip": true,
+      "width": 393,
+      "fill": "$campus-background",
+      "cornerRadius": 32,
+      "layout": "vertical",
+      "gap": 16,
+      "padding": [
+        0,
+        16,
+        16,
+        16
+      ],
+      "children": [
+        {
+          "id": "j0g8b",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "UxzSG",
+          "name": "Page header",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 5,
+          "children": [
+            {
+              "type": "text",
+              "id": "gduR9",
+              "name": "Eyebrow",
+              "fill": "$campus-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "USTLIFE · HKUST",
+              "lineHeight": 1.45,
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "ErvXZ",
+              "name": "Page title",
+              "fill": "$campus-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "大学生活，\n从容一点。",
+              "lineHeight": 1.45,
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 32,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "text",
+              "id": "S372q",
+              "name": "Introduction",
+              "fill": "$campus-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "截止、课表、校巴和活动，都在一个地方。",
+              "lineHeight": 1.45,
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "g05aj",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "Q0vw4y",
+              "name": "从今天开始",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "RUSpa",
+                  "name": "Section title",
+                  "fill": "$campus-text",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "从今天开始",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 19,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "tkIbw",
+                  "name": "学习有条理",
+                  "metadata": {
+                    "type": "navigation",
+                    "target": "week"
+                  },
+                  "width": "fill_container",
+                  "stroke": "$campus-line",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    14,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "RKhlq",
+                      "name": "Row content",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "X1tgJV",
+                          "name": "Title",
+                          "fill": "$campus-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "截止不再漏",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "quHFe",
+                          "name": "Detail",
+                          "fill": "$campus-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "今天要交什么，一眼看到",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Sj2PM",
+                      "name": "Action",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "calendar-days",
+                      "library": "lucide",
+                      "fill": "$campus-accent"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SBwUf",
+                  "name": "校园少一点绕路",
+                  "metadata": {
+                    "type": "navigation",
+                    "target": "campus"
+                  },
+                  "width": "fill_container",
+                  "stroke": "$campus-line",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    14,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "P6vmYp",
+                      "name": "Row content",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "d2Gi9",
+                          "name": "Title",
+                          "fill": "$campus-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "下一班车几点",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "sugSh",
+                          "name": "Detail",
+                          "fill": "$campus-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "校巴时刻表和小巴实时到站",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "bQSzH",
+                      "name": "Action",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "map",
+                      "library": "lucide",
+                      "fill": "$campus-accent"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "N3blvh",
+                  "name": "认识朋友，不必勉强",
+                  "metadata": {
+                    "type": "navigation",
+                    "target": "discover"
+                  },
+                  "width": "fill_container",
+                  "stroke": "$campus-line",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    14,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "g6JOWy",
+                      "name": "Row content",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mAqs0",
+                          "name": "Title",
+                          "fill": "$campus-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "找人一起做点小事",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "de8h1",
+                          "name": "Detail",
+                          "fill": "$campus-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "自习、散步、复习小组，想参加再参加",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Tj6Bw",
+                      "name": "Action",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "users",
+                      "library": "lucide",
+                      "fill": "$campus-accent"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hG8F0",
+          "name": "Email field",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 6,
+          "children": [
+            {
+              "type": "text",
+              "id": "ulesc",
+              "fill": "#7A7A80",
+              "content": "学校邮箱",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "V1dXM3",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "#FFFFFF",
+              "cornerRadius": 16,
+              "stroke": "#E3E5EA",
+              "strokeWidth": 1,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "K6LGA",
+                  "fill": "#A0A3AA",
+                  "content": "name@connect.ust.hk",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 17
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Q7y0v",
+              "fill": "#7A7A80",
+              "content": "只接受 @connect.ust.hk 和 @ust.hk。第一次登录会自动注册。",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 12
+            }
+          ]
+        },
+        {
+          "id": "A7LIB",
+          "type": "ref",
+          "ref": "dn4GA",
+          "name": "获取验证码",
+          "width": "fill_container",
+          "fill": "$campus-accent",
+          "descendants": {
+            "YWT0C": {
+              "content": "获取验证码",
+              "fill": "#FFFFFF"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "d6fkS7",
+      "x": 15100,
+      "y": 25200,
+      "name": "V6 / 交通（从科大出发）",
+      "width": 393,
+      "fill": "#F2F4F7",
+      "layout": "vertical",
+      "gap": 16,
+      "padding": [
+        58,
+        16,
+        40,
+        16
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "o6m6R",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "czE4J",
+              "width": 44,
+              "height": 44,
+              "fill": "#FFFFFFD9",
+              "cornerRadius": 22,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A331F",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 14
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "thgvZ",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "#0B0B0C"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "jXJLN",
+              "fill": "#0B0B0C",
+              "content": "交通",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 17,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "umOYN",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "O5mpL",
+          "width": "fill_container",
+          "height": 46,
+          "fill": "#FFFFFFB3",
+          "cornerRadius": 23,
+          "stroke": "#FFFFFF",
+          "strokeWidth": 1,
+          "gap": 2,
+          "padding": [
+            0,
+            5
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "A7GTJ",
+              "height": 36,
+              "fill": "#24467F1F",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "x7Xe8",
+                  "fill": "#24467F",
+                  "content": "全部",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GLNsW",
+              "height": 36,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XqZx5",
+                  "fill": "#0B0B0C",
+                  "content": "校巴",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "aN2HX",
+              "height": 36,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "DuRfv",
+                  "fill": "#0B0B0C",
+                  "content": "九巴",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "D7adbt",
+              "height": 36,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "J9C5I2",
+                  "fill": "#0B0B0C",
+                  "content": "小巴",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "xAf1k",
+              "height": 36,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UwqHJ",
+                  "fill": "#0B0B0C",
+                  "content": "港铁",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "BtDRn",
+          "name": "Map card",
+          "clip": true,
+          "width": "fill_container",
+          "height": 168,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "assets/map-hkust.png",
+            "mode": "cover"
+          },
+          "cornerRadius": 28,
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "X6VhU",
+              "x": 150,
+              "y": 46,
+              "fill": "#FFFFFFE6",
+              "cornerRadius": 99,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A3333",
+                "offset": {
+                  "x": 0,
+                  "y": 3
+                },
+                "blur": 10
+              },
+              "gap": 5,
+              "padding": [
+                4,
+                10,
+                4,
+                4
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "MXy2L",
+                  "width": 20,
+                  "height": 20,
+                  "fill": "#24467F",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "ZlfZy",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "footprints",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "p9f6R",
+                  "fill": "#0B0B0C",
+                  "content": "北闸",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vbzzc",
+              "x": 190,
+              "y": 104,
+              "fill": "#FFFFFFE6",
+              "cornerRadius": 99,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A3333",
+                "offset": {
+                  "x": 0,
+                  "y": 3
+                },
+                "blur": 10
+              },
+              "gap": 5,
+              "padding": [
+                4,
+                10,
+                4,
+                4
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Nb0rO",
+                  "width": 20,
+                  "height": 20,
+                  "fill": "#24467F",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Bgu3R",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "footprints",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "xaWLi",
+                  "fill": "#0B0B0C",
+                  "content": "南闸",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "B9iiuc",
+              "x": 12,
+              "y": 12,
+              "fill": "#FFFFFFE6",
+              "cornerRadius": 99,
+              "gap": 6,
+              "padding": [
+                7,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "l0n9O",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "navigation",
+                  "library": "lucide",
+                  "fill": "#24467F"
+                },
+                {
+                  "type": "text",
+                  "id": "JVmrp",
+                  "fill": "#24467F",
+                  "content": "步行到上车点",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "SKPR0",
+          "name": "Gate 北闸",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "gGksW",
+              "width": "fill_container",
+              "gap": 6,
+              "padding": [
+                0,
+                4
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "X8eks",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "door-open",
+                  "library": "lucide",
+                  "fill": "#7A7A80"
+                },
+                {
+                  "type": "text",
+                  "id": "qirm9",
+                  "fill": "#0B0B0C",
+                  "content": "北闸",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "U1orv",
+                  "fill": "#7A7A80",
+                  "content": "科大北站",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 13
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "a7Fnkm",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A330F",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 20
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "k7e3Z",
+                  "name": "Row 坑口站",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "t6hCQ",
+                      "width": 52,
+                      "height": 28,
+                      "fill": "#2E9E5B",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "A2NBq",
+                          "fill": "#FFFFFF",
+                          "content": "11M",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "z12KM",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "aUV6Y",
+                          "gap": 5,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "iNkJ5",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "KEeUH",
+                              "fill": "#0B0B0C",
+                              "content": "坑口站",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 17,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "XKyns",
+                          "fill": "#7A7A80",
+                          "content": "之后 19:28 · 19:35",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Mz8Or",
+                      "gap": 3,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ps4LN",
+                          "fill": "#2E9E5B",
+                          "content": "5",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 30,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "eXSRo",
+                          "fill": "#7A7A80",
+                          "content": "分钟",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nwcgD",
+                  "name": "Row 宝林",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "fM7nc",
+                      "width": 52,
+                      "height": 28,
+                      "fill": "#E5484D",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "b81S6",
+                          "fill": "#FFFFFF",
+                          "content": "91M",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "x5amqP",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vsTGv",
+                          "gap": 5,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "l2fD2q",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "y7Gm1",
+                              "fill": "#0B0B0C",
+                              "content": "宝林",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 17,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "Zlfr4",
+                          "fill": "#7A7A80",
+                          "content": "之后 19:45",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MMsr1",
+                      "gap": 3,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "M3zNeW",
+                          "fill": "#E5484D",
+                          "content": "9",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 30,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "dIPd7",
+                          "fill": "#7A7A80",
+                          "content": "分钟",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "s5kj9",
+                  "name": "Row 彩虹站",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "b35F0X",
+                      "width": 52,
+                      "height": 28,
+                      "fill": "#2E9E5B",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "uGiIH",
+                          "fill": "#FFFFFF",
+                          "content": "11B",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "eLA5F",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "IQJpa",
+                          "gap": 5,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "XSRum",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "K1PAp",
+                              "fill": "#0B0B0C",
+                              "content": "彩虹站",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 17,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "V0jHXW",
+                          "fill": "#7A7A80",
+                          "content": "日间特别班次",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "h7l6B",
+                      "gap": 3,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ROTFy",
+                          "fill": "#7A7A80",
+                          "content": "暂无预测",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "meJCn",
+                          "fill": "#7A7A80",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "RYJdx",
+          "name": "Gate 南闸",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "OUkps",
+              "width": "fill_container",
+              "gap": 6,
+              "padding": [
+                0,
+                4
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "vsTpO",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "door-open",
+                  "library": "lucide",
+                  "fill": "#7A7A80"
+                },
+                {
+                  "type": "text",
+                  "id": "YGY8Q",
+                  "fill": "#0B0B0C",
+                  "content": "南闸",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "w8aWPP",
+                  "fill": "#7A7A80",
+                  "content": "科大南",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 13
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "i6STwf",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A330F",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 20
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cdChb",
+                  "name": "Row 钻石山站",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "K64pT",
+                      "width": 52,
+                      "height": 28,
+                      "fill": "#E5484D",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "v9bE8",
+                          "fill": "#FFFFFF",
+                          "content": "91M",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sdkPS",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "gTeF8",
+                          "gap": 5,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "CjuAF",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "vGC7A",
+                              "fill": "#0B0B0C",
+                              "content": "钻石山站",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 17,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "ayHLE",
+                          "fill": "#7A7A80",
+                          "content": "之后 19:44",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g4eMi7",
+                      "gap": 3,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "gVDXE",
+                          "fill": "#E5484D",
+                          "content": "17",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 30,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "c3P11E",
+                          "fill": "#7A7A80",
+                          "content": "分钟",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DUiSG",
+                  "name": "Row 坪石 / 彩虹站",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "A44UG",
+                      "width": 52,
+                      "height": 28,
+                      "fill": "#E5484D",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "F0a8H",
+                          "fill": "#FFFFFF",
+                          "content": "91P",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bzqnb",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "OjnII",
+                          "gap": 5,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ERK6N",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "S9KYff",
+                              "fill": "#0B0B0C",
+                              "content": "坪石 / 彩虹站",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 17,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "Z4qjTb",
+                          "fill": "#7A7A80",
+                          "content": "服务只限于星期一至五",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ejvuR",
+                      "gap": 3,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "y0aWhP",
+                          "fill": "#7A7A80",
+                          "content": "周一",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "W0xGm",
+                          "fill": "#7A7A80",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "W6IA0a",
+                  "name": "Row 旺角",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "lehQO",
+                      "width": 52,
+                      "height": 28,
+                      "fill": "#E5484D",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "aFZFx",
+                          "fill": "#FFFFFF",
+                          "content": "291P",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "f6ZHH",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Vrjo7",
+                          "gap": 5,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Ex15P",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Y7j9Jm",
+                              "fill": "#0B0B0C",
+                              "content": "旺角",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 17,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "kQeu2",
+                          "fill": "#7A7A80",
+                          "content": "服务只限于星期一至五",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "C9Cpym",
+                      "gap": 3,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Dij0j",
+                          "fill": "#7A7A80",
+                          "content": "周一",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "f4KJj",
+                          "fill": "#7A7A80",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fEhPg",
+          "name": "Gate 校巴",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "UDzkG",
+              "width": "fill_container",
+              "gap": 6,
+              "padding": [
+                0,
+                4
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "jgZnU",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "bus",
+                  "library": "lucide",
+                  "fill": "#7A7A80"
+                },
+                {
+                  "type": "text",
+                  "id": "sNjzz",
+                  "fill": "#0B0B0C",
+                  "content": "校巴",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "W10hQU",
+                  "fill": "#7A7A80",
+                  "content": "学生专用 · 免费",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 13
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "SsNsw",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A330F",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 20
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lUtLm",
+                  "name": "Row 坑口",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "OyRDm",
+                      "width": 52,
+                      "height": 28,
+                      "fill": "#24467F",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "A1q0o",
+                          "fill": "#FFFFFF",
+                          "content": "校巴",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "K9BiYR",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "i8Em4",
+                          "gap": 5,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "WLmUe",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ClgoZ",
+                              "fill": "#0B0B0C",
+                              "content": "坑口",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 17,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "J66xCL",
+                          "fill": "#7A7A80",
+                          "content": "时刻表 · 18:00 / 18:05 / 18:10",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hoMsj",
+                      "gap": 3,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BQg0s",
+                          "fill": "#24467F",
+                          "content": "18:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 24,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "D3Ok11",
+                          "fill": "#7A7A80",
+                          "content": "周一",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "sbWAf",
+          "name": "Gate 港铁坑口站",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "HqmXu",
+              "width": "fill_container",
+              "gap": 6,
+              "padding": [
+                0,
+                4
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "VIEIH",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "train-front",
+                  "library": "lucide",
+                  "fill": "#7A7A80"
+                },
+                {
+                  "type": "text",
+                  "id": "w7kX7",
+                  "fill": "#0B0B0C",
+                  "content": "港铁坑口站",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "HrcOL",
+                  "fill": "#7A7A80",
+                  "content": "将军澳线 · 港铁实时",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 13
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "E6tKQ3",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A330F",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 20
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "yTNId",
+                  "name": "Row 宝琳",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "DKWhE",
+                      "width": 72,
+                      "height": 28,
+                      "fill": "#7E3C93",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "o8Pzo4",
+                          "fill": "#FFFFFF",
+                          "content": "将军澳线",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yKCD7",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ljAYF",
+                          "gap": 5,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "oo4BM",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "yYLNl",
+                              "fill": "#0B0B0C",
+                              "content": "宝琳",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 17,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "MAsvE",
+                          "fill": "#7A7A80",
+                          "content": "1 号月台",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "x1jeb",
+                      "gap": 3,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "g1vdXL",
+                          "fill": "#7E3C93",
+                          "content": "0",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 30,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "V9yuv",
+                          "fill": "#7A7A80",
+                          "content": "即将到站",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qrLg2",
+                  "name": "Row 北角",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "AN2Aj",
+                      "width": 72,
+                      "height": 28,
+                      "fill": "#7E3C93",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "s0Vlm0",
+                          "fill": "#FFFFFF",
+                          "content": "将军澳线",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Z3YIPB",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "hxGdK",
+                          "gap": 5,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "jHOBD",
+                              "fill": "#7A7A80",
+                              "content": "往",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "r0Ak3",
+                              "fill": "#0B0B0C",
+                              "content": "北角",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 17,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "dluK8",
+                          "fill": "#7A7A80",
+                          "content": "2 号月台",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "w9015",
+                      "gap": 3,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "a2ZkfL",
+                          "fill": "#7E3C93",
+                          "content": "4",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 30,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "TLeVi",
+                          "fill": "#7A7A80",
+                          "content": "分钟",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "kiwx7",
+          "fill": "#7A7A80",
+          "content": "小巴、巴士、港铁为实时到站；校巴为公布时刻表。",
+          "textAlign": "center",
+          "fontFamily": "Noto Sans SC",
+          "fontSize": 12
         }
       ]
     }
