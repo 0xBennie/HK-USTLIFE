@@ -1,4 +1,5 @@
 import {useInputProtection} from '../navigation/InputProtection';
+import {ZONES,zoneLabel} from './ics-text';
 import {StudyActionController,type StudyAction} from './action-controller';
 import {useSceneFocus} from '../navigation/TabScene';
 import {SchoolSourcesScreen} from './SchoolSourcesScreen';
@@ -99,11 +100,14 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
     const destructive=opts.findIndex(o=>o[2]);
     ActionSheetIOS.showActionSheetWithOptions({title:item.title,options:[...opts.map(o=>o[0]),zh?'取消':'Cancel'],cancelButtonIndex:opts.length,destructiveButtonIndex:destructive>=0?destructive:undefined},i=>{if(i<opts.length&&!actionLocked)opts[i][1]();});
   }
+  // "今天 17:00" / "明天 23:59" / "10 月 8 日" (Pen "V6 / 本周课表"), in the calendar's display zone.
+  const dayWord=(d:string)=>{const today=dateInZone(new Date().toISOString(),zone);return d===today?(zh?'今天':'Today'):d===shiftDate(today,1)?(zh?'明天':'Tomorrow'):zh?`${Number(d.slice(5,7))} 月 ${Number(d.slice(8,10))} 日`:new Date(d+'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'});};
+  const dueText=(item:Extract<CalendarItem,{kind:'task'}>)=>{if(item.due_date)return dayWord(item.due_date);if(!item.due_at)return t.undated;const at=dateTimeInZone(item.due_at,zone);return `${dayWord(at.slice(0,10))} ${at.slice(11,16)}`;};
   function renderItem(item:CalendarItem,index:number) {
     const school='school_origin' in item?item.school_origin:null;
     const linked=courses.find(c=>c.id===item.course_id),col=courseColor(courses,item.course_id);
     const when=item.kind==='event'?(item.all_day?(zh?'全天':'All day'):`${dateTimeInZone(item.starts_at!,zone).slice(11)}${item.ends_at?'–'+dateTimeInZone(item.ends_at,zone).slice(11):''}`)
-      :item.kind==='task'?(item.due_date??(item.due_at?dateTimeInZone(item.due_at,zone).slice(5):t.undated)):'';
+      :item.kind==='task'?dueText(item):'';
     const icon=item.kind==='event'?('activity_origin' in item?'users':'calendar-days'):item.kind==='note'?'notebook-pen':item.kind==='material'?'link':'circle-check';
     const done=item.kind==='task'&&item.status==='done',cancelled=item.kind==='event'&&item.status==='cancelled';
     return <Stagger key={item.id} index={index}><Surface padding={14} onPress={()=>item.kind==='task'&&!school?setEditor({kind:'task',record:item}):itemMenu(item)} label={item.title}>
@@ -128,7 +132,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
   useEffect(()=>{if(view!=='week')return;const wd=new Date(date+'T00:00:00Z').getUTCDay();if(wd===0)setDate(shiftDate(date,1));else if(wd===6)setDate(shiftDate(date,2));else if(wd!==1)setDate(shiftDate(date,1-wd));},[view,date]);
   const status=actionMessage();
   if(schoolSources)return <SchoolSourcesScreen language={language} dark={dark} onBack={()=>{setSchoolSources(false);void load();}}/>;
-  if(managingSources)return <SourceScreen language={language} dark={dark} onBack={()=>{setManagingSources(false);void load();}}/>;
+  if(managingSources)return <SourceScreen language={language} dark={dark} onBack={()=>{setManagingSources(false);void load();}} onImport={()=>{setManagingSources(false);setImporting(true);}}/>;
   if(importing)return <ImportScreen language={language} dark={dark} onBack={()=>setImporting(false)} onSaved={()=>{setImporting(false);void load();}}/>;
   if(editor)return <StudyForm editor={editor} courses={courses} language={language} dark={dark} onBack={()=>setEditor(null)} onSaved={()=>{setEditor(null);void load();}} />;
   if(view==='home')return <View style={{gap:16}}>
@@ -142,7 +146,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
   let n=0;
   return <View style={{gap:18}}>
     <PageHeader onBack={()=>{setView('home');setCourseId(null);}} backLabel={zh?'今天':'Today'} title={view==='courses'?(zh?'课程':'Courses'):view==='all'?(courseId?courses.find(c=>c.id===courseId)?.title??t.all:(zh?'全部记录':'All records')):view==='week'?(zh?'本周课表':'This week'):(zh?'日程':'Schedule')} subtitle={t.private}
-      right={<><CircleButton icon="ellipsis" label={zh?'更多设置':'More settings'} onPress={()=>ActionSheetIOS.showActionSheetWithOptions({options:[zh?'学校连接与同步':'School connections',zh?'管理导入来源':'Imported sources',`${t.zone}: ${zone}`,zh?'导入其他日历（ICS）':'Import another calendar (ICS)',zh?'取消':'Cancel'],cancelButtonIndex:4},i=>{if(i===0)setSchoolSources(true);if(i===1)setManagingSources(true);if(i===3)setImporting(true);if(i===2)ActionSheetIOS.showActionSheetWithOptions({options:['Asia/Hong_Kong','UTC','Europe/London','America/New_York',zh?'取消':'Cancel'],cancelButtonIndex:4},j=>{if(j<4)setZone(['Asia/Hong_Kong','UTC','Europe/London','America/New_York'][j]);});})}/><CircleButton icon="plus" label={zh?'添加':'Add'} onPress={addMenu}/></>}/>
+      right={<><CircleButton icon="ellipsis" label={zh?'更多设置':'More settings'} onPress={()=>ActionSheetIOS.showActionSheetWithOptions({options:[zh?'学校连接与同步':'School connections',zh?'导入的日历':'Imported calendars',zh?`显示时区：${zoneLabel(zone,zh)}`:`Time zone: ${zoneLabel(zone,zh)}`,zh?'导入日历文件':'Import a calendar file',zh?'取消':'Cancel'],cancelButtonIndex:4},i=>{if(i===0)setSchoolSources(true);if(i===1)setManagingSources(true);if(i===3)setImporting(true);if(i===2)ActionSheetIOS.showActionSheetWithOptions({title:zh?'课表按哪个时区显示':'Show the calendar in',options:[...ZONES.map(z=>zoneLabel(z,zh)),zh?'取消':'Cancel'],cancelButtonIndex:ZONES.length},j=>{if(j<ZONES.length)setZone(ZONES[j]);});})}/><CircleButton icon="plus" label={zh?'添加':'Add'} onPress={addMenu}/></>}/>
     <Segmented value={view} label={zh?'视图':'View'} options={(['day','week','courses','all'] as const).map(v=>({value:v,label:v==='all'?(zh?'全部':'All'):t[v]}))} onChange={v=>{setView(v);setCourseId(null);}}/>
     {status?<Notice tone={needsReview||actionState.phase==='rejected'?'warning':'success'} text={status} action={needsReview?(zh?'核对':'Check'):undefined} onAction={()=>void actions.check()}/>:null}
     {error?<Notice tone="error" text={error} action={zh?'重试':'Retry'} onAction={()=>void load()}/>:null}
@@ -156,7 +160,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
       {loading&&!sameRange?<><Skeleton/><Skeleton/></>:null}
       {!loading&&calendar?.import_issues.length?<Notice tone="warning" text={zh?'部分导入日程无法在此范围展开，请检查来源。':'Some imported schedules could not be expanded for this range.'} action={zh?'查看':'Review'} onAction={()=>setManagingSources(true)}/>:null}
       {sameRange&&view==='week'?<>
-        <WeekGrid days={calendar!.days} today={dateInZone(new Date().toISOString(),zone)} zh={zh} colorOf={id=>courseColor(courses,id)} codeOf={i=>courses.find(c=>c.id===i.course_id)?.code||i.title} onOpen={i=>itemMenu(i)} onDay={d=>{setDate(d);setView('day');}}/>
+        <WeekGrid days={calendar!.days} today={dateInZone(new Date().toISOString(),zone)} zone={zone} zh={zh} colorOf={id=>courseColor(courses,id)} codeOf={i=>courses.find(c=>c.id===i.course_id)?.code||i.title} onOpen={i=>itemMenu(i)} onDay={d=>{setDate(d);setView('day');}}/>
         {calendar!.days.some(d=>d.tasks.length)?<View style={{gap:10}}><Text style={{paddingHorizontal:4,fontSize:20,fontWeight:'700',color:colors.text}}>{zh?'本周截止':'Due this week'}</Text>{calendar!.days.flatMap(d=>d.tasks).map(i=>renderItem(i,n++))}</View>:null}
       </>:null}
       {sameRange&&view==='day'?calendar!.days.map(day=><View key={day.date} style={{gap:10}}>
