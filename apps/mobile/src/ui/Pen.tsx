@@ -196,6 +196,15 @@ export function GlassChips<T extends string>({items,value,onChange,label,fill}:{
 export function useBottomClearance(bar:'tab'|'bottom'){const insets=useSafeAreaInsets();return bar==='tab'?TAB_BAR_HEIGHT+Math.max(12,insets.bottom-14)+24:118+insets.bottom;}
 
 /** Pushed-page header (Pen "Page header"): circle back button, optional trailing actions, then a large title. */
+/** Pushed-page nav: back circle, centred title, balanced right edge (Pen V6 boards' "Nav"). */
+export function NavRow({title,backLabel,onBack,disabled,right}:{title:string;backLabel:string;onBack:()=>void;disabled?:boolean;right?:ReactNode}){
+ const c=usePenColors();
+ return <View style={{flexDirection:'row',alignItems:'center',minHeight:48,gap:10}}>
+  <CircleButton icon="chevron-left" label={backLabel} disabled={disabled} onPress={onBack}/>
+  <Text accessibilityRole="header" numberOfLines={1} style={{flex:1,textAlign:'center',fontSize:17,fontWeight:'700',color:c.text}}>{title}</Text>
+  {right??<View style={{width:44}}/>}
+ </View>;
+}
 export function PageHeader({title,eyebrow,subtitle,onBack,backLabel,right}:{title:string;eyebrow?:string;subtitle?:string;onBack?:()=>void;backLabel?:string;right?:ReactNode}){
  const c=usePenColors();
  return <View style={{gap:14}}>

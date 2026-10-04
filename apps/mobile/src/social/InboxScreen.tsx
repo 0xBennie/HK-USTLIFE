@@ -1,4 +1,5 @@
-// Pen board "V3 / 消息" (dqbRa): unread hero, Today / Earlier glass groups, mark-all in the top bar.
+// Pen board "V3 / 消息" (dqbRa): unread hero, Today / Earlier glass groups, mark-all in the top bar; rows say only
+// what the notification carries. Unread vs read rows: "V3 / 消息 · 未读与已读" (DDS0O).
 import {useSceneFocus} from '../navigation/TabScene';
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {ReconnectionScreen} from './ReconnectionScreen';
@@ -19,7 +20,7 @@ const kindMeta:Record<ActivityNotification['kind'],[PenIconName,string]>={
 const hkDay=(iso:string)=>dateTimeInZone(iso,'Asia/Hong_Kong').slice(0,10);
 export function InboxScreen({language,dark,name,onMe,onActivity,onPost}:{language:Language;dark:boolean;name?:string;onMe?:()=>void;onActivity:(id:string)=>void;onPost:(id:string)=>void}){
  const sceneActive=useSceneFocus();
- const [reconnection,setReconnection]=useState<ActivityNotification['reconnection']>(undefined);
+ const [reconnection,setReconnection]=useState<(NonNullable<ActivityNotification['reconnection']>&{activity_title?:string})|undefined>(undefined);
  const zh=language==='zh',c=usePenColors();
  const controller=useRef(new InboxController((path,options)=>session.request(path,options))).current;
  const state=useSyncExternalStore(controller.subscribe,controller.snapshot);
@@ -28,12 +29,12 @@ export function InboxScreen({language,dark,name,onMe,onActivity,onPost}:{languag
  useEffect(()=>{if(!sceneActive)return;void controller.refresh();const listener=AppState.addEventListener('change',value=>{if(value==='active')void controller.refresh();});return()=>listener.remove();},[sceneActive,controller]);
  const labels:Record<ActivityNotification['kind'],string>={reconnection_mutual:zh?'再次同行有新进展':'Meet-again update',joined:zh?'报名已确认':'You’re in',waitlisted:zh?'已加入候补':'On the waitlist',promoted:zh?'候补转正，报名成功':'Off the waitlist — you’re in',withdrawn:zh?'已退出活动':'You left',activity_updated:zh?'活动时间或安排有变化':'Activity changed',activity_cancelled:zh?'活动已取消':'Activity cancelled',activity_removed:zh?'活动已被删除':'Activity removed',comment:zh?'活动讨论有新评论':'New comment',post_reply:zh?'有人回复了你的帖子':'New reply to your post',post_resolved:zh?'你回复的问题已解决':'A question you answered is solved'};
 
- if(reconnection)return <ReconnectionScreen activityId={reconnection.activity_id} peer={{id:reconnection.target_id,display_name:reconnection.display_name}} language={language} dark={dark} backLabel={zh?'返回消息':'Back to messages'} onBack={()=>{setReconnection(undefined);void controller.refresh();}}/>;
+ if(reconnection)return <ReconnectionScreen activityId={reconnection.activity_id} activityTitle={reconnection.activity_title} peer={{id:reconnection.target_id,display_name:reconnection.display_name}} language={language} dark={dark} backLabel={zh?'返回消息':'Back to messages'} onBack={()=>{setReconnection(undefined);void controller.refresh();}}/>;
  const today=hkDay(new Date().toISOString());
  const when=(iso:string)=>{const d=dateTimeInZone(iso,'Asia/Hong_Kong');if(d.slice(0,10)===today)return d.slice(11,16);const days=Math.round((Date.parse(today)-Date.parse(d.slice(0,10)))/86400000);if(days===1)return zh?'昨天':'Yesterday';if(days<7)return new Date(iso).toLocaleDateString(zh?'zh-CN':'en-GB',{weekday:'short',timeZone:'Asia/Hong_Kong'});return d.slice(5,10);};
  function open(m:ActivityNotification){
   if(!m.read_at)void controller.markRead(m.id);
-  if(m.reconnection)setReconnection(m.reconnection);else if(m.activity)onActivity(m.activity.id);else if(m.post)onPost(m.post.id);
+  if(m.reconnection)setReconnection({...m.reconnection,activity_title:m.activity?.title});else if(m.activity)onActivity(m.activity.id);else if(m.post)onPost(m.post.id);
  }
  // The organizer also receives joined/withdrawn notices for other people's signups.
  const row=(m:ActivityNotification)=>{const host=m.activity?.is_organizer===true;const [icon,tile]=host&&m.kind==='joined'?['user-plus','#2E9E5B'] as [PenIconName,string]:host&&m.kind==='withdrawn'?['user-minus','#8E8E93'] as [PenIconName,string]:kindMeta[m.kind];const target=m.reconnection?.display_name??m.activity?.title??m.post?.title;

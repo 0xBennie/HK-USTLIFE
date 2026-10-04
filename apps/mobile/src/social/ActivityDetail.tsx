@@ -69,7 +69,7 @@ export function ActivityDetail({id,language,dark,onBack,onNavigate}:{id:string;l
   <GlassCapsule radius={22} style={{flex:1}}><TextInput accessibilityLabel={zh?'发表评论':'Write a comment'} value={reply} onChangeText={setReply} editable={!frozen} multiline maxLength={2000} placeholder={zh?'问问集合方式、要带什么…':'Ask about meeting up or what to bring…'} placeholderTextColor={c.muted} style={{minHeight:44,maxHeight:120,paddingHorizontal:16,paddingTop:12,paddingBottom:12,fontSize:16,color:c.text}}/></GlassCapsule>
   <CircleButton variant="prominent" icon="arrow-up" label={zh?'发布评论':'Post comment'} disabled={frozen||!reply.trim()} onPress={()=>act('/comments','POST',{body:reply},()=>setReply(''))}/>
  </View></BottomBar>:<></>);
- if(recontact)return <ReconnectionScreen activityId={id} peer={recontact} language={language} dark={dark} onBack={()=>{setRecontact(null);void load();}}/>;
+ if(recontact)return <ReconnectionScreen activityId={id} activityTitle={activity?.title} peer={recontact} language={language} dark={dark} onBack={()=>{setRecontact(null);void load();}}/>;
  if(editing&&activity)return <ActivityForm initial={activity} language={language} dark={dark} onBack={()=>setEditing(false)} onSaved={()=>setEditing(false)}/>;
  if(discussion&&activity)return <View style={{gap:16}}>
   <View style={{flexDirection:'row',alignItems:'center',minHeight:48}}>
