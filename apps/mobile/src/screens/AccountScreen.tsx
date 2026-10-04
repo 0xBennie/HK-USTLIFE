@@ -2,7 +2,7 @@ import { useEffect,useRef,useState } from 'react';
 import {useNavigationProtection} from '../navigation/InputProtection';
 import {protectionFor} from '../navigation/protection';
 import type {AccountExitKind} from '../navigation/account-exit';
-import { Alert, Image, Pressable, Share, Text, TextInput, View } from 'react-native';
+import { ActionSheetIOS, Alert, Image, Pressable, Share, Text, TextInput, View } from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import { ApiFailure } from '../api';
 import { api, session } from '../runtime';
@@ -98,7 +98,7 @@ export function LoginScreen({ language }: Props) {
 
 type MePage='home'|'profile'|'reminders'|'school'|'activities'|'saved'|'ai';
 // Pen "18 / My account" (B7wsR): profile card, grouped rows with color tiles, account actions last.
-export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExit,onLanguage,onSafety,onActivity,onCampus }: Props & { profile: Profile;exitBusy:boolean;exitError:unknown;onExit:(kind:AccountExitKind)=>void;onLanguage:()=>void;onSafety:()=>void;onActivity:(id:string)=>void;onCampus:(target:{kind:'place'|'route';id:string})=>void }) {
+export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExit,onLanguage,onSafety,onActivity,onCampus }: Props & { profile: Profile;exitBusy:boolean;exitError:unknown;onExit:(kind:AccountExitKind)=>void;onLanguage:(language:Language)=>void;onSafety:()=>void;onActivity:(id:string)=>void;onCampus:(target:{kind:'place'|'route';id:string})=>void }) {
   const t = strings[language], c = usePenColors(), zh=language==='zh';
   const [page,setPage]=useState<MePage>('home');
   const action = useAction(language);
@@ -139,7 +139,8 @@ export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExi
       <ListRow icon="sparkles" tile="#24467F" title={zh?'用 AI 管理生活':'AI for campus life'} subtitle={zh?'把课表、截止交给 ChatGPT / Claude':'Connect ChatGPT, Claude, Shortcuts'} chevron onPress={()=>setPage('ai')}/>
       <ListRow icon="bell" tile="#E5484D" title={zh?'提醒':'Reminders'} chevron onPress={()=>setPage('reminders')}/>
       <ListRow icon="hand" tile="#24467F" title={zh?'隐私与安全':'Privacy & safety'} subtitle={zh?'课表默认私密 · 举报与屏蔽':'Private by default · reports & blocks'} chevron onPress={onSafety}/>
-      <ListRow icon="languages" tile="#56647D" title={zh?'外观与语言':'Appearance & language'} value={zh?'中文':'English'} chevron onPress={onLanguage}/>
+      {/* Pen "V6 / 语言（系统菜单）" (biMye): appearance follows the system; the chosen language is saved to the account. */}
+      <ListRow icon="languages" tile="#56647D" title={zh?'语言':'Language'} value={zh?'中文':'English'} chevron onPress={()=>ActionSheetIOS.showActionSheetWithOptions({title:zh?'App 语言':'App language',options:[zh?'中文（当前）':'中文',zh?'English':'English (current)',zh?'取消':'Cancel'],cancelButtonIndex:2},i=>{const next:Language|null=i===0?'zh':i===1?'en':null;if(!next||next===language)return;feel.select();onLanguage(next);void session.updateProfile({language:next}).catch(()=>{});})}/>
     </ListGroup></Stagger>
     {action.message?<Notice tone={action.failed?'error':'success'} text={action.message}/>:null}
     {exitError?<Notice tone="error" text={exitError instanceof ApiFailure&&exitError.code==='EXIT_REVIEW_REQUIRED'?(zh?'账户或未保存状态已变化，请重新检查后操作。':'The account or unsaved state changed. Review it before trying again.'):t.errors[exitError instanceof ApiFailure?exitError.code:'REQUEST_FAILED']??t.errors.REQUEST_FAILED}/>:null}
