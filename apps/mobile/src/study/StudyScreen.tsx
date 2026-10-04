@@ -26,6 +26,11 @@ async function allPages<T>(path:string) {
   } while(cursor);
   return items;
 }
+/** "全部": open deadlines and events by date, finished tasks after them, undated notes and links last. */
+function sortRecords(items:StudyItem[]){
+ const key=(i:StudyItem)=>{const r=i as Record<string,unknown>;const at=(r.due_at??r.starts_at??r.due_date??r.start_date) as string|null|undefined;const done=i.kind==='task'&&(r.status==='done');return `${done?1:0}${at?'0'+at:'1'}`;};
+ return [...items].sort((a,b)=>key(a).localeCompare(key(b)));
+}
 export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,onInbox,initialReminder}:{name?:string;onMe?:()=>void;language:Language;dark:boolean;onActivity:(id:string)=>void;onPost:(id:string)=>void;onCampus:()=>void;onInbox:()=>void;initialReminder?:{id:string;date:string}|null}) {
  const sceneActive=useSceneFocus();
   const t=studyStrings[language],colors=palette[dark?'dark':'light'];
@@ -106,13 +111,16 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
   function renderItem(item:CalendarItem,index:number) {
     const school='school_origin' in item?item.school_origin:null;
     const linked=courses.find(c=>c.id===item.course_id),col=courseColor(courses,item.course_id);
-    const when=item.kind==='event'?(item.all_day?(zh?'全天':'All day'):`${dateTimeInZone(item.starts_at!,zone).slice(11)}${item.ends_at?'–'+dateTimeInZone(item.ends_at,zone).slice(11):''}`)
+    // "全部" spans many days, so its events carry the date (Pen "V6 / 全部记录（课表）" cYjzG); day and week views don't.
+    const eventDay=view==='all'&&item.kind==='event'&&item.starts_at?`${dayWord(dateTimeInZone(item.starts_at,zone).slice(0,10))} `:view==='all'&&item.kind==='event'&&item.start_date?`${dayWord(item.start_date)} `:'';
+    const when=item.kind==='event'?(item.all_day?`${eventDay}${zh?'全天':'All day'}`.trim():`${eventDay}${dateTimeInZone(item.starts_at!,zone).slice(11)}${item.ends_at?'–'+dateTimeInZone(item.ends_at,zone).slice(11):''}`)
       :item.kind==='task'?dueText(item):'';
+    const overdue=item.kind==='task'&&item.status==='open'&&(item.due_at?Date.parse(item.due_at)<Date.now():item.due_date?item.due_date<dateInZone(new Date().toISOString(),zone):false);
     const icon=item.kind==='event'?('activity_origin' in item?'users':'calendar-days'):item.kind==='note'?'notebook-pen':item.kind==='material'?'link':'circle-check';
     const done=item.kind==='task'&&item.status==='done',cancelled=item.kind==='event'&&item.status==='cancelled';
     return <Stagger key={item.id} index={index}><Surface padding={14} onPress={()=>item.kind==='task'&&!school?setEditor({kind:'task',record:item}):itemMenu(item)} label={item.title}>
       <View style={{flexDirection:'row',alignItems:'center',gap:12}}>
-        {item.kind==='task'?<CheckCircle checked={done} disabled={actionLocked} label={`${item.title} · ${done?t.reopen:t.complete}`} onPress={()=>toggle(item)}/>:<IconTile icon={icon} color={item.kind==='event'?col:item.kind==='note'?colors.orange:colors.teal}/>}
+        {item.kind==='task'?<CheckCircle color={overdue?colors.danger:undefined} checked={done} disabled={actionLocked} label={`${item.title} · ${done?t.reopen:t.complete}`} onPress={()=>toggle(item)}/>:<IconTile icon={icon} color={item.kind==='event'?col:item.kind==='note'?colors.orange:colors.teal}/>}
         <View style={{flex:1,gap:3}}>
           <Text numberOfLines={2} style={{fontSize:16,lineHeight:22,fontWeight:'500',color:done||cancelled?colors.muted:colors.text,textDecorationLine:done||cancelled?'line-through':'none'}}>{item.title}</Text>
           <View style={{flexDirection:'row',alignItems:'center',gap:6,flexWrap:'wrap'}}>
@@ -122,7 +130,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
             {cancelled?<Text style={{fontSize:12,fontWeight:'600',color:colors.danger}}>{t.cancelled}</Text>:null}
           </View>
         </View>
-        {when?<Text style={{fontSize:14,fontWeight:'500',color:colors.muted}}>{when}</Text>:null}
+        {when?<Text style={{fontSize:14,fontWeight:'500',color:overdue?colors.danger:colors.muted}}>{when}</Text>:null}
         {!school&&item.kind!=='task'?<Pressable accessibilityRole="button" accessibilityLabel={zh?'更多操作':'More actions'} hitSlop={10} onPress={()=>itemMenu(item)}><PenIcon name="ellipsis" size={18} color={colors.tertiary}/></Pressable>:null}
       </View>
       {item.body&&view!=='day'&&view!=='week'?<Text numberOfLines={2} style={{fontSize:14,lineHeight:20,color:colors.muted,marginTop:8,marginLeft:42}}>{item.body}</Text>:null}
@@ -171,13 +179,13 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
     </>:null}
     {view==='courses'?<>
       {!courses.length&&!loading?<EmptyState icon="library" title={zh?'还没有课程':'No courses yet'} body={zh?'连接 Canvas 后自动同步，也可以手动添加。':'Connect Canvas to sync, or add one.'} action={zh?'添加课程':'Add course'} onAction={()=>setEditor({kind:'course'})}/>:null}
-      <ListGroup>{courses.map(c=><ListRow key={c.id} icon="book-open" tile={courseColor(courses,c.id)} title={c.code||c.title} subtitle={c.code?c.title:c.description||undefined} value={`${items.filter(i=>i.course_id===c.id).length}`} chevron onPress={()=>{setCourseId(c.id);setView('all');}}/>)}</ListGroup>
+      <ListGroup>{courses.map(c=><ListRow key={c.id} icon="book-open" tile={courseColor(courses,c.id)} title={c.code||c.title} subtitle={c.code?c.title:c.description||undefined} value={zh?`${items.filter(i=>i.course_id===c.id).length} 项`:`${items.filter(i=>i.course_id===c.id).length} items`} chevron onPress={()=>{setCourseId(c.id);setView('all');}}/>)}</ListGroup>
       {courseId===null&&courses.length?<Text style={{paddingHorizontal:16,fontSize:12,color:colors.muted}}>{t.manual}</Text>:null}
     </>:null}
     {view==='all'?<>
       {courseId?<View style={{flexDirection:'row',gap:10}}><View style={{flex:1}}><PrimaryButton tone="soft" label={t.edit} onPress={()=>{const c=courses.find(x=>x.id===courseId);if(c)setEditor({kind:'course',record:c});}}/></View><View style={{flex:1}}><PrimaryButton tone="soft" label={t.remove} onPress={()=>{const c=courses.find(x=>x.id===courseId);if(c)remove(c);}}/></View></View>:null}
       {!items.filter(i=>!courseId||i.course_id===courseId).length&&!loading?<EmptyState icon="inbox" title={t.empty}/>:null}
-      {items.filter(i=>!courseId||i.course_id===courseId).map(i=>renderItem(i,n++))}
+      {sortRecords(items.filter(i=>!courseId||i.course_id===courseId)).map(i=>renderItem(i,n++))}
     </>:null}
   </View>;
 }
