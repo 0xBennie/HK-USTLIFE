@@ -63989,7 +63989,7 @@
                 {
                   "type": "frame",
                   "id": "jOXEg",
-                  "name": "Stat 本周截止",
+                  "name": "Stat 7 天内截止",
                   "clip": true,
                   "width": "fill_container",
                   "fill": "$g-content",
@@ -64044,9 +64044,9 @@
                     {
                       "type": "text",
                       "id": "BGojR",
-                      "name": "本周截止",
+                      "name": "7 天内截止",
                       "fill": "$g-muted",
-                      "content": "本周截止",
+                      "content": "7 天内截止",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 12,
                       "fontWeight": "500"
@@ -67090,7 +67090,7 @@
                       "fill": "$g-muted"
                     },
                     "MI4Rp": {
-                      "content": "3 门课 · 本周 5 项截止"
+                      "content": "3 门课 · 7 天内 5 项截止"
                     }
                   }
                 }
@@ -69556,17 +69556,6 @@
                   "fontFamily": "Noto Sans SC",
                   "fontSize": 17,
                   "fontWeight": "700"
-                },
-                {
-                  "id": "A3w0cW",
-                  "type": "ref",
-                  "ref": "V90WG",
-                  "name": "Action",
-                  "descendants": {
-                    "k1OyU": {
-                      "icon": "heart"
-                    }
-                  }
                 }
               ]
             },
@@ -70084,7 +70073,7 @@
       "id": "rbykj",
       "x": 880,
       "y": 28300,
-      "name": "V5 / 宿舍服务（洗衣计时）",
+      "name": "V5 / 宿舍服务（计时中）",
       "clip": true,
       "width": 393,
       "height": 975,
@@ -70201,17 +70190,6 @@
                   "fontFamily": "Noto Sans SC",
                   "fontSize": 17,
                   "fontWeight": "700"
-                },
-                {
-                  "id": "CzB1W",
-                  "type": "ref",
-                  "ref": "V90WG",
-                  "name": "Action",
-                  "descendants": {
-                    "k1OyU": {
-                      "icon": "bell"
-                    }
-                  }
                 }
               ]
             },
@@ -70302,18 +70280,6 @@
               "gap": 14,
               "children": [
                 {
-                  "id": "TaCQX",
-                  "type": "ref",
-                  "ref": "jllpz",
-                  "name": "Primary",
-                  "width": "fill_container",
-                  "descendants": {
-                    "dQzbI": {
-                      "content": "30 分钟"
-                    }
-                  }
-                },
-                {
                   "id": "e2Gq7r",
                   "type": "ref",
                   "ref": "k87YPr",
@@ -70321,7 +70287,7 @@
                   "width": "fill_container",
                   "descendants": {
                     "siEp5": {
-                      "content": "45 分钟"
+                      "content": "取消计时"
                     }
                   }
                 }
@@ -85900,6 +85866,342 @@
                   "fontFamily": "Inter",
                   "fontSize": 15,
                   "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "k2Old",
+      "x": 1320,
+      "y": 28300,
+      "name": "V5 / 宿舍服务（未计时）",
+      "clip": true,
+      "width": 393,
+      "height": 975,
+      "fill": "$g-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "ellipse",
+          "id": "DHavJ",
+          "layoutPosition": "absolute",
+          "x": -120,
+          "y": -60,
+          "name": "Aurora",
+          "fill": "#D6E1F2B3",
+          "width": 360,
+          "height": 360,
+          "effect": {
+            "type": "blur",
+            "radius": 90
+          }
+        },
+        {
+          "type": "ellipse",
+          "id": "Gkecl",
+          "layoutPosition": "absolute",
+          "x": 200,
+          "y": 120,
+          "name": "Aurora",
+          "fill": "#E2E9F2B3",
+          "width": 320,
+          "height": 320,
+          "effect": {
+            "type": "blur",
+            "radius": 90
+          }
+        },
+        {
+          "type": "ellipse",
+          "id": "k5ukl",
+          "layoutPosition": "absolute",
+          "x": -80,
+          "y": 520,
+          "name": "Aurora",
+          "fill": "#E4E9F3B3",
+          "width": 300,
+          "height": 300,
+          "effect": {
+            "type": "blur",
+            "radius": 90
+          }
+        },
+        {
+          "type": "ellipse",
+          "id": "UY0j3",
+          "layoutPosition": "absolute",
+          "x": 180,
+          "y": 820,
+          "name": "Aurora",
+          "fill": "#EEE7DCB3",
+          "width": 340,
+          "height": 340,
+          "effect": {
+            "type": "blur",
+            "radius": 90
+          }
+        },
+        {
+          "id": "I6MY3F",
+          "type": "ref",
+          "ref": "p6qxw",
+          "name": "Status bar"
+        },
+        {
+          "type": "frame",
+          "id": "fOiwg",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            4,
+            16,
+            60,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "UHXmf",
+              "name": "Nav",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "Q66JQd",
+                  "type": "ref",
+                  "ref": "V90WG",
+                  "name": "Back",
+                  "descendants": {
+                    "k1OyU": {
+                      "icon": "chevron-left"
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "SpMSi",
+                  "name": "宿舍服务",
+                  "fill": "$g-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "宿舍服务",
+                  "textAlign": "center",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 17,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "xqID0",
+              "name": "Hero",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "gpUq7",
+                  "name": "Hall V ·",
+                  "fill": "$g-muted",
+                  "content": "洗衣计时",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 18,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "CPgjO",
+                  "name": "Value",
+                  "gap": 6,
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "gx9iT",
+                      "name": "2",
+                      "fill": "#7A7A80",
+                      "content": "45",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 68,
+                      "fontWeight": "700",
+                      "letterSpacing": -3
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bXzYF",
+                      "name": "Unit pad",
+                      "padding": [
+                        0,
+                        0,
+                        14,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jlyg5",
+                          "name": "台空闲",
+                          "fill": "$g-ink",
+                          "content": "分钟",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 22,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "o8XnJq",
+                  "type": "ref",
+                  "ref": "tKPYZ",
+                  "name": "Chip",
+                  "descendants": {
+                    "nk5IS": {
+                      "icon": "timer",
+                      "fill": "#7A7A80"
+                    },
+                    "MI4Rp": {
+                      "content": "放好衣服，选时长开始计时"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "w7Mjeo",
+              "name": "Actions",
+              "width": "fill_container",
+              "gap": 14,
+              "children": [
+                {
+                  "id": "jF0Qk",
+                  "type": "ref",
+                  "ref": "k87YPr",
+                  "name": "Secondary",
+                  "width": "fill_container",
+                  "descendants": {
+                    "siEp5": {
+                      "content": "30 分钟"
+                    }
+                  }
+                },
+                {
+                  "id": "iOMWO",
+                  "type": "ref",
+                  "ref": "jllpz",
+                  "name": "Primary",
+                  "width": "fill_container",
+                  "descendants": {
+                    "dQzbI": {
+                      "content": "45 分钟"
+                    }
+                  }
+                },
+                {
+                  "id": "UdHki",
+                  "type": "ref",
+                  "ref": "k87YPr",
+                  "name": "Secondary",
+                  "width": "fill_container",
+                  "descendants": {
+                    "siEp5": {
+                      "content": "60 分钟"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "LaiJu",
+              "name": "Other",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$g-glass",
+              "cornerRadius": 28,
+              "stroke": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 180,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#FFFFFFF2",
+                    "position": 0
+                  },
+                  {
+                    "color": "#FFFFFF40",
+                    "position": 1
+                  }
+                ]
+              },
+              "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 28
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000000F",
+                  "offset": {
+                    "x": 0,
+                    "y": 10
+                  },
+                  "blur": 30
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "inner",
+                  "color": "#FFFFFFB3",
+                  "offset": {
+                    "x": 0,
+                    "y": 1
+                  }
+                }
+              ],
+              "layout": "vertical",
+              "children": [
+                {
+                  "id": "o2Kfug",
+                  "type": "ref",
+                  "ref": "s1Jb8y",
+                  "name": "Row 报修",
+                  "width": "fill_container",
+                  "descendants": {
+                    "cxtsS": {
+                      "fill": "#D98A1C1F"
+                    },
+                    "HIbgz": {
+                      "icon": "wrench",
+                      "fill": "#D98A1C"
+                    },
+                    "WWO2Y": {
+                      "content": "宿舍报修与住宿事务"
+                    },
+                    "c7wmJ": {
+                      "content": "学生住宿官方网站"
+                    },
+                    "BMpJq": {
+                      "enabled": false,
+                      "content": ""
+                    }
+                  }
                 }
               ]
             }
