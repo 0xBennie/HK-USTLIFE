@@ -7,6 +7,7 @@ import {AffairsScreen} from '../affairs/AffairsScreen';
 import {useSceneFocus} from '../navigation/TabScene';
 import {useSceneNavigation} from '../navigation/InputProtection';
 import {PublicTransitScreen} from './PublicTransitScreen';
+import {TransitHub} from './TransitHub';
 import {DirectoryScreen} from './DirectoryScreen';
 import {TargetActions} from './TargetActions';
 import {liveAlternatives,type LiveOption} from './live';
@@ -23,7 +24,7 @@ import {CircleButton,EmptyState,Hero,HeroActions,IconTile,ListGroup,ListRow,Noti
 type Catalog={routes:ShuttleRoute[];freshness:string;refresh_due_at:string};
 type Place=typeof directoryData[number]&{version:number;freshness:string};
 type Affair={id:string;template:{title:{zh:string;en:string};steps:{id:string;text:{zh:string;en:string}}[]};step_checks:Record<string,boolean>;personal_due:{kind:'date';date:string}|{kind:'time';at:string}|null;requires_review:boolean};
-type Page={kind:'home'}|{kind:'route';id:string}|{kind:'routes'}|{kind:'directory';category?:string;placeId?:string}|{kind:'transit'}|{kind:'affairs'}|{kind:'life';screen:'services'|'academics'|'grades'|'booking'|'timematch'|'clubs'|'hall'|'market'|'school'};
+type Page={kind:'home'}|{kind:'route';id:string}|{kind:'routes'}|{kind:'directory';category?:string;placeId?:string}|{kind:'transit'}|{kind:'transit-stop';routeId:string;sequence:number}|{kind:'affairs'}|{kind:'life';screen:'services'|'academics'|'grades'|'booking'|'timematch'|'clubs'|'hall'|'market'|'school'};
 const PATH_ADVISOR='https://pathadvisor.ust.hk/';
 const destinationKey=(id:string)=>id.replace(/^campus-to-/,'');
 const minutesUntil=(scheduled:string)=>Math.round((Date.parse(scheduled)-Date.now())/60000);
@@ -71,7 +72,8 @@ export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{la
    case 'hall':return <HallScreen zh={zh0} onBack={back}/>;
    case 'market':return <MarketScreen zh={zh0} onBack={back} onOpenPost={id=>onPost?.(id)} onCompose={()=>onWall?.()}/>;
   }}
- if(page.kind==='transit')return <PublicTransitScreen language={language} dark={dark} onBack={home}/>;
+ if(page.kind==='transit')return <TransitHub zh={zh} onBack={home} onRoute={(routeId,sequence)=>go({kind:'transit-stop',routeId,sequence})} onShuttle={id=>go({kind:'route',id})}/>;
+ if(page.kind==='transit-stop')return <PublicTransitScreen language={language} dark={dark} initial={{routeId:page.routeId,sequence:page.sequence}} onBack={()=>go({kind:'transit'})}/>;
  if(page.kind==='directory')return <DirectoryScreen language={language} dark={dark} onBack={home} onLogin={onLogin} initialCategory={page.category} initialId={page.placeId}/>;
  if(page.kind==='affairs')return <AffairsScreen language={language} dark={dark} onBack={home} onLogin={onLogin}/>;
  if(page.kind==='route')return <RouteDetail id={page.id} language={language} dark={dark} onBack={()=>go({kind:'routes'})} onLogin={onLogin}/>;
@@ -143,7 +145,7 @@ function RouteList({catalog,language,onBack,onRoute,onTransit}:{catalog:Catalog|
   {!catalog?<><Skeleton/><Skeleton/></>:null}
   {out.length?<ListGroup header={zh?'从科大出发':'From HKUST'}>{out.map(row)}</ListGroup>:null}
   {inbound.length?<ListGroup header={zh?'回科大':'To HKUST'}>{inbound.map(row)}</ListGroup>:null}
-  <ListGroup><ListRow icon="bus-front" tile={c.green} title={zh?'九巴与绿色小巴':'KMB & green minibuses'} subtitle={zh?'实时到站':'Live arrivals'} chevron onPress={onTransit}/></ListGroup>
+  <ListGroup><ListRow icon="bus-front" tile={c.green} title={zh?'全部交通':'All transport'} subtitle={zh?'小巴、巴士和港铁实时到站':'Live minibuses, buses and MTR'} chevron onPress={onTransit}/></ListGroup>
  </View>;
 }
 // Pen board "13 / Shuttle route" (n71ixQ).

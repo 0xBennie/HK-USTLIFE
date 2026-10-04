@@ -24,3 +24,18 @@ export function plannedDepartures(id:string,at:string,now=Date.now(),data:Shuttl
     holiday_source:data.holiday_source,holiday_refresh_due_at:data.holiday_refresh_due_at,queried_at:at,generated_at:new Date(now).toISOString(),notices:data.notes};
 }
 export type ShuttleDepartures=ReturnType<typeof plannedDepartures>;
+/** Every shuttle that leaves campus with its next departure: later today, else the first trip of the next service day (≤14 days). */
+export function campusShuttles(now=Date.now(),data:ShuttleCatalog=shuttleData) {
+  const outbound=data.routes.filter(r=>r.id.startsWith('campus-to-')||r.id.endsWith('-to-east-point-city'));
+  const hkMidnight=Date.parse(new Date(now+8*3600_000).toISOString().slice(0,10)+'T00:00:00+08:00');
+  return {routes:outbound.map(route=>{
+    const today=plannedDepartures(route.id,new Date(now).toISOString(),now,data);
+    let next:{service_date:string;local_time:string;scheduled_at:string;today:boolean}|null=today.upcoming[0]?{service_date:today.service_date,...today.upcoming[0],today:true}:null;
+    for(let i=1;!next&&today.status!=='stale'&&i<=14;i++){
+      const d=plannedDepartures(route.id,new Date(hkMidnight+i*864e5).toISOString(),now,data);
+      if(d.status==='scheduled'&&d.upcoming[0])next={service_date:d.service_date,...d.upcoming[0],today:false};
+    }
+    return {id:route.id,name:route.name,destination:{zh:route.name.zh.split('→').pop()!.trim(),en:route.name.en.split('→').pop()!.trim()},eligibility:route.eligibility,fare_minor:route.fare_minor,
+      status:today.status,next,later:next?.today?today.upcoming.slice(1,3).map(u=>u.local_time):[],timetable:route.departures};
+  }),source:data.source,generated_at:new Date(now).toISOString()};
+}

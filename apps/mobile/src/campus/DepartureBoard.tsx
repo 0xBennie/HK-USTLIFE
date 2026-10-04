@@ -62,7 +62,7 @@ export function DepartureBoard({zh,title,label,time,minutes,later,live,note,onOp
     <View style={{flex:1}}><Text numberOfLines={1} style={{fontSize:14,fontWeight:'500',color:'#FFFFFFCC'}}>{l.name}</Text>{l.minutes===null&&l.message?<Text numberOfLines={1} style={{fontSize:12,color:'#FFFFFF80'}}>{l.message}</Text>:null}</View>
     <Text style={{fontSize:15,fontWeight:'700',color:l.minutes===null?'#FFFFFF80':'#FFFFFF',fontVariant:['tabular-nums']}}>{l.minutes===null?(zh?'暂无预测':'No ETA'):l.minutes===0?(zh?'即将到站':'Due'):zh?`${l.minutes} 分钟`:`${l.minutes} min`}</Text>
    </View>):<Text style={{fontSize:13,color:'#FFFFFF99'}}>{zh?'这个方向暂时没有实时巴士。':'No live buses this way.'}</Text>}
-   <View style={{flexDirection:'row',justifyContent:'flex-end'}}>{link(zh?'九巴与绿色小巴':'All buses',onBuses)}</View>
+   <View style={{flexDirection:'row',justifyContent:'flex-end'}}>{link(zh?'全部交通':'All transport',onBuses)}</View>
   </View>
  </Pressable>;
 }

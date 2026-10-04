@@ -1,7 +1,7 @@
 export class ApiFailure extends Error {
   constructor(public status: number, public code: string, message: string, public retryAfter?: number) { super(message); }
 }
-export type RequestOptions = { method?: string; body?: unknown; token?: string; idempotencyKey?: string };
+export type RequestOptions = { method?: string; body?: unknown; token?: string; idempotencyKey?: string; timeoutMs?: number };
 
 export class ApiClient {
   constructor(private baseUrl: string) {
@@ -12,7 +12,7 @@ export class ApiClient {
   }
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 12_000);
+    const timer = setTimeout(() => controller.abort(), options.timeoutMs ?? 12_000);
     try {
       const response = await fetch(`${this.baseUrl}${path}`, {
         method: options.method ?? 'GET', signal: controller.signal,

@@ -31,6 +31,7 @@ import Fastify from 'fastify';
 import { z, ZodError } from 'zod';
 import { openDatabase } from './database.js';
 import { createAuth } from './auth.js';
+import { createMtr } from './campus/mtr.js';
 import { ApiError } from './errors.js';
 import { createLearningStore } from './learning/store.js';
 import { createCalendarStore } from './calendar/store.js';
@@ -39,7 +40,7 @@ import { registerLearningRoutes } from './learning/routes.js';
 import { projectReminders, REMINDER_DAYS } from './reminders/projection.js';
 
 const SCHOOL_EMAIL_DOMAINS = ['connect.ust.hk', 'ust.hk'];
-export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch; schoolContracts?:Contracts; canvasFetch?:typeof fetch; canvas?:boolean; weatherFetch?:typeof fetch; calendarFetch?:typeof fetch; testEmailDomains?:string[] }) {
+export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch; schoolContracts?:Contracts; canvasFetch?:typeof fetch; canvas?:boolean; weatherFetch?:typeof fetch; calendarFetch?:typeof fetch; mtrFetch?:typeof fetch; testEmailDomains?:string[] }) {
   if (process.env.NODE_ENV === 'production') throw new Error('Local development mail is forbidden in production.');
   const now = options.now ?? Date.now;
   const db = openDatabase(options.dataDir);
@@ -91,6 +92,8 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   registerActivityMaintenanceRoutes(app,social,requireAdmin,ok);
   registerShuttleMaintenanceRoutes(app,shuttles,requireAdmin,ok);
   registerPublicTransitRoutes(app,createPublicTransit({now,fetch:options.transitFetch}),ok);
+  const mtr=createMtr(options.mtrFetch,now);
+  app.get('/api/v1/transport/mtr/hang-hau',async request=>ok(await mtr.hangHau(),request.id));
   registerMaintenanceRoutes(app,maintenance,directory,requireAdmin,ok);
   registerDirectoryRoutes(app,directory,request=>auth.requireUser(request.headers.authorization).id,ok);
   const canvas = options.canvas===false?undefined:createCanvasConnector(db,options.dataDir,now,school,options.canvasFetch);

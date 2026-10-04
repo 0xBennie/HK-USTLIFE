@@ -8,7 +8,7 @@ import {visibleTransitArrivals} from './transit-state';
 import {EmptyState,FilterPill,ListGroup,ListRow,Notice,PageHeader,PenIcon,PillRow,Skeleton,Stagger,usePenColors,GlassChips,SearchField} from '../ui/Pen';
 const hkTime=(s:string)=>new Date(s).toLocaleTimeString('en-GB',{timeZone:'Asia/Hong_Kong',hour:'2-digit',minute:'2-digit',hour12:false});
 // Pen "public-transit" / "transit-detail" boards: route → boarding stop → live arrivals.
-export function PublicTransitScreen({language,onBack}:{language:Language;dark:boolean;onBack:()=>void}) {
+export function PublicTransitScreen({language,onBack,initial}:{language:Language;dark:boolean;onBack:()=>void;initial?:{routeId:string;sequence:number}}) {
  const sceneActive=useSceneFocus();
  const zh=language==='zh',c=usePenColors();
  const [route,setRoute]=useState<PublicRoute|null>(null),[sequence,setSequence]=useState<number|null>(null),[search,setSearch]=useState(''),[operator,setOperator]=useState<''|'kmb'|'gmb'>('');
@@ -21,7 +21,7 @@ export function PublicTransitScreen({language,onBack}:{language:Language;dark:bo
   const load=async()=>{
    const request=++epoch.current;setBusy(true);setError(false);
    try {
-    if(!route){const result=await api.request<TransitCatalog>('/transport/public/routes');if(active&&request===epoch.current)setCatalog(result);}
+    if(!route){const result=await api.request<TransitCatalog>('/transport/public/routes');if(active&&request===epoch.current){setCatalog(result);const hit=initial?result.routes.find(r=>r.id===initial.routeId):undefined;if(hit){setRoute(hit);setSequence(initial!.sequence);}}}
     else {
      const path=`/transport/public/routes/${encodeURIComponent(route.id)}`;
      const [mapping,predictions]=await Promise.all([api.request<TransitStops>(`${path}/stops`),sequence===null?Promise.resolve(null):api.request<TransitArrivals>(`${path}/arrivals?stop_sequence=${sequence}`)]);
@@ -42,7 +42,8 @@ export function PublicTransitScreen({language,onBack}:{language:Language;dark:bo
  const routes=catalog?.routes.filter(r=>(!operator||r.operator===operator)&&`${r.code} ${r.origin.zh} ${r.origin.en} ${r.destination.zh} ${r.destination.en}`.toLowerCase().includes(query))??[];
  const stopList=stops?.status==='available'?stops.stops.filter(s=>`${s.name.zh} ${s.name.en}`.toLowerCase().includes(query)):[];
  const badge=(r:PublicRoute)=><View style={{minWidth:52,paddingVertical:4,paddingHorizontal:6,borderRadius:8,alignItems:'center',backgroundColor:r.operator==='gmb'?c.green:c.danger}}><Text style={{fontSize:14,fontWeight:'800',color:'#FFFFFF'}}>{r.code}</Text></View>;
- const back=()=>{if(sequence!==null){setSequence(null);setArrivals(null);}else if(route){setRoute(null);setStops(null);setSearch('');}else onBack();};
+ // Opened from the 交通 hub straight onto one stop: back returns to the hub.
+ const back=()=>{if(initial&&sequence!==null){onBack();return;}if(sequence!==null){setSequence(null);setArrivals(null);}else if(route){setRoute(null);setStops(null);setSearch('');}else onBack();};
  const searchBox=(placeholder:string)=><SearchField value={search} onChangeText={setSearch} placeholder={placeholder}/>;
  if(route&&sequence!==null){
   const stopName=arrivals?.stop?.name[language]??stops?.stops.find(s=>s.sequence===sequence)?.name[language]??'';

@@ -103,3 +103,28 @@ it('shows when configured route codes are absent from an otherwise valid provide
  expect(catalog.issues).toContainEqual({operator:'gmb',route_code:'12',reason:'not_listed'});
  expect(catalog.issues).toContainEqual({operator:'kmb',route_code:'291P',reason:'not_listed'});
 });
+it('lists departures from HKUST stops with gate, coordinates and next arrivals, skipping routes that end at HKUST',async()=>{
+ const f=fixture(),result=await f.service.campusDepartures();
+ expect(result.departures.map(d=>d.route_id)).toEqual(['kmb:91M:O:1']);
+ expect(result.departures[0]).toMatchObject({gate:'south',status:'available',arrivals:[stamp(instant+180000)],stop:{sequence:13,lat:22.3,lng:114.2}});
+ expect(result.gates.south).toEqual({name:{zh:'科大南',en:'HKUST South'},lat:22.3,lng:114.2});
+});
+it('reads Hang Hau MTR departures by destination, drops unknown stations and reports outages',async()=>{
+ const {createMtr}=await import('../src/product/campus/mtr.js');
+ const now=Date.parse('2026-10-04T22:34:49+08:00');let fail=false;const urls:string[]=[];
+ const fake=(async(u:string)=>{urls.push(String(u));if(fail)throw new Error('offline');return new Response(JSON.stringify({status:1,isdelay:'N',data:{'TKL-HAH':{UP:[{seq:'1',dest:'POA',plat:'1',time:'2026-10-04 22:34:49',ttnt:'0',valid:'Y'},{seq:'2',dest:'POA',plat:'1',time:'2026-10-04 22:39:49',ttnt:'5',valid:'Y'}],DOWN:[{seq:'1',dest:'NOP',plat:'2',time:'2026-10-04 22:38:49',ttnt:'4',valid:'Y'},{seq:'2',dest:'XXX',plat:'2',time:'2026-10-04 22:40:49',valid:'Y'}]}}}));}) as unknown as typeof fetch;
+ const mtr=createMtr(fake,()=>now),r=await mtr.hangHau();
+ expect(urls[0]).toContain('rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=HAH');
+ expect(r.status).toBe('available');
+ expect(r.directions).toEqual([{destination:{zh:'宝琳',en:'Po Lam'},platform:'1',arrivals:['2026-10-04T14:34:49.000Z','2026-10-04T14:39:49.000Z']},{destination:{zh:'北角',en:'North Point'},platform:'2',arrivals:['2026-10-04T14:38:49.000Z']}]);
+ fail=true;const down=createMtr(fake,()=>now);expect((await down.hangHau()).status).toBe('unavailable');
+});
+it('gives each outbound shuttle its next trip today or on the next service day',async()=>{
+ const {campusShuttles}=await import('../src/product/campus/shuttle.js');
+ const sunday=Date.parse('2026-10-04T20:00:00+08:00'),monday5pm=Date.parse('2026-10-05T17:45:00+08:00');
+ const sun=campusShuttles(sunday).routes.find(r=>r.id==='campus-to-hang-hau')!;
+ expect(sun.next).toEqual({service_date:'2026-10-05',local_time:'18:00',scheduled_at:'2026-10-05T10:00:00.000Z',today:false});
+ const mon=campusShuttles(monday5pm).routes.find(r=>r.id==='campus-to-tseung-kwan-o')!;
+ expect(mon.next).toMatchObject({local_time:'17:50',today:true});expect(mon.later).toEqual(['18:00','18:10']);
+ expect(campusShuttles(sunday).routes.every(r=>!r.id.endsWith('-to-campus'))).toBe(true);
+});

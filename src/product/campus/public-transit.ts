@@ -1,6 +1,6 @@
 import {z} from 'zod';
 import {ApiError} from '../errors.js';
-import type {PublicRoute,PublicStop,TransitName,TransitSource,TransitCatalog,TransitStops,TransitArrivals} from './public-transit-types.js';
+import type {PublicRoute,PublicStop,TransitName,TransitSource,TransitCatalog,TransitStops,TransitArrivals,CampusDeparture,CampusDepartures,CampusGate} from './public-transit-types.js';
 const KMB='https://data.etabus.gov.hk/v1/transport/kmb',GMB='https://data.etagmb.gov.hk';
 const KMB_CODES=['91','91M','91B','91P','291P'],GMB_CODES=['11','11B','11S','104','11M','12'];
 const DAY=86400000,ETA_AGE=180000,CLOCK_SKEW=60000;
@@ -10,7 +10,8 @@ const nullableText=str.nullish();
 const names={orig_sc:str,orig_en:str,dest_sc:str,dest_en:str};
 const kmbRoutes=z.array(z.object({route:id,bound:z.enum(['O','I']),service_type:numeric,...names})).max(5000);
 const gmbRoutes=z.array(z.object({route_id:integer,region:z.literal('NT'),route_code:id,description_sc:str,description_en:str,directions:z.array(z.object({route_seq:z.union([z.literal(1),z.literal(2)]),...names,remarks_sc:nullableText,remarks_en:nullableText})).max(2)})).max(30);
-const kmbStops=z.array(z.object({stop:id,name_sc:str,name_en:str})).max(20000);
+const coord=z.union([z.string(),z.number()]).transform(Number).pipe(z.number().finite()).optional();
+const kmbStops=z.array(z.object({stop:id,name_sc:str,name_en:str,lat:coord,long:coord})).max(20000);
 const kmbRouteStops=z.array(z.object({route:id,bound:z.enum(['O','I']),service_type:numeric,seq:numeric,stop:id})).max(300);
 const gmbRouteStops=z.object({route_stops:z.array(z.object({stop_seq:integer,stop_id:integer,name_sc:str,name_en:str})).max(300)});
 const kmbEtas=z.array(z.object({co:str,route:id,dir:z.enum(['O','I']),service_type:integer,seq:integer,eta:timestamp.nullable(),eta_seq:integer,rmk_sc:nullableText,rmk_en:nullableText,data_timestamp:timestamp})).max(100);
@@ -96,7 +97,7 @@ export function createPublicTransit(options:{now?:()=>number;fetch?:typeof fetch
     const names=new Map(kmbStops.parse(lookup.data).map(s=>[s.stop,s]));
     stops=kmbRouteStops.parse(list.data).map(s=>{
      if(s.route!==route!.code||s.bound!==route!.direction||s.service_type!==route!.service_type||Number(s.seq)<1)throw new Error('Mismatched route-stop mapping');
-     const n=names.get(s.stop);if(!n)throw new Error('Stop missing from operator catalog');return {id:s.stop,sequence:Number(s.seq),name:name(n.name_sc,n.name_en)};
+     const n=names.get(s.stop);if(!n)throw new Error('Stop missing from operator catalog');return {id:s.stop,sequence:Number(s.seq),name:name(n.name_sc,n.name_en),...(n.lat!==undefined&&n.long!==undefined?{lat:n.lat,lng:n.long}:{})};
     });
    }else{
     const e=typed(await load(`${GMB}/route-stop/${route.service_type}/${route.direction}`,DAY),'Route-Stop');sources.push(source(e,DAY));
@@ -135,5 +136,28 @@ export function createPublicTransit(options:{now?:()=>number;fetch?:typeof fetch
    return {...result,generated_at:iso()};
   }catch(e){return {...result,status:e instanceof StaleSource?'stale':'unavailable',arrivals:[],messages:[],expires_at:null,generated_at:iso()};}
  }
- return {catalog,stops,arrivals};
+ /** Every catalog route variant that departs from an HKUST stop (not ending there), with its next arrivals at that stop. */
+ async function campusDepartures():Promise<CampusDepartures> {
+  const isCampus=(n:TransitName)=>/科技大[学學]/.test(n.zh)||/SCIENCE|HKUST/i.test(n.en);
+  const gateOf=(n:TransitName):CampusGate=>/北|NORTH/i.test(n.zh+n.en)?'north':/南|SOUTH/i.test(n.zh+n.en)?'south':'other';
+  const {routes}=await catalog();
+  // A few at a time: each route needs its stop list and a prediction, and upstream concurrency is capped.
+  const pool=async<T,R>(items:T[],size:number,fn:(t:T)=>Promise<R>)=>{const out:R[]=new Array(items.length);let next=0;await Promise.all(Array.from({length:Math.min(size,items.length)},async()=>{while(next<items.length){const i=next++;out[i]=await fn(items[i]);}}));return out;};
+  const rows=await pool(routes,4,async (route):Promise<CampusDeparture|null>=>{
+   const mapping=await stops(route.id);
+   if(mapping.status!=='available')return null;
+   const last=mapping.stops[mapping.stops.length-1];
+   const stop=mapping.stops.find(s=>isCampus(s.name)&&s!==last);
+   if(!stop)return null;
+   const a=await arrivals(route.id,stop.sequence);
+   return {route_id:route.id,operator:route.operator,code:route.code,destination:route.destination,description:route.description,gate:gateOf(stop.name),stop,status:a.status,arrivals:a.arrivals.map(x=>x.at),messages:a.messages};
+  });
+  // KMB service-type variants of one line share the stop and the predictions; keep one row per line, stop and destination.
+  const seen=new Set<string>();
+  const departures=rows.filter((r):r is CampusDeparture=>r!==null).filter(r=>{const k=`${r.operator}:${r.code}:${r.stop.id}:${r.destination.zh}`;if(seen.has(k))return false;seen.add(k);return true;}).sort((x,y)=>{const a=x.arrivals[0]??'~',b=y.arrivals[0]??'~';return a<b?-1:a>b?1:x.code.localeCompare(y.code);});
+  const gates:CampusDepartures['gates']={};
+  for(const d of departures)if(d.gate!=='other'&&!gates[d.gate]&&d.stop.lat!==undefined&&d.stop.lng!==undefined)gates[d.gate]={name:d.stop.name,lat:d.stop.lat,lng:d.stop.lng};
+  return {departures,gates,generated_at:iso()};
+ }
+ return {catalog,stops,arrivals,campusDepartures};
 }
