@@ -1,7 +1,7 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {Linking,Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
-import {session} from '../runtime';
+import {api,session} from '../runtime';
 import {CheckCircle,CircleButton,EmptyState,Hero,HeroActions,IconTile,LargeTitle,ListGroup,ListRow,Notice,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,TopBar,ViewAll,usePenColors} from '../ui/Pen';
 import type {Language} from '../strings';
 import type {Calendar,CalendarItem,Course,StudyItem} from './types';
@@ -46,6 +46,9 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
  const [ride,setRide]=useState<{name:string;time:string|null;status:string}|null|undefined>(undefined);
  const [showDone,setShowDone]=useState(false);
  const [weather,setWeather]=useState<CampusWeather|null>(null);
+ // Week number and holiday from the Registry's official calendar (/campus/academic-calendar).
+ const [term,setTerm]=useState<{week:number|null;holiday:{name:{zh:string;en:string}}|null;phase:string}|null>(null);
+ useEffect(()=>{let live=true;void api.request<{week:number|null;holiday:{name:{zh:string;en:string}}|null;phase:string}>('/campus/academic-calendar').then(v=>{if(live)setTerm(v);}).catch(()=>{});return()=>{live=false;};},[]);
  useEffect(()=>{let live=true;getWeather().then(w=>{if(live)setWeather(w);}).catch(()=>{});return()=>{live=false;};},[]);
  useEffect(()=>{let live=true;
   session.request<{items:ActivityNotification[]}>('/me/notifications').then(r=>{if(live)setNotes(r.items.filter(n=>!n.read_at).slice(0,3));}).catch(()=>{});
@@ -108,7 +111,10 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
  const firstName=(name??'').split(/[@\s]/)[0];
  const greeting=(zh?(hourNow<5?'夜深了':hourNow<12?'早上好':hourNow<18?'下午好':'晚上好'):(hourNow<12?'Good morning':hourNow<18?'Good afternoon':'Good evening'))+(firstName?(zh?`，${firstName}`:`, ${firstName}`):'');
  const firstDue=dueToday[0];
- const brief=[upcoming.length?(zh?`还有 ${upcoming.length} 节课`:`${upcoming.length} classes left`):(zh?'今天没课了':'No more classes'),firstDue?(zh?`${firstDue.title.split(/[:：]/)[0]} ${firstDue.due_at?hk(firstDue.due_at).slice(11):'今天'} 截止`:`${firstDue.title.split(/[:：]/)[0]} due ${firstDue.due_at?hk(firstDue.due_at).slice(11):'today'}`):null,overdue.length?(zh?`${overdue.length} 项已逾期`:`${overdue.length} overdue`):null].filter(Boolean).join(' · ');
+ const termLabel=term?.holiday?(zh?term.holiday.name.zh:term.holiday.name.en):term?.week?(zh?`第 ${term.week} 周`:`Week ${term.week}`):term?.phase==='exams'?(zh?'考试期':'Exams'):term?.phase==='study_break'?(zh?'温习周':'Study break'):null;
+ // Joined activities are plans, not classes; count them separately so the line stays truthful.
+ const classesLeft=upcoming.filter(e=>!('activity_origin' in e)).length,plansLeft=upcoming.length-classesLeft;
+ const brief=[termLabel,classesLeft?(zh?`还有 ${classesLeft} 节课`:`${classesLeft} classes left`):(zh?'今天没课了':'No more classes'),plansLeft?(zh?`${plansLeft} 个活动`:`${plansLeft} plans`):null,firstDue?(zh?`${firstDue.title.split(/[:：]/)[0]} ${firstDue.due_at?hk(firstDue.due_at).slice(11):'今天'} 截止`:`${firstDue.title.split(/[:：]/)[0]} due ${firstDue.due_at?hk(firstDue.due_at).slice(11):'today'}`):null,overdue.length?(zh?`${overdue.length} 项已逾期`:`${overdue.length} overdue`):null].filter(Boolean).join(' · ');
  const dueCount=overdue.length+dueToday.length;
  const nextLabel=next?`${startsIn<=0?(zh?'正在上课':'Now'):hk(next.starts_at!).slice(11)} · ${next.title}`:upcoming.length===0&&events.length?(zh?'今天的课都上完了':'Classes done for today'):(zh?'今天没有课':'No classes today');
  return <View style={{gap:24}}>
@@ -133,7 +139,7 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
    <Svg style={{position:'absolute',width:'100%',height:'100%'}}><Defs><LinearGradient id="classcard" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#2C5291"/><Stop offset="1" stopColor="#182F59"/></LinearGradient></Defs><Rect width="100%" height="100%" fill="url(#classcard)"/></Svg>
    <View style={{flex:1,padding:18,justifyContent:'space-between'}}>
     <View style={{flexDirection:'row',alignItems:'center',gap:8}}>
-     <View style={{paddingVertical:5,paddingHorizontal:11,borderRadius:99,backgroundColor:'#FFFFFF26'}}><Text style={{fontSize:13,fontWeight:'600',color:'#FFFFFF'}}>{startsIn<=0?(zh?'正在进行':'Now'):startsIn<60?(zh?`${startsIn} 分钟后`:`in ${startsIn} min`):(zh?'下一节':'Next up')}</Text></View>
+     <View style={{paddingVertical:5,paddingHorizontal:11,borderRadius:99,backgroundColor:'#FFFFFF26'}}><Text style={{fontSize:13,fontWeight:'600',color:'#FFFFFF'}}>{startsIn<=0?(zh?'正在进行':'Now'):startsIn<60?(zh?`${startsIn} 分钟后`:`in ${startsIn} min`):(zh?('activity_origin' in next?'下一个活动':'下一节'):'Next up')}</Text></View>
      <View style={{flex:1}}/><Text style={{fontSize:15,fontWeight:'600',color:'#FFFFFFB3',fontVariant:['tabular-nums']}}>{hk(next.starts_at!).slice(11)}–{next.ends_at?hk(next.ends_at).slice(11):''}</Text>
     </View>
     <View style={{gap:4}}>
