@@ -25,7 +25,26 @@
           "launchMode": "most-recent"
         }
       ],
-      "./plugins/with-ios-scene.cjs"
+      "./plugins/with-ios-scene.cjs",
+      [
+        "expo-widgets",
+        {
+          "widgets": [
+            {
+              "name": "TodayWidget",
+              "displayName": "USTLIFE 今天",
+              "description": "今天的截止和下一班校巴",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "accessoryRectangular"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     ]
   }
 }

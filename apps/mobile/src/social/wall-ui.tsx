@@ -29,11 +29,11 @@ export function relativeTime(iso:string,zh:boolean){
 }
 export function TopicPill({topic,zh}:{topic:WallTopic;zh:boolean}){const t=topicMeta[topic];return <View style={{paddingVertical:5,paddingHorizontal:11,borderRadius:99,backgroundColor:t.color+'1F'}}><Text style={{fontSize:12,fontWeight:'700',color:t.color}}>{zh?t.zh:t.en}</Text></View>;}
 /** Pen "V3 / Wall post card". */
-export function WallPostCard({post,zh,onOpen,cover}:{post:WallPost;zh:boolean;onOpen:()=>void;cover?:number}){
+export function WallPostCard({post,zh,onOpen,cover,onAuthor}:{post:WallPost;zh:boolean;onOpen:()=>void;cover?:number;onAuthor?:()=>void}){
  const c=usePenColors(),{reduceMotion}=useAppearance(),topic=topicOf(post);
  return <Pressable accessibilityRole="button" accessibilityLabel={`${post.title}, ${post.author.display_name}`} onPress={onOpen} style={({pressed})=>({gap:12,padding:18,borderRadius:28,borderCurve:'continuous',backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder,boxShadow:'0 10px 30px #0000000F',transform:[{scale:pressed&&!reduceMotion?0.985:1}]})}>
   <View style={{flexDirection:'row',alignItems:'center',gap:10}}>
-   <GradientAvatar name={post.author.display_name}/>
+   <Pressable accessibilityRole="button" accessibilityLabel={post.author.display_name} disabled={!onAuthor} onPress={onAuthor} hitSlop={6}><GradientAvatar name={post.author.display_name}/></Pressable>
    <View style={{flex:1,gap:1}}>
     <View style={{flexDirection:'row',alignItems:'center',gap:5}}><Text numberOfLines={1} style={{fontSize:15,fontWeight:'700',color:c.text}}>{post.author.display_name}</Text>{post.visibility==='members'?<PenIcon name="badge-check" size={14} color="#24467F"/>:null}</View>
     <Text style={{fontSize:12,color:c.muted}}>{relativeTime(post.created_at,zh)}{post.visibility==='members'?(zh?' · 仅同学可见':' · members'):''}</Text>

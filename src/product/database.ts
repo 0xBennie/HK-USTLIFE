@@ -301,6 +301,48 @@ const migrations = [{ version: 1, sql: `
 ` }, { version: 18, sql: `
  ALTER TABLE wall_posts ADD COLUMN topic TEXT NOT NULL DEFAULT 'share' CHECK(topic IN ('question','share','buddy','market'));
  UPDATE wall_posts SET topic='question' WHERE kind='help';
+` }, { version: 19, sql: `
+ CREATE TABLE api_tokens (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL CHECK(length(name) BETWEEN 1 AND 40),
+  token_hash TEXT NOT NULL UNIQUE,
+  created_at INTEGER NOT NULL,
+  last_used_at INTEGER
+ );
+ CREATE INDEX api_tokens_user ON api_tokens(user_id);
+` }, { version: 20, sql: `
+ CREATE TABLE canvas_tokens (
+  owner_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  token TEXT NOT NULL,
+  canvas_user TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+ );
+` }, { version: 21, sql: `
+ CREATE TABLE time_groups (id TEXT PRIMARY KEY, name TEXT NOT NULL, code TEXT NOT NULL UNIQUE, owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, created_at INTEGER NOT NULL);
+ CREATE TABLE time_members (group_id TEXT NOT NULL REFERENCES time_groups(id) ON DELETE CASCADE, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, joined_at INTEGER NOT NULL, PRIMARY KEY(group_id,user_id));
+ CREATE TABLE grade_reports (user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, course TEXT NOT NULL, term TEXT NOT NULL, grade TEXT NOT NULL CHECK(grade IN ('A+','A','A-','B+','B','B-','C+','C','C-','D','F')), created_at INTEGER NOT NULL, PRIMARY KEY(user_id,course,term));
+ CREATE INDEX grade_reports_course ON grade_reports(course);
+ CREATE TABLE clubs (id TEXT PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL CHECK(category IN ('academic','sport','culture','engineering','service')), tags TEXT NOT NULL DEFAULT '', url TEXT, is_sample INTEGER NOT NULL DEFAULT 0);
+ CREATE TABLE club_follows (club_id TEXT NOT NULL REFERENCES clubs(id) ON DELETE CASCADE, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, created_at INTEGER NOT NULL, PRIMARY KEY(club_id,user_id));
+ CREATE TABLE employers (id TEXT PRIMARY KEY, name TEXT NOT NULL, tagline TEXT NOT NULL, verified INTEGER NOT NULL DEFAULT 0, is_sample INTEGER NOT NULL DEFAULT 0, quote TEXT, quote_by TEXT, created_at INTEGER NOT NULL);
+ CREATE TABLE employer_jobs (id TEXT PRIMARY KEY, employer_id TEXT NOT NULL REFERENCES employers(id) ON DELETE CASCADE, title TEXT NOT NULL, detail TEXT NOT NULL, apply_url TEXT NOT NULL, sort INTEGER NOT NULL DEFAULT 0);
+ CREATE TABLE employer_talks (id TEXT PRIMARY KEY, employer_id TEXT NOT NULL REFERENCES employers(id) ON DELETE CASCADE, title TEXT NOT NULL, venue TEXT NOT NULL, starts_at INTEGER NOT NULL);
+ CREATE TABLE talk_rsvps (talk_id TEXT NOT NULL REFERENCES employer_talks(id) ON DELETE CASCADE, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, created_at INTEGER NOT NULL, PRIMARY KEY(talk_id,user_id));
+ INSERT INTO clubs(id,name,category,tags,is_sample) VALUES
+ ('photo','摄影学会','culture','文化 · 周六西贡外拍',1),
+ ('band','乐队协会','culture','文化 · 演出',1),
+ ('archery','射箭会','sport','运动 · 竞赛',1),
+ ('hiking','远足会','sport','运动 · 周末行山',1),
+ ('acct','会计学生会','academic','学术 · 商学院 · 简历',1),
+ ('robotics','机器人队','engineering','竞赛 · 工程',1),
+ ('aero','航空队','engineering','竞赛 · 工程',1),
+ ('debate','辩论队','academic','学术 · 中英辩论',1);
+ INSERT INTO employers(id,name,tagline,verified,is_sample,quote,quote_by,created_at) VALUES ('nova','Nova Robotics','香港科学园 · 机器人与自动驾驶 · 320 人',0,1,'mentor 很耐心，实习生也能上真机调试。面试主要问 C++ 和 ROS。','示例评价',1791043200000);
+ INSERT INTO employer_jobs(id,employer_id,title,detail,apply_url,sort) VALUES
+  ('nova-intern','nova','机器人软件实习生','2027 暑期 · COMP/ELEC','https://example.com/careers',1),
+  ('nova-grad','nova','嵌入式工程师（应届）','全职 · 2027 年 6 月入职','https://example.com/careers',2);
+ INSERT INTO employer_talks(id,employer_id,title,venue,starts_at) VALUES ('nova-talk','nova','校园宣讲 + 现场面试','LTB · 19:00',1791802800000);
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

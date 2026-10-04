@@ -27,6 +27,10 @@ import { strings, type Language } from './src/strings';
 import { palette, styles } from './src/theme';
 import { StudyScreen } from './src/study/StudyScreen';
 import { GuestHome } from './src/study/TodayHome';
+import { refreshBrief } from './src/reminders/brief';
+import { checkWeatherAlerts } from './src/campus/weather';
+import { syncCanvasIfDue } from './src/study/canvas-sync';
+import { refreshWidget } from './src/widgets/today-widget';
 
 function CampusApp() {
   const state = useSyncExternalStore(session.subscribe, session.snapshot);
@@ -73,7 +77,7 @@ function CampusApp() {
   const colors = palette[dark ? 'dark' : 'light'], t = strings[language];
   useEffect(() => { void session.restore(); }, []);
   useEffect(()=>{
-    const refresh=()=>void reminders.refresh();
+    const refresh=()=>{void reminders.refresh();const p=session.snapshot().profile;if(p){void refreshBrief(p.id,(p.language??'zh')==='zh');void checkWeatherAlerts(p.id,(p.language??'zh')==='zh').catch(()=>{});void syncCanvasIfDue(p);}void refreshWidget();};
     let identity='';
     const unsubscribe=session.subscribe(()=>{const value=session.snapshot();const next=value.status+':'+value.profile?.id+':'+value.profile?.language;if(next!==identity){identity=next;refresh();}});
     const unsubscribeWrites=session.subscribeMutations(()=>void reminders.refresh('invalidate'));
@@ -119,7 +123,7 @@ function CampusApp() {
           : <LoginScreen language={language} dark={dark} onGuest={()=>setTab(1)}/>
           : index === 0 ? state.profile ? <StudyScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost} onCampus={()=>setTab(1)} onInbox={()=>setTab(3)} initialReminder={studyTarget?.owner===state.profile.id?studyTarget:null} />
           : <GuestHome language={language} title={t.tabs[0]} onLogin={()=>setTab(4)} onCampus={()=>setTab(1)}/>
-          : index === 1 ? <CampusScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)}/>
+          : index === 1 ? <CampusScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onPost={openPost} onWall={()=>setTab(2)}/>
           : index === 2 ? <CommunityScreen key={`${state.profile?.id??'visitor'}:${targetRevision}`} language={language} dark={dark} onLogin={()=>setTab(4)} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onDismissTarget={()=>{const target=activityTarget;setActivityTarget(null);if(target?.owner===(state.profile?.id??null)&&target.returnTab!==undefined)setTab(target.returnTab);}} onNavigate={scrollToTop}/>
           : state.profile ? <InboxScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost}/>
           : <GuestHome language={language} title={t.tabs[3]} inbox onLogin={()=>setTab(4)} onCampus={()=>setTab(1)}/>}

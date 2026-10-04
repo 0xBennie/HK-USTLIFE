@@ -78,6 +78,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
     Alert.alert(t.confirmDelete,collection==='courses'?t.detach:record.title,[{text:t.cancel,style:'cancel'},{text:t.remove,style:'destructive',onPress:()=>{if(!alive.current||actionLocked)return;void mutate({path:`/study/${collection}/${record.id}`,method:'DELETE',body:{version:record.version},label:record.title});}}]);
   }
   const zh=language==='zh';
+  function postpone(item:Extract<CalendarItem,{kind:'task'}>){if('school_origin' in item)return;const body:Record<string,unknown>={version:item.version,status:item.status};if(item.due_at)body.due_at=new Date(Date.parse(item.due_at)+864e5).toISOString();else if(item.due_date)body.due_date=shiftDate(item.due_date,1);else return;void mutate({path:`/study/items/${item.id}`,method:'PATCH',body,label:item.title});}
   function toggle(item:Extract<CalendarItem,{kind:'task'}>){const school='school_origin' in item?item.school_origin:null;void mutate(school?{path:`/school/records/${item.id}/personal`,method:'PATCH',body:{version:school.personal_version,completed:item.status==='open'},label:item.title}:{path:`/study/items/${item.id}`,method:'PATCH',body:{version:item.version,status:item.status==='open'?'done':'open'},label:item.title});}
   function addMenu(){
     const kinds:[string,()=>void][]=[[zh?'截止 / 任务':'Deadline / task',()=>setEditor({kind:'task',courseId})],[zh?'日程':'Event',()=>setEditor({kind:'event',courseId})],[zh?'私人笔记':'Note',()=>setEditor({kind:'note',courseId})],[zh?'资料链接':'Link',()=>setEditor({kind:'material',courseId})],[zh?'课程':'Course',()=>setEditor({kind:'course',courseId})]];
@@ -133,7 +134,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
   if(view==='home')return <View style={{gap:16}}>
     {status?<Notice tone={needsReview||actionState.phase==='rejected'?'warning':'success'} text={status} action={needsReview?(zh?'核对':'Check'):undefined} onAction={()=>void actions.check()}/>:null}
     <TodayHome name={name} onMe={onMe} language={language} courses={courses} items={items} calendar={calendar} loading={loading} error={error} busy={actionLocked}
-      onToggle={toggle} onOpenTask={task=>setEditor({kind:'task',record:task})} onAdd={addMenu} onManage={v=>{setDate(dateInZone(new Date().toISOString(),zone));setCourseId(null);setView(v);}}
+      onToggle={toggle} onPostpone={postpone} onOpenTask={task=>setEditor({kind:'task',record:task})} onAdd={addMenu} onManage={v=>{setDate(dateInZone(new Date().toISOString(),zone));setCourseId(null);setView(v);}}
       onActivity={onActivity} onPost={onPost} onCampus={onCampus} onInbox={onInbox} onSchool={()=>setSchoolSources(true)} onRetry={()=>void load()}/>
   </View>;
   const sameRange=calendar&&calendar.from===date&&calendar.to===shiftDate(date,view==='week'?7:1)&&calendar.timezone===zone;

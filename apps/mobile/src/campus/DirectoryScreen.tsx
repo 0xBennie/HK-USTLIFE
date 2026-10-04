@@ -55,5 +55,5 @@ export function DirectoryScreen({language,onBack,onLogin,initialCategory,initial
 }
 function QuickAction({icon,label,onPress,primary}:{icon:string;label:string;onPress:()=>void;primary?:boolean}){
  const c=usePenColors();
- return <Surface onPress={onPress} padding={12} label={label} style={{flex:1,alignItems:'center',gap:6,backgroundColor:primary?c.accent:c.surface}}><PenIcon name={icon} size={20} color={primary?'#FFFFFF':c.accent}/><Text style={{fontSize:13,fontWeight:'600',color:primary?'#FFFFFF':c.text}}>{label}</Text></Surface>;
+ return <Surface onPress={onPress} padding={12} label={label} style={{flex:1,alignItems:'center',gap:6,backgroundColor:primary?'#24467F':c.surface}}><PenIcon name={icon} size={20} color={primary?'#FFFFFF':c.accent}/><Text style={{fontSize:13,fontWeight:'600',color:primary?'#FFFFFF':c.text}}>{label}</Text></Surface>;
 }

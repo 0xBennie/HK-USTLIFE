@@ -1,7 +1,8 @@
 import {useEffect,useMemo,useRef,useState,useSyncExternalStore} from 'react';
-import {ActionSheetIOS,Alert,Text,View} from 'react-native';
+import {ActionSheetIOS,Alert,Linking,Text,TextInput,View} from 'react-native';
+import {feel} from '../ui/feel';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
-import {CircleButton,ListGroup,ListRow,Notice,PenIcon,Section,ViewAll,usePenColors} from '../ui/Pen';
+import {CircleButton,GlassCapsule,ListGroup,ListRow,Notice,PenIcon,PrimaryButton,Section,Surface,ViewAll,usePenColors} from '../ui/Pen';
 import {Button,Card,Input} from '../ui/Primitives';
 import {session} from '../runtime';
 import {palette,styles} from '../theme';
@@ -12,7 +13,7 @@ import {ReminderPicker} from '../reminders/ReminderControls';
 type Connection={provider:'sis'|'canvas';state:string;version:number;last_success_at:string|null;scopes:{id:string;state:string;last_success_at:string|null}[]};
 type RecordItem={id:string;provider:'sis'|'canvas';source_state:string;source_seen_at:string|null;payload:{kind?:string;title:string;starts_at?:string|null;due_at?:string|null;all_day?:boolean};personal:{version:number;notes:string;completed:boolean;remind_minutes:number|null}};
 type Props={language:Language;dark:boolean;onBack:()=>void};
-const labels:Record<string,[string,string]>={approval_required:['待批准','Pending approval'],not_connected:['尚未连接','Not connected'],syncing:['同步中','Syncing'],connected:['已同步','Synced'],partial:['部分同步','Partially synced'],reauth_required:['需要重新授权','Authorization expired'],revoked:['已撤销','Revoked'],error:['同步失败','Sync failed']};
+const labels:Record<string,[string,string]>={approval_required:['待批准','Pending approval'],not_connected:['未连接','Not connected'],syncing:['同步中','Syncing'],connected:['已同步','Synced'],partial:['部分同步','Partially synced'],reauth_required:['需要重新授权','Authorization expired'],revoked:['已撤销','Revoked'],error:['同步失败','Sync failed']};
 const stateText=(state:string,zh:boolean)=>labels[state]?.[zh?0:1]??(zh?'状态待确认':'Status unknown');
 export function SchoolSourcesScreen({language,dark,onBack}:Props){
  const zh=language==='zh',c=palette[dark?'dark':'light'];
@@ -43,8 +44,11 @@ export function SchoolSourcesScreen({language,dark,onBack}:Props){
  const sis=connections.find(x=>x.provider==='sis'),canvas=connections.find(x=>x.provider==='canvas');
  const anyLinked=connections.some(x=>x.state==='connected'||x.state==='partial');
  const heroState=anyLinked?(zh?'已连接':'Connected'):connections.some(x=>x.state==='reauth_required')?(zh?'需要重新登录':'Sign in again'):(zh?'等待学校开放授权':'Waiting for school approval');
- const manage=(connection:Connection)=>{if(busy||review||connection.version<=0)return;const opts=[...(connection.state!=='revoked'?[zh?'断开（保留缓存）':'Disconnect, keep cache']:[]),connection.state==='revoked'?(zh?'删除保留的缓存与备注':'Delete retained cache and notes'):(zh?'断开并删除缓存':'Disconnect and delete cache'),zh?'取消':'Cancel'];ActionSheetIOS.showActionSheetWithOptions({options:opts,destructiveButtonIndex:opts.length-2,cancelButtonIndex:opts.length-1},i=>{if(i===opts.length-1)return;revoke(connection,i===opts.length-2);});};
- const row=(icon:string,tile:string,title:string,sub:string,connection?:Connection,planned?:boolean)=><ListRow key={title} icon={icon} tile={tile} title={title} subtitle={connection?.last_success_at?`${sub} · ${zh?'最近同步':'last sync'} ${connection.last_success_at.slice(5,16).replace('T',' ')}`:sub} value={planned?(zh?'规划中':'Planned'):connection?stateText(connection.state,zh):(zh?'读取中':'Loading')} chevron={!!connection&&connection.version>0} onPress={connection&&connection.version>0?()=>manage(connection):undefined}/>;
+ const [canvasOpen,setCanvasOpen]=useState(false),[canvasToken,setCanvasToken]=useState(''),[canvasBusy,setCanvasBusy]=useState(false),[canvasMsg,setCanvasMsg]=useState('');
+ async function connectCanvas(){setCanvasBusy(true);setCanvasMsg('');try{const r=await session.request<{canvas_name:string|null;sync:{state:string}}>('/school/canvas/connect',{method:'POST',body:{token:canvasToken.trim()}});feel.success();setCanvasToken('');setCanvasOpen(false);setCanvasMsg(zh?`已连接${r.canvas_name?`（${r.canvas_name}）`:''}，作业已同步到"今天"。`:'Connected. Assignments synced to Today.');await load();}catch(e){const code=(e as {code?:string})?.code;setCanvasMsg(code==='CANVAS_TOKEN_REJECTED'?(zh?'Canvas 不接受这个令牌，请重新生成。':'Canvas rejected this token.'):code==='CANVAS_TOKEN_INVALID'?(zh?'格式不对，请复制完整的令牌。':'Copy the full token.'):(zh?'连不上 Canvas，请稍后再试。':'Canvas unreachable.'));}finally{setCanvasBusy(false);}}
+ async function syncCanvas(){setCanvasBusy(true);setCanvasMsg('');try{await session.request('/school/canvas/sync',{method:'POST',body:{}});feel.success();setCanvasMsg(zh?'已重新同步。':'Synced.');await load();}catch{setCanvasMsg(zh?'同步失败，请稍后再试。':'Sync failed.');}finally{setCanvasBusy(false);}}
+ const manage=(connection:Connection)=>{if(connection.provider==='canvas'&&(connection.state==='not_connected'||connection.state==='reauth_required'||connection.state==='revoked'||connection.version<=0)){setCanvasOpen(true);return;}if(busy||review||connection.version<=0)return;const opts=[...(connection.provider==='canvas'?[zh?'立即同步':'Sync now']:[]),...(connection.state!=='revoked'?[zh?'断开（保留缓存）':'Disconnect, keep cache']:[]),connection.state==='revoked'?(zh?'删除保留的缓存与备注':'Delete retained cache and notes'):(zh?'断开并删除缓存':'Disconnect and delete cache'),zh?'取消':'Cancel'];ActionSheetIOS.showActionSheetWithOptions({options:opts,destructiveButtonIndex:opts.length-2,cancelButtonIndex:opts.length-1},i=>{if(i===opts.length-1)return;if(connection.provider==='canvas'&&i===0){void syncCanvas();return;}revoke(connection,i===opts.length-2);});};
+ const row=(icon:string,tile:string,title:string,sub:string,connection?:Connection,planned?:boolean)=><ListRow key={title} icon={icon} tile={tile} title={title} subtitle={connection?.last_success_at?`${sub} · ${zh?'最近同步':'last sync'} ${connection.last_success_at.slice(5,16).replace('T',' ')}`:sub} value={planned?(zh?'规划中':'Planned'):connection?.provider==='canvas'&&(connection.state==='not_connected'||connection.version<=0)?(zh?'连接':'Connect'):connection?stateText(connection.state,zh):(zh?'读取中':'Loading')} chevron={!!connection&&(connection.version>0||connection.provider==='canvas')} valueColor={connection?.provider==='canvas'&&connection.state!=='connected'&&connection.state!=='partial'?'#24467F':undefined} onPress={connection&&(connection.version>0||connection.provider==='canvas')?()=>manage(connection):undefined}/>;
  return <View style={{gap:18}}>
   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><CircleButton icon="chevron-left" label={zh?'返回':'Back'} disabled={busy} onPress={()=>protect(onBack)}/><CircleButton icon="refresh-cw" label={zh?'刷新状态':'Refresh'} disabled={busy||review} onPress={()=>void load()}/></View>
   <View style={{gap:6,paddingHorizontal:4}}><Text accessibilityRole="header" style={{fontSize:30,lineHeight:37,fontWeight:'700',color:pc.text}}>{zh?'学校连接':'School connection'}</Text><Text style={{fontSize:15,lineHeight:22,color:pc.muted}}>{zh?'登录一次 HKUST 账号，课表、截止和邮件自动同步。':'Sign in once with HKUST — timetable, deadlines and mail sync automatically.'}</Text></View>
@@ -60,6 +64,15 @@ export function SchoolSourcesScreen({language,dark,onBack}:Props){
   {review?<Notice tone="warning" text={zh?'操作可能已生效，请先核对当前状态，不要重复断开。':'The change may have applied. Check the current state first.'} action={zh?'核对':'Check'} onAction={()=>void controller.check()}/>:null}
   {action.phase==='rejected'?<Notice tone="error" text={zh?'操作被拒绝，请刷新后核对权限。':'Request rejected. Refresh and check permissions.'}/>:null}
   {action.phase==='saved'||action.phase==='reviewed'?<Notice tone="success" text={zh?'已更新，请核对下方状态。':'Updated. Review the status below.'}/>:null}
+  {canvasMsg?<Notice tone={/失败|不接受|不对|连不上|failed|rejected|unreachable|full/i.test(canvasMsg)?'error':'success'} text={canvasMsg}/>:null}
+  {canvasOpen?<Surface style={{gap:12}}>
+   <View style={{flexDirection:'row',alignItems:'center',gap:10}}><View style={{width:36,height:36,borderRadius:18,backgroundColor:'#E5484D1F',alignItems:'center',justifyContent:'center'}}><PenIcon name="circle-check" size={18} color="#E5484D"/></View><Text style={{flex:1,fontSize:17,fontWeight:'700',color:pc.text}}>{zh?'连接 Canvas':'Connect Canvas'}</Text><CircleButton icon="x" label={zh?'关闭':'Close'} onPress={()=>setCanvasOpen(false)}/></View>
+   <Text style={{fontSize:14,lineHeight:21,color:pc.muted}}>{zh?'1. 打开 Canvas → 账户 → 设置\n2. 点「+ 新建访问许可证」，用途填 USTLIFE\n3. 复制生成的令牌，粘贴到下面':'1. Canvas → Account → Settings\n2. "+ New access token", purpose USTLIFE\n3. Paste the token below'}</Text>
+   <PrimaryButton tone="soft" icon="external-link" label={zh?'打开 Canvas 设置':'Open Canvas settings'} onPress={()=>void Linking.openURL('https://canvas.ust.hk/profile/settings')}/>
+   <GlassCapsule radius={16}><TextInput accessibilityLabel={zh?'Canvas 访问令牌':'Canvas access token'} value={canvasToken} onChangeText={setCanvasToken} placeholder={zh?'粘贴令牌':'Paste token'} placeholderTextColor={pc.muted} autoCapitalize="none" autoCorrect={false} secureTextEntry style={{height:48,paddingHorizontal:16,fontSize:16,color:pc.text}}/></GlassCapsule>
+   <PrimaryButton label={canvasBusy?(zh?'正在连接…':'Connecting…'):(zh?'连接并同步':'Connect & sync')} disabled={canvasBusy||canvasToken.trim().length<20} onPress={()=>void connectCanvas()}/>
+   <Text style={{fontSize:12,lineHeight:18,color:pc.muted}}>{zh?'令牌只读取你的作业和截止，加密保存在服务器；随时可以在这里断开，或在 Canvas 里删除令牌。':'Read-only use of assignments; stored encrypted; revoke anytime.'}</Text>
+  </Surface>:null}
   <Section title={zh?'同步内容':'What syncs'}><ListGroup>
    {row('calendar-days','#24467F',zh?'SIS 课表':'SIS timetable',zh?'每学期自动导入，课室变更随时更新':'Imported each term, room changes stay current',sis)}
    {row('circle-check','#E5484D',zh?'Canvas 截止':'Canvas deadlines',zh?'作业与测验，提前提醒':'Assignments and quizzes, reminded early',canvas)}

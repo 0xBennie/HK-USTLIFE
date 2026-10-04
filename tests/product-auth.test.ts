@@ -41,7 +41,7 @@ describe('persistent product account API', () => {
     const me = await app.inject({ url: '/api/v1/me', headers: bearer(token) });
     expect(me.json().data).toMatchObject({ email: 'student@connect.ust.hk', membership: 'unknown', role: 'member', is_demo: true });
     expect(me.headers['cache-control']).toBe('no-store');
-    expect(me.json().data.connections.canvas).toBe('approval_required');
+    expect(me.json().data.connections.canvas).toBe('not_connected'); // Canvas connects with the student's own access token
   });
 
   it('consumes a code once even for concurrent requests and never persists raw sessions', async () => {

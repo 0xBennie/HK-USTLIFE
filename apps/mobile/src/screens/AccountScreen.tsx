@@ -9,6 +9,8 @@ import { api, session } from '../runtime';
 import type { Profile } from '../session';
 import { strings, type Language } from '../strings';
 import {NumberFlow} from 'number-flow-react-native';
+import {DataApiScreen} from '../life/SocialExtras';
+import {usePageTop} from '../navigation/TabScene';
 import {CircleButton,GradientCircle,EmptyState,FormField,FormGroup,IconTile,LargeTitle,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,usePenColors} from '../ui/Pen';
 import {ReminderSettings} from '../reminders/ReminderControls';
 import {SchoolSourcesScreen} from '../study/SchoolSourcesScreen';
@@ -75,19 +77,21 @@ export function LoginScreen({ language, onGuest }: Props & {onGuest?:()=>void}) 
   </View>;
 }
 
-type MePage='home'|'profile'|'reminders'|'school'|'activities'|'saved';
+type MePage='home'|'profile'|'reminders'|'school'|'activities'|'saved'|'ai';
 // Pen "18 / My account" (B7wsR): profile card, grouped rows with color tiles, account actions last.
 export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExit,onLanguage,onSafety,onActivity }: Props & { profile: Profile;exitBusy:boolean;exitError:unknown;onExit:(kind:AccountExitKind)=>void;onLanguage:()=>void;onSafety:()=>void;onActivity:(id:string)=>void }) {
   const t = strings[language], c = usePenColors(), zh=language==='zh';
   const [page,setPage]=useState<MePage>('home');
   const action = useAction(language);
   const busy=action.busy||exitBusy;
+  usePageTop(page);
   const [stats,setStats]=useState<{joined:number;saved:number;week:number;linked:boolean}|null>(null);
   useEffect(()=>{if(page!=='home')return;let live=true;
     const weekEnd=Date.now()+7*864e5;
     Promise.all([session.request<{items:unknown[]}>('/activities?limit=50&mine=participating'),session.request<{items:unknown[]}>('/activities?limit=50&mine=saved'),session.request<{items:{kind:string;status?:string;due_at?:string|null;due_date?:string|null}[]}>('/study/items?limit=100'),session.request<{connections:{state:string}[]}>('/school/records?limit=1').catch(()=>({connections:[]}))])
      .then(([a,b,items,school])=>{if(live)setStats({joined:a.items.length,saved:b.items.length,week:items.items.filter(i=>i.kind==='task'&&i.status==='open'&&(i.due_at||i.due_date)&&Date.parse(i.due_at??`${i.due_date}T23:59:00+08:00`)<=weekEnd&&Date.parse(i.due_at??`${i.due_date}T23:59:00+08:00`)>=Date.now()-864e5).length,linked:school.connections.some(x=>x.state==='connected'||x.state==='partial')});}).catch(()=>{});
     return()=>{live=false;};},[page]);
+  if(page==='ai')return <DataApiScreen zh={zh} onBack={()=>setPage('home')}/>;
   if(page==='profile')return <ProfileEditor profile={profile} language={language} onBack={()=>setPage('home')}/>;
   if(page==='school')return <SchoolSourcesScreen language={language} dark={dark} onBack={()=>setPage('home')}/>;
   if(page==='reminders')return <View style={{gap:18}}><PageHeader onBack={()=>setPage('home')} backLabel={zh?'我的':'Me'} title={zh?'自动提醒':'Reminders'}/><ReminderSettings language={language} dark={dark}/></View>;
@@ -114,6 +118,7 @@ export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExi
       <ListRow icon="graduation-cap" tile="#24467F" title={zh?'学校连接':'School connection'} subtitle={zh?'SIS 课表 · Canvas 截止 · 学校邮箱':'SIS · Canvas · school mail'} chevron onPress={()=>setPage('school')}/>
     </ListGroup></Stagger>
     <Stagger index={2}><ListGroup>
+      <ListRow icon="sparkles" tile="#24467F" title={zh?'用 AI 管理生活':'AI for campus life'} subtitle={zh?'把课表、截止交给 ChatGPT / Claude':'Connect ChatGPT, Claude, Shortcuts'} chevron onPress={()=>setPage('ai')}/>
       <ListRow icon="bell" tile="#E5484D" title={zh?'提醒':'Reminders'} chevron onPress={()=>setPage('reminders')}/>
       <ListRow icon="hand" tile="#24467F" title={zh?'隐私与安全':'Privacy & safety'} subtitle={zh?'课表默认私密 · 举报与屏蔽':'Private by default · reports & blocks'} chevron onPress={onSafety}/>
       <ListRow icon="languages" tile="#56647D" title={zh?'外观与语言':'Appearance & language'} value={zh?'中文':'English'} chevron onPress={onLanguage}/>

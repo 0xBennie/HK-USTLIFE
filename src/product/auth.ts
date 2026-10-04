@@ -79,7 +79,33 @@ export function createAuth(db: DatabaseSync, dataDir: string, now: () => number,
     return result;
   }
 
+  /** Personal read-only API tokens ("ustl_…") for the student's own AI tools. Stored hashed; shown once. */
+  const personal = /^Bearer (ustl_[A-Za-z0-9_-]{43})$/;
+  function createToken(user: string, name: string) {
+    if (Number(db.prepare('SELECT COUNT(*) AS n FROM api_tokens WHERE user_id=?').get(user)!.n) >= 5) throw new ApiError(409, 'TOKEN_LIMIT', 'Revoke an old connection first (max 5).');
+    const token = 'ustl_' + randomBytes(32).toString('base64url'), id = randomUUID(); // release-check:allow (freshly generated random token, returned once)
+    db.prepare('INSERT INTO api_tokens(id,user_id,name,token_hash,created_at) VALUES (?,?,?,?,?)').run(id, user, name, digest(token), now());
+    return { id, name, token, scope: 'read', created_at: new Date(now()).toISOString() };
+  }
+  function listTokens(user: string) {
+    return (db.prepare('SELECT id,name,created_at,last_used_at FROM api_tokens WHERE user_id=? ORDER BY created_at DESC').all(user) as { id: string; name: string; created_at: number; last_used_at: number | null }[])
+      .map(r => ({ id: r.id, name: r.name, scope: 'read', created_at: new Date(Number(r.created_at)).toISOString(), last_used_at: r.last_used_at == null ? null : new Date(Number(r.last_used_at)).toISOString() }));
+  }
+  function revokeToken(user: string, id: string) {
+    if (!db.prepare('DELETE FROM api_tokens WHERE id=? AND user_id=?').run(id, user).changes) throw new ApiError(404, 'TOKEN_NOT_FOUND', 'Connection not found.');
+    return { id, revoked: true };
+  }
+  const isPersonalToken = (authorization?: string) => personal.test(authorization ?? '');
+
   function requireUser(authorization?: string): Principal {
+    const key = personal.exec(authorization ?? '')?.[1];
+    if (key) {
+      const row = db.prepare('SELECT u.id,u.email,u.role,u.banned_at,t.id AS token_id,t.created_at FROM api_tokens t JOIN users u ON u.id=t.user_id WHERE t.token_hash=?').get(digest(key));
+      if (!row) throw new ApiError(401, 'TOKEN_REVOKED', 'This connection was revoked.');
+      if (row.banned_at !== null) throw new ApiError(403, 'ACCOUNT_RESTRICTED', 'This account is restricted.');
+      db.prepare('UPDATE api_tokens SET last_used_at=? WHERE id=?').run(now(), String(row.token_id));
+      return { id: String(row.id), email: String(row.email), role: 'member', signedInAt: 0 };
+    }
     const token = /^Bearer ([A-Za-z0-9_-]{43})$/.exec(authorization ?? '')?.[1];
     if (!token) throw new ApiError(401, 'AUTH_REQUIRED', 'Sign in to continue.');
     const hash = digest(token);
@@ -110,5 +136,5 @@ export function createAuth(db: DatabaseSync, dataDir: string, now: () => number,
     });
     for (const c of mails) removeMail(String(c.id));
   }
-  return { challenge, verify, requireUser, profile, logout, deleteAccount };
+  return { challenge, verify, requireUser, profile, logout, deleteAccount, createToken, listTokens, revokeToken, isPersonalToken };
 }

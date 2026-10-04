@@ -1,4 +1,6 @@
 import {feel} from '../ui/feel';
+import {ClassmateScreen,CompanyScreen} from '../life/SocialExtras';
+import {usePageTop} from '../navigation/TabScene';
 import {useSceneFocus} from '../navigation/TabScene';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {AppState,Pressable,Text,TextInput,View} from 'react-native';
@@ -19,6 +21,7 @@ import {WallDetail} from './WallDetail';
 export function WallScreen({language,dark,onLogin,initialId,onDismissTarget,onNavigate,onDepthChange,createRequest=0,onActivities=()=>{}}:{language:Language;dark:boolean;onLogin:()=>void;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void;onDepthChange?:(nested:boolean)=>void;createRequest?:number;onActivities?:()=>void}){
  const sceneActive=useSceneFocus();
  const zh=language==='zh',c=usePenColors(),profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
+ const [company,setCompany]=useState(false),[person,setPerson]=useState<{id:string;display_name:string}|null>(null);
  const [selected,setSelected]=useState(initialId),[creating,setCreating]=useState(false),[q,setQ]=useState(''),[filters,setFilters]=useState<{q:string;kind:string;mine:boolean;topic?:string}>({q:'',kind:'',mine:false});
  const [items,setItems]=useState<WallPost[]>([]),[cursor,setCursor]=useState<string|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');const epoch=useRef(0),lock=useRef(false);
  useEffect(()=>{if(initialId){setCreating(false);setSelected(initialId);}},[initialId]);
@@ -33,7 +36,10 @@ export function WallScreen({language,dark,onLogin,initialId,onDismissTarget,onNa
   if(generation===epoch.current){setItems(old=>next?[...old,...page.items.filter(x=>!old.some(y=>y.id===x.id))]:page.items);setCursor(page.next_cursor);}
  }catch(e){if(generation===epoch.current){setItems([]);setCursor(null);setError(wallError(e,language));}}finally{if(generation===epoch.current){lock.current=false;setBusy(false);}}},[filters,language]);
  useEffect(()=>{if(!sceneActive||selected||creating)return;void load();const listener=AppState.addEventListener('change',s=>{if(s==='active')void load();});return()=>{epoch.current++;lock.current=false;listener.remove();};},[load,selected,creating,sceneActive]);
+ usePageTop(`${company}${person?.id}${selected}${creating}`);
  if(creating)return <WallForm language={language} dark={dark} onBack={()=>setCreating(false)} onSaved={id=>{setCreating(false);setSelected(id);}}/>;
+ if(company)return <CompanyScreen zh={zh} onBack={()=>setCompany(false)}/>;
+ if(person)return <ClassmateScreen zh={zh} author={person} onBack={()=>setPerson(null)} onOpenPost={id=>{setPerson(null);setSelected(id);}}/>;
  if(selected)return <WallDetail key={selected} id={selected} language={language} dark={dark} onLogin={onLogin} onNavigate={onNavigate} onBack={()=>{setSelected(null);onDismissTarget();}}/>;
  const topicFilter=filters.kind==='help'?'question':filters.topic??'';
  const hot=items.filter(p=>p.status==='open').sort((a,b)=>b.reply_count-a.reply_count)[0];
@@ -59,15 +65,15 @@ export function WallScreen({language,dark,onLogin,initialId,onDismissTarget,onNa
   {busy&&!items.length?<><Skeleton height={220} radius={28}/><Skeleton height={160} radius={28}/></>:null}
   {!busy&&!error&&!items.length?<EmptyState icon="messages-square" title={zh?'这里还很安静':'It is quiet here'} body={zh?'问第一个问题，或者约个搭子。':'Ask the first question or find a buddy.'} action={zh?'发一条':'Post'} onAction={()=>profile?setCreating(true):onLogin()}/>:null}
   {items.map((p,i)=><View key={p.id} style={{gap:16}}>
-   <Stagger index={i}><WallPostCard post={p} zh={zh} onOpen={()=>setSelected(p.id)}/></Stagger>
-   {i===0&&!topicFilter&&!filters.mine?<SponsoredCard zh={zh}/>:null}
+   <Stagger index={i}><WallPostCard post={p} zh={zh} onOpen={()=>setSelected(p.id)} onAuthor={p.is_mine?undefined:()=>setPerson(p.author)}/></Stagger>
+   {i===0&&!topicFilter&&!filters.mine?<SponsoredCard zh={zh} onOpen={()=>setCompany(true)}/>:null}
   </View>)}
   {cursor?<ViewAll label={zh?'加载更多':'Load more'} onPress={()=>void load(cursor)}/>:null}
  </View>;
 }
 /** Pen "Sponsored 校招" — demo placement; real campaigns require a verified employer account. */
-function SponsoredCard({zh}:{zh:boolean}){
- return <View style={{gap:12,padding:18,borderRadius:28,overflow:'hidden',boxShadow:'0 12px 28px #1E336040'}}>
+function SponsoredCard({zh,onOpen}:{zh:boolean;onOpen:()=>void}){
+ return <Pressable accessibilityRole="button" onPress={onOpen} style={({pressed})=>({gap:12,padding:18,borderRadius:28,overflow:'hidden',boxShadow:'0 12px 28px #1E336040',transform:[{scale:pressed?0.985:1}]})}>
   <Svg style={{position:'absolute',top:0,left:0,right:0,bottom:0}}><Defs><LinearGradient id="ad" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#1B1B3A"/><Stop offset="1" stopColor="#1E3360"/></LinearGradient></Defs><Rect width="100%" height="100%" fill="url(#ad)"/></Svg>
   <View style={{flexDirection:'row',alignItems:'center',gap:10}}>
    <View style={{width:40,height:40,borderRadius:12,backgroundColor:'#FFFFFF',alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:20,fontWeight:'800',color:'#1E3360'}}>N</Text></View>
@@ -77,5 +83,5 @@ function SponsoredCard({zh}:{zh:boolean}){
   <Text style={{fontSize:20,lineHeight:27,fontWeight:'700',color:'#FFFFFF'}}>{zh?'2027 暑期实习：机器人软件 / 嵌入式':'2027 summer internship: robotics software'}</Text>
   <View style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{['COMP','ELEC','HK$ 18k',zh?'可远程面试':'Remote interview'].map(t=><View key={t} style={{paddingVertical:4,paddingHorizontal:10,borderRadius:99,backgroundColor:'#FFFFFF1F'}}><Text style={{fontSize:12,fontWeight:'700',color:'#FFFFFF'}}>{t}</Text></View>)}</View>
   <Text style={{fontSize:12,color:'#FFFFFF99'}}>{zh?'企业校招位即将开放：认证企业可在校园墙发布职位与宣讲会。':'Verified employers can soon post roles and talks here.'}</Text>
- </View>;
+ </Pressable>;
 }

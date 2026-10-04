@@ -53,7 +53,7 @@ describe('authenticated school source API without a public approval bypass', () 
     expect((await app.inject({url:'/api/v1/school/connections'})).statusCode).toBe(401);
     const response=await call('GET','/school/connections');expect(response.statusCode).toBe(200);
     expect(response.headers['cache-control']).toBe('no-store');
-    expect(response.json().data.map((x:any)=>x.state)).toEqual(['approval_required','approval_required']);
+    expect(response.json().data.map((x:any)=>x.state)).toEqual(['approval_required','not_connected']); // SIS needs school approval; Canvas uses a personal token
     expect((await call('GET','/me')).json().data.connections.sis).toBe('approval_required');
     for(const path of ['/school/connections/sis/grant','/school/connections/sis/sync']) {
       expect((await call('POST',path,{subject:'forged',approved:true})).statusCode).toBe(404);

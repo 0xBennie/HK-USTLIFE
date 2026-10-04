@@ -81,13 +81,13 @@ export function ListGroup({header,children,style}:{header?:string;children:React
 const RowPosition=createContext(false);
 
 /** Pen "Component / List row": 30pt colored icon tile, 17pt title, 13pt subtitle, optional value and chevron, inset hairline. */
-export function ListRow({icon,tile,title,subtitle,value,chevron,titleColor,onPress,disabled,accessory}:{icon?:PenIconName;tile?:string;title:string;subtitle?:string;value?:string;chevron?:boolean;titleColor?:string;onPress?:()=>void;disabled?:boolean;accessory?:ReactNode}){
+export function ListRow({icon,tile,title,subtitle,value,valueColor,chevron,titleColor,onPress,disabled,accessory}:{icon?:PenIconName;tile?:string;title:string;subtitle?:string;value?:string;valueColor?:string;chevron?:boolean;titleColor?:string;onPress?:()=>void;disabled?:boolean;accessory?:ReactNode}){
  const c=usePenColors(),separated=useContext(RowPosition);
  const body=<View style={{flexDirection:'row',alignItems:'center',gap:14,paddingLeft:18}}>
   {icon?<IconTile icon={icon} color={tile??c.gray} size={subtitle?40:32}/>:null}
   <View style={{flex:1,flexDirection:'row',alignItems:'center',gap:8,minHeight:subtitle?72:52,paddingVertical:12,paddingRight:18,borderBottomWidth:separated?0.5:0,borderBottomColor:c.border}}>
    <View style={{flex:1,gap:3}}><Text style={{fontSize:17,lineHeight:25,color:titleColor??c.text}}>{title}</Text>{subtitle?<Text style={{fontSize:13,lineHeight:19,color:c.muted}}>{subtitle}</Text>:null}</View>
-   {value?<Text style={{fontSize:15,lineHeight:22,color:c.muted}}>{value}</Text>:null}
+   {value?<Text style={{fontSize:15,lineHeight:22,fontWeight:valueColor?'700':'400',color:valueColor??c.muted}}>{value}</Text>:null}
    {accessory}
    {chevron?<PenIcon name="chevron-right" size={16} color={c.tertiary}/>:null}
   </View>

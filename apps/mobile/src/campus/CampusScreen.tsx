@@ -1,4 +1,8 @@
 import {DepartureBoard} from './DepartureBoard';
+import {usePageTop} from '../navigation/TabScene';
+import {AcademicsScreen,BookingScreen,ClubsScreen,GradesScreen,HallScreen,ServicesScreen,TimeMatchScreen} from '../life/LifeScreens';
+import {MarketScreen} from '../life/SocialExtras';
+import {SchoolSourcesScreen} from '../study/SchoolSourcesScreen';
 import {AffairsScreen} from '../affairs/AffairsScreen';
 import {useSceneFocus} from '../navigation/TabScene';
 import {useSceneNavigation} from '../navigation/InputProtection';
@@ -19,13 +23,13 @@ import {CircleButton,EmptyState,Hero,HeroActions,IconTile,ListGroup,ListRow,Noti
 type Catalog={routes:ShuttleRoute[];freshness:string;refresh_due_at:string};
 type Place=typeof directoryData[number]&{version:number;freshness:string};
 type Affair={id:string;template:{title:{zh:string;en:string};steps:{id:string;text:{zh:string;en:string}}[]};step_checks:Record<string,boolean>;personal_due:{kind:'date';date:string}|{kind:'time';at:string}|null;requires_review:boolean};
-type Page={kind:'home'}|{kind:'route';id:string}|{kind:'routes'}|{kind:'directory';category?:string;placeId?:string}|{kind:'transit'}|{kind:'affairs'};
+type Page={kind:'home'}|{kind:'route';id:string}|{kind:'routes'}|{kind:'directory';category?:string;placeId?:string}|{kind:'transit'}|{kind:'affairs'}|{kind:'life';screen:'services'|'academics'|'grades'|'booking'|'timematch'|'clubs'|'hall'|'market'|'school'};
 const PATH_ADVISOR='https://pathadvisor.ust.hk/';
 const destinationKey=(id:string)=>id.replace(/^campus-to-/,'');
 const minutesUntil=(scheduled:string)=>Math.round((Date.parse(scheduled)-Date.now())/60000);
 const hkDate=()=>new Date(Date.now()+8*3600e3).toISOString().slice(0,10);
 
-export function CampusScreen({language,dark,onLogin,name,onMe}:{language:Language;dark:boolean;onLogin:()=>void;name?:string;onMe?:()=>void}) {
+export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{language:Language;dark:boolean;onLogin:()=>void;name?:string;onMe?:()=>void;onPost?:(id:string)=>void;onWall?:()=>void}) {
  const zh=language==='zh',c=usePenColors(),sceneActive=useSceneFocus(),navigate=useSceneNavigation(zh);
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [page,setPage]=useState<Page>({kind:'home'});
@@ -53,7 +57,20 @@ export function CampusScreen({language,dark,onLogin,name,onMe}:{language:Languag
  },[routeId,sceneActive,page.kind]);
  const outbound=useMemo(()=>(catalog?.routes??[]).filter(r=>r.id.startsWith('campus-to-')),[catalog]);
  const go=(p:Page)=>navigate(()=>setPage(p));
+ usePageTop(JSON.stringify(page));
  const home=()=>navigate(()=>setPage({kind:'home'}));
+ if(page.kind==='life'){const zh0=language==='zh',life=(screen:Extract<Page,{kind:'life'}>['screen'])=>go({kind:'life',screen}),back=()=>page.screen==='services'?home():page.screen==='grades'||page.screen==='timematch'?life('academics'):life('services');
+  switch(page.screen){
+   case 'services':return <ServicesScreen zh={zh0} onBack={home} onOpen={k=>k==='map'?void Linking.openURL(PATH_ADVISOR):k.startsWith('places:')?go({kind:'directory',category:k.slice(7)}):k==='transit'?go({kind:'transit'}):k==='affairs'?go({kind:'affairs'}):['academics','booking','timematch','clubs','hall','market'].includes(k)?life(k as 'academics'):undefined}/>;
+   case 'school':return <SchoolSourcesScreen language={language} dark={dark} onBack={()=>life('academics')}/>;
+   case 'academics':return <AcademicsScreen zh={zh0} onBack={back} onGrades={()=>life('grades')} onTimeMatch={()=>life('timematch')} onSchool={()=>life('school')}/>;
+   case 'grades':return <GradesScreen zh={zh0} onBack={back}/>;
+   case 'booking':return <BookingScreen zh={zh0} onBack={back}/>;
+   case 'timematch':return <TimeMatchScreen zh={zh0} onBack={back}/>;
+   case 'clubs':return <ClubsScreen zh={zh0} onBack={back}/>;
+   case 'hall':return <HallScreen zh={zh0} onBack={back}/>;
+   case 'market':return <MarketScreen zh={zh0} onBack={back} onOpenPost={id=>onPost?.(id)} onCompose={()=>onWall?.()}/>;
+  }}
  if(page.kind==='transit')return <PublicTransitScreen language={language} dark={dark} onBack={home}/>;
  if(page.kind==='directory')return <DirectoryScreen language={language} dark={dark} onBack={home} onLogin={onLogin} initialCategory={page.category} initialId={page.placeId}/>;
  if(page.kind==='affairs')return <AffairsScreen language={language} dark={dark} onBack={home} onLogin={onLogin}/>;
@@ -106,13 +123,13 @@ export function CampusScreen({language,dark,onLogin,name,onMe}:{language:Languag
     <PenIcon name="chevron-right" size={16} color={c.tertiary}/>
    </View></Surface></Stagger>;})}</Section>:null}
   {savedPlaces.length?<Section title={zh?'我的常用':'Saved'}><ListGroup>{savedPlaces.map(p=><ListRow key={p.id} icon={p.category==='study'?'book-open':p.category==='shop'?'shopping-bag':'package'} tile={p.category==='study'?c.indigo:p.category==='shop'?'#A9824C':c.orange} title={p.name[language]} subtitle={p.location[language]} chevron onPress={()=>go({kind:'directory',placeId:p.id})}/>)}</ListGroup></Section>:null}
-  <Section title={zh?'校园生活':'Campus life'}>
+  <Section title={zh?'校园生活':'Campus life'} link={zh?'全部服务':'All services'} onLink={()=>go({kind:'life',screen:'services'})}>
    {[tiles.slice(0,2),tiles.slice(2)].map((row,r)=><View key={r} style={{flexDirection:'row',gap:10}}>{row.map(([icon,col,t,s,on])=><Pressable key={t} accessibilityRole="button" accessibilityLabel={t} onPress={on} style={({pressed})=>({flex:1,gap:14,padding:14,borderRadius:18,backgroundColor:c.surface,opacity:pressed?0.7:1})}>
     <IconTile icon={icon} color={col} size={36}/>
     <View style={{gap:2}}><Text style={{fontSize:16,fontWeight:'600',color:c.text}}>{t}</Text><Text numberOfLines={1} style={{fontSize:12,color:c.muted}}>{s||'—'}</Text></View>
    </Pressable>)}</View>)}
   </Section>
-  <ListGroup><ListRow icon="clipboard-check" tile={c.orange} title={zh?'办事指南':'How-to guides'} subtitle={zh?'续借、加退选、补办学生证':'Renewals, add/drop, student card'} chevron onPress={()=>go({kind:'affairs'})}/></ListGroup>
+  <ListGroup><ListRow icon="layout-grid" tile="#24467F" title={zh?'全部校园服务':'All campus services'} subtitle={zh?'学业、预约场地、社团、宿舍、二手':'Academics, booking, clubs, hall, market'} chevron onPress={()=>go({kind:'life',screen:'services'})}/><ListRow icon="clipboard-check" tile={c.orange} title={zh?'办事指南':'How-to guides'} subtitle={zh?'续借、加退选、补办学生证':'Renewals, add/drop, student card'} chevron onPress={()=>go({kind:'affairs'})}/></ListGroup>
   </>}
  </View>;
 }

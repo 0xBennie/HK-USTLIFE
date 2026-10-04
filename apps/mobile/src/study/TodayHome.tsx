@@ -1,4 +1,4 @@
-import {useEffect,useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
 import {Linking,Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import {session} from '../runtime';
@@ -8,6 +8,10 @@ import type {Calendar,CalendarItem,Course,StudyItem} from './types';
 import type {ActivityNotification} from '../../../../src/product/social/types';
 import {dateTimeInZone} from './dates';
 import {DayRibbon} from './DayRibbon';
+import {getWeather,type CampusWeather} from '../campus/weather';
+const weatherIcon=(en?:string)=>!en?'cloud':/thunder/i.test(en)?'cloud-lightning':/rain|shower/i.test(en)?'cloud-rain':/sun|fine/i.test(en)?'sun':/fog|mist|haze/i.test(en)?'cloud-fog':/wind/i.test(en)?'wind':/hot|warm/i.test(en)?'thermometer-sun':'cloud';
+import ReanimatedSwipeable,{type SwipeableMethods} from 'react-native-gesture-handler/ReanimatedSwipeable';
+import {feel} from '../ui/feel';
 
 // Pen board "V2 / 今天 / 今日简报" (jV0eP) and "第一次使用" (TCURr).
 type Task=Extract<StudyItem,{kind:'task'}>;
@@ -33,14 +37,16 @@ export function notificationText(m:ActivityNotification,zh:boolean){
  return {title:(t[m.kind]??['新消息','Update'])[zh?0:1],subject:m.activity?.title??m.post?.title??m.reconnection?.display_name??'',icon:notifIcon[m.kind]??['bell','#8E8E93']};
 }
 
-export function TodayHome({name,onMe,language,courses,items,calendar,loading,error,busy,onToggle,onOpenTask,onAdd,onManage,onActivity,onPost,onCampus,onInbox,onSchool,onRetry}:{
+export function TodayHome({name,onMe,language,courses,items,calendar,loading,error,busy,onToggle,onPostpone,onOpenTask,onAdd,onManage,onActivity,onPost,onCampus,onInbox,onSchool,onRetry}:{
  name?:string;onMe?:()=>void;language:Language;courses:Course[];items:StudyItem[];calendar:Calendar|null;loading:boolean;error:string;busy:boolean;
- onToggle:(task:Task)=>void;onOpenTask:(task:StudyItem)=>void;onAdd:()=>void;onManage:(view:'day'|'week'|'courses'|'all')=>void;
+ onToggle:(task:Task)=>void;onPostpone:(task:Task)=>void;onOpenTask:(task:StudyItem)=>void;onAdd:()=>void;onManage:(view:'day'|'week'|'courses'|'all')=>void;
  onActivity:(id:string)=>void;onPost:(id:string)=>void;onCampus:()=>void;onInbox:()=>void;onSchool:()=>void;onRetry:()=>void}){
  const zh=language==='zh',c=usePenColors(),today=todayHK();
  const [notes,setNotes]=useState<ActivityNotification[]>([]);
  const [ride,setRide]=useState<{name:string;time:string|null;status:string}|null|undefined>(undefined);
  const [showDone,setShowDone]=useState(false);
+ const [weather,setWeather]=useState<CampusWeather|null>(null);
+ useEffect(()=>{let live=true;getWeather().then(w=>{if(live)setWeather(w);}).catch(()=>{});return()=>{live=false;};},[]);
  useEffect(()=>{let live=true;
   session.request<{items:ActivityNotification[]}>('/me/notifications').then(r=>{if(live)setNotes(r.items.filter(n=>!n.read_at).slice(0,3));}).catch(()=>{});
   session.request<{target_kind:string;target_id:string}[]>('/me/campus/bookmarks').then(async b=>{const id=b.find(x=>x.target_kind==='shuttle')?.target_id;if(!id){if(live)setRide(null);return;}
@@ -65,7 +71,13 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
  const dateLine=zh?`${Number(today.slice(5,7))} 月 ${Number(today.slice(8))} 日 · 星期${zhDay[wd]}`:new Date(today+'T00:00:00Z').toLocaleDateString('en-HK',{weekday:'long',month:'short',day:'numeric',timeZone:'UTC'});
  const summary=[upcoming.length?(zh?`还有 ${upcoming.length} 节课`:`${upcoming.length} classes left`):null,dueToday.length?(zh?`${dueToday.length} 项今天截止`:`${dueToday.length} due today`):null,overdue.length?(zh?`${overdue.length} 项逾期`:`${overdue.length} overdue`):null].filter(Boolean).join(zh?'，':', ');
  const deadlineRow=(t:Task,tone:'red'|'orange'|'plain',i:number,last:boolean)=>{const col=courseColor(courses,t.course_id),course=courses.find(x=>x.id===t.course_id);
-  return <Stagger key={t.id} index={i}><Pressable accessibilityRole="button" accessibilityLabel={`${t.title}, ${dueLabel(t,zh)}`} onPress={()=>onOpenTask(t)} style={({pressed})=>({flexDirection:'row',alignItems:'center',gap:12,paddingLeft:16,opacity:pressed?0.6:1})}>
+  const school='school_origin' in t;
+  // Swipe right = complete (green), swipe left = push back one day (orange). Buttons stay the accessible path.
+  return <Stagger key={t.id} index={i}><SwipeRow friction={1.6} overshootFriction={8} leftThreshold={70} rightThreshold={70}
+   renderLeftActions={()=><View style={{width:96,backgroundColor:c.green,alignItems:'center',justifyContent:'center',gap:3}}><PenIcon name="check" size={22} strokeWidth={2.6} color="#FFFFFF"/><Text style={{fontSize:12,fontWeight:'700',color:'#FFFFFF'}}>{zh?'完成':'Done'}</Text></View>}
+   renderRightActions={school?undefined:()=><View style={{width:96,backgroundColor:c.orange,alignItems:'center',justifyContent:'center',gap:3}}><PenIcon name="calendar-arrow-up" size={22} color="#FFFFFF"/><Text style={{fontSize:12,fontWeight:'700',color:'#FFFFFF'}}>{zh?'推迟一天':'+1 day'}</Text></View>}
+   onOpen={direction=>{if(direction==='left'){feel.success();onToggle(t);}else{feel.tap();onPostpone(t);}}}>
+  <Pressable accessibilityRole="button" accessibilityLabel={`${t.title}, ${dueLabel(t,zh)}`} accessibilityActions={[{name:'magicTap',label:zh?'完成':'Complete'}]} onPress={()=>onOpenTask(t)} style={({pressed})=>({flexDirection:'row',alignItems:'center',gap:12,paddingLeft:16,opacity:pressed?0.6:1})}>
    <CheckCircle checked={false} disabled={busy} color={tone==='red'?c.red:tone==='orange'?c.orange:undefined} label={zh?`完成 ${t.title}`:`Complete ${t.title}`} onPress={()=>onToggle(t)}/>
    <View style={{flex:1,flexDirection:'row',alignItems:'center',gap:8,paddingVertical:11,paddingRight:16,borderBottomWidth:last?0:0.5,borderBottomColor:c.border}}>
     <View style={{flex:1,gap:4}}>
@@ -77,7 +89,7 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
     </View>
     <Text style={{fontSize:14,fontWeight:tone==='plain'?'500':'700',color:tone==='red'?c.red:tone==='orange'?c.orange:c.muted}}>{dueLabel(t,zh)}</Text>
    </View>
-  </Pressable></Stagger>;};
+  </Pressable></SwipeRow></Stagger>;};
  const group=(label:string,color:string)=><Text style={{paddingHorizontal:16,paddingTop:12,paddingBottom:2,fontSize:13,fontWeight:'600',color}}>{label}</Text>;
  const nowCard=next?<Stagger index={0}><View style={{borderRadius:22,overflow:'hidden',boxShadow:'0 10px 24px #00000026'}}>
   <Svg style={{position:'absolute',width:'100%',height:'100%'}}><Defs><LinearGradient id="now" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor={next.course_id?courseColor(courses,next.course_id):'#24467F'}/><Stop offset="1" stopColor={shade(next.course_id?courseColor(courses,next.course_id):'#24467F')}/></LinearGradient></Defs><Rect width="100%" height="100%" fill="url(#now)"/></Svg>
@@ -105,7 +117,13 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
   <Stagger index={0}><View style={{gap:6,paddingHorizontal:4}}>
    <Text accessibilityRole="header" style={{fontSize:32,lineHeight:40,fontWeight:'700',letterSpacing:-0.6,color:c.text}}>{greeting}</Text>
    <Text style={{fontSize:15,lineHeight:21,color:c.muted}}>{brief}</Text>
+   {weather?<Pressable accessibilityRole="button" accessibilityLabel={zh?'天气来源：香港天文台':'Weather from HKO'} onPress={()=>void Linking.openURL(weather.source.url)} style={{alignSelf:'flex-start',flexDirection:'row',alignItems:'center',gap:6,marginTop:6,paddingVertical:6,paddingHorizontal:12,borderRadius:99,backgroundColor:c.surface}}>
+    <PenIcon name={weatherIcon(weather.condition?.en)} size={15} color={c.blue}/>
+    <Text style={{fontSize:13,fontWeight:'600',color:c.text}}>{weather.temperature??'–'}° {weather.condition?(zh?weather.condition.zh:weather.condition.en):''}</Text>
+    <Text style={{fontSize:12,color:c.muted}}>{zh?`${weather.station} · 天文台`:`${weather.station} · HKO`}</Text>
+   </Pressable>:null}
   </View></Stagger>
+  {weather?.warnings.filter(w=>w.level!=='info').map(w=><Notice key={w.code} tone={w.level==='severe'?'error':'warning'} text={`${zh?w.zh:w.en}${weather.classes_may_be_suspended?(zh?' · 学校通常停课，以校方公告为准':' · classes usually suspended; check official notice'):''}`}/>)}
   <Stagger index={1}><DayRibbon zh={zh} onWeek={()=>onManage('week')}
    blocks={events.map(e=>({id:e.id,label:courses.find(x=>x.id===e.course_id)?.code||e.title,start:Date.parse(e.starts_at!),end:Date.parse(e.ends_at??e.starts_at!)+(e.ends_at?0:3600e3),color:e.course_id?courseColor(courses,e.course_id):'#24467F',onPress:'activity_origin' in e?()=>onActivity((e as {activity_origin:{id:string}}).activity_origin.id):undefined}))}
    pins={dueToday.filter(t=>t.due_at).map(t=>({id:t.id,label:t.title.split(/[:：]/)[0],at:Date.parse(t.due_at!),tone:'orange' as const,onPress:()=>onOpenTask(t)}))}/></Stagger>
@@ -178,4 +196,11 @@ export function GuestHome({language,title,inbox,onLogin,onCampus}:{language:Lang
   {inbox?<Surface><EmptyState icon="inbox" title={zh?'登录后查看你的消息':'Sign in to see your updates'} body={zh?'报名结果、活动变化和回复都会在这里。':'Signup results, activity changes and replies appear here.'} action={zh?'登录':'Sign in'} onAction={onLogin}/></Surface>:<FirstUse zh={zh} onSchool={onLogin} onAdd={onLogin}/>}
   <Surface onPress={onCampus} padding={12} style={{paddingHorizontal:16}}><View style={{flexDirection:'row',alignItems:'center',gap:12}}><IconTile icon="bus" color={c.teal}/><View style={{flex:1}}><Text style={{fontSize:15,fontWeight:'600',color:c.text}}>{zh?'不用登录也能看校巴':'Shuttles without signing in'}</Text><Text style={{fontSize:12,color:c.muted}}>{zh?'时刻表、小巴实时到站和校园地点':'Timetables, live minibuses and places'}</Text></View><PenIcon name="chevron-right" size={16} color={c.tertiary}/></View></Surface>
  </View>;
+}
+
+/** Swipeable list row that snaps back after triggering its action. */
+function SwipeRow({onOpen,children,...props}:Omit<React.ComponentProps<typeof ReanimatedSwipeable>,'onSwipeableWillOpen'|'ref'>&{onOpen:(direction:'left'|'right')=>void}){
+ const ref=useRef<SwipeableMethods>(null),busy=useRef(false);
+ // RNGH reports the finger direction: a right swipe ('right') reveals the left (complete) action.
+ return <ReanimatedSwipeable ref={ref} {...props} onSwipeableWillOpen={direction=>{if(busy.current)return;busy.current=true;onOpen(direction==='right'?'left':'right');setTimeout(()=>ref.current?.close(),250);}} onSwipeableClose={()=>{busy.current=false;}}>{children}</ReanimatedSwipeable>;
 }

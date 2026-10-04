@@ -2,7 +2,8 @@ import * as Notifications from 'expo-notifications';
 import type {NotificationPort} from './controller';
 const prefix='campus.local.reminder.v1:';
 export const isCampusReminder=(id:string)=>id.startsWith(prefix);
-Notifications.setNotificationHandler({handleNotification:async notification=>({shouldPlaySound:false,shouldSetBadge:false,shouldShowBanner:isCampusReminder(notification.request.identifier),shouldShowList:isCampusReminder(notification.request.identifier)})});
+const ours=(id:string)=>isCampusReminder(id)||id.startsWith('campus.local.');
+Notifications.setNotificationHandler({handleNotification:async notification=>({shouldPlaySound:false,shouldSetBadge:false,shouldShowBanner:ours(notification.request.identifier),shouldShowList:ours(notification.request.identifier)})});
 export const notificationPort:NotificationPort={
  list:async()=>(await Notifications.getAllScheduledNotificationsAsync()).map(n=>({id:n.identifier,owned:isCampusReminder(n.identifier)})),
  cancel:id=>Notifications.cancelScheduledNotificationAsync(id),
