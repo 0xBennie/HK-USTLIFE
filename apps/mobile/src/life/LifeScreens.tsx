@@ -186,7 +186,7 @@ export function HallScreen({zh,onBack}:Base){
   {until?<HeroActions><PrimaryButton tone="soft" label={zh?'取消计时':'Cancel'} onPress={()=>void cancel()}/></HeroActions>
    :<View style={{flexDirection:'row',gap:10}}>{PRESETS.map(m=><View key={m} style={{flex:1}}><PrimaryButton tone={m===DEFAULT_WASH?'accent':'soft'} label={zh?`${m} 分钟`:`${m} min`} onPress={()=>void start(m)}/></View>)}</View>}
   <ListGroup>
-   <ListRow icon="wrench" tile="#D98A1C" title={zh?'宿舍报修与住宿事务':'Hall repairs & housing'} subtitle={zh?'学生住宿官方网站':'Official student housing site'} chevron onPress={()=>void Linking.openURL('https://sao.hkust.edu.hk/')}/>
+   <ListRow icon="building" tile="#D98A1C" title={zh?'住宿事务':'Student housing'} subtitle={zh?'学生住宿及宿舍生活处（SHRLO）官网':'Student Housing & Residential Life Office'} chevron onPress={()=>void Linking.openURL('https://shrl.hkust.edu.hk/')}/>
   </ListGroup>
  </View>;
 }
