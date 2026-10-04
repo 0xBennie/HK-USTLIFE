@@ -1,4 +1,5 @@
 import {useSceneFocus} from '../navigation/TabScene';
+import {OfficialEventsScreen,OfficialEventsSection} from './OfficialEvents';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {AppState,Image,Pressable,ScrollView,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
@@ -51,12 +52,12 @@ function ActivityRow({activity:a,zh,last,onOpen}:{activity:Activity;zh:boolean;l
 export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,onNavigate,onDepthChange,createRequest=0}:{language:Language;dark:boolean;onLogin:()=>void;initialId:string|null;onDismissTarget:()=>void;onNavigate:()=>void;onDepthChange?:(nested:boolean)=>void;createRequest?:number}){
  const sceneActive=useSceneFocus();
  const zh=language==='zh',c=usePenColors(),profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
- const [selected,setSelected]=useState<string|null>(initialId),[creating,setCreating]=useState(false),[filtersOpen,setFiltersOpen]=useState(false);
+ const [selected,setSelected]=useState<string|null>(initialId),[creating,setCreating]=useState(false),[filtersOpen,setFiltersOpen]=useState(false),[official,setOfficial]=useState(false);
  const [filters,setFilters]=useState<Filters>(emptyFilters),[applied,setApplied]=useState(filters);
  const [items,setItems]=useState<Activity[]>([]),[cursor,setCursor]=useState<string|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');const epoch=useRef(0),lock=useRef(false);
  useEffect(()=>{if(initialId)setSelected(initialId);},[initialId]);
  useEffect(onNavigate,[selected,creating,onNavigate]);
- useEffect(()=>{onDepthChange?.(selected!==null||creating);},[selected,creating,onDepthChange]);
+ useEffect(()=>{onDepthChange?.(selected!==null||creating||official);},[selected,creating,official,onDepthChange]);
  // The Discover large-title plus button (Pen MjoHv) starts an activity.
  const created=useRef(createRequest);
  useEffect(()=>{if(createRequest===created.current)return;created.current=createRequest;if(profile)setCreating(true);else onLogin();},[createRequest]);
@@ -66,6 +67,7 @@ export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,
   if(generation===epoch.current){setItems(old=>next?[...old,...page.items.filter(x=>!old.some(y=>y.id===x.id))]:page.items);setCursor(page.next_cursor);}
  }catch(e){if(generation===epoch.current){setItems([]);setCursor(null);setError(e instanceof Error&&!(e instanceof ApiFailure)?(zh?'时间格式应为 YYYY-MM-DD HH:mm。':'Use YYYY-MM-DD HH:mm for the time window.'):socialError(e,language));}}finally{if(generation===epoch.current){lock.current=false;setBusy(false);}}},[applied,language]);
  useEffect(()=>{if(!sceneActive||selected||creating)return;void load();const listener=AppState.addEventListener('change',state=>{if(state==='active')void load();});return()=>{epoch.current++;lock.current=false;listener.remove();};},[load,selected,creating,sceneActive]);
+ if(official)return <OfficialEventsScreen zh={zh} onBack={()=>setOfficial(false)}/>;
  if(creating)return <ActivityForm language={language} dark={dark} onBack={()=>setCreating(false)} onSaved={id=>{setCreating(false);setSelected(id);}}/>;
  if(selected)return <ActivityDetail key={selected} id={selected} language={language} dark={dark} onLogin={onLogin} onNavigate={onNavigate} onBack={()=>{setSelected(null);onDismissTarget();}}/>;
  const choose=(key:keyof Filters,value:string)=>setFilters({...filters,[key]:value});
@@ -74,6 +76,7 @@ export function DiscoverScreen({language,dark,onLogin,initialId,onDismissTarget,
  const filtered=JSON.stringify(applied)!==JSON.stringify(emptyFilters);
  const options=(key:keyof Filters,values:[string,string][])=> <PillRow>{values.map(([value,label])=><FilterPill key={value} label={label} selected={filters[key]===value} onPress={()=>choose(key,value)}/>)}</PillRow>;
  return <View style={{gap:18}}>
+  <OfficialEventsSection zh={zh} onAll={()=>setOfficial(true)}/>
   <PillRow>
    <FilterPill label={zh?'全部':'All'} selected={!applied.interaction} onPress={()=>quick('')}/>
    <FilterPill label={interactionLabel('quiet',zh)} selected={applied.interaction==='quiet'} onPress={()=>quick('quiet')}/>
