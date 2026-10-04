@@ -15,30 +15,42 @@ type Base={zh:boolean;onBack:()=>void};
 const covers={clubs:require('../../assets/covers/1763890965393-1cea435581ab.jpg')};
 const BOOKING='https://booking.hkust.edu.hk/';
 const hk=(iso:string)=>dateTimeInZone(iso,'Asia/Hong_Kong');
-// 2026–27 Fall teaching weeks counted from Mon 31 Aug 2026 (13 teaching weeks).
-const TERM={label:{zh:'2026–27 秋季学期',en:'2026–27 Fall'},start:Date.parse('2026-08-31T00:00:00+08:00'),weeks:13};
-const termWeek=()=>Math.max(1,Math.min(TERM.weeks,Math.floor((Date.now()-TERM.start)/(7*864e5))+1));
+type Name={zh:string;en:string};
+type KeyDate={start:string;end?:string;kind:string;name:Name;days_until:number};
+type Academic={today:string;term:{id:string;name:Name;weeks:number;classes_end:string}|null;week:number|null;phase:'teaching'|'study_break'|'exams'|'between_terms';holiday:{name:Name}|null;next_term:{name:Name;start:string}|null;upcoming:KeyDate[];source:{url:string}};
+const KD_ICON:Record<string,[string,string]>={holiday:['party-popper','#D98A1C'],exam:['pencil-line','#E5484D'],break:['coffee','#2E7D55'],add_drop:['list-plus','#24467F'],enrolment:['list-plus','#24467F'],term:['flag','#24467F'],deadline:['clock','#56647D']};
+const mdDate=(d:string,zh:boolean)=>{const [,m,day]=d.split('-').map(Number);return zh?`${m} 月 ${day} 日`:new Date(d+'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'});};
 const err=(zh:boolean)=>zh?'暂时无法读取，请稍后再试。':'Could not load.';
 
 export function AcademicsScreen({zh,onBack,onGrades,onTimeMatch,onSchool}:Base&{onGrades:()=>void;onTimeMatch:()=>void;onSchool?:()=>void}){
  const c=usePenColors();
- const [courses,setCourses]=useState<Course[]|null>(null),[due,setDue]=useState<number|null>(null),[canvas,setCanvas]=useState('');
+ const [courses,setCourses]=useState<Course[]|null>(null),[due,setDue]=useState<number|null>(null),[canvas,setCanvas]=useState(''),[cal,setCal]=useState<Academic|null>(null);
  useEffect(()=>{let live=true;
+  api.request<Academic>('/campus/academic-calendar').then(r=>{if(live)setCal(r);}).catch(()=>{});
   session.request<{items:Course[]}>('/study/courses?limit=100').then(r=>{if(live)setCourses(r.items);}).catch(()=>{if(live)setCourses([]);});
   session.request<{items:StudyItem[]}>('/study/items?limit=100').then(r=>{if(live)setDue(dueWithinWeek(r.items));}).catch(()=>{});
   session.request<{state:string;provider:string}[]>('/school/connections').then(r=>{if(live)setCanvas(r.find(x=>x.provider==='canvas')?.state??'');}).catch(()=>{});
   return()=>{live=false;};},[]);
- const week=termWeek(),linked=canvas==='connected'||canvas==='partial';
+ const linked=canvas==='connected'||canvas==='partial';
+ // Pen V5 / 学业（真实数据）: week number and key dates from the Registry's official 2026-27 calendar.
+ const phase=cal?.phase==='study_break'?(zh?'温习周':'Study break'):cal?.phase==='exams'?(zh?'考试期':'Exams'):cal?.phase==='between_terms'?(zh?'假期':'Break'):null;
+ const label=cal?.term?(zh?cal.term.name.zh:cal.term.name.en):cal?.next_term?(zh?`下学期 · ${cal.next_term.name.zh}`:`Next · ${cal.next_term.name.en}`):(zh?'学期':'Term');
+ const chip=courses===null?undefined:(zh?`${courses.length} 门课 · 7 天内 ${due??'–'} 项截止`:`${courses.length} courses · ${due??'–'} due in 7 days`);
  return <View style={{gap:18}}>
   <LifeTop zh={zh} title={zh?'学业':'Academics'} onBack={onBack}/>
-  <Hero label={zh?TERM.label.zh:TERM.label.en} value={String(week)} unit={zh?`/ ${TERM.weeks} 周`:`/ ${TERM.weeks} wks`} chip={courses===null?undefined:(zh?`${courses.length} 门课 · 7 天内 ${due??'–'} 项截止`:`${courses.length} courses · ${due??'–'} due in 7 days`)} chipIcon="book-open"/>
-  <View style={{height:6,borderRadius:3,backgroundColor:c.fill,overflow:'hidden'}}><View style={{width:`${week/TERM.weeks*100}%`,height:6,borderRadius:3,backgroundColor:'#24467F'}}/></View>
+  {!cal?<Skeleton height={150} radius={28}/>:cal.week&&cal.term?<>
+   <Hero label={label} value={String(cal.week)} unit={zh?`/ ${cal.term.weeks} 周`:`/ ${cal.term.weeks} wks`} chip={chip} chipIcon="book-open"/>
+   <View style={{height:6,borderRadius:3,backgroundColor:c.fill,overflow:'hidden'}}><View style={{width:`${cal.week/cal.term.weeks*100}%`,height:6,borderRadius:3,backgroundColor:'#24467F'}}/></View>
+  </>:<Hero label={label} value={phase??'–'} chip={chip} chipIcon="book-open"/>}
   <ListGroup>
    <ListRow icon="circle-check" tile="#E5484D" title={zh?'Canvas 作业':'Canvas assignments'} subtitle={linked?(zh?'已连接 · 自动进入「今天」':'Connected · flows into Today'):(zh?'粘贴 Canvas 令牌即可自动同步':'Paste a Canvas token to sync')} value={linked?(zh?'已连接':'On'):(zh?'连接':'Connect')} valueColor={linked?'#2E9E5B':'#24467F'} chevron onPress={onSchool}/>
    <ListRow icon="chart-column" tile="#24467F" title={zh?'成绩分布':'Grade distribution'} subtitle={zh?'同学匿名上报 · 满 10 人才显示':'Anonymous reports · shown at n ≥ 10'} chevron onPress={onGrades}/>
    <ListRow icon="users" tile="#7A5C8E" title={zh?'和同学找共同空闲':'Find common free time'} subtitle={zh?'只比对空闲时段，不共享课表':'Compares free slots only'} chevron onPress={onTimeMatch}/>
    <ListRow icon="graduation-cap" tile="#56647D" title={zh?'成绩与考试（SIS）':'Grades & exams (SIS)'} subtitle={zh?'学校开放 SIS 授权后自动同步':'Syncs once HKUST approves SIS access'} value={zh?'待批准':'Pending'}/>
   </ListGroup>
+  {cal?.upcoming.length?<Section title={zh?'校历':'Key dates'} link={zh?'官方校历':'Official'} onLink={()=>void Linking.openURL(cal.source.url)}>
+   <ListGroup>{cal.upcoming.slice(0,4).map(k=>{const [icon,tile]=KD_ICON[k.kind]??['calendar','#56647D'];return <ListRow key={k.start+k.kind+k.name.en} icon={icon} tile={tile} title={zh?k.name.zh:k.name.en} subtitle={k.end?`${mdDate(k.start,zh)} – ${mdDate(k.end,zh)}`:mdDate(k.start,zh)} value={k.days_until<=0?(zh?'进行中':'Now'):k.days_until===1?(zh?'明天':'Tomorrow'):(zh?`${k.days_until} 天后`:`in ${k.days_until} d`)} valueColor={k.days_until<=7?'#D98A1C':undefined}/>;})}</ListGroup>
+  </Section>:null}
   <Section title={zh?'我的课程':'My courses'}>
    {courses===null?<Skeleton height={120} radius={28}/>:courses.length?<ListGroup>{courses.map(x=><ListRow key={x.id} icon="book-open" tile="#24467F" title={x.code||x.title} subtitle={x.code?x.title:undefined}/>)}</ListGroup>:<Surface><Text style={{fontSize:15,color:c.muted}}>{zh?'还没有课程。连接 Canvas 或在「今天」添加。':'No courses yet. Connect Canvas or add one.'}</Text></Surface>}
   </Section>
