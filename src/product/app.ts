@@ -9,6 +9,7 @@ import { registerSchoolRoutes } from './school/routes.js';
 import { CANVAS_CONTRACT, createCanvasConnector } from './school/canvas.js';
 import { createWeather } from './campus/weather.js';
 import { createLifeStore } from './life/store.js';
+import { createCalendarSubscriptions } from './calendar/subscriptions.js';
 import {registerActivityMaintenanceRoutes} from './social/maintenance-routes.js';
 import {createShuttleStore} from './campus/shuttle-store.js';
 import {registerShuttleMaintenanceRoutes} from './campus/shuttle-maintenance-routes.js';
@@ -37,7 +38,7 @@ import { registerCalendarRoutes } from './calendar/routes.js';
 import { registerLearningRoutes } from './learning/routes.js';
 import { projectReminders, REMINDER_DAYS } from './reminders/projection.js';
 
-export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch; schoolContracts?:Contracts; canvasFetch?:typeof fetch; canvas?:boolean; weatherFetch?:typeof fetch }) {
+export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch; schoolContracts?:Contracts; canvasFetch?:typeof fetch; canvas?:boolean; weatherFetch?:typeof fetch; calendarFetch?:typeof fetch }) {
   if (process.env.NODE_ENV === 'production') throw new Error('Local development mail is forbidden in production.');
   const now = options.now ?? Date.now;
   const db = openDatabase(options.dataDir);
@@ -137,6 +138,11 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
     return cal.days.flatMap(d => d.events).filter(e => e.kind === 'event' && e.status !== 'cancelled' && e.starts_at).map(e => ({ start: Date.parse(e.starts_at!), end: Date.parse(e.ends_at ?? e.starts_at!) + (e.ends_at ? 0 : 3600e3) }));
   };
   const life = createLifeStore(db, now, busyFor);
+  const subscriptions = createCalendarSubscriptions(db, now, calendars, options.calendarFetch);
+  app.get('/api/v1/calendar/subscriptions', async r => ok(subscriptions.list(uid(r)), r.id));
+  app.post('/api/v1/calendar/subscriptions', async r => ok(await subscriptions.subscribe(uid(r), r.body), r.id));
+  app.post('/api/v1/calendar/subscriptions/refresh', async r => ok(await subscriptions.refresh(uid(r)), r.id));
+  app.delete('/api/v1/calendar/subscriptions/:id', async r => ok(subscriptions.remove(uid(r), idParam(r)), r.id));
   const idParam = (request: import('fastify').FastifyRequest) => z.object({ id: z.string().min(1).max(80) }).parse(request.params).id;
   app.get('/api/v1/me/time-groups', async r => ok(life.groups(uid(r)), r.id));
   app.post('/api/v1/me/time-groups', async r => ok(life.createGroup(uid(r), r.body), r.id));

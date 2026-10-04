@@ -343,6 +343,12 @@ const migrations = [{ version: 1, sql: `
   ('nova-intern','nova','机器人软件实习生','2027 暑期 · COMP/ELEC','https://example.com/careers',1),
   ('nova-grad','nova','嵌入式工程师（应届）','全职 · 2027 年 6 月入职','https://example.com/careers',2);
  INSERT INTO employer_talks(id,employer_id,title,venue,starts_at) VALUES ('nova-talk','nova','校园宣讲 + 现场面试','LTB · 19:00',1791802800000);
+` }, { version: 22, sql: `
+ CREATE TABLE calendar_subscriptions (
+  id TEXT PRIMARY KEY, owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  source_id TEXT NOT NULL REFERENCES calendar_sources(id) ON DELETE CASCADE,
+  url TEXT NOT NULL, last_success_at INTEGER, last_error TEXT, created_at INTEGER NOT NULL
+ );
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

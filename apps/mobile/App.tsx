@@ -29,7 +29,7 @@ import { StudyScreen } from './src/study/StudyScreen';
 import { GuestHome } from './src/study/TodayHome';
 import { refreshBrief } from './src/reminders/brief';
 import { checkWeatherAlerts } from './src/campus/weather';
-import { syncCanvasIfDue } from './src/study/canvas-sync';
+import { refreshSubscriptionsIfDue, syncCanvasIfDue } from './src/study/canvas-sync';
 import { refreshWidget } from './src/widgets/today-widget';
 
 function CampusApp() {
@@ -77,7 +77,7 @@ function CampusApp() {
   const colors = palette[dark ? 'dark' : 'light'], t = strings[language];
   useEffect(() => { void session.restore(); }, []);
   useEffect(()=>{
-    const refresh=()=>{void reminders.refresh();const p=session.snapshot().profile;if(p){void refreshBrief(p.id,(p.language??'zh')==='zh');void checkWeatherAlerts(p.id,(p.language??'zh')==='zh').catch(()=>{});void syncCanvasIfDue(p);}void refreshWidget();};
+    const refresh=()=>{void reminders.refresh();const p=session.snapshot().profile;if(p){void refreshBrief(p.id,(p.language??'zh')==='zh');void checkWeatherAlerts(p.id,(p.language??'zh')==='zh').catch(()=>{});void syncCanvasIfDue(p);void refreshSubscriptionsIfDue();}void refreshWidget();};
     let identity='';
     const unsubscribe=session.subscribe(()=>{const value=session.snapshot();const next=value.status+':'+value.profile?.id+':'+value.profile?.language;if(next!==identity){identity=next;refresh();}});
     const unsubscribeWrites=session.subscribeMutations(()=>void reminders.refresh('invalidate'));
