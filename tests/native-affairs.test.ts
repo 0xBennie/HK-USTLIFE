@@ -1,5 +1,5 @@
 import {it,expect} from 'vitest';
-import {AffairController} from '../apps/mobile/src/affairs/controller';
+import {AcceptRevisionController,AffairController} from '../apps/mobile/src/affairs/controller';
 import {ApiFailure} from '../apps/mobile/src/api';
 const initial=()=>({id:'affair',version:1,template_id:'library',accepted_revision:1,current_revision:1,requires_review:false,step_checks:{check:false},label:'',note:'',submission:'not_reported',self_reported_outcome:'unknown',archived:false,personal_due:null,calendar_saved:false,remind_minutes:null,reported_at:null,outcome_recorded_at:null,official_status:{status:'unknown',reason:'not_connected'},template:{title:{zh:'续借',en:'Renewal'},steps:[{id:'check'}]},current_template:{title:{zh:'续借',en:'Renewal'},steps:[{id:'check'}]}});
 it('serializes saving and checks exact requested effect before clearing draft',async()=>{
@@ -31,4 +31,20 @@ it('accepts normalized equivalent times but rejects another instant in a write r
 it('keeps recovery blocked when refresh fails, with no extra write',async()=>{
  let writes=0,failRead=false;const c=new AffairController('affair',async(_p,o)=>{if(o?.method){writes++;throw Error('lost');}if(failRead)throw Error('offline');return initial();});
  await c.refresh();c.edit({note:'pending'});await c.save();failRead=true;await c.refresh();c.resolve('keep-draft');expect(c.snapshot().phase).toBe('uncertain');expect(await c.save()).toBe(false);expect(writes).toBe(1);
+});
+
+const body={instance_version:1,from_revision:1,to_revision:2,changed_step_choices:{check:'retain' as const}};
+const accepted=()=>({...initial(),version:2,accepted_revision:2,current_revision:2,requires_review:false});
+it('replays the same accept key after a lost response and never sends different choices',async()=>{
+ const keys:string[]=[],bodies:unknown[]=[];let n=0;
+ const c=new AcceptRevisionController('affair',()=>`key-${++n}`,async(_p,o)=>{keys.push(String(o?.idempotencyKey));bodies.push(o?.body);if(keys.length===1)throw Error('lost response');return accepted();});
+ expect(await c.submit(body)).toBeNull();expect(c.snapshot().phase).toBe('uncertain');expect(c.lockedBody()).toEqual(body);
+ expect(await c.submit({...body,changed_step_choices:{check:'reset'}})).toMatchObject({accepted_revision:2});
+ expect(keys).toEqual(['key-1','key-1']);expect(bodies[1]).toEqual(body);expect(c.snapshot().phase).toBe('done');expect(c.lockedBody()).toBeNull();
+});
+it('ends the attempt on a conflict and on a response that still needs review',async()=>{
+ const conflict=new AcceptRevisionController('affair',()=>'k',async()=>{throw new ApiFailure(409,'TEMPLATE_CHANGED','changed');});
+ expect(await conflict.submit(body)).toBeNull();expect(conflict.snapshot().phase).toBe('conflict');expect(conflict.lockedBody()).toBeNull();
+ const stale=new AcceptRevisionController('affair',()=>'k',async()=>({...accepted(),requires_review:true}));
+ expect(await stale.submit(body)).toBeNull();expect(stale.snapshot().phase).toBe('uncertain');expect(stale.lockedBody()).toEqual(body);
 });

@@ -8,6 +8,8 @@ type State={phase:Phase;value:AffairDetail|null;draft:AffairPatch;error:unknown}
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const canonical=(v:unknown):string=>Array.isArray(v)?`[${v.map(canonical).join(',')}]`:object(v)?`{${Object.entries(v).sort(([a],[b])=>a.localeCompare(b)).map(([k,x])=>`${k}:${canonical(x)}`).join(',')}}`:JSON.stringify(v);
 const matches=(a:unknown,b:unknown)=>canonical(a)===canonical(b);
+/** Same comparison the server uses to decide which guide steps changed between revisions. */
+export const sameValue=matches;
 function matchesField(key:string,actual:unknown,wanted:unknown){
  if(key==='personal_due'&&object(actual)&&object(wanted)&&actual.kind==='time'&&wanted.kind==='time')return actual.timezone===wanted.timezone&&typeof actual.at==='string'&&typeof wanted.at==='string'&&Number.isFinite(Date.parse(actual.at))&&Date.parse(actual.at)===Date.parse(wanted.at);
  return matches(actual,wanted);
@@ -39,6 +41,7 @@ export class AffairController{
    this.set({phase:gone?'gone':previous==='uncertain'||previous==='review'?'uncertain':'error',error,...(gone?{value:null}:{})});return false;
   }finally{if(epoch===this.epoch&&this.state.phase==='loading')this.set({phase:'error'});}
  }
+ discard(){if(this.disposed||this.state.phase!=='dirty')return;this.set({phase:'ready',draft:{},error:null});}
  resolve(choice:'use-server'|'keep-draft'){
   if(this.disposed||this.state.phase!=='review'||!this.state.value)return;
   this.set({phase:choice==='use-server'?'ready':'dirty',...(choice==='use-server'?{draft:{}}:{}),error:null});
@@ -52,6 +55,39 @@ export class AffairController{
   }catch(error){if(epoch!==this.epoch)return false;
    const rejected=error instanceof ApiFailure&&error.status>=400&&error.status<500&&error.status!==409;
    this.set({phase:rejected?'error':'uncertain',error});return false;
+  }
+ }
+}
+
+export type AcceptBody={instance_version:number;from_revision:number;to_revision:number;changed_step_choices:Record<string,'retain'|'reset'>};
+type AcceptState={phase:'idle'|'saving'|'uncertain'|'conflict'|'error'|'done';error:unknown};
+/** Accepting a newer guide revision. The write key and body stay together until the server confirms or
+ *  rejects, so a retry after a lost response replays the same request instead of creating a second change. */
+export class AcceptRevisionController{
+ private state:AcceptState={phase:'idle',error:null};private pending:{key:string;body:AcceptBody}|null=null;private disposed=false;private listeners=new Set<()=>void>();
+ constructor(private id:string,private newKey:()=>string,private request:(path:string,options?:RequestOptions)=>Promise<unknown>){}
+ snapshot=()=>this.state;
+ subscribe=(fn:()=>void)=>{this.listeners.add(fn);return()=>{this.listeners.delete(fn);};};
+ private set(patch:Partial<AcceptState>){this.state={...this.state,...patch};this.listeners.forEach(fn=>fn());}
+ /** While an attempt is unconfirmed its choices are fixed; the sheet shows them read-only. */
+ lockedBody=()=>this.pending?.body??null;
+ dispose(){this.disposed=true;this.listeners.clear();}
+ reset(){if(this.state.phase!=='saving'&&!this.pending)this.set({phase:'idle',error:null});}
+ async submit(body?:AcceptBody){
+  if(this.disposed||this.state.phase==='saving')return null;
+  if(!this.pending){if(!body)return null;this.pending={key:this.newKey(),body:clone(body)};}
+  const {key,body:sent}=this.pending;this.set({phase:'saving',error:null});
+  try{
+   const value=await this.request(`/me/affairs/${this.id}/accept-revision`,{method:'POST',body:sent,idempotencyKey:key});
+   if(this.disposed)return null;
+   if(!valid(value,this.id)||value.accepted_revision!==sent.to_revision||value.requires_review)throw new ApiFailure(502,'INVALID_AFFAIR_RESPONSE','Could not confirm the accepted revision.');
+   this.pending=null;this.set({phase:'done',error:null});return value;
+  }catch(error){
+   if(this.disposed)return null;
+   const status=error instanceof ApiFailure?error.status:0;
+   // 409: the record or the guide changed again; any other 4xx is a definite rejection. Both end this attempt.
+   if(status===409||(status>=400&&status<500))this.pending=null;
+   this.set({phase:status===409?'conflict':status>=400&&status<500?'error':'uncertain',error});return null;
   }
  }
 }

@@ -1,4 +1,5 @@
 import {PlainField} from '../ui/Pen';
+import {dateTimeInZone} from '../study/dates';
 import {DepartureBoard} from './DepartureBoard';
 import {usePageTop} from '../navigation/TabScene';
 import {AcademicsScreen,BookingScreen,ClubsScreen,GradesScreen,HallScreen,ServicesScreen,TimeMatchScreen} from '../life/LifeScreens';
@@ -27,12 +28,16 @@ import {CircleButton,EmptyState,Hero,HeroActions,IconTile,ListGroup,ListRow,Noti
 type Catalog={routes:ShuttleRoute[];freshness:string;refresh_due_at:string};
 type Place=typeof directoryData[number]&{version:number;freshness:string};
 type Affair={id:string;template:{title:{zh:string;en:string};steps:{id:string;text:{zh:string;en:string}}[]};step_checks:Record<string,boolean>;personal_due:{kind:'date';date:string}|{kind:'time';at:string}|null;requires_review:boolean};
-type Page={kind:'home'}|{kind:'route';id:string}|{kind:'routes'}|{kind:'directory';category?:string;placeId?:string}|{kind:'transit'}|{kind:'dining'}|{kind:'transit-stop';routeId:string;sequence:number}|{kind:'affairs'}|{kind:'life';screen:'services'|'academics'|'grades'|'booking'|'timematch'|'clubs'|'hall'|'market'|'school'};
+type Page={kind:'home'}|{kind:'route';id:string}|{kind:'routes'}|{kind:'directory';category?:string;placeId?:string}|{kind:'transit'}|{kind:'dining'}|{kind:'transit-stop';routeId:string;sequence:number}|{kind:'affairs';instance?:string}|{kind:'life';screen:'services'|'academics'|'grades'|'booking'|'timematch'|'clubs'|'hall'|'market'|'school'};
 const PATH_ADVISOR='https://pathadvisor.ust.hk/';
 const destinationKey=(id:string)=>id.replace(/^campus-to-/,'');
 const minutesUntil=(scheduled:string)=>Math.round((Date.parse(scheduled)-Date.now())/60000);
 const hkDate=()=>new Date(Date.now()+8*3600e3).toISOString().slice(0,10);
 
+// CSO stop names are official English only; drop the "(see … boarding map)" aside, which the 上客点 row links to.
+const stopName=(s:string)=>s.replace(/\s*\((?:see|please)[^)]*\)\s*/i,' ').trim();
+/** Same wording as the 校园 departure card: minutes under 90, otherwise hours. */
+const waitText=(m:number,zh:boolean)=>m<=0?(zh?'即将开出':'Now'):m<=90?(zh?`${m} 分钟后`:`in ${m} min`):(zh?`约 ${Math.floor(m/60)} 小时后`:`in ~${Math.floor(m/60)} h`);
 export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{language:Language;dark:boolean;onLogin:()=>void;name?:string;onMe?:()=>void;onPost?:(id:string)=>void;onWall?:()=>void}) {
  const zh=language==='zh',c=usePenColors(),sceneActive=useSceneFocus(),navigate=useSceneNavigation(zh);
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
@@ -79,7 +84,7 @@ export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{la
  if(page.kind==='transit')return <TransitHub zh={zh} onBack={home} onRoute={(routeId,sequence)=>go({kind:'transit-stop',routeId,sequence})} onShuttle={id=>go({kind:'route',id})}/>;
  if(page.kind==='transit-stop')return <PublicTransitScreen language={language} dark={dark} initial={{routeId:page.routeId,sequence:page.sequence}} onBack={()=>go({kind:'transit'})}/>;
  if(page.kind==='directory')return <DirectoryScreen language={language} dark={dark} onBack={home} onLogin={onLogin} initialCategory={page.category} initialId={page.placeId}/>;
- if(page.kind==='affairs')return <AffairsScreen language={language} dark={dark} onBack={home} onLogin={onLogin}/>;
+ if(page.kind==='affairs')return <AffairsScreen language={language} dark={dark} onBack={home} onLogin={onLogin} initialInstance={page.instance}/>;
  if(page.kind==='route')return <RouteDetail id={page.id} language={language} dark={dark} onBack={()=>go({kind:'routes'})} onLogin={onLogin}/>;
  if(page.kind==='routes')return <RouteList catalog={catalog} language={language} onBack={home} onRoute={id=>go({kind:'route',id})} onTransit={()=>go({kind:'transit'})}/>;
  const route=outbound.find(r=>r.id===routeId);
@@ -123,7 +128,7 @@ export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{la
    <Text style={{paddingHorizontal:4,fontSize:12,color:c.muted}}>{zh?'校巴为公布时刻表；巴士和小巴为运营方实时预测。':'Shuttles follow published timetables; buses show operator live predictions.'}</Text>
   </Section>
   {affairs.length?<Section title={zh?'办事进度':'In progress'} link={zh?'全部指南':'All guides'} onLink={()=>go({kind:'affairs'})}>{affairs.slice(0,2).map((a,i)=>{const steps=a.template.steps,done=steps.filter(s=>a.step_checks[s.id]).length,next=steps.find(s=>!a.step_checks[s.id]);
-   return <Stagger key={a.id} index={i}><Surface onPress={()=>go({kind:'affairs'})} label={a.template.title[language]}><View style={{flexDirection:'row',alignItems:'center',gap:14}}>
+   return <Stagger key={a.id} index={i}><Surface onPress={()=>go({kind:'affairs',instance:a.id})} label={a.template.title[language]}><View style={{flexDirection:'row',alignItems:'center',gap:14}}>
     <ProgressRing done={done} total={steps.length}/>
     <View style={{flex:1,gap:2}}><Text style={{fontSize:17,fontWeight:'600',color:c.text}}>{a.template.title[language]}</Text><Text numberOfLines={1} style={{fontSize:13,color:a.requires_review?c.orange:c.muted}}>{a.requires_review?(zh?'官方说明有更新，请核对':'Official guide changed — review'):!next?(zh?'步骤都完成了':'All steps done'):`${zh?'下一步：':'Next: '}${next.text[language]}${a.personal_due?.kind==='date'?(zh?` · ${Number(a.personal_due.date.slice(5,7))} 月 ${Number(a.personal_due.date.slice(8))} 日前`:` · by ${a.personal_due.date.slice(5)}`):''}`}</Text></View>
     <PenIcon name="chevron-right" size={16} color={c.tertiary}/>
@@ -161,7 +166,7 @@ function RouteDetail({id,language,dark,onBack,onLogin}:{id:string;language:Langu
  const status:Record<string,string>={scheduled:zh?'今天有班次':'Running today',finished_for_day:zh?'今天的班次已结束':'Finished for today',public_holiday:zh?'公众假期：没有常规班次':'Public holiday: no regular service',non_operating_day:zh?'今天不运行':'Not running today',outside_service_period:zh?'超出公布服务期':'Outside service period',stale:zh?'资料待更新，请核对官方页面':'Needs review; check the official page',holiday_coverage_unknown:zh?'该年份假期未核验':'Holiday calendar unverified'};
  const next=d?.upcoming??[];
  return <View style={{gap:18}}>
-  <PageHeader onBack={onBack} backLabel={zh?'路线':'Routes'} eyebrow={zh?'计划班次 · 非实时车辆位置':'Scheduled · not live vehicle position'} title={d?.route.name[language]??'…'} subtitle={d?`${d.route.origin} → ${d.route.destination}`:undefined}/>
+  <PageHeader onBack={onBack} backLabel={zh?'路线':'Routes'} eyebrow={zh?'计划班次 · 非实时车辆位置':'Scheduled · not live vehicle position'} title={d?.route.name[language]??'…'} subtitle={d?`${stopName(d.route.origin)} → ${stopName(d.route.destination)}`:undefined}/>
   {error?<Notice tone="error" text={zh?'未能取得最新班次，已隐藏结果。':'Could not refresh departures.'}/>:null}
   {!d&&!error?<><Skeleton height={140}/><Skeleton/></>:null}
   {d?<>
@@ -169,12 +174,12 @@ function RouteDetail({id,language,dark,onBack,onLogin}:{id:string;language:Langu
    {next.length?<View style={{backgroundColor:c.surface,borderRadius:18,overflow:'hidden'}}>{next.slice(0,6).map((t,i)=>{const m=minutesUntil(t.scheduled_at);return <View key={t.scheduled_at} style={{flexDirection:'row',alignItems:'center',gap:12,paddingVertical:13,paddingHorizontal:16,borderBottomWidth:i<Math.min(next.length,6)-1?0.5:0,borderBottomColor:c.border}}>
     <View style={{width:10,height:10,borderRadius:5,backgroundColor:i===0?c.teal:'transparent',borderWidth:i===0?0:1.5,borderColor:c.tertiary}}/>
     <Text style={{flex:1,fontSize:20,fontWeight:i===0?'700':'500',color:c.text,fontVariant:['tabular-nums']}}>{t.local_time}</Text>
-    <Text style={{fontSize:15,fontWeight:i===0?'600':'400',color:i===0?c.teal:c.muted}}>{m<=0?(zh?'即将开出':'Now'):zh?`${m} 分钟后`:`in ${m} min`}</Text>
+    <Text style={{fontSize:15,fontWeight:i===0?'600':'400',color:i===0?c.teal:c.muted}}>{waitText(m,zh)}</Text>
    </View>;})}</View>:null}
    <ListGroup header={zh?'全部公布时刻':'Published times'}><View style={{padding:14,flexDirection:'row',flexWrap:'wrap',gap:8}}>{d.timetable.map(t=><View key={t.scheduled_at} style={{paddingVertical:5,paddingHorizontal:10,borderRadius:8,backgroundColor:c.fill}}><Text style={{fontSize:14,color:c.text,fontVariant:['tabular-nums']}}>{t.local_time}</Text></View>)}</View></ListGroup>
    <ListGroup>
     <ListRow icon="map-pin" tile={c.accent} title={zh?'上客点':'Boarding point'} subtitle={zh?'站点说明与官方地图':'Official boarding maps'} chevron onPress={()=>void Linking.openURL(d.source.url)}/>
-    <ListRow icon="info" tile={c.gray} title={zh?'数据来源与更新时间':'Source & freshness'} subtitle={`${zh?'核对于':'Checked'} ${d.source.retrieved_at.slice(0,10)} · ${d.route.valid_from} — ${d.route.valid_to}`} chevron onPress={()=>void Linking.openURL(d.source.url)}/>
+    <ListRow icon="info" tile={c.gray} title={zh?'数据来源与更新时间':'Source & freshness'} subtitle={`${zh?'核对于':'Checked'} ${dateTimeInZone(d.source.retrieved_at,'Asia/Hong_Kong').slice(0,10)} · ${d.route.valid_from} — ${d.route.valid_to}`} chevron onPress={()=>void Linking.openURL(d.source.url)}/>
    </ListGroup>
    <Text style={{paddingHorizontal:16,fontSize:12,lineHeight:17,color:c.muted}}>{zh?'上车需出示校方认可的证件或二维码；本 App 不能代替乘车验证。':'Show school-recognized ID or QR when boarding; this app is not a boarding pass.'}</Text>
    <TargetActions key={id} target={{target_kind:'shuttle',target_id:id}} language={language} dark={dark} onLogin={onLogin}/>

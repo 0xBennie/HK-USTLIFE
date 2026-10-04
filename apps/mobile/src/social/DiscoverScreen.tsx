@@ -21,7 +21,7 @@ import {costText,dayTitle,hhmm,hk} from './activity-time';
 type Filters={q:string;kind:string;interaction:string;language:string;mine:string;from:string;to:string};
 const emptyFilters:Filters={q:'',kind:'',interaction:'',language:'',mine:'',from:'',to:''};
 
-const relative=(iso:string,zh:boolean)=>{const d=Math.round((Date.parse(iso.slice(0,10))-Date.parse(new Date(Date.now()+8*3600e3).toISOString().slice(0,10)))/864e5);const t=cardDateTime(iso).slice(6);return d<=0?(zh?`今天 ${t}`:`Today ${t}`):d===1?(zh?`明天 ${t}`:`Tomorrow ${t}`):zh?`${d} 天后`:`in ${d}d`;};
+const relative=(iso:string,zh:boolean)=>{const d=Math.round((Date.parse(hk(iso).toISOString().slice(0,10))-Date.parse(new Date(Date.now()+8*3600e3).toISOString().slice(0,10)))/864e5);const t=cardDateTime(iso).slice(6);return d<=0?(zh?`今天 ${t}`:`Today ${t}`):d===1?(zh?`明天 ${t}`:`Tomorrow ${t}`):zh?`${d} 天后`:`in ${d}d`;};
 /** Only a live place is a status: confirmed in green, waitlisted in orange; withdrawn or cancelled shows nothing. */
 const activeStatus=(a:Activity,zh:boolean)=>{const p=a.mine?.participation?.status;return p==='confirmed'?{label:participationLabel(p,zh),color:'#2E9E5B'}:p==='waitlisted'?{label:participationLabel(p,zh),color:'#D98A1C'}:null;};
 /** V3 featured card (Plasma "Offers"): full-bleed photo, white time pill, title over a soft dark fade. */
