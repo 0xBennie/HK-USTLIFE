@@ -33,9 +33,15 @@ function dueLabel(t:Task,zh:boolean){
 }
 const notifIcon:Record<string,[string,string]>={joined:['circle-check','#2E9E5B'],waitlisted:['hourglass','#56647D'],promoted:['party-popper','#2E9E5B'],withdrawn:['log-out','#8E8E93'],activity_updated:['clock-alert','#D98A1C'],activity_cancelled:['calendar-x','#E5484D'],activity_removed:['trash','#8E8E93'],comment:['message-circle','#24467F'],post_reply:['message-square-reply','#24467F'],post_resolved:['circle-check-big','#2E9E5B'],reconnection_mutual:['heart-handshake','#A9824C']};
 export function notificationText(m:ActivityNotification,zh:boolean){
- const t:Record<string,[string,string]>={joined:['报名已确认','Signup confirmed'],waitlisted:['已加入候补','On the waitlist'],promoted:['候补到你了','Waitlist place confirmed'],withdrawn:['已退出','Withdrawn'],activity_updated:['活动有变化','Activity changed'],activity_cancelled:['活动已取消','Activity cancelled'],activity_removed:['活动已删除','Activity removed'],comment:['活动讨论有新评论','New comment'],post_reply:['你的帖子有新回复','New reply to your post'],post_resolved:['问题已解决','Question resolved'],reconnection_mutual:['双方都愿意再见面','You both want to meet again']};
- return {title:(t[m.kind]??['新消息','Update'])[zh?0:1],subject:m.activity?.title??m.post?.title??m.reconnection?.display_name??'',icon:notifIcon[m.kind]??['bell','#8E8E93']};
+ // The organizer also receives joined/withdrawn notices for other people's signups.
+ const host=m.activity?.is_organizer===true;
+ const t:Record<string,[string,string]>={joined:host?['有人报名了你的活动','Someone joined your activity']:['报名已确认','Signup confirmed'],waitlisted:['已加入候补','On the waitlist'],promoted:['候补到你了','Waitlist place confirmed'],withdrawn:host?['有人退出了你的活动','Someone left your activity']:['已退出','Withdrawn'],activity_updated:['活动有变化','Activity changed'],activity_cancelled:['活动已取消','Activity cancelled'],activity_removed:['活动已删除','Activity removed'],comment:['活动讨论有新评论','New comment'],post_reply:['你的帖子有新回复','New reply to your post'],post_resolved:['问题已解决','Question resolved'],reconnection_mutual:['双方都愿意再见面','You both want to meet again']};
+ const icon:[string,string]|undefined=host&&m.kind==='joined'?['user-plus','#2E9E5B']:host&&m.kind==='withdrawn'?['user-minus','#8E8E93']:notifIcon[m.kind];
+ return {title:(t[m.kind]??['新消息','Update'])[zh?0:1],subject:m.activity?.title??m.post?.title??m.reconnection?.display_name??'',icon:icon??['bell','#8E8E93']};
 }
+/** "需要你处理" shows changes made by others, not receipts of your own signups; one line per activity or post. */
+const ACTIONABLE=new Set<ActivityNotification['kind']>(['promoted','activity_updated','activity_cancelled','activity_removed','comment','post_reply','post_resolved','reconnection_mutual']);
+const needsYou=(items:ActivityNotification[])=>{const seen=new Set<string>();return items.filter(n=>{if(n.read_at||!ACTIONABLE.has(n.kind))return false;const key=n.activity?`a:${n.activity.id}`:n.post?`p:${n.post.id}`:`n:${n.id}`;if(seen.has(key))return false;seen.add(key);return true;});};
 
 export function TodayHome({name,onMe,language,courses,items,calendar,loading,error,busy,onToggle,onPostpone,onOpenTask,onAdd,onManage,onActivity,onPost,onCampus,onInbox,onSchool,onRetry}:{
  name?:string;onMe?:()=>void;language:Language;courses:Course[];items:StudyItem[];calendar:Calendar|null;loading:boolean;error:string;busy:boolean;
@@ -51,7 +57,7 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
  useEffect(()=>{let live=true;void api.request<{week:number|null;holiday:{name:{zh:string;en:string}}|null;phase:string}>('/campus/academic-calendar').then(v=>{if(live)setTerm(v);}).catch(()=>{});return()=>{live=false;};},[]);
  useEffect(()=>{let live=true;getWeather().then(w=>{if(live)setWeather(w);}).catch(()=>{});return()=>{live=false;};},[]);
  useEffect(()=>{let live=true;
-  session.request<{items:ActivityNotification[]}>('/me/notifications').then(r=>{if(live)setNotes(r.items.filter(n=>!n.read_at).slice(0,3));}).catch(()=>{});
+  session.request<{items:ActivityNotification[]}>('/me/notifications').then(r=>{if(live)setNotes(needsYou(r.items).slice(0,3));}).catch(()=>{});
   session.request<{target_kind:string;target_id:string}[]>('/me/campus/bookmarks').then(async b=>{const id=b.find(x=>x.target_kind==='shuttle')?.target_id;if(!id){if(live)setRide(null);return;}
    const d=await session.request<{route:{name:{zh:string;en:string}};status:string;upcoming:{local_time:string}[]}>(`/transport/routes/${id}/departures`);if(live)setRide({name:d.route.name[zh?'zh':'en'],time:d.upcoming[0]?.local_time??null,status:d.status});}).catch(()=>{if(live)setRide(null);});
   return()=>{live=false;};
@@ -114,7 +120,9 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
  const termLabel=term?.holiday?(zh?term.holiday.name.zh:term.holiday.name.en):term?.week?(zh?`第 ${term.week} 周`:`Week ${term.week}`):term?.phase==='exams'?(zh?'考试期':'Exams'):term?.phase==='study_break'?(zh?'温习周':'Study break'):null;
  // Joined activities are plans, not classes; count them separately so the line stays truthful.
  const classesLeft=upcoming.filter(e=>!('activity_origin' in e)).length,plansLeft=upcoming.length-classesLeft;
- const brief=[termLabel,classesLeft?(zh?`还有 ${classesLeft} 节课`:`${classesLeft} classes left`):(zh?'今天没课了':'No more classes'),plansLeft?(zh?`${plansLeft} 个活动`:`${plansLeft} plans`):null,firstDue?(zh?`${firstDue.title.split(/[:：]/)[0]} ${firstDue.due_at?hk(firstDue.due_at).slice(11):'今天'} 截止`:`${firstDue.title.split(/[:：]/)[0]} due ${firstDue.due_at?hk(firstDue.due_at).slice(11):'today'}`):null,overdue.length?(zh?`${overdue.length} 项已逾期`:`${overdue.length} overdue`):null].filter(Boolean).join(' · ');
+ // "没课了" only when classes already happened today; a day without classes says "没课".
+ const classesToday=events.filter(e=>!('activity_origin' in e)).length;
+ const brief=[termLabel,classesLeft?(zh?`还有 ${classesLeft} 节课`:`${classesLeft} classes left`):classesToday?(zh?'今天没课了':'No more classes'):(zh?'今天没课':'No classes today'),plansLeft?(zh?`${plansLeft} 个活动`:`${plansLeft} plans`):null,firstDue?(zh?`${firstDue.title.split(/[:：]/)[0]} ${firstDue.due_at?hk(firstDue.due_at).slice(11):'今天'} 截止`:`${firstDue.title.split(/[:：]/)[0]} due ${firstDue.due_at?hk(firstDue.due_at).slice(11):'today'}`):null,overdue.length?(zh?`${overdue.length} 项已逾期`:`${overdue.length} overdue`):null].filter(Boolean).join(' · ');
  const dueCount=overdue.length+dueToday.length;
  const nextLabel=next?`${startsIn<=0?(zh?'正在上课':'Now'):hk(next.starts_at!).slice(11)} · ${next.title}`:upcoming.length===0&&events.length?(zh?'今天的课都上完了':'Classes done for today'):(zh?'今天没有课':'No classes today');
  return <View style={{gap:24}}>
@@ -126,12 +134,12 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
    {weather?<Pressable accessibilityRole="button" accessibilityLabel={zh?'天气来源：香港天文台':'Weather from HKO'} onPress={()=>void Linking.openURL(weather.source.url)} style={{alignSelf:'flex-start',flexDirection:'row',alignItems:'center',gap:6,marginTop:6,paddingVertical:6,paddingHorizontal:12,borderRadius:99,backgroundColor:c.surface}}>
     <PenIcon name={weatherIcon(weather.condition?.en)} size={15} color={c.blue}/>
     <Text style={{fontSize:13,fontWeight:'600',color:c.text}}>{weather.temperature??'–'}° {weather.condition?(zh?weather.condition.zh:weather.condition.en):''}</Text>
-    <Text style={{fontSize:12,color:c.muted}}>{zh?`${weather.station} · 天文台`:`${weather.station} · HKO`}</Text>
+    <Text style={{fontSize:12,color:c.muted}}>{zh?`${weather.place?.zh??weather.station} · 天文台`:`${weather.place?.en??weather.station} · HKO`}</Text>
    </Pressable>:null}
   </View></Stagger>
   {weather?.warnings.filter(w=>w.level!=='info').map(w=><Notice key={w.code} tone={w.level==='severe'?'error':'warning'} text={`${zh?w.zh:w.en}${weather.classes_may_be_suspended?(zh?' · 学校通常停课，以校方公告为准':' · classes usually suspended; check official notice'):''}`}/>)}
   <Stagger index={1}><DayRibbon zh={zh} onWeek={()=>onManage('week')}
-   blocks={events.map(e=>({id:e.id,label:courses.find(x=>x.id===e.course_id)?.code||e.title,start:Date.parse(e.starts_at!),end:Date.parse(e.ends_at??e.starts_at!)+(e.ends_at?0:3600e3),color:e.course_id?courseColor(courses,e.course_id):'#24467F',onPress:'activity_origin' in e?()=>onActivity((e as {activity_origin:{id:string}}).activity_origin.id):undefined}))}
+   blocks={events.map(e=>({id:e.id,label:courses.find(x=>x.id===e.course_id)?.code||e.title,icon:'activity_origin' in e?'users' as const:undefined,start:Date.parse(e.starts_at!),end:Date.parse(e.ends_at??e.starts_at!)+(e.ends_at?0:3600e3),color:e.course_id?courseColor(courses,e.course_id):'#24467F',onPress:'activity_origin' in e?()=>onActivity((e as {activity_origin:{id:string}}).activity_origin.id):undefined}))}
    pins={dueToday.filter(t=>t.due_at).map(t=>({id:t.id,label:t.title.split(/[:：]/)[0],at:Date.parse(t.due_at!),tone:'orange' as const,onPress:()=>onOpenTask(t)}))}/></Stagger>
   {error?<Notice tone="error" text={error} action={zh?'重试':'Retry'} onAction={onRetry}/>:null}
   {loading&&!calendar?<View style={{gap:12}}><Skeleton height={190}/><Skeleton height={96}/></View>:null}

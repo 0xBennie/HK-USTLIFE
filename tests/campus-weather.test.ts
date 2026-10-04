@@ -11,7 +11,7 @@ it('returns Sai Kung conditions and flags class-suspension-level warnings',async
  dir=mkdtempSync(join(tmpdir(),'wx-'));
  const app=createProductApp({dataDir:dir,weatherFetch:hko({WRAIN:{name:'暴雨警告信號',code:'WRAINB',issueTime:'2026-10-04T17:00:00+08:00'},WTS:{code:'WTS'}})});
  const r=(await app.inject({method:'GET',url:'/api/v1/campus/weather'})).json().data;
- expect(r).toMatchObject({station:'西貢',temperature:26,humidity:95,condition:{zh:'大雨'},classes_may_be_suspended:true});
+ expect(r).toMatchObject({station:'西貢',place:{zh:'西贡',en:'Sai Kung'},temperature:26,humidity:95,condition:{zh:'大雨'},classes_may_be_suspended:true});
  expect(r.warnings.map((w:{code:string})=>w.code)).toEqual(['WRAINB','WTS']);
  await app.close();
 });

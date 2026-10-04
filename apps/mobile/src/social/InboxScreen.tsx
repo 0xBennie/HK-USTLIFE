@@ -35,8 +35,10 @@ export function InboxScreen({language,dark,name,onMe,onActivity,onPost}:{languag
   if(!m.read_at)void controller.markRead(m.id);
   if(m.reconnection)setReconnection(m.reconnection);else if(m.activity)onActivity(m.activity.id);else if(m.post)onPost(m.post.id);
  }
- const row=(m:ActivityNotification)=>{const [icon,tile]=kindMeta[m.kind];const target=m.reconnection?.display_name??m.activity?.title??m.post?.title;
-  return <ListRow key={m.id} icon={icon} tile={tile} title={labels[m.kind]} titleColor={m.read_at?c.muted:undefined} subtitle={target??(zh?'内容已删除或不可查看':'No longer available')} value={when(m.created_at)} accessory={m.read_at?undefined:<View accessibilityLabel={zh?'未读':'Unread'} style={{width:9,height:9,borderRadius:5,backgroundColor:'#24467F'}}/>} disabled={stale||(!target&&!!m.read_at)} onPress={()=>target?open(m):void controller.markRead(m.id)}/>;};
+ // The organizer also receives joined/withdrawn notices for other people's signups.
+ const row=(m:ActivityNotification)=>{const host=m.activity?.is_organizer===true;const [icon,tile]=host&&m.kind==='joined'?['user-plus','#2E9E5B'] as [PenIconName,string]:host&&m.kind==='withdrawn'?['user-minus','#8E8E93'] as [PenIconName,string]:kindMeta[m.kind];const target=m.reconnection?.display_name??m.activity?.title??m.post?.title;
+  const title=host&&m.kind==='joined'?(zh?'有人报名了你的活动':'Someone joined your activity'):host&&m.kind==='withdrawn'?(zh?'有人退出了你的活动':'Someone left your activity'):labels[m.kind];
+  return <ListRow key={m.id} icon={icon} tile={tile} title={title} titleColor={m.read_at?c.muted:undefined} subtitle={target??(zh?'内容已删除或不可查看':'No longer available')} value={when(m.created_at)} accessory={m.read_at?undefined:<View accessibilityLabel={zh?'未读':'Unread'} style={{width:9,height:9,borderRadius:5,backgroundColor:'#24467F'}}/>} disabled={stale||(!target&&!!m.read_at)} onPress={()=>target?open(m):void controller.markRead(m.id)}/>;};
  const fresh=items.filter(m=>hkDay(m.created_at)===today),older=items.filter(m=>hkDay(m.created_at)!==today);
  return <View style={{gap:18}}>
   <TopBar name={name} onAvatar={onMe} title={zh?'消息':'Inbox'} right={<CircleButton icon="check-check" label={zh?'全部标为已读':'Mark all read'} disabled={busy||unread===0} onPress={()=>void controller.markAll()}/>}/>

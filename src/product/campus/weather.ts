@@ -27,8 +27,10 @@ const current = z.object({
 }).passthrough();
 const summary = z.record(z.string(), z.object({ code: z.string().optional(), issueTime: z.string().optional() }).passthrough());
 
+// HKO returns place names in Traditional Chinese (lang=tc); the app shows them in the reader's language.
+const PLACE: Record<string, { zh: string; en: string }> = { '西貢': { zh: '西贡', en: 'Sai Kung' }, '將軍澳': { zh: '将军澳', en: 'Tseung Kwan O' }, '京士柏': { zh: '京士柏', en: "King's Park" }, '香港天文台': { zh: '香港天文台', en: 'HK Observatory' } };
 export type CampusWeather = {
-  station: string; temperature: number | null; humidity: number | null; condition: { zh: string; en: string } | null; updated_at: string;
+  station: string; place: { zh: string; en: string }; temperature: number | null; humidity: number | null; condition: { zh: string; en: string } | null; updated_at: string;
   warnings: { code: string; zh: string; en: string; level: 'info' | 'warning' | 'severe'; issued_at: string | null }[];
   classes_may_be_suspended: boolean; source: { name: string; url: string };
 };
@@ -45,7 +47,7 @@ export function createWeather(fetcher: typeof fetch = fetch, now: () => number =
     const icon = c.icon[0];
     const warnings = Object.values(w).map(x => { const code = String(x.code ?? ''); const meta = WARN[code]; return meta ? { code, zh: meta[0], en: meta[1], level: meta[2], issued_at: x.issueTime ?? null } : null; }).filter(x => x !== null);
     const value: CampusWeather = {
-      station: station?.place ?? '香港', temperature: station?.value ?? null, humidity: c.humidity?.data[0]?.value ?? null,
+      station: station?.place ?? '香港', place: PLACE[station?.place ?? ''] ?? { zh: station?.place ?? '香港', en: 'Hong Kong' }, temperature: station?.value ?? null, humidity: c.humidity?.data[0]?.value ?? null,
       condition: icon && ICON[icon] ? { zh: ICON[icon][0], en: ICON[icon][1] } : null, updated_at: new Date(c.updateTime).toISOString(),
       warnings, classes_may_be_suspended: warnings.some(x => /^TC(8|9|10)/.test(x.code) || x.code === 'WRAINB'),
       source: { name: '香港天文台 Hong Kong Observatory', url: 'https://www.hko.gov.hk/' },

@@ -2,10 +2,11 @@
 import {useEffect,useState} from 'react';
 import {Pressable,Text,View} from 'react-native';
 import Reanimated,{FadeIn} from 'react-native-reanimated';
-import {PenIcon,usePenColors} from '../ui/Pen';
+import {PenIcon,usePenColors,type PenIconName} from '../ui/Pen';
 import {useAppearance} from '../ui/Appearance';
 
-export type RibbonBlock={id:string;label:string;start:number;end:number;color:string;onPress?:()=>void};
+/** `icon`: joined activities show a glyph instead of a (long) title; the full title is the accessibility label. */
+export type RibbonBlock={id:string;label:string;start:number;end:number;color:string;icon?:PenIconName;onPress?:()=>void};
 export type RibbonPin={id:string;label:string;at:number;tone:'orange'|'red';onPress?:()=>void};
 
 const hourOf=(ms:number)=>{const d=new Date(ms+8*3600e3);return d.getUTCHours()+d.getUTCMinutes()/60;};
@@ -19,8 +20,10 @@ export function DayRibbon({blocks,pins,zh,onWeek}:{blocks:RibbonBlock[];pins:Rib
  const x=(ms:number)=>Math.max(0,Math.min(width,(hourOf(ms)-h0)/(h1-h0)*width));
  const ticks=[];for(let h=h0;h<=h1;h+=3)ticks.push(h);
  const nowH=hourOf(now),showNow=nowH>=h0&&nowH<=h1;
- let lastPin=-999;
- const placed=[...pins].sort((a,b)=>a.at-b.at).slice(0,4).map(p=>{const w=64,want=Math.min(width-w,Math.max(0,x(p.at)-w/2)),left=Math.max(want,lastPin+w+4);lastPin=Math.min(left,width-w);return {...p,left:lastPin,w};});
+ let lastRight=-999;
+ // Flag width follows its label (10pt bold: ≤7pt per Latin character, ~11pt per CJK), capped so four still fit.
+ const pinWidth=(label:string)=>Math.round(Math.min(112,Math.max(44,30+[...label].reduce((n,ch)=>n+(/[\u3000-\u9fff\uff00-\uffef]/.test(ch)?11:7),0))));
+ const placed=[...pins].sort((a,b)=>a.at-b.at).slice(0,4).map(p=>{const w=pinWidth(p.label),want=Math.min(width-w,Math.max(0,x(p.at)-w/2)),left=Math.min(Math.max(want,lastRight+4),width-w);lastRight=left+w;return {...p,left,w};});
  const tone=(t:RibbonPin['tone'])=>t==='red'?c.red:c.orange;
  return <View style={{gap:14,padding:18,borderRadius:28,borderCurve:'continuous',backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder,boxShadow:'0 10px 30px #1B356614'}}>
   <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -32,7 +35,7 @@ export function DayRibbon({blocks,pins,zh,onWeek}:{blocks:RibbonBlock[];pins:Rib
     <View style={{position:'absolute',left:0,right:0,top:47,height:2,borderRadius:1,backgroundColor:c.blue+'1A'}}/>
     {ticks.map(h=>{const left=(h-h0)/(h1-h0)*width;return <View key={h} style={{position:'absolute',left:left-12,top:43,width:24,alignItems:'center'}}><View style={{width:1,height:10,backgroundColor:c.blue+'33'}}/><Text style={{marginTop:20,fontSize:11,fontWeight:'600',color:c.muted,fontVariant:['tabular-nums']}}>{h}</Text></View>;})}
     {blocks.map((b,i)=>{const left=x(b.start),w=Math.max(34,x(b.end)-left),past=b.end<now;return <Reanimated.View key={b.id} entering={reduceMotion?undefined:FadeIn.delay(80*i)} style={{position:'absolute',left,top:30,width:w,height:36}}>
-     <Pressable accessibilityRole="button" accessibilityLabel={b.label} onPress={b.onPress} style={({pressed})=>({flex:1,borderRadius:10,borderCurve:'continuous',alignItems:'center',justifyContent:'center',backgroundColor:b.color,opacity:past?0.35:pressed?0.8:1})}><Text numberOfLines={1} style={{fontSize:10,fontWeight:'800',color:'#FFFFFF',letterSpacing:0.3}}>{b.label.split(' ')[0]}</Text></Pressable>
+     <Pressable accessibilityRole="button" accessibilityLabel={b.label} onPress={b.onPress} style={({pressed})=>({flex:1,borderRadius:10,borderCurve:'continuous',alignItems:'center',justifyContent:'center',backgroundColor:b.color,opacity:past?0.35:pressed?0.8:1})}>{b.icon?<PenIcon name={b.icon} size={15} strokeWidth={2.4} color="#FFFFFF"/>:<Text numberOfLines={1} style={{fontSize:10,fontWeight:'800',color:'#FFFFFF',letterSpacing:0.3}}>{b.label.split(' ')[0]}</Text>}</Pressable>
     </Reanimated.View>;})}
     {placed.map(p=><View key={p.id}>
      <View style={{position:'absolute',left:Math.min(width-2,x(p.at)),top:22,width:2,height:26,backgroundColor:tone(p.tone)}}/>

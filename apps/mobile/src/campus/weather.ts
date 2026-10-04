@@ -2,7 +2,7 @@
 import * as Notifications from 'expo-notifications';
 import * as SecureStore from 'expo-secure-store';
 import {api} from '../runtime';
-export type CampusWeather={station:string;temperature:number|null;humidity:number|null;condition:{zh:string;en:string}|null;updated_at:string;warnings:{code:string;zh:string;en:string;level:'info'|'warning'|'severe';issued_at:string|null}[];classes_may_be_suspended:boolean;source:{name:string;url:string}};
+export type CampusWeather={station:string;place?:{zh:string;en:string};temperature:number|null;humidity:number|null;condition:{zh:string;en:string}|null;updated_at:string;warnings:{code:string;zh:string;en:string;level:'info'|'warning'|'severe';issued_at:string|null}[];classes_may_be_suspended:boolean;source:{name:string;url:string}};
 export const getWeather=()=>api.request<CampusWeather>('/campus/weather');
 const key=(owner:string)=>'campus.weather-alerts.v1.'+owner,seenKey=(owner:string)=>'campus.weather-seen.v1.'+owner;
 export async function weatherAlertsEnabled(owner:string){return (await SecureStore.getItemAsync(key(owner)))!=='off';}

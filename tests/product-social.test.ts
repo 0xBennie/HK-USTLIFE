@@ -64,6 +64,11 @@ it('projects only opt-in calendars, follows organizer changes and atomically can
  expect((await call('POST',`/activities/${x.id}/join`,{activity_version:3},b)).statusCode).toBe(409);
  expect((await call('PATCH',`/activities/${x.id}`,{version:3,title:'Revive'})).statusCode).toBe(409);
 });
+it('tells the organizer a joined notice is about someone else, and the participant it is their own',async()=>{
+ const x=await create();await call('POST',`/activities/${x.id}/join`,{activity_version:1},a);
+ const host=(await inbox(owner)).find((m:any)=>m.kind==='joined'),own=(await inbox(a)).find((m:any)=>m.kind==='joined');
+ expect(host.activity).toMatchObject({id:x.id,is_organizer:true});expect(own.activity).toMatchObject({id:x.id,is_organizer:false});
+});
 it('marks waitlisted and saved-only calendar entries honestly and prevents manual editing of activity projections',async()=>{
  const x=await create();await call('POST',`/activities/${x.id}/join`,{activity_version:1},a);await call('POST',`/activities/${x.id}/join`,{activity_version:1,save_calendar:true},b);
  expect((await day(b))[0].activity_origin.participation).toBe('waitlisted');
