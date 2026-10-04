@@ -47,6 +47,11 @@ export function createCalendarStore(db:DatabaseSync,now:()=>number=Date.now) {
     try {original=occurrenceAt(JSON.parse(row.definition),value.recurrence_id);}catch {throw new ApiError(400,'INVALID_OCCURRENCE','This occurrence cannot be resolved.');}
     if(!local&&!original)throw absent();
     const base=local?.payload??{kind:'event' as const,title:original!.title,body:original!.body,location:original!.location,timezone:timezone.safeParse(original!.timezone).success?original!.timezone:'UTC',all_day:original!.all_day,starts_at:original!.starts_at,ends_at:original!.ends_at,start_date:original!.start_date,end_date:original!.end_date};
+    // Restoring a date that was only cancelled drops the private record, so the date follows the file again
+    // instead of staying pinned as a local change (which would also block later updates from the file).
+    const fields=['title','body','location','all_day','starts_at','ends_at','start_date','end_date'] as const;
+    if(value.status==='active'&&local&&original&&fields.every(k=>((local.payload as Record<string,unknown>)[k]??null)===((original as Record<string,unknown>)[k]??null)))
+      return resetOccurrence(owner,seriesId,{version:value.version,recurrence_id:value.recurrence_id});
     return editOccurrence(owner,seriesId,{version:value.version,recurrence_id:value.recurrence_id,event:{...base,status:value.status}});
   }
   function editOccurrence(owner:string,seriesId:string,input:unknown) {

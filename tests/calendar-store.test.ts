@@ -91,9 +91,12 @@ it('cancel/restore and reset are versioned, owner-scoped and recoverable from so
  expect(()=>store.resetOccurrence('a',s.id,{version:1,recurrence_id:rid})).toThrow(/Refresh/);
  expect(()=>store.setOccurrenceStatus('b',s.id,{version:2,recurrence_id:rid,status:'active'})).toThrow(/not found/);
  store.setOccurrenceStatus('a',s.id,{version:2,recurrence_id:rid,status:'active'});
- expect(store.detail('a',r.source_id).series[0].overrides[0].payload.status).toBe('active');
- store.resetOccurrence('a',s.id,{version:3,recurrence_id:rid});
- expect(store.detail('a',r.source_id).series[0]).toMatchObject({version:4,overrides:[]});
+ // Restoring a date that was only cancelled returns it to the file: no private record is left behind.
+ expect(store.detail('a',r.source_id).series[0]).toMatchObject({version:3,overrides:[]});
+ store.setOccurrenceStatus('a',s.id,{version:3,recurrence_id:rid,status:'cancelled'});
+ expect(()=>store.resetOccurrence('a',s.id,{version:3,recurrence_id:rid})).toThrow(/Refresh/);
+ store.resetOccurrence('a',s.id,{version:4,recurrence_id:rid});
+ expect(store.detail('a',r.source_id).series[0]).toMatchObject({version:5,overrides:[]});
  expect(store.occurrences('a',{from:'2026-10-05',to:'2026-10-06'}).items[0]).toMatchObject({locally_modified:false,status:'active'});
 });
 it('drops raw preview content after confirmation, bounds replay to 24 hours and removes pending source snapshots on deletion',()=>{

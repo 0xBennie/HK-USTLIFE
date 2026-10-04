@@ -52,6 +52,20 @@ describe('private learning API', () => {
     expect((await call('POST',`/calendar/imports/${update.id}/confirm`,{uids:['personal'],resolutions:{personal:'use_source'}})).statusCode).toBe(200);
     expect((await call('GET','/me/calendar?from=2026-10-05&to=2026-10-06')).json().data.days[0].events[0]).toMatchObject({title:'New source',locally_modified:false});
   });
+  it('restoring a date that was only cancelled returns it to the file instead of keeping a private change',async()=>{
+    const content='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:weekly\r\nDTSTART:20261005T010000Z\r\nDTEND:20261005T020000Z\r\nRRULE:FREQ=WEEKLY;COUNT=2\r\nSUMMARY:Lecture\r\nLOCATION:Room 2465\r\nEND:VEVENT\r\nEND:VCALENDAR';
+    const preview=(await call('POST','/calendar/imports/preview',{source_name:'Test',content})).json().data;
+    await call('POST',`/calendar/imports/${preview.id}/confirm`,{uids:['weekly']});
+    const first=(await call('GET','/me/calendar?from=2026-10-05&to=2026-10-06')).json().data.days[0].events[0];
+    const path=`/calendar/series/${first.import_origin.series_id}/occurrence/status`,source=`/calendar/sources/${first.import_origin.source_id}`;
+    expect((await call('PATCH',path,{version:first.version,recurrence_id:first.recurrence_id,status:'cancelled'})).statusCode).toBe(200);
+    expect((await call('GET',source)).json().data.series[0].overrides).toHaveLength(1);
+    const restored=await call('PATCH',path,{version:first.version+1,recurrence_id:first.recurrence_id,status:'active'});expect(restored.statusCode,restored.body).toBe(200);
+    expect((await call('GET',source)).json().data.series[0].overrides).toEqual([]);
+    expect((await call('GET','/me/calendar?from=2026-10-05&to=2026-10-06')).json().data.days[0].events[0]).toMatchObject({title:'Lecture',status:'active',locally_modified:false});
+    const update=(await call('POST','/calendar/imports/preview',{source_id:first.import_origin.source_id,content:content.replace('Room 2465','Room 4210')})).json().data;
+    expect(update.entries[0].action).toBe('update');
+  });
   it('renders imported recurrence exceptions with manual items, stable identity and display timezone', async () => {
     const lines=['BEGIN:VCALENDAR','VERSION:2.0',
       'BEGIN:VEVENT','UID:weekly','DTSTART:20261005T010000Z','DTEND:20261005T020000Z','RRULE:FREQ=WEEKLY;COUNT=4','EXDATE:20261012T010000Z','SUMMARY:Weekly','END:VEVENT',
