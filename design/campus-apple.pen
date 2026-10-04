@@ -62401,6 +62401,255 @@
             },
             {
               "type": "frame",
+              "id": "Q8cPQt",
+              "name": "Section 科大官方活动",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pkSQm",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "gCyXl",
+                      "fill": "#0B0B0C",
+                      "content": "今天在科大",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 20,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "u3Z6L",
+                      "fill": "#7A7A80",
+                      "content": "科大官方活动日历",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Fxsfr",
+                  "fill": "#7A7A80",
+                  "content": "全部 ›",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "b50WEc",
+              "name": "Official events",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A330F",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 20
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "p94tJl",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 14,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "tujII",
+                      "width": 52,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yMJtw",
+                          "fill": "#24467F",
+                          "content": "12:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 17,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "h11ubB",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ujTAo",
+                          "fill": "#0B0B0C",
+                          "content": "Career Mosaic",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "s2vt9c",
+                          "fill": "#7A7A80",
+                          "content": "Atrium · 至 17:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DXB5Q",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 14,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "szVhy",
+                      "width": 52,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OYoAW",
+                          "fill": "#24467F",
+                          "content": "14:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 17,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fpST2",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "j6Ktn2",
+                          "fill": "#0B0B0C",
+                          "content": "Social Science Seminar - Irrational Investors",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "w24j0",
+                          "fill": "#7A7A80",
+                          "content": "Room 3301 (Lift 2 or Lifts 17-18)",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "j1X3A",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "vqxEp",
+                      "width": 52,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OMRpz",
+                          "fill": "#24467F",
+                          "content": "16:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 17,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "VIEas",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "PifDw",
+                          "fill": "#0B0B0C",
+                          "content": "CSE Distinguished Seminar",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "x5NME",
+                          "fill": "#7A7A80",
+                          "content": "Leung Yat Sing Lecture Theater (LT-F)",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
               "id": "PfH72",
               "name": "Section 即将开始",
               "width": "fill_container",
@@ -67048,7 +67297,7 @@
                       "id": "xXZVs",
                       "name": "5",
                       "fill": "$g-ink",
-                      "content": "5",
+                      "content": "6",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 68,
                       "fontWeight": "700",
@@ -67284,6 +67533,183 @@
                     "BMpJq": {
                       "enabled": false,
                       "content": "待批准"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "C4mEZ",
+              "name": "Section 校历",
+              "width": "fill_container",
+              "padding": [
+                4,
+                4,
+                0,
+                4
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "v83hl",
+                  "name": "最近成绩",
+                  "fill": "$g-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "校历",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zbN7c",
+              "name": "Calendar list",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$g-glass",
+              "cornerRadius": 28,
+              "stroke": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 180,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#FFFFFFF2",
+                    "position": 0
+                  },
+                  {
+                    "color": "#FFFFFF40",
+                    "position": 1
+                  }
+                ]
+              },
+              "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 28
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000000F",
+                  "offset": {
+                    "x": 0,
+                    "y": 10
+                  },
+                  "blur": 30
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "inner",
+                  "color": "#FFFFFFB3",
+                  "offset": {
+                    "x": 0,
+                    "y": 1
+                  }
+                }
+              ],
+              "layout": "vertical",
+              "children": [
+                {
+                  "id": "bq3JV",
+                  "type": "ref",
+                  "ref": "s1Jb8y",
+                  "name": "Row 重阳节翌日",
+                  "width": "fill_container",
+                  "stroke": "$g-line",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "descendants": {
+                    "cxtsS": {
+                      "fill": "#D98A1C1F"
+                    },
+                    "HIbgz": {
+                      "icon": "party-popper",
+                      "fill": "#D98A1C"
+                    },
+                    "WWO2Y": {
+                      "content": "重阳节翌日"
+                    },
+                    "c7wmJ": {
+                      "content": "10 月 19 日"
+                    },
+                    "BMpJq": {
+                      "content": "15 天后",
+                      "fill": "$g-muted",
+                      "enabled": true
+                    }
+                  }
+                },
+                {
+                  "id": "mtJel",
+                  "type": "ref",
+                  "ref": "s1Jb8y",
+                  "name": "Row 秋季学期最后一天上课",
+                  "width": "fill_container",
+                  "stroke": "$g-line",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "descendants": {
+                    "cxtsS": {
+                      "fill": "#24467F1F"
+                    },
+                    "HIbgz": {
+                      "icon": "flag",
+                      "fill": "#24467F"
+                    },
+                    "WWO2Y": {
+                      "content": "秋季学期最后一天上课"
+                    },
+                    "c7wmJ": {
+                      "content": "11 月 30 日"
+                    },
+                    "BMpJq": {
+                      "enabled": true,
+                      "content": "57 天后",
+                      "fill": "$g-muted"
+                    }
+                  }
+                },
+                {
+                  "id": "mkEUW",
+                  "type": "ref",
+                  "ref": "s1Jb8y",
+                  "name": "Row 温习周",
+                  "width": "fill_container",
+                  "stroke": "$g-line",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "descendants": {
+                    "cxtsS": {
+                      "fill": "#2E7D551F"
+                    },
+                    "HIbgz": {
+                      "icon": "coffee",
+                      "fill": "#2E7D55"
+                    },
+                    "WWO2Y": {
+                      "content": "温习周"
+                    },
+                    "c7wmJ": {
+                      "content": "12 月 1 日 – 12 月 5 日"
+                    },
+                    "BMpJq": {
+                      "content": "58 天后",
+                      "fill": "$g-muted",
+                      "enabled": true
                     }
                   }
                 }
@@ -70352,21 +70778,21 @@
                   "id": "hGRms",
                   "type": "ref",
                   "ref": "s1Jb8y",
-                  "name": "Row 报修",
+                  "name": "Row 住宿事务",
                   "width": "fill_container",
                   "descendants": {
                     "cxtsS": {
                       "fill": "#D98A1C1F"
                     },
                     "HIbgz": {
-                      "icon": "wrench",
+                      "icon": "building",
                       "fill": "#D98A1C"
                     },
                     "WWO2Y": {
-                      "content": "宿舍报修与住宿事务"
+                      "content": "住宿事务"
                     },
                     "c7wmJ": {
-                      "content": "学生住宿官方网站"
+                      "content": "学生住宿及宿舍生活处（SHRLO）官网"
                     },
                     "BMpJq": {
                       "enabled": false,
@@ -80354,7 +80780,7 @@
                   "fill": "$g-muted",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "3 节课 · Lab 4 今晚截止 · 末班校巴 22:40",
+                  "content": "第 6 周 · 还有 3 节课 · Lab 4 23:59 截止",
                   "lineHeight": 1.4,
                   "fontFamily": "Inter",
                   "fontSize": 15,
@@ -82491,6 +82917,242 @@
                       "enabled": false
                     }
                   }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MKbYn",
+              "name": "Library now",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 28,
+              "stroke": "#FFFFFFF2",
+              "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000000F",
+                "offset": {
+                  "x": 0,
+                  "y": 10
+                },
+                "blur": 30
+              },
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 18,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "b5CZk",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "gEbRG",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "rGXge",
+                          "width": 8,
+                          "height": 8,
+                          "fill": "#2E9E5B",
+                          "cornerRadius": 4
+                        },
+                        {
+                          "type": "text",
+                          "id": "rmD7c",
+                          "fill": "#0B0B0C",
+                          "content": "图书馆 · 现在",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "B2rx0E",
+                      "fill": "#24467F",
+                      "content": "预约研讨室 ›",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "r3hSh2",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sdrjg",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "C1ZAU",
+                          "fill": "#7A7A80",
+                          "content": "馆内",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qn5gH",
+                          "gap": 3,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "jgtxb",
+                              "fill": "#24467F",
+                              "content": "167",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 26,
+                              "fontWeight": "800",
+                              "letterSpacing": -0.5
+                            },
+                            {
+                              "type": "text",
+                              "id": "fJjEa",
+                              "fill": "#7A7A80",
+                              "content": "人",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "N0ePwC",
+                          "fill": "#7A7A80",
+                          "content": "上周此时 180",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 11
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tTSgf",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pRvdz",
+                          "fill": "#7A7A80",
+                          "content": "研讨室已订",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "JC0al",
+                          "gap": 3,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hlJuD",
+                              "fill": "#2E9E5B",
+                              "content": "5",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 26,
+                              "fontWeight": "800",
+                              "letterSpacing": -0.5
+                            },
+                            {
+                              "type": "text",
+                              "id": "hUUV7",
+                              "fill": "#7A7A80",
+                              "content": "/ 55",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "fSC5j",
+                          "fill": "#7A7A80",
+                          "content": "学习舱 0 / 9",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 11
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "w6WvQc",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "IrekJ",
+                          "fill": "#7A7A80",
+                          "content": "LC 学习区",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "VkLnz",
+                          "gap": 3,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "BqZQ8",
+                              "fill": "#24467F",
+                              "content": "24",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 26,
+                              "fontWeight": "800",
+                              "letterSpacing": -0.5
+                            },
+                            {
+                              "type": "text",
+                              "id": "BXZ8e",
+                              "fill": "#7A7A80",
+                              "content": "小时",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "K6YFI",
+                          "fill": "#7A7A80",
+                          "content": "主馆开到 23:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 11
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             },
@@ -86181,21 +86843,21 @@
                   "id": "o2Kfug",
                   "type": "ref",
                   "ref": "s1Jb8y",
-                  "name": "Row 报修",
+                  "name": "Row 住宿事务",
                   "width": "fill_container",
                   "descendants": {
                     "cxtsS": {
                       "fill": "#D98A1C1F"
                     },
                     "HIbgz": {
-                      "icon": "wrench",
+                      "icon": "building",
                       "fill": "#D98A1C"
                     },
                     "WWO2Y": {
-                      "content": "宿舍报修与住宿事务"
+                      "content": "住宿事务"
                     },
                     "c7wmJ": {
-                      "content": "学生住宿官方网站"
+                      "content": "学生住宿及宿舍生活处（SHRLO）官网"
                     },
                     "BMpJq": {
                       "enabled": false,
@@ -90390,6 +91052,1417 @@
           "id": "kiwx7",
           "fill": "#7A7A80",
           "content": "小巴、巴士、港铁为实时到站；校巴为公布时刻表。",
+          "textAlign": "center",
+          "fontFamily": "Noto Sans SC",
+          "fontSize": 12
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "pVLzF",
+      "x": 15600,
+      "y": 25200,
+      "name": "V6 / 餐厅（现在营业）",
+      "width": 393,
+      "fill": "#F2F4F7",
+      "layout": "vertical",
+      "gap": 16,
+      "padding": [
+        58,
+        16,
+        40,
+        16
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "vieP1",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "iaPG9",
+              "width": 44,
+              "height": 44,
+              "fill": "#FFFFFFD9",
+              "cornerRadius": 22,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A331F",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 14
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "WCUIu",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "#0B0B0C"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "NZ7hb",
+              "fill": "#0B0B0C",
+              "content": "餐厅",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 17,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "KZ82H",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "H0K5jH",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 2,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "W11gs",
+              "fill": "#7A7A80",
+              "content": "现在营业",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "GvMF7",
+              "gap": 4,
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CiFP1",
+                  "fill": "#0B0B0C",
+                  "content": "21",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 64,
+                  "fontWeight": "800",
+                  "letterSpacing": -2
+                },
+                {
+                  "type": "text",
+                  "id": "CbMRP",
+                  "fill": "#0B0B0C",
+                  "content": "/ 25 家",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GiOmg",
+              "fill": "#7676801A",
+              "cornerRadius": 99,
+              "gap": 6,
+              "padding": [
+                6,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "Q02YaO",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "info",
+                  "library": "lucide",
+                  "fill": "#7A7A80"
+                },
+                {
+                  "type": "text",
+                  "id": "xJEcZ",
+                  "fill": "#7A7A80",
+                  "content": "假期与特别时间以 CSO 公布为准",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "oTXK9",
+          "width": "fill_container",
+          "height": 46,
+          "fill": "#FFFFFFB3",
+          "cornerRadius": 23,
+          "stroke": "#FFFFFF",
+          "strokeWidth": 1,
+          "gap": 2,
+          "padding": [
+            0,
+            5
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "m2Qh1",
+              "height": 36,
+              "fill": "#24467F1F",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "PyzbV",
+                  "fill": "#24467F",
+                  "content": "营业中",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oQFXl",
+              "height": 36,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "c3qHP",
+                  "fill": "#0B0B0C",
+                  "content": "全部",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "l68syB",
+              "height": 36,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Q6lVI",
+                  "fill": "#0B0B0C",
+                  "content": "快餐",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Grr5P",
+              "height": 36,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "SUN0U",
+                  "fill": "#0B0B0C",
+                  "content": "咖啡",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "LkBDJ",
+              "height": 36,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "LkWXE",
+                  "fill": "#0B0B0C",
+                  "content": "外带",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "gW3iF",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "u2NgxB",
+              "fill": "#0B0B0C",
+              "content": "营业中",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 15,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "cgxNo",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A330F",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 20
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "VLI6P",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "evqzz",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "#2E9E5B1F",
+                      "cornerRadius": 12,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "EKGro",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "utensils",
+                          "library": "lucide",
+                          "fill": "#2E9E5B"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qm5M8",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NdIZ8",
+                          "fill": "#0B0B0C",
+                          "content": "Gold Rice Bowl",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "jTIJk",
+                          "fill": "#7A7A80",
+                          "content": "快餐 · 11:00–21:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uckf5",
+                      "layout": "vertical",
+                      "gap": 1,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "t0M40",
+                          "fill": "#2E9E5B",
+                          "content": "营业中",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "iPhF3",
+                          "fill": "#7A7A80",
+                          "content": "到 21:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XZEhX",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QVSVZ",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "#A9824C1F",
+                      "cornerRadius": 12,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Z00uc9",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "coffee",
+                          "library": "lucide",
+                          "fill": "#A9824C"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bUSTZ",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "KhW1s",
+                          "fill": "#0B0B0C",
+                          "content": "Pacific Coffee",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "FHhkp",
+                          "fill": "#7A7A80",
+                          "content": "咖啡 · 08:00–18:30",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ilMCV",
+                      "layout": "vertical",
+                      "gap": 1,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "s8AQ3",
+                          "fill": "#2E9E5B",
+                          "content": "营业中",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "YmRmK",
+                          "fill": "#7A7A80",
+                          "content": "到 18:30",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "iuKdm",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "U4pxA",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "#24467F1F",
+                      "cornerRadius": 12,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "qh33i",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "shopping-bag",
+                          "library": "lucide",
+                          "fill": "#24467F"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hLFRd",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "oipJY",
+                          "fill": "#0B0B0C",
+                          "content": "Donburi Bowl",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "dSjbD",
+                          "fill": "#7A7A80",
+                          "content": "外带 · 11:00–14:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "iye00",
+                      "layout": "vertical",
+                      "gap": 1,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "e2ZaiZ",
+                          "fill": "#2E9E5B",
+                          "content": "营业中",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "H9y1z",
+                          "fill": "#7A7A80",
+                          "content": "到 14:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DQQNP",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "FKZRn",
+              "fill": "#0B0B0C",
+              "content": "稍后开门",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 15,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "Fw6Tm",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A330F",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 20
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "wqyrj",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "vc1d0",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "#7A7A801F",
+                      "cornerRadius": 12,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "G8DQr",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "utensils",
+                          "library": "lucide",
+                          "fill": "#7A7A80"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WJ59P",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "uMALg",
+                          "fill": "#0B0B0C",
+                          "content": "Seafront Cafeteria",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "b5Ka7g",
+                          "fill": "#7A7A80",
+                          "content": "快餐 · 17:00–00:30",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "h909WP",
+                      "layout": "vertical",
+                      "gap": 1,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hdc3b",
+                          "fill": "#7A7A80",
+                          "content": "17:00 开",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Bgkky",
+                          "fill": "#7A7A80",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NB64b",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "bT1fd",
+              "fill": "#0B0B0C",
+              "content": "时间请看官网",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 15,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "y6gfbP",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0B1A330F",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 20
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Vn128",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "i981wl",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "#7A7A801F",
+                      "cornerRadius": 12,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Al5JW",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "coffee",
+                          "library": "lucide",
+                          "fill": "#7A7A80"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "rDMl0",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Eu6Ki",
+                          "fill": "#0B0B0C",
+                          "content": "Starbucks Coffee",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "p41fW",
+                          "fill": "#7A7A80",
+                          "content": "官网两条时间有冲突",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jLVot",
+                      "layout": "vertical",
+                      "gap": 1,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "sSJJY",
+                          "fill": "#7A7A80",
+                          "content": "以官网为准",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "BVdbC",
+                          "fill": "#7A7A80",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "T8ZXx",
+          "name": "Shops",
+          "clip": true,
+          "width": "fill_container",
+          "fill": "#FFFFFF",
+          "cornerRadius": 24,
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "NJHF8",
+              "type": "ref",
+              "ref": "s1Jb8y",
+              "name": "Row 超市与便利店",
+              "width": "fill_container",
+              "descendants": {
+                "cxtsS": {
+                  "fill": "#A9824C1F"
+                },
+                "HIbgz": {
+                  "icon": "shopping-cart",
+                  "fill": "#A9824C"
+                },
+                "WWO2Y": {
+                  "content": "超市与便利店"
+                },
+                "c7wmJ": {
+                  "content": "Fusion · 7-Eleven"
+                },
+                "BMpJq": {
+                  "enabled": false,
+                  "content": ""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "FghVN",
+          "fill": "#7A7A80",
+          "content": "资料来源：科大校园服务处（CSO）餐厅页面 · 点按看位置",
+          "textAlign": "center",
+          "fontFamily": "Noto Sans SC",
+          "fontSize": 12
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "xKe4t",
+      "x": 16050,
+      "y": 25200,
+      "name": "V6 / 科大官方活动",
+      "width": 393,
+      "fill": "#F2F4F7",
+      "layout": "vertical",
+      "gap": 16,
+      "padding": [
+        58,
+        16,
+        40,
+        16
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "VxwPP",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "TXhv2",
+              "width": 44,
+              "height": 44,
+              "fill": "#FFFFFFD9",
+              "cornerRadius": 22,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 1,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "EfAlz",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "#0B0B0C"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "J0WQO",
+              "fill": "#0B0B0C",
+              "content": "科大官方活动",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 17,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "m2ZSy",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "XpQt9",
+          "width": "fill_container",
+          "height": 46,
+          "fill": "#FFFFFFB3",
+          "cornerRadius": 23,
+          "stroke": "#FFFFFF",
+          "strokeWidth": 1,
+          "gap": 2,
+          "padding": [
+            0,
+            5
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "lzBB8",
+              "height": 36,
+              "fill": "#24467F1F",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "s3dbA",
+                  "fill": "#24467F",
+                  "content": "在校园",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "JUqdh",
+              "height": 36,
+              "fill": "#FFFFFF00",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "GdSPI",
+                  "fill": "#0B0B0C",
+                  "content": "全部",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "AzWZU",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "rwpLE",
+              "fill": "#0B0B0C",
+              "content": "今天 · 10 月 5 日",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 15,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "pxufU",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lmHhu",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 14,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "eYOiY",
+                      "width": 52,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "b4yn6u",
+                          "fill": "#24467F",
+                          "content": "12:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 17,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EAbGn",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "A3hxjA",
+                          "fill": "#0B0B0C",
+                          "content": "Career Mosaic",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "lAowM",
+                          "fill": "#7A7A80",
+                          "content": "Atrium",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "eicpQ",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "mfELW",
+                      "width": 52,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ZzMyA",
+                          "fill": "#24467F",
+                          "content": "16:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 17,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PdK2E",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Z5zI1X",
+                          "fill": "#0B0B0C",
+                          "content": "CSE Distinguished Seminar",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "GDJWL",
+                          "fill": "#7A7A80",
+                          "content": "Leung Yat Sing Lecture Theater (LT-F)",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vOrtm",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "u0B8bR",
+              "fill": "#0B0B0C",
+              "content": "明天 · 周二",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 15,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "hjuRl",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vi4nD",
+                  "width": "fill_container",
+                  "stroke": "#E9EBEF",
+                  "strokeWidth": {
+                    "bottom": 0.5
+                  },
+                  "gap": 14,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VGLTl",
+                      "width": 52,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lon68",
+                          "fill": "#24467F",
+                          "content": "10:00",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 17,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Jbj4J",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "s8DIW",
+                          "fill": "#0B0B0C",
+                          "content": "35 for Life - Blood Donation (6 Oct)",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "eivAh",
+                          "fill": "#7A7A80",
+                          "content": "Tsang Shiu Tim Art Hall",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "YfEPU",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "OoT7m",
+                      "width": 52,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Vjnyd",
+                          "fill": "#24467F",
+                          "content": "16:30",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 17,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cYrnI",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hNRqi",
+                          "fill": "#0B0B0C",
+                          "content": "What Does This Meme? HKUST Edition",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "G5ySgC",
+                          "fill": "#7A7A80",
+                          "content": "Language Commons, Room 3018",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "I8kegQ",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "ZuxbQ",
+              "fill": "#0B0B0C",
+              "content": "长期开放",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 15,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "D4fWU",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ZWwyt",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "CaLgz",
+                      "width": 52,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "B2aqsh",
+                          "fill": "#24467F",
+                          "content": "全天",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 17,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GedLZ",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ePEWO",
+                          "fill": "#0B0B0C",
+                          "content": "Northlandia in the Making: A Solo Exhibition",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "DGnFm",
+                          "fill": "#7A7A80",
+                          "content": "Library G/F Gallery · 至 1 月 17 日",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "l0TuGK",
+          "fill": "#7A7A80",
+          "content": "资料来源：科大大学活动日历 calendar.hkust.edu.hk · 点按看详情与报名",
           "textAlign": "center",
           "fontFamily": "Noto Sans SC",
           "fontSize": 12
