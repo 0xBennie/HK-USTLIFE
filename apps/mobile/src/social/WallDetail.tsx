@@ -89,7 +89,7 @@ export function WallDetail({id,language,dark,onBack,onLogin,onNavigate}:{id:stri
     <View style={{flex:1,gap:4}}>
      <View style={{flexDirection:'row',alignItems:'center',gap:6}}><Text style={{fontSize:14,fontWeight:'700',color:c.text}}>{r.author.display_name}</Text><Text style={{flex:1,fontSize:12,color:c.muted}}>{relativeTime(r.created_at,zh)}</Text>{r.is_mine?<Pressable hitSlop={10} accessibilityLabel={zh?'删除我的回复':'Delete my reply'} onPress={()=>confirm(zh?'删除这条回复？':'Delete this reply?',r.body,()=>act(`/replies/${r.id}`,'DELETE',{version:r.version}))}><PenIcon name="trash" size={15} color={c.muted}/></Pressable>:null}</View>
      <Text selectable style={{fontSize:15,lineHeight:22,color:c.text}}>{r.body}</Text>
-     <SafetyActions target={{kind:'reply',id:String(r.id)}} author={r.author} language={language} dark={dark} disabled={frozen} onChanged={()=>void load()}/>
+     <SafetyActions quiet="inline" target={{kind:'reply',id:String(r.id)}} author={r.author} language={language} dark={dark} disabled={frozen} onChanged={()=>void load()}/>
     </View>
    </View></Stagger>)}{cursor?<View style={{borderTopWidth:0.5,borderTopColor:c.border}}><ViewAll label={zh?'加载较早回复':'Earlier replies'} onPress={()=>void load(cursor)}/></View>:null}</View>}
    {!profile?<View style={{flexDirection:'row'}}><PrimaryButton label={zh?'登录后回复':'Sign in to reply'} onPress={onLogin}/></View>:null}

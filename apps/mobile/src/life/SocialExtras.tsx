@@ -26,7 +26,7 @@ export function MarketScreen({zh,onBack,onOpenPost,onCompose}:Base&{onOpenPost:(
   <SearchField value={q} onChangeText={setQ} placeholder={zh?'教材、风扇、换宿舍…':'Books, fans, hall swaps…'}/>
   <GlassChips label={zh?'分类':'Category'} value={kind} onChange={setKind} items={[{value:'all',label:zh?'全部':'All'},{value:'books',label:zh?'教材':'Books'},{value:'electronics',label:zh?'电器':'Electronics'},{value:'furniture',label:zh?'家具':'Furniture'},{value:'swap',label:zh?'换宿':'Swaps'}]}/>
   {posts===null?<View style={{flexDirection:'row',gap:10}}><View style={{flex:1}}><Skeleton height={190}/></View><View style={{flex:1}}><Skeleton height={190}/></View></View>:null}
-  {posts&&!list.length?<Surface><EmptyState icon="shopping-bag" title={zh?'暂时没有':'Nothing here yet'} body={zh?'在校园墙选"二手"发帖，就会出现在这里。':'Post on the wall with the Market topic.'} action={zh?'发布二手':'Post an item'} onAction={onCompose}/></Surface>:null}
+  {posts&&!list.length?<Surface><EmptyState icon="shopping-bag" title={zh?'暂时没有':'Nothing here yet'} body={zh?'在校园墙选“二手”发帖，就会出现在这里。':'Post on the wall with the Market topic.'} action={zh?'发布二手':'Post an item'} onAction={onCompose}/></Surface>:null}
   <View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'space-between',rowGap:10}}>{list.map(p=><Pressable key={p.id} accessibilityRole="button" accessibilityLabel={p.title} onPress={()=>{feel.tap();setOpen(p);}} style={({pressed})=>({width:'48.5%',borderRadius:24,borderCurve:'continuous',overflow:'hidden',backgroundColor:c.surface,boxShadow:'0 6px 18px #1B35660D',transform:[{scale:pressed?0.97:1}]})}>
    <View style={{height:110,alignItems:'center',justifyContent:'center',backgroundColor:tint(p)+'14'}}><PenIcon name={icon(p)} size={40} strokeWidth={1.6} color={tint(p)}/></View>
    <View style={{padding:12,gap:4}}><Text numberOfLines={2} style={{fontSize:14,fontWeight:'700',color:c.text}}>{p.title.replace(/[，,]?\s*HK\$\s?\d+/i,'')}</Text><Text style={{fontSize:14,fontWeight:'800',color:marketKind(p)==='swap'?'#7A5C8E':'#A9824C'}}>{price(p.title)??(marketKind(p)==='swap'?(zh?'换宿':'Swap'):(zh?'面议':'Ask'))}</Text></View>
@@ -66,7 +66,7 @@ export function DataApiScreen({zh,onBack}:Base){
  const endpoints:[string,string][]=[['/me/calendar',zh?'今天和本周的课、截止':'Classes and deadlines'],['/me/notifications',zh?'消息与提醒':'Inbox'],['/transport/routes',zh?'校巴时刻':'Shuttle times'],['/posts',zh?'校园墙':'Campus wall']];
  return <View style={{gap:18}}>
   <LifeTop zh={zh} title={zh?'用 AI 管理生活':'AI for campus life'} onBack={onBack}/>
-  <Surface style={{gap:8}}><Text style={{fontSize:20,fontWeight:'800',color:c.text}}>{zh?'把你的校园数据交给你的 AI':'Hand your campus data to your AI'}</Text><Text style={{fontSize:14,lineHeight:21,color:c.muted}}>{zh?'生成一把只读钥匙，交给 ChatGPT、Claude 或快捷指令，直接问"我这周有什么要交"。它只能读，不能改；随时撤销。':'Create a read-only key for ChatGPT, Claude or Shortcuts. It can read, never write. Revoke anytime.'}</Text></Surface>
+  <Surface style={{gap:8}}><Text style={{fontSize:20,fontWeight:'800',color:c.text}}>{zh?'把你的校园数据交给你的 AI':'Hand your campus data to your AI'}</Text><Text style={{fontSize:14,lineHeight:21,color:c.muted}}>{zh?'生成一把只读钥匙，交给 ChatGPT、Claude 或快捷指令，直接问“我这周有什么要交”。它只能读，不能改；随时撤销。':'Create a read-only key for ChatGPT, Claude or Shortcuts. It can read, never write. Revoke anytime.'}</Text></Surface>
   {fresh?.token?<Surface style={{gap:10,borderWidth:1.5,borderColor:'#2E9E5B'}}>
    <View style={{flexDirection:'row',alignItems:'center',gap:8}}><PenIcon name="key-round" size={18} color="#2E9E5B"/><Text style={{flex:1,fontSize:16,fontWeight:'700',color:c.text}}>{zh?`「${fresh.name}」的钥匙`:`Key for ${fresh.name}`}</Text></View>
    <Text selectable style={{fontSize:13,fontFamily:'Menlo',color:c.text,padding:10,borderRadius:12,backgroundColor:c.fill}}>{fresh.token}</Text>
@@ -80,7 +80,7 @@ export function DataApiScreen({zh,onBack}:Base){
   {/* Pen V5 / 交互 · AI 钥匙: while a fresh key is shown, sharing it is the only primary action. */}
   {fresh?null:<PrimaryButton label={zh?'新建连接':'New connection'} onPress={ask}/>}
   <Section title={zh?'上手教程':'Get started'}><ListGroup>
-   <ListRow icon="message-square-text" tile="#56647D" title={zh?'5 个好用的提问':'5 great prompts'} subtitle={zh?'"帮我排一下这周的复习时间"':'"Plan my revision this week"'} chevron onPress={()=>Alert.alert(zh?'5 个好用的提问':'Prompts',zh?'1. 我这周有哪些截止？\n2. 下一班去坑口的车几点？\n3. 帮我把 Lab 5 拆成三步\n4. 周三下午哪里有空研讨室？\n5. 把今天的安排读给我听':'1. What’s due this week?\n2. Next bus to Hang Hau?\n3. Split Lab 5 into steps\n4. Free study rooms Wed pm?\n5. Read me today’s plan')}/>
+   <ListRow icon="message-square-text" tile="#56647D" title={zh?'5 个好用的提问':'5 great prompts'} subtitle={zh?'“帮我排一下这周的复习时间”':'"Plan my revision this week"'} chevron onPress={()=>Alert.alert(zh?'5 个好用的提问':'Prompts',zh?'1. 我这周有哪些截止？\n2. 下一班去坑口的车几点？\n3. 帮我把 Lab 5 拆成三步\n4. 周三下午哪里有空研讨室？\n5. 把今天的安排读给我听':'1. What’s due this week?\n2. Next bus to Hang Hau?\n3. Split Lab 5 into steps\n4. Free study rooms Wed pm?\n5. Read me today’s plan')}/>
    <ListRow icon="code" tile="#4F6F8C" title={zh?'开发者接口':'Developer endpoints'} subtitle={endpoints.map(e=>e[0]).join(' · ')} chevron onPress={()=>Alert.alert(zh?'开发者接口（只读）':'Endpoints (read-only)',`${base}\n\n`+endpoints.map(([p,d])=>`GET ${p}  ${d}`).join('\n')+`\n\nAuthorization: Bearer ustl_…`)}/>
   </ListGroup></Section>
  </View>;
