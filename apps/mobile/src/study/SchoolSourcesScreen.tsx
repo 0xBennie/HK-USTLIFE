@@ -2,19 +2,21 @@ import {useEffect,useMemo,useRef,useState,useSyncExternalStore} from 'react';
 import {ActionSheetIOS,Alert,Linking,Text,TextInput,View} from 'react-native';
 import {feel} from '../ui/feel';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
-import {CircleButton,GlassCapsule,ListGroup,ListRow,Notice,PenIcon,PrimaryButton,Section,Surface,ViewAll,usePenColors} from '../ui/Pen';
-import {Button,Card,Input} from '../ui/Primitives';
+import {CircleButton,GlassCapsule,ListGroup,ListRow,NavRow,Notice,PenIcon,PrimaryButton,Section,Surface,ViewAll,usePenColors} from '../ui/Pen';
 import {session} from '../runtime';
 import {palette,styles} from '../theme';
 import type {Language} from '../strings';
 import {StudyActionController} from './action-controller';
 import {useNavigationProtection} from '../navigation/InputProtection';
 import {ReminderPicker} from '../reminders/ReminderControls';
+import {dateTimeInZone} from './dates';
 type Connection={provider:'sis'|'canvas';state:string;version:number;last_success_at:string|null;scopes:{id:string;state:string;last_success_at:string|null}[]};
 type RecordItem={id:string;provider:'sis'|'canvas';source_state:string;source_seen_at:string|null;payload:{kind?:string;title:string;starts_at?:string|null;due_at?:string|null;all_day?:boolean};personal:{version:number;notes:string;completed:boolean;remind_minutes:number|null}};
 type Props={language:Language;dark:boolean;onBack:()=>void};
 const labels:Record<string,[string,string]>={approval_required:['待批准','Pending approval'],not_connected:['未连接','Not connected'],syncing:['同步中','Syncing'],connected:['已同步','Synced'],partial:['部分同步','Partially synced'],reauth_required:['需要重新授权','Authorization expired'],revoked:['已撤销','Revoked'],error:['同步失败','Sync failed']};
 const stateText=(state:string,zh:boolean)=>labels[state]?.[zh?0:1]??(zh?'状态待确认':'Status unknown');
+/** "10 月 5 日 12:30" in Hong Kong time (the server sends UTC instants). */
+const syncedAt=(iso:string,zh:boolean)=>{const d=dateTimeInZone(iso,'Asia/Hong_Kong');return zh?`${Number(d.slice(5,7))} 月 ${Number(d.slice(8,10))} 日 ${d.slice(11,16)}`:`${new Date(d.slice(0,10)+'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'})} ${d.slice(11,16)}`;};
 export function SchoolSourcesScreen({language,dark,onBack}:Props){
  const zh=language==='zh',c=palette[dark?'dark':'light'];
  const [connections,setConnections]=useState<Connection[]>([]),[records,setRecords]=useState<RecordItem[]>([]),[cursor,setCursor]=useState<string|null>(null),[editing,setEditing]=useState<RecordItem|null>(null),[loading,setLoading]=useState(false),[error,setError]=useState('');
@@ -41,8 +43,10 @@ export function SchoolSourcesScreen({language,dark,onBack}:Props){
  // Pen board "V5 / 学校连接": navy hero (HKUST sign-in promise), sync sources list, honest status chips.
  const pc=usePenColors();
  const sis=connections.find(x=>x.provider==='sis'),canvas=connections.find(x=>x.provider==='canvas');
- const anyLinked=connections.some(x=>x.state==='connected'||x.state==='partial');
- const heroState=anyLinked?(zh?'已连接':'Connected'):connections.some(x=>x.state==='reauth_required')?(zh?'需要重新登录':'Sign in again'):(zh?'等待学校开放授权':'Waiting for school approval');
+ // The HKUST account card reflects the school sign-in (SIS) only; Canvas uses a personal token and is not the
+ // school account (Pen "V5 / 学校连接 · 连接状态", lTrEk).
+ const anyLinked=sis?.state==='connected'||sis?.state==='partial';
+ const heroState=anyLinked?(zh?'已连接':'Connected'):sis?.state==='reauth_required'?(zh?'需要重新登录':'Sign in again'):(zh?'等待学校开放授权':'Waiting for school approval');
  const [canvasOpen,setCanvasOpen]=useState(false),[canvasToken,setCanvasToken]=useState(''),[canvasBusy,setCanvasBusy]=useState(false),[canvasMsg,setCanvasMsg]=useState('');
  async function connectCanvas(){setCanvasBusy(true);setCanvasMsg('');try{const r=await session.request<{canvas_name:string|null;sync:{state:string}}>('/school/canvas/connect',{method:'POST',body:{token:canvasToken.trim()}});feel.success();setCanvasToken('');setCanvasOpen(false);setCanvasMsg(zh?`已连接${r.canvas_name?`（${r.canvas_name}）`:''}，作业已同步到“今天”。`:'Connected. Assignments synced to Today.');await load();}catch(e){const code=(e as {code?:string})?.code;setCanvasMsg(code==='CANVAS_TOKEN_REJECTED'?(zh?'Canvas 不接受这个令牌，请重新生成。':'Canvas rejected this token.'):code==='CANVAS_TOKEN_INVALID'?(zh?'格式不对，请复制完整的令牌。':'Copy the full token.'):(zh?'连不上 Canvas，请稍后再试。':'Canvas unreachable.'));}finally{setCanvasBusy(false);}}
  const [subs,setSubs]=useState<{id:string;name:string;host:string;last_success_at:string|null;last_error:string|null}[]>([]),[icsOpen,setIcsOpen]=useState(false),[icsUrl,setIcsUrl]=useState('');
@@ -52,7 +56,7 @@ export function SchoolSourcesScreen({language,dark,onBack}:Props){
  const manageSub=(x:typeof subs[number])=>ActionSheetIOS.showActionSheetWithOptions({options:[zh?'立即刷新':'Refresh now',zh?'断开':'Disconnect',zh?'取消':'Cancel'],destructiveButtonIndex:1,cancelButtonIndex:2},i=>{if(i===0)void session.request('/calendar/subscriptions/refresh',{method:'POST',body:{}}).then(()=>{feel.success();void loadSubs();});if(i===1)void session.request(`/calendar/subscriptions/${x.id}`,{method:'DELETE'}).then(()=>void loadSubs());});
  async function syncCanvas(){setCanvasBusy(true);setCanvasMsg('');try{await session.request('/school/canvas/sync',{method:'POST',body:{}});feel.success();setCanvasMsg(zh?'已重新同步。':'Synced.');await load();}catch{setCanvasMsg(zh?'同步失败，请稍后再试。':'Sync failed.');}finally{setCanvasBusy(false);}}
  const manage=(connection:Connection)=>{if(connection.provider==='canvas'&&(connection.state==='not_connected'||connection.state==='reauth_required'||connection.state==='revoked'||connection.version<=0)){setCanvasOpen(true);return;}if(busy||review||connection.version<=0)return;const opts=[...(connection.provider==='canvas'?[zh?'立即同步':'Sync now']:[]),...(connection.state!=='revoked'?[zh?'断开（保留缓存）':'Disconnect, keep cache']:[]),connection.state==='revoked'?(zh?'删除保留的缓存与备注':'Delete retained cache and notes'):(zh?'断开并删除缓存':'Disconnect and delete cache'),zh?'取消':'Cancel'];ActionSheetIOS.showActionSheetWithOptions({options:opts,destructiveButtonIndex:opts.length-2,cancelButtonIndex:opts.length-1},i=>{if(i===opts.length-1)return;if(connection.provider==='canvas'&&i===0){void syncCanvas();return;}revoke(connection,i===opts.length-2);});};
- const row=(icon:string,tile:string,title:string,sub:string,connection?:Connection,planned?:boolean)=><ListRow key={title} icon={icon} tile={tile} title={title} subtitle={connection?.last_success_at?`${sub} · ${zh?'最近同步':'last sync'} ${connection.last_success_at.slice(5,16).replace('T',' ')}`:sub} value={planned?(zh?'规划中':'Planned'):connection?.provider==='canvas'&&(connection.state==='not_connected'||connection.version<=0)?(zh?'连接':'Connect'):connection?stateText(connection.state,zh):(zh?'读取中':'Loading')} chevron={!!connection&&(connection.version>0||connection.provider==='canvas')} valueColor={connection?.provider==='canvas'&&connection.state!=='connected'&&connection.state!=='partial'?'#24467F':undefined} onPress={connection&&(connection.version>0||connection.provider==='canvas')?()=>manage(connection):undefined}/>;
+ const row=(icon:string,tile:string,title:string,sub:string,connection?:Connection,planned?:boolean)=><ListRow key={title} icon={icon} tile={tile} title={title} subtitle={connection?.last_success_at?`${sub} · ${zh?'最近同步':'last sync'} ${syncedAt(connection.last_success_at,zh)}`:sub} value={planned?(zh?'规划中':'Planned'):connection?.provider==='canvas'&&(connection.state==='not_connected'||connection.version<=0)?(zh?'连接':'Connect'):connection?stateText(connection.state,zh):(zh?'读取中':'Loading')} chevron={!!connection&&(connection.version>0||connection.provider==='canvas')} valueColor={connection?.provider==='canvas'&&connection.state!=='connected'&&connection.state!=='partial'?'#24467F':undefined} onPress={connection&&(connection.version>0||connection.provider==='canvas')?()=>manage(connection):undefined}/>;
  if(editing)return <SchoolPersonalEditor key={editing.id} record={editing} language={language} dark={dark} onBack={()=>setEditing(null)} onSaved={()=>{setEditing(null);void load();}}/>;
  return <View style={{gap:18}}>
   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><CircleButton icon="chevron-left" label={zh?'返回':'Back'} disabled={busy} onPress={()=>protect(onBack)}/><CircleButton icon="refresh-cw" label={zh?'刷新状态':'Refresh'} disabled={busy||review} onPress={()=>void load()}/></View>
@@ -62,13 +66,12 @@ export function SchoolSourcesScreen({language,dark,onBack}:Props){
    <View style={{padding:20,gap:12}}>
     <View style={{flexDirection:'row',alignItems:'center',gap:10}}><View style={{width:44,height:44,borderRadius:22,backgroundColor:'#FFFFFF26',alignItems:'center',justifyContent:'center'}}><PenIcon name="graduation-cap" size={22} color="#FFFFFF"/></View><View style={{gap:2}}><Text style={{fontSize:18,fontWeight:'700',color:'#FFFFFF'}}>{zh?'HKUST 账号':'HKUST account'}</Text><Text style={{fontSize:13,color:'#FFFFFFB3'}}>{zh?'ITSO 统一登录 · Duo 验证':'ITSO sign-in · Duo'}</Text></View></View>
     <View style={{alignSelf:'flex-start',flexDirection:'row',alignItems:'center',gap:6,paddingVertical:6,paddingHorizontal:12,borderRadius:99,backgroundColor:'#FFFFFF26'}}><View style={{width:7,height:7,borderRadius:4,backgroundColor:anyLinked?'#5BE38F':'#E0A040'}}/><Text style={{fontSize:13,fontWeight:'600',color:'#FFFFFF'}}>{heroState}</Text></View>
-    <Text style={{fontSize:14,lineHeight:21,color:'#FFFFFFD9'}}>{zh?'开放后点一下就能连接。密码只在学校页面输入，我们不会看到或保存。':'Once open, connect with one tap. Your password stays on the school page; we never see or store it.'}</Text>
+    <Text style={{fontSize:14,lineHeight:21,color:'#FFFFFFD9'}}>{anyLinked?(zh?'课表会自动同步。密码只在学校页面输入，我们不会看到或保存。':'Your timetable syncs automatically. Your password stays on the school page; we never see or store it.'):(zh?'开放后点一下就能连接。密码只在学校页面输入，我们不会看到或保存。':'Once open, connect with one tap. Your password stays on the school page; we never see or store it.')}</Text>
    </View>
   </View>
   {error?<Notice tone="error" text={error} action={zh?'重试':'Retry'} onAction={()=>void load()}/>:null}
-  {review?<Notice tone="warning" text={zh?'操作可能已生效，请先核对当前状态，不要重复断开。':'The change may have applied. Check the current state first.'} action={zh?'核对':'Check'} onAction={()=>void controller.check()}/>:null}
-  {action.phase==='rejected'?<Notice tone="error" text={zh?'操作被拒绝，请刷新后核对权限。':'Request rejected. Refresh and check permissions.'}/>:null}
-  {action.phase==='saved'||action.phase==='reviewed'?<Notice tone="success" text={zh?'已更新，请核对下方状态。':'Updated. Review the status below.'}/>:null}
+  {review?<Notice tone="warning" text={zh?'还没确认是否已断开，先核对再操作。':'Not confirmed yet; check before trying again.'} action={zh?'核对':'Check'} onAction={()=>void controller.check()}/>:null}
+  {action.phase==='rejected'?<Notice tone="error" text={zh?'没完成，请刷新后再试。':'Not done. Refresh and try again.'}/>:null}
   {canvasMsg?<Notice tone={/失败|不接受|不对|连不上|failed|rejected|unreachable|full/i.test(canvasMsg)?'error':'success'} text={canvasMsg}/>:null}
   {canvasOpen?<Surface style={{gap:12}}>
    <View style={{flexDirection:'row',alignItems:'center',gap:10}}><View style={{width:36,height:36,borderRadius:18,backgroundColor:'#E5484D1F',alignItems:'center',justifyContent:'center'}}><PenIcon name="circle-check" size={18} color="#E5484D"/></View><Text style={{flex:1,fontSize:17,fontWeight:'700',color:pc.text}}>{zh?'连接 Canvas':'Connect Canvas'}</Text><CircleButton icon="x" label={zh?'关闭':'Close'} onPress={()=>setCanvasOpen(false)}/></View>
@@ -89,34 +92,44 @@ export function SchoolSourcesScreen({language,dark,onBack}:Props){
   <Section title={zh?'同步内容':'What syncs'}><ListGroup>
    {row('calendar-days','#24467F',zh?'SIS 课表':'SIS timetable',zh?'每学期自动导入，课室变更随时更新':'Imported each term, room changes stay current',sis)}
    {row('circle-check','#E5484D',zh?'Canvas 截止':'Canvas deadlines',zh?'作业与测验，提前提醒':'Assignments and quizzes, reminded early',canvas)}
-   {subs.length?subs.map(x=><ListRow key={x.id} icon="calendar-range" tile="#24467F" title={zh?`${x.name} 日历`:`${x.name} calendar`} subtitle={x.last_error?(zh?'上次刷新失败，点开重试':'Last refresh failed'):x.last_success_at?`${zh?'已同步':'Synced'} ${x.last_success_at.slice(5,16).replace('T',' ')}`:x.host} value={x.last_error?(zh?'需处理':'Fix'):(zh?'已连接':'On')} valueColor={x.last_error?'#E5484D':'#2E9E5B'} chevron onPress={()=>manageSub(x)}/>)
+   {subs.length?subs.map(x=><ListRow key={x.id} icon="calendar-range" tile="#24467F" title={zh?`${x.name} 日历`:`${x.name} calendar`} subtitle={x.last_error?(zh?'上次刷新失败，点开重试':'Last refresh failed'):x.last_success_at?`${zh?'已同步':'Synced'} ${syncedAt(x.last_success_at,zh)}`:x.host} value={x.last_error?(zh?'需处理':'Fix'):(zh?'已连接':'On')} valueColor={x.last_error?'#E5484D':'#2E9E5B'} chevron onPress={()=>manageSub(x)}/>)
     :<ListRow icon="calendar-range" tile="#24467F" title={zh?'Outlook 日历':'Outlook calendar'} subtitle={zh?'粘贴发布链接，学校会议和日程自动同步':'Paste the published link to sync'} value={zh?'连接':'Connect'} valueColor="#24467F" chevron onPress={()=>setIcsOpen(true)}/>}
    {row('mail','#D98A1C',zh?'Outlook 邮件':'Outlook mail',zh?'需要学校开放 Microsoft 365 授权':'Needs HKUST Microsoft 365 approval',undefined,true)}
   </ListGroup></Section>
-  {records.length?<Section title={zh?'已同步的记录':'Synced records'}><ListGroup>{records.map(r=><ListRow key={r.id} icon={r.provider==='sis'?'calendar-days':'circle-check'} tile={r.provider==='sis'?'#24467F':'#E5484D'} title={r.payload.title} subtitle={`${r.provider.toUpperCase()}${r.personal.notes?` · ${zh?'有备注':'has notes'}`:''}`} chevron onPress={()=>setEditing(r)}/>)}{cursor?<ViewAll label={zh?'加载更多':'Load more'} onPress={()=>void load(true)}/>:null}</ListGroup></Section>:null}
+  {records.length?<Section title={zh?'已同步的记录':'Synced records'}><ListGroup>{records.map(r=>{const due=r.payload.due_at??(!r.payload.all_day?r.payload.starts_at??null:null),gone=r.source_state==='removed'||r.source_state==='cancelled';return <ListRow key={r.id} icon={r.provider==='sis'?'calendar-days':'circle-check'} tile={gone?'#8E8E93':r.provider==='sis'?'#24467F':'#E5484D'} title={r.payload.title} subtitle={[r.provider==='sis'?'SIS':'Canvas',gone?(zh?'学校已撤下':'Withdrawn by the school'):due?`${syncedAt(due,zh)} ${r.payload.due_at?(zh?'截止':'due'):(zh?'开始':'starts')}`:'',r.personal.notes?(zh?'有备注':'has notes'):''].filter(Boolean).join(' · ')} chevron onPress={()=>setEditing(r)}/>;})}{cursor?<ViewAll label={zh?'加载更多':'Load more'} onPress={()=>void load(true)}/>:null}</ListGroup></Section>:null}
   <Text style={{paddingHorizontal:4,fontSize:12,lineHeight:18,color:pc.muted}}>{zh?'随时可以在这里断开；断开后学校数据会从“今天”移除。这里断开不代表学校端授权已撤销，请在官方账户核对。':'Disconnect anytime; school data leaves Today. This does not revoke the grant at the school — check your official account.'}</Text>
  </View>;
 }
-function SchoolPersonalEditor({record,language,dark,onBack,onSaved}:Props&{record:RecordItem;onSaved:()=>void}){
- const zh=language==='zh',c=palette[dark?'dark':'light'];
+// Pen "V6 / 学校记录（私人笔记与提醒）" (LfGB3): private notes and a reminder on a synced school item. It never changes
+// the school's requirement; after an unconfirmed save the latest saved copy is read back and the draft is kept.
+function SchoolPersonalEditor({record,language,onBack,onSaved}:Props&{record:RecordItem;onSaved:()=>void}){
+ const zh=language==='zh',c=usePenColors();
  const [current,setCurrent]=useState(record),[notes,setNotes]=useState(record.personal.notes),[minutes,setMinutes]=useState(record.personal.remind_minutes);
  const alive=useRef(true);useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
  const controller=useMemo(()=>new StudyActionController((p,o)=>session.request(p,o),async()=>{try{const latest=await session.request<RecordItem>(`/school/records/${record.id}`);if(!alive.current)return false;setCurrent(latest);return true;}catch{return false;}}),[record.id]);
  const action=useSyncExternalStore(controller.subscribe,controller.snapshot),busy=action.phase==='submitting'||action.phase==='checking',review=action.phase==='uncertain'||action.phase==='refresh-needed';
  const dirty=notes!==current.personal.notes||minutes!==current.personal.remind_minutes;
  const protect=useNavigationProtection(busy?'busy':review?'uncertain':dirty?'draft':'clear',zh);
- const timed=Boolean(current.payload.due_at||(!current.payload.all_day&&current.payload.starts_at));
- return <View style={styles.stack}>
-  <Button variant="ghost" isDisabled={busy} onPress={()=>protect(onBack)}>{zh?'返回学校记录':'Back to school records'}</Button>
-  <Text style={[styles.title,{color:c.text}]}>{current.payload.title}</Text>
-  <Text style={[styles.caption,{color:c.muted}]}>{current.provider.toUpperCase()} · {current.source_state} · {current.source_seen_at}</Text>
-  <Text style={[styles.body,{color:c.muted}]}>{zh?'只修改自己的笔记和提醒，不修改学校要求，也不代表作业已提交。已撤销或失效来源不会生成新提醒。':'These private settings do not change school requirements or submit work. Revoked or stale sources do not generate new reminders.'}</Text>
-  <Text style={[styles.heading,{color:c.text}]}>{zh?'私人笔记':'Private notes'}</Text>
-  <Input accessibilityLabel={zh?'私人笔记':'Private notes'} multiline maxLength={10000} editable={!busy&&!review} value={notes} onChangeText={setNotes} style={{minHeight:140,textAlignVertical:'top'}}/>
-  {timed?<ReminderPicker value={minutes} onChange={setMinutes} language={language} dark={dark} disabled={busy||review}/>:<Text style={{color:c.muted}}>{zh?'这条记录没有可用的具体时间，无法安排提醒。':'No timed deadline is available for a reminder.'}</Text>}
-  {review?<><Text accessibilityRole="alert" style={{color:c.danger}}>{zh?'保存结果需要核对，输入已保留。':'Review the save result. Your input is kept.'}</Text><Button isDisabled={busy} onPress={()=>void controller.check()}>{zh?'读取已保存内容':'Read saved content'}</Button></>:null}
-  {action.phase==='reviewed'||action.phase==='saved'?<Card style={[styles.card,{backgroundColor:c.surface}]}><Text style={{color:c.text}}>{zh?'服务器当前笔记：':'Current saved notes: '}{current.personal.notes||'—'}</Text><Text style={{color:c.muted}}>{zh?'提前提醒分钟：':'Reminder minutes: '}{current.personal.remind_minutes??'—'}</Text><Button variant="secondary" onPress={()=>{setNotes(current.personal.notes);setMinutes(current.personal.remind_minutes);}}>{zh?'采用已保存内容':'Use saved content'}</Button></Card>:null}
-  {action.phase==='rejected'?<Text accessibilityRole="alert" style={{color:c.danger}}>{zh?'保存被拒绝，请检查输入或返回刷新。':'Save rejected. Check input or return and refresh.'}</Text>:null}
-  <Button isDisabled={busy||review||!dirty} onPress={()=>void controller.submit({path:`/school/records/${current.id}/personal`,method:'PATCH',body:{version:current.personal.version,notes,remind_minutes:timed?minutes:null},label:current.payload.title}).then(saved=>{if(saved&&alive.current)onSaved();})}>{busy?(zh?'处理中…':'Working…'):(zh?'保存私人设置':'Save private settings')}</Button>
+ const at=current.payload.due_at??(!current.payload.all_day?current.payload.starts_at??null:null),timed=Boolean(at);
+ const gone=current.source_state==='removed'||current.source_state==='cancelled';
+ const source=current.source_state==='removed'?(zh?'学校已移除这一项':'Removed by the school'):current.source_state==='cancelled'?(zh?'学校已取消这一项':'Cancelled by the school'):at?`${syncedAt(at,zh)} ${current.payload.due_at?(zh?'截止':'due'):(zh?'开始':'starts')}`:'';
+ const tint=gone?c.muted:current.provider==='sis'?'#24467F':'#E5484D';
+ const label=(t:string)=><Text style={{paddingHorizontal:4,paddingTop:4,fontSize:13,fontWeight:'600',color:c.muted}}>{t}</Text>;
+ return <View style={{gap:12}}>
+  <NavRow title={zh?'学校记录':'School record'} backLabel={zh?'返回学校连接':'Back to school connection'} disabled={busy} onBack={()=>protect(onBack)}/>
+  <View style={{flexDirection:'row',alignItems:'center',gap:12,padding:16,borderRadius:20,borderCurve:'continuous',backgroundColor:c.surface}}>
+   <View style={{width:40,height:40,borderRadius:20,alignItems:'center',justifyContent:'center',backgroundColor:tint+'1F'}}><PenIcon name={current.provider==='sis'?'calendar-days':'circle-check'} size={20} color={tint}/></View>
+   <View style={{flex:1,gap:3}}><Text style={{fontSize:17,lineHeight:23,fontWeight:'700',color:c.text}}>{current.payload.title}</Text><Text style={{fontSize:13,color:c.muted}}>{current.provider==='sis'?'SIS':'Canvas'}{source?` · ${source}`:''}</Text></View>
+  </View>
+  <Text style={{paddingHorizontal:4,fontSize:13,lineHeight:19,color:c.muted}}>{zh?'只改你自己的笔记和提醒，不会改学校的要求，也不代表已经提交。':'Only your own notes and reminder change — not the school’s requirement, and it doesn’t mark anything submitted.'}</Text>
+  {label(zh?'私人笔记':'Private notes')}
+  <View style={{minHeight:130,padding:16,borderRadius:20,borderCurve:'continuous',backgroundColor:c.surface}}>
+   <TextInput accessibilityLabel={zh?'私人笔记':'Private notes'} multiline maxLength={10000} editable={!busy&&!review} value={notes} onChangeText={setNotes} placeholder={zh?'只有你自己看得到':'Only you can see this'} placeholderTextColor={c.tertiary} style={{minHeight:98,fontSize:16,lineHeight:23,color:c.text,textAlignVertical:'top',padding:0}}/>
+  </View>
+  {label(zh?'提醒':'Reminder')}
+  {timed&&!gone?<ReminderPicker value={minutes} onChange={setMinutes} language={language} disabled={busy||review}/>:<Text style={{paddingHorizontal:4,fontSize:14,lineHeight:20,color:c.muted}}>{gone?(zh?'学校已撤下这一项，不再提醒。':'The school withdrew this item; no reminders.'):(zh?'这条没有具体时间，不能设提醒。':'This item has no set time, so it can’t remind you.')}</Text>}
+  {review?<Notice tone="warning" text={zh?'还没确认是否保存，输入保留着。':'Not confirmed yet; your input is kept.'} action={zh?'核对':'Check'} onAction={()=>void controller.check()}/>:null}
+  {action.phase==='rejected'?<Notice tone="error" text={zh?'没保存，请检查输入后再试。':'Not saved. Check your input and try again.'}/>:null}
+  <View style={{flexDirection:'row'}}><PrimaryButton label={busy?(zh?'正在保存…':'Saving…'):(zh?'保存':'Save')} disabled={busy||review||!dirty} onPress={()=>void controller.submit({path:`/school/records/${current.id}/personal`,method:'PATCH',body:{version:current.personal.version,notes,remind_minutes:timed&&!gone?minutes:null},label:current.payload.title}).then(saved=>{if(saved&&alive.current)onSaved();})}/></View>
  </View>;
 }

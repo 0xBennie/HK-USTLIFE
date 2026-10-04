@@ -103,10 +103,10 @@ export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExi
   const action = useAction(language);
   const busy=action.busy||exitBusy;
   usePageTop(page);
-  const [stats,setStats]=useState<{joined:number;saved:number;week:number;linked:boolean}|null>(null);
+  const [stats,setStats]=useState<{joined:number;saved:number;week:number;linked:'school'|'canvas'|null}|null>(null);
   useEffect(()=>{if(page!=='home')return;let live=true;
-    Promise.all([session.request<{items:unknown[]}>('/activities?limit=50&mine=participating'),session.request<{items:unknown[]}>('/activities?limit=50&mine=saved'),session.request<{items:{kind:string;status?:string;due_at?:string|null;due_date?:string|null}[]}>('/study/items?limit=100'),session.request<{connections:{state:string}[]}>('/school/records?limit=1').catch(()=>({connections:[]}))])
-     .then(([a,b,items,school])=>{if(live)setStats({joined:a.items.length,saved:b.items.length,week:dueWithinWeek(items.items),linked:school.connections.some(x=>x.state==='connected'||x.state==='partial')});}).catch(()=>{});
+    Promise.all([session.request<{items:unknown[]}>('/activities?limit=50&mine=participating'),session.request<{items:unknown[]}>('/activities?limit=50&mine=saved'),session.request<{items:{kind:string;status?:string;due_at?:string|null;due_date?:string|null}[]}>('/study/items?limit=100'),session.request<{connections:{provider:string;state:string}[]}>('/school/records?limit=1').catch(()=>({connections:[]}))])
+     .then(([a,b,items,school])=>{if(live)setStats({joined:a.items.length,saved:b.items.length,week:dueWithinWeek(items.items),linked:school.connections.some(x=>x.provider==='sis'&&(x.state==='connected'||x.state==='partial'))?'school':school.connections.some(x=>x.provider==='canvas'&&(x.state==='connected'||x.state==='partial'))?'canvas':null});}).catch(()=>{});
     return()=>{live=false;};},[page]);
   if(page==='ai')return <DataApiScreen zh={zh} onBack={()=>setPage('home')}/>;
   if(page==='profile')return <ProfileEditor profile={profile} language={language} onBack={()=>setPage('home')}/>;
@@ -122,7 +122,7 @@ export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExi
       <Text numberOfLines={1} style={{fontSize:32,fontWeight:'700',letterSpacing:-0.5,color:c.text}}>{shownName}</Text>
       <Pressable accessibilityRole="button" onPress={()=>setPage('school')} style={({pressed})=>({flexDirection:'row',alignItems:'center',gap:7,paddingVertical:9,paddingHorizontal:16,borderRadius:99,backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder,opacity:pressed?0.7:1})}>
         <View style={{width:7,height:7,borderRadius:4,backgroundColor:stats?.linked?c.green:c.orange}}/>
-        <Text style={{fontSize:14,fontWeight:'600',color:c.muted}}>{stats?.linked?(zh?'HKUST · 学校账号已连接':'HKUST · school account linked'):(zh?'HKUST · 连接学校账号':'HKUST · link school account')}</Text>
+        <Text style={{fontSize:14,fontWeight:'600',color:c.muted}}>{stats?.linked==='school'?(zh?'HKUST · 学校账号已连接':'HKUST · school account linked'):stats?.linked==='canvas'?(zh?'HKUST · Canvas 已连接':'HKUST · Canvas linked'):(zh?'HKUST · 连接学校账号':'HKUST · link school account')}</Text>
       </Pressable>
     </View></Stagger>
     <Stagger index={1}><View style={{flexDirection:'row',gap:10}}>{([[stats?.joined,zh?'参与的活动':'Joined',()=>setPage('activities')],[stats?.saved,zh?'收藏':'Saved',()=>setPage('saved')],[stats?.week,zh?'7 天内截止':'Due in 7 days',undefined]] as [number|undefined,string,(()=>void)|undefined][]).map(([n,l,on])=><Pressable key={l} disabled={!on} accessibilityRole={on?'button':undefined} onPress={on} style={({pressed})=>({flex:1,alignItems:'center',gap:4,paddingVertical:16,borderRadius:22,borderCurve:'continuous',backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder,opacity:pressed?0.7:1})}>

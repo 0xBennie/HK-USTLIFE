@@ -3,16 +3,20 @@ import {briefEnabled,previewBrief,setBriefEnabled} from './brief';
 import {setWeatherAlerts,weatherAlertsEnabled} from '../campus/weather';
 import * as Notifications from 'expo-notifications';
 import {feel} from '../ui/feel';
-import {Alert,Linking,Switch,Text,View} from 'react-native';
+import {Alert,Linking,Pressable,Switch,Text,View} from 'react-native';
 import {Hero,ListGroup,ListRow,PrimaryButton,Section,usePenColors} from '../ui/Pen';
-import {Button,Card} from '../ui/Primitives';
 import {reminders,session} from '../runtime';
 import {palette,styles} from '../theme';
 import type {Language} from '../strings';
-export function ReminderPicker({value,onChange,language,dark,disabled=false}:{value:number|null;onChange:(value:number|null)=>void;language:Language;dark:boolean;disabled?:boolean}){
- const zh=language==='zh',c=palette[dark?'dark':'light'];
+/** Pen "V6 / 学校记录（私人笔记与提醒）": reminder lead time as chips; a hint only when device reminders are off. */
+export function ReminderPicker({value,onChange,language,disabled=false}:{value:number|null;onChange:(value:number|null)=>void;language:Language;dark?:boolean;disabled?:boolean}){
+ const zh=language==='zh',c=usePenColors(),device=useSyncExternalStore(reminders.subscribe,reminders.snapshot);
  const options:(number|null)[]=[null,0,10,30,60];if(value!==null&&!options.includes(value))options.push(value);
- return <View style={styles.smallStack}><Text style={[styles.body,{color:c.text}]}>{zh?'提醒时间':'Reminder time'}</Text><View style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{options.map(minutes=><Button key={minutes??'none'} variant={value===minutes?'primary':'secondary'} isDisabled={disabled} onPress={()=>onChange(minutes)}>{value===minutes?'✓ ':''}{minutes===null?(zh?'不提醒':'None'):minutes===0?(zh?'准时':'At time'):zh?`提前 ${minutes} 分钟`:`${minutes} min before`}</Button>)}</View><Text style={[styles.caption,{color:c.muted}]}>{zh?'保存后生效；需在“我的”中开启本机提醒并允许通知。':'Saved with this item. Enable device reminders in Me and allow notifications.'}</Text></View>;
+ const text=(m:number|null)=>m===null?(zh?'不提醒':'None'):m===0?(zh?'准时':'At time'):m%60===0?(zh?`提前 ${m/60} 小时`:`${m/60} h before`):(zh?`提前 ${m} 分钟`:`${m} min before`);
+ return <View style={{gap:8}}>
+  <View accessibilityRole="radiogroup" style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{options.map(m=>{const on=value===m;return <Pressable key={m??'none'} accessibilityRole="radio" accessibilityState={{checked:on,disabled}} disabled={disabled} onPress={()=>{feel.select();onChange(m);}} style={({pressed})=>({paddingVertical:8,paddingHorizontal:14,borderRadius:99,backgroundColor:on?c.accent+'1F':c.fill,opacity:disabled?0.45:pressed?0.7:1})}><Text style={{fontSize:14,fontWeight:'600',color:on?c.accent:c.text}}>{text(m)}</Text></Pressable>;})}</View>
+  {!device.enabled?<Text style={{paddingHorizontal:4,fontSize:12,lineHeight:17,color:c.muted}}>{zh?'本机提醒还没开：到「我的 → 提醒」里打开。':'Device reminders are off — turn them on in Me → Reminders.'}</Text>:null}
+ </View>;
 }
 export function ReminderSettings({language,dark}:{language:Language;dark:boolean}){
  const state=useSyncExternalStore(reminders.subscribe,reminders.snapshot),zh=language==='zh',c=palette[dark?'dark':'light'];
