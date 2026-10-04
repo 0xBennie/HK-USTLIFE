@@ -42,5 +42,15 @@ export function createShuttleStore(db:DatabaseSync,now:()=>number,maintenance:Re
   maintenance.audit(actor,'shuttle_holidays','calendar','edit_shuttle_holidays',v.reason,snapshot(before),snapshot(after),check.id);return after;
  });}
  function preview(id:string,input:unknown){const v=z.object({revision:z.number().int().positive(),fields:routeFields,at:z.string()}).strict().parse(input),row=current(v.revision);if(!row.catalog.routes.some(r=>r.id===id))throw new ApiError(404,'ROUTE_NOT_FOUND','Unknown route.');return plannedDepartures(id,v.at,now(),{...row.catalog,routes:row.catalog.routes.map(r=>r.id===id?{...r,...v.fields}:r)});}
- return {read,editRoute,editHolidays,preview};
+ /** Automatic re-confirmation: only called after every route was found unchanged on the live CSO page. */
+ function reconfirm(page:{url:string;sha256:string;retrieved_at:number},holidays:{url:string;retrieved_at:number}|null){return transaction(db,()=>{
+  const before=read(),source={url:page.url,retrieved_at:new Date(page.retrieved_at).toISOString(),sha256:page.sha256,status:200},due=new Date(page.retrieved_at+7*86400000).toISOString();
+  const catalog:ShuttleCatalog={...before.catalog,source,routes:before.catalog.routes.map(r=>({...r,source,refresh_due_at:due})),
+   ...(holidays?{holiday_source:{...before.catalog.holiday_source,url:holidays.url,retrieved_at:new Date(holidays.retrieved_at).toISOString()},holiday_refresh_due_at:new Date(holidays.retrieved_at+30*86400000).toISOString()}:{})};
+  const after=save(before.revision,catalog);
+  // System action: no human actor (actor_id NULL), recorded in the same audit trail as manual edits.
+  db.prepare('INSERT INTO campus_maintenance_audit(target_kind,target_id,actor_id,action,reason,before_json,after_json,source_check_id,created_at) VALUES (?,?,NULL,?,?,?,?,NULL,?)').run('shuttle','catalog','auto_reconfirm_unchanged','Every route matched the live CSO page'+(holidays?'; every holiday listed by 1823':''),JSON.stringify({revision:before.revision,refresh_due_at:before.catalog.refresh_due_at}),JSON.stringify({revision:after.revision,refresh_due_at:after.catalog.refresh_due_at}),now());
+  return after;
+ });}
+ return {read,editRoute,editHolidays,preview,reconfirm};
 }

@@ -13,6 +13,7 @@ import { createLifeStore } from './life/store.js';
 import { createCalendarSubscriptions } from './calendar/subscriptions.js';
 import {registerActivityMaintenanceRoutes} from './social/maintenance-routes.js';
 import {createShuttleStore} from './campus/shuttle-store.js';
+import {CSO_SHUTTLE,verifyHolidays,verifyShuttlePage} from './campus/shuttle-verify.js';
 import {registerShuttleMaintenanceRoutes} from './campus/shuttle-maintenance-routes.js';
 import {createMaintenanceStore} from './campus/maintenance.js';
 import {registerMaintenanceRoutes} from './campus/maintenance-routes.js';
@@ -43,7 +44,7 @@ import { registerLearningRoutes } from './learning/routes.js';
 import { projectReminders, REMINDER_DAYS } from './reminders/projection.js';
 
 const SCHOOL_EMAIL_DOMAINS = ['connect.ust.hk', 'ust.hk'];
-export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch; schoolContracts?:Contracts; canvasFetch?:typeof fetch; canvas?:boolean; weatherFetch?:typeof fetch; calendarFetch?:typeof fetch; mtrFetch?:typeof fetch; libraryFetch?:typeof fetch; eventsFetch?:typeof fetch; testEmailDomains?:string[] }) {
+export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch; schoolContracts?:Contracts; canvasFetch?:typeof fetch; canvas?:boolean; weatherFetch?:typeof fetch; calendarFetch?:typeof fetch; mtrFetch?:typeof fetch; libraryFetch?:typeof fetch; eventsFetch?:typeof fetch; autoVerify?:boolean; testEmailDomains?:string[] }) {
   if (process.env.NODE_ENV === 'production') throw new Error('Local development mail is forbidden in production.');
   const now = options.now ?? Date.now;
   const db = openDatabase(options.dataDir);
@@ -93,6 +94,18 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   const maintenance=createMaintenanceStore(db,directory,now,options.sourceFetch);
   const shuttles=createShuttleStore(db,now,maintenance);
   registerCampusRoutes(app,ok,now,()=>shuttles.read().catalog);
+  // Daily: re-verify the shuttle snapshot against the live CSO page and 1823 holidays; extend validity only if unchanged.
+  if(options.autoVerify){
+   const verify=async()=>{try{
+    const html=await (await fetch(CSO_SHUTTLE,{signal:AbortSignal.timeout(20_000)})).text();
+    const catalog=shuttles.read().catalog,page=verifyShuttlePage(html,catalog);
+    if(!page.ok){console.warn('shuttle timetable changed on CSO; snapshot left to expire for review:',page.failed.join(','));return;}
+    let holidays:{url:string;retrieved_at:number}|null=null;
+    try{const url='https://www.1823.gov.hk/common/ical/en.json',json=JSON.parse((await (await fetch(url,{signal:AbortSignal.timeout(20_000)})).text()).replace(/^\uFEFF/,''));if(verifyHolidays(json,catalog).ok)holidays={url,retrieved_at:now()};}catch{}
+    shuttles.reconfirm({url:CSO_SHUTTLE,sha256:page.sha256,retrieved_at:now()},holidays);
+   }catch(error){console.warn('shuttle verification failed:',error instanceof Error?error.message:error);}};
+   void verify();const timer=setInterval(()=>void verify(),24*3600_000);timer.unref();app.addHook('onClose',async()=>clearInterval(timer));
+  }
   registerActivityMaintenanceRoutes(app,social,requireAdmin,ok);
   registerShuttleMaintenanceRoutes(app,shuttles,requireAdmin,ok);
   registerPublicTransitRoutes(app,createPublicTransit({now,fetch:options.transitFetch}),ok);
