@@ -38,7 +38,8 @@ import { registerCalendarRoutes } from './calendar/routes.js';
 import { registerLearningRoutes } from './learning/routes.js';
 import { projectReminders, REMINDER_DAYS } from './reminders/projection.js';
 
-export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch; schoolContracts?:Contracts; canvasFetch?:typeof fetch; canvas?:boolean; weatherFetch?:typeof fetch; calendarFetch?:typeof fetch }) {
+const SCHOOL_EMAIL_DOMAINS = ['connect.ust.hk', 'ust.hk'];
+export function createProductApp(options: { dataDir: string; now?: () => number; transitFetch?: typeof fetch; sourceFetch?:typeof fetch; schoolContracts?:Contracts; canvasFetch?:typeof fetch; canvas?:boolean; weatherFetch?:typeof fetch; calendarFetch?:typeof fetch; testEmailDomains?:string[] }) {
   if (process.env.NODE_ENV === 'production') throw new Error('Local development mail is forbidden in production.');
   const now = options.now ?? Date.now;
   const db = openDatabase(options.dataDir);
@@ -122,6 +123,9 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   app.get('/api/v1/auth/methods', async request => ok({ email: { status: 'local_development_only' }, school_sso: { status: 'approval_required' }, remote_push: { status: 'not_configured' } }, request.id));
   app.post('/api/v1/auth/email/challenges', async (request, reply) => {
     const { email } = z.object({ email: z.string().trim().toLowerCase().email().max(254) }).strict().parse(request.body);
+    // HKUST students and staff only; the reserved example.test domain stays open for local test accounts.
+    const domain = email.split('@')[1];
+    if (!SCHOOL_EMAIL_DOMAINS.includes(domain) && !(options.testEmailDomains ?? ['example.test']).includes(domain)) throw new ApiError(422, 'EMAIL_DOMAIN_NOT_ALLOWED', 'Use your HKUST email (@connect.ust.hk or @ust.hk).');
     return reply.code(202).send(ok(auth.challenge(email, request.ip), request.id));
   });
   app.post('/api/v1/auth/email/verify', async request => {

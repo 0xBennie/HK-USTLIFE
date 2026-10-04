@@ -159,7 +159,7 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
   {upcoming.length>1?<ListGroup header={zh?'今天还有':'Later today'}>{upcoming.slice(1).map(e=><ListRow key={e.id} icon="book-open" tile={courseColor(courses,e.course_id)} title={e.title} subtitle={e.location||undefined} value={hk(e.starts_at!).slice(11)}/>)}</ListGroup>:null}
   <ListGroup>
    <ListRow icon="bus" tile={c.teal} title={ride?`${ride.name}${ride.time?` · ${ride.time}`:''}`:(zh?'选一条常坐的路线':'Pick your usual route')} subtitle={ride?(ride.time?(zh?'校巴时刻表 · 点开看实时小巴':'Shuttle timetable · live buses inside'):(zh?'今天没有校巴 · 看看小巴和巴士':'No shuttle today · see buses')):(zh?'下一班车会显示在这里':'Your next ride shows here')} chevron onPress={onCampus}/>
-   {!schoolLinked?<ListRow icon="graduation-cap" tile="#24467F" title={zh?'用 HKUST 账号自动同步':'Sync with HKUST'} subtitle={zh?'课表、Canvas 截止和学校邮箱自动出现':'Timetable, Canvas deadlines and mail, automatically'} chevron onPress={onSchool}/>:null}
+   {!schoolLinked?<ListRow icon="graduation-cap" tile="#24467F" title={zh?'连接 Canvas 和学校日历':'Connect Canvas & calendar'} subtitle={zh?'粘贴令牌或日历链接，截止和课程自动进来':'Paste a token or calendar link; deadlines and classes flow in'} chevron onPress={onSchool}/>:null}
   </ListGroup>
   </>}
  </View>;
@@ -172,31 +172,24 @@ function Aurora({color}:{color:string}){
   <LinearGradient id={id+'v'} x1="0" y1="0" x2="0" y2="1"><Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.55}/><Stop offset="1" stopColor="#FFFFFF" stopOpacity={0}/></LinearGradient>
  </Defs><Rect width="100%" height="100%" fill={`url(#${id})`}/><Rect width="100%" height="100%" fill={`url(#${id}v)`}/></Svg>;
 }
+/** Pen V2 / 今天 / 已登录未连接（真实能力）: only claims what works today. */
 function FirstUse({zh,onSchool,onAdd}:{zh:boolean;onSchool:()=>void;onAdd:()=>void}){
  const c=usePenColors();
  const src=(icon:string,col:string,t:string,s:string,badge:string,live:boolean)=><View style={{flexDirection:'row',alignItems:'center',gap:12,padding:14,borderRadius:16,backgroundColor:c.background}}><IconTile icon={icon} color={col} size={36}/><View style={{flex:1,gap:2}}><Text style={{fontSize:16,fontWeight:'600',color:c.text}}>{t}</Text><Text style={{fontSize:12,color:c.muted}}>{s}</Text></View><View style={{paddingVertical:4,paddingHorizontal:9,borderRadius:99,backgroundColor:(live?c.green:c.orange)+'1F'}}><Text style={{fontSize:12,fontWeight:'600',color:live?c.green:c.orange}}>{badge}</Text></View></View>;
  return <Stagger index={0}><View style={{gap:16}}>
   <View style={{backgroundColor:c.surface,borderRadius:22,padding:18,gap:12,boxShadow:'0 6px 20px #00000014'}}>
-   <Text style={{fontSize:22,lineHeight:30,fontWeight:'700',color:c.text}}>{zh?'登录一次，今天的事都在这里':'Sign in once. Your day in one place.'}</Text>
-   <Text style={{fontSize:15,lineHeight:22,color:c.muted}}>{zh?'用 HKUST 账号登录后，课表、Canvas 作业和截止、成绩会自动同步。密码只在学校官方登录页输入，我们看不到，也不保存。':'Sign in with HKUST and your timetable, Canvas deadlines and grades sync automatically. You enter your password only on the school’s own page.'}</Text>
-   {src('calendar-days','#56647D',zh?'课表与选课':'Timetable & enrollment',zh?'SIS · 上课时间、课室、候补位置':'SIS · times, rooms, waitlist',zh?'自动':'Auto',true)}
-   {src('graduation-cap','#24467F',zh?'Canvas 作业与截止':'Canvas deadlines',zh?'截止日期、作业要求、课程公告':'Due dates, requirements, announcements',zh?'自动':'Auto',true)}
-   {src('mail','#0078D4',zh?'学校邮箱':'School mail',zh?'重要邮件和里面的截止':'Important mail and its deadlines',zh?'测试中':'Beta',false)}
-   <View style={{flexDirection:'row'}}><PrimaryButton label={zh?'用 HKUST 账号登录':'Sign in with HKUST'} onPress={onSchool}/></View>
-   <Pressable onPress={onAdd} style={{alignItems:'center',padding:6}}><Text style={{fontSize:15,fontWeight:'600',color:c.accent}}>{zh?'先自己添加一项':'Add one myself'}</Text></Pressable>
+   <Text style={{fontSize:22,lineHeight:30,fontWeight:'700',color:c.text}}>{(zh?'连接一次，今天的事都在这里':'Connect once. Your day in one place.')}</Text>
+   <Text style={{fontSize:15,lineHeight:22,color:c.muted}}>{(zh?'连接 Canvas 和学校日历后，作业、截止和课程会自动同步。':'Connect Canvas and your school calendar and deadlines and classes sync automatically.')}</Text>
+   {src('calendar-days','#56647D',zh?'学校日历':'School calendar',zh?'Outlook、Google、iCloud · 课程和会议自动进来':'Outlook, Google, iCloud · classes and meetings',zh?'可用':'Ready',true)}
+   {src('graduation-cap','#24467F',zh?'Canvas 作业与截止':'Canvas deadlines',zh?'粘贴 Canvas 令牌 · 截止日期自动进来':'Paste a Canvas token · due dates flow in',zh?'可用':'Ready',true)}
+   {src('mail','#0078D4',zh?'课表、成绩、学校邮箱':'Timetable, grades, mail',zh?'SIS 与 Microsoft 365 需要学校授权':'SIS and Microsoft 365 need HKUST approval',zh?'待学校开放':'Awaiting HKUST',false)}
+   <View style={{flexDirection:'row'}}><PrimaryButton label={(zh?'连接 Canvas 和日历':'Connect Canvas & calendar')} onPress={onSchool}/></View>
+   <Pressable onPress={onAdd} style={{alignItems:'center',padding:6}}><Text style={{fontSize:15,fontWeight:'600',color:c.accent}}>{(zh?'先自己添加一项':'Add one myself')}</Text></Pressable>
   </View>
-  <Surface><View style={{flexDirection:'row',alignItems:'center',gap:12}}><IconTile icon="lock" color={c.indigo}/><View style={{flex:1,gap:2}}><Text style={{fontSize:15,fontWeight:'600',color:c.text}}>{zh?'会话只留在你的手机':'Your session stays on this phone'}</Text><Text style={{fontSize:12,lineHeight:17,color:c.muted}}>{zh?'同步在手机上完成；服务器只收到整理好的课程和截止':'Sync runs on the phone; the server only receives organized courses and deadlines'}</Text></View></View></Surface>
+  <Surface><View style={{flexDirection:'row',alignItems:'center',gap:12}}><IconTile icon="lock" color={c.indigo}/><View style={{flex:1,gap:2}}><Text style={{fontSize:15,fontWeight:'600',color:c.text}}>{zh?'你的数据由你控制':'You control your data'}</Text><Text style={{fontSize:12,lineHeight:17,color:c.muted}}>{zh?'Canvas 令牌加密保存，只用来读取作业；随时在「学校连接」里断开并删除':'Your Canvas token is encrypted and only reads assignments; disconnect and delete it any time'}</Text></View></View></Surface>
  </View></Stagger>;
 }
 
-export function GuestHome({language,title,inbox,onLogin,onCampus}:{language:Language;title:string;inbox?:boolean;onLogin:()=>void;onCampus:()=>void}){
- const zh=language==='zh',c=usePenColors();
- return <View style={{gap:22}}>
-  <LargeTitle eyebrow={inbox?(zh?'只留下与你有关的更新':'Updates that matter to you'):(zh?'先看看，再决定':'Look around first')} title={title}/>
-  {inbox?<Surface><EmptyState icon="inbox" title={zh?'登录后查看你的消息':'Sign in to see your updates'} body={zh?'报名结果、活动变化和回复都会在这里。':'Signup results, activity changes and replies appear here.'} action={zh?'登录':'Sign in'} onAction={onLogin}/></Surface>:<FirstUse zh={zh} onSchool={onLogin} onAdd={onLogin}/>}
-  <Surface onPress={onCampus} padding={12} style={{paddingHorizontal:16}}><View style={{flexDirection:'row',alignItems:'center',gap:12}}><IconTile icon="bus" color={c.teal}/><View style={{flex:1}}><Text style={{fontSize:15,fontWeight:'600',color:c.text}}>{zh?'不用登录也能看校巴':'Shuttles without signing in'}</Text><Text style={{fontSize:12,color:c.muted}}>{zh?'时刻表、小巴实时到站和校园地点':'Timetables, live minibuses and places'}</Text></View><PenIcon name="chevron-right" size={16} color={c.tertiary}/></View></Surface>
- </View>;
-}
 
 /** Swipeable list row that snaps back after triggering its action. */
 function SwipeRow({onOpen,children,...props}:Omit<React.ComponentProps<typeof ReanimatedSwipeable>,'onSwipeableWillOpen'|'ref'>&{onOpen:(direction:'left'|'right')=>void}){

@@ -3,7 +3,7 @@ export const strings = {
   zh: {
     tabs: ['今天', '校园', '校园墙', '消息', '我的'], brand: '在科大，好好生活', campus: '香港科技大学 · 清水湾',
     dev: '本地开发版 · 数据仅供测试', loginTitle: '欢迎来到 Campus', loginBody: '登录后保存自己的安排。浏览校园信息不需要公开课表，也不需要参与社交。',
-    email: '邮箱', sendCode: '获取开发验证码', code: '六位验证码', signIn: '登录', resend: '重新获取', changeEmail: '更换邮箱',
+    email: '学校邮箱', sendCode: '获取验证码', code: '六位验证码', signIn: '登录', resend: '重新获取', changeEmail: '更换邮箱',
     localMail: '当前不会发送真实邮件。验证码保存在电脑的本地开发收件箱，使用启动说明中的命令查看。',
     guest: '先以访客浏览', retry: '重试', loading: '正在连接…', network: '暂时无法连接，请确认本机后端已启动后重试。',
     account: '我的账户', name: '你希望大家如何称呼你', save: '保存资料', saved: '已保存', school: '学校资格未核验',
@@ -12,12 +12,12 @@ export const strings = {
     delete: '删除账户', deleteBody: '此操作会删除本地开发账户及相关数据，并使所有登录会话失效。需要最近 10 分钟内登录。', cancel: '取消',
     phase: '首个开发单元：账户与原生基础', pending: '这个模块尚未接入。本轮先验证真实登录、资料保存和账户隔离；内容会在后续开发单元加入。',
     todayTitle: '今天，按自己的节奏', campusTitle: '找到你需要的校园信息', discoverTitle: '一起做一件小事', inboxTitle: '只留下与你有关的消息',
-    errors: { RATE_LIMITED: '请求太频繁，请稍后再试。', INVALID_CODE: '验证码不正确。', CHALLENGE_UNAVAILABLE: '验证码已过期或使用，请重新获取。', REAUTH_REQUIRED: '请先退出并重新登录，再删除账户。', INVALID_INPUT: '请检查填写的内容。', ACCOUNT_RESTRICTED: '此账户已受限。', NETWORK_ERROR: '连接失败，请检查网络和本机后端。', STORAGE_ERROR: '无法保存登录状态，请重试。', REQUEST_FAILED: '操作未完成，请重试。' } as Record<string, string>,
+    errors: { EMAIL_DOMAIN_NOT_ALLOWED: '请使用科大邮箱（@connect.ust.hk 或 @ust.hk）。', RATE_LIMITED: '请求太频繁，请稍后再试。', INVALID_CODE: '验证码不正确。', CHALLENGE_UNAVAILABLE: '验证码已过期或使用，请重新获取。', REAUTH_REQUIRED: '请先退出并重新登录，再删除账户。', INVALID_INPUT: '请检查填写的内容。', ACCOUNT_RESTRICTED: '此账户已受限。', NETWORK_ERROR: '连接失败，请检查网络和本机后端。', STORAGE_ERROR: '无法保存登录状态，请重试。', REQUEST_FAILED: '操作未完成，请重试。' } as Record<string, string>,
   },
   en: {
     tabs: ['Today', 'Campus', 'Wall', 'Inbox', 'Me'], brand: 'Make room for campus life', campus: 'HKUST · Clear Water Bay',
     dev: 'Local development · Test data only', loginTitle: 'Welcome to Campus', loginBody: 'Sign in to keep your own plans. Browse campus information without sharing your timetable or joining social activities.',
-    email: 'Email', sendCode: 'Get development code', code: 'Six-digit code', signIn: 'Sign in', resend: 'Request another code', changeEmail: 'Change email',
+    email: 'HKUST email', sendCode: 'Get code', code: 'Six-digit code', signIn: 'Sign in', resend: 'Request another code', changeEmail: 'Change email',
     localMail: 'No real email is sent. Your code is stored in the computer’s local development inbox. See the startup guide for the read command.',
     guest: 'Browse as a guest', retry: 'Try again', loading: 'Connecting…', network: 'Could not connect. Check that the local backend is running and try again.',
     account: 'My account', name: 'What should we call you?', save: 'Save profile', saved: 'Saved', school: 'School membership unverified',
@@ -26,6 +26,6 @@ export const strings = {
     delete: 'Delete account', deleteBody: 'This deletes your local development account and associated data, and revokes all sessions. Sign-in must be within the last 10 minutes.', cancel: 'Cancel',
     phase: 'First development unit: accounts and native foundation', pending: 'This module is not connected yet. This unit verifies real sign-in, profile persistence and account isolation. Content arrives in the following implementation units.',
     todayTitle: 'A day at your own pace', campusTitle: 'Find the campus information you need', discoverTitle: 'Do something small, together', inboxTitle: 'Updates that matter to you',
-    errors: { RATE_LIMITED: 'Too many requests. Please wait and try again.', INVALID_CODE: 'The code is incorrect.', CHALLENGE_UNAVAILABLE: 'This code expired or was used. Request a new one.', REAUTH_REQUIRED: 'Sign out and sign in again before deleting your account.', INVALID_INPUT: 'Check the submitted fields.', ACCOUNT_RESTRICTED: 'This account is restricted.', NETWORK_ERROR: 'Connection failed. Check the network and local backend.', STORAGE_ERROR: 'Could not save the session. Please retry.', REQUEST_FAILED: 'The action did not complete. Please retry.' } as Record<string, string>,
+    errors: { EMAIL_DOMAIN_NOT_ALLOWED: 'Use your HKUST email (@connect.ust.hk or @ust.hk).', RATE_LIMITED: 'Too many requests. Please wait and try again.', INVALID_CODE: 'The code is incorrect.', CHALLENGE_UNAVAILABLE: 'This code expired or was used. Request a new one.', REAUTH_REQUIRED: 'Sign out and sign in again before deleting your account.', INVALID_INPUT: 'Check the submitted fields.', ACCOUNT_RESTRICTED: 'This account is restricted.', NETWORK_ERROR: 'Connection failed. Check the network and local backend.', STORAGE_ERROR: 'Could not save the session. Please retry.', REQUEST_FAILED: 'The action did not complete. Please retry.' } as Record<string, string>,
   },
 };

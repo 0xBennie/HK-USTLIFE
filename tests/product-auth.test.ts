@@ -44,6 +44,17 @@ describe('persistent product account API', () => {
     expect(me.json().data.connections.canvas).toBe('not_connected'); // Canvas connects with the student's own access token
   });
 
+  it('accepts only HKUST email domains (plus the local test domain)', async () => {
+    for (const email of ['someone@gmail.com', 'x@ust.hk.evil.com', 'y@connectust.hk']) {
+      const r = await app.inject({ method: 'POST', url: '/api/v1/auth/email/challenges', payload: { email } });
+      expect(r.statusCode).toBe(422);
+      expect(r.json().error.code).toBe('EMAIL_DOMAIN_NOT_ALLOWED');
+    }
+    for (const email of ['s1@connect.ust.hk', 'staff@ust.hk', 'dev@example.test']) {
+      expect((await app.inject({ method: 'POST', url: '/api/v1/auth/email/challenges', payload: { email } })).statusCode).toBe(202);
+    }
+  });
+
   it('consumes a code once even for concurrent requests and never persists raw sessions', async () => {
     const c = await challenge();
     const attempts = await Promise.all([verify(c), verify(c)]);

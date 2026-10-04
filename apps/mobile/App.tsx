@@ -12,7 +12,7 @@ import {InboxScreen} from './src/social/InboxScreen';
 import { CampusScreen } from './src/campus/CampusScreen';
 import './global.css';
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { AppState, ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Pressable, Text, useColorScheme, View } from 'react-native';
+import { AppState, ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Pressable, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { HeroUINativeProvider } from 'heroui-native/provider';
@@ -26,7 +26,6 @@ import { LoginScreen, ProfileScreen } from './src/screens/AccountScreen';
 import { strings, type Language } from './src/strings';
 import { palette, styles } from './src/theme';
 import { StudyScreen } from './src/study/StudyScreen';
-import { GuestHome } from './src/study/TodayHome';
 import { refreshBrief } from './src/reminders/brief';
 import { checkWeatherAlerts } from './src/campus/weather';
 import { refreshSubscriptionsIfDue, syncCanvasIfDue } from './src/study/canvas-sync';
@@ -105,6 +104,18 @@ function CampusApp() {
     return()=>subscription.remove();
   },[state.status,state.profile?.id]);
   useEffect(() => { if (state.profile) setLanguage(state.profile.language); }, [state.profile?.id]);
+  // Pen V5 / 登录入口（学校邮箱）: signing in with a school email is the only way in; the tabs always have a student.
+  if (!state.profile) return <SafeAreaView edges={['left','right']} style={[styles.flex, { backgroundColor: colors.background }]}>
+    <StatusBar style={dark ? 'light' : 'dark'} />
+    <Aurora/>
+    <KeyboardAvoidingView behavior="padding" style={styles.flex}>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.page, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }]}>
+        {state.status === 'loading' ? <View style={[styles.stack,{paddingTop:120,alignItems:'center'}]}><ActivityIndicator color={colors.accent} /></View>
+          : state.status === 'error' ? <View style={styles.stack}><Text accessibilityRole="alert" style={[styles.body, { color: colors.danger }]}>{t.errors[state.error ?? ''] ?? t.network}</Text><Button onPress={() => session.restore()}>{t.retry}</Button></View>
+          : <LoginScreen language={language} dark={dark}/>}
+      </ScrollView>
+    </KeyboardAvoidingView>
+  </SafeAreaView>;
   return <SafeAreaView edges={['left','right']} style={[styles.flex, { backgroundColor: colors.background }]}>
     <StatusBar style={dark ? 'light' : 'dark'} />
     <Aurora/>
@@ -120,13 +131,13 @@ function CampusApp() {
         {index === 4 ? state.status === 'loading' ? <View style={styles.stack}><ActivityIndicator color={colors.accent} /><Text style={{ color: colors.text }}>{t.loading}</Text></View>
           : state.status === 'error' ? <View style={styles.stack}><Text accessibilityRole="alert" style={[styles.body, { color: colors.danger }]}>{t.errors[state.error ?? ''] ?? t.network}</Text><Button onPress={() => session.restore()}>{t.retry}</Button></View>
           : state.profile ? safetyOpen?<GovernanceScreen key={state.profile.id} language={language} dark={dark} onBack={()=>setSafetyOpen(false)}/>:<ProfileScreen key={state.profile.id} profile={state.profile} language={language} dark={dark} exitBusy={exitState.busy} exitError={exitState.error} onExit={requestAccountExit} onLanguage={()=>setLanguage(language==='zh'?'en':'zh')} onSafety={()=>guardedOpen(4,()=>setSafetyOpen(true))} onActivity={openActivity}/>
-          : <LoginScreen language={language} dark={dark} onGuest={()=>setTab(1)}/>
+          : null
           : index === 0 ? state.profile ? <StudyScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost} onCampus={()=>setTab(1)} onInbox={()=>setTab(3)} initialReminder={studyTarget?.owner===state.profile.id?studyTarget:null} />
-          : <GuestHome language={language} title={t.tabs[0]} onLogin={()=>setTab(4)} onCampus={()=>setTab(1)}/>
+          : null
           : index === 1 ? <CampusScreen key={state.profile?.id??'visitor'} language={language} dark={dark} onLogin={()=>setTab(4)} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onPost={openPost} onWall={()=>setTab(2)}/>
           : index === 2 ? <CommunityScreen key={`${state.profile?.id??'visitor'}:${targetRevision}`} language={language} dark={dark} onLogin={()=>setTab(4)} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onDismissTarget={()=>{const target=activityTarget;setActivityTarget(null);if(target?.owner===(state.profile?.id??null)&&target.returnTab!==undefined)setTab(target.returnTab);}} onNavigate={scrollToTop}/>
           : state.profile ? <InboxScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost}/>
-          : <GuestHome language={language} title={t.tabs[3]} inbox onLogin={()=>setTab(4)} onCampus={()=>setTab(1)}/>}
+          : null}
       </TabScene></InputProtectionContext.Provider>)}
       </View>
     </KeyboardAvoidingView>

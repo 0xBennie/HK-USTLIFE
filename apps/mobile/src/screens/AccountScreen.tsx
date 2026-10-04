@@ -37,7 +37,9 @@ function useAction(language: Language) {
 }
 
 // Pen "welcome" board, rebuilt in the V2 style: value rows, one sign-in card, guest option.
-export function LoginScreen({ language, onGuest }: Props & {onGuest?:()=>void}) {
+// Pen V5 / 登录入口（学校邮箱）: the app's only entry; first sign-in registers the account.
+const schoolEmail=(v:string)=>/@(connect\.)?ust\.hk$/i.test(v.trim())||(__DEV__&&/@example\.test$/i.test(v.trim()));
+export function LoginScreen({ language }: Props) {
   const t = strings[language], c = usePenColors(), zh=language==='zh';
   const [email, setEmail] = useState('');
   const [challenge, setChallenge] = useState('');
@@ -59,7 +61,7 @@ export function LoginScreen({ language, onGuest }: Props & {onGuest?:()=>void}) 
       {value('bus','#4F6F8C',zh?'下一班车几点':'When is the next ride',zh?'校巴时刻表和小巴实时到站':'Shuttle timetables and live minibuses')}
       {value('users','#56647D',zh?'找人一起做点小事':'Do small things together',zh?'自习、散步、复习小组，想参加再参加':'Study, walk or review together — only if you want')}
     </Surface>
-    <FormGroup header={zh?'登录':'Sign in'} footer={challenge?t.localMail:(zh?'开发版使用邮箱验证码登录；正式版使用 HKUST 账号。':'Development builds use an email code; release builds use your HKUST account.')}>
+    <FormGroup footer={challenge?t.localMail:(zh?'只接受 @connect.ust.hk 和 @ust.hk。第一次登录会自动注册。':'HKUST emails only (@connect.ust.hk, @ust.hk). Your first sign-in creates the account.')}>
       <FormField label={t.email} value={email} onChangeText={setEmail} editable={!challenge&&!action.busy} keyboardType="email-address" autoCapitalize="none" placeholder="name@connect.ust.hk"/>
       {challenge?<FormField label={t.code} value={code} onChangeText={v=>setCode(v.replace(/\D/g,''))} editable={!action.busy} keyboardType="number-pad" maxLength={6} placeholder="000000"/>:null}
     </FormGroup>
@@ -73,8 +75,7 @@ export function LoginScreen({ language, onGuest }: Props & {onGuest?:()=>void}) 
         <Pressable disabled={action.busy} onPress={send}><Text style={{fontSize:15,fontWeight:'600',color:c.accent}}>{t.resend}</Text></Pressable>
         <Pressable disabled={action.busy} onPress={() => { setChallenge(''); setCode(''); }}><Text style={{fontSize:15,fontWeight:'600',color:c.accent}}>{t.changeEmail}</Text></Pressable>
       </View>
-    </View>:<View style={{flexDirection:'row'}}><PrimaryButton label={action.busy ? t.loading : t.sendCode} disabled={action.busy || !email.includes('@')} onPress={send}/></View>}
-    {onGuest?<Pressable onPress={onGuest} style={{alignItems:'center',padding:6}}><Text style={{fontSize:15,fontWeight:'600',color:c.accent}}>{t.guest}</Text></Pressable>:null}
+    </View>:<View style={{flexDirection:'row'}}><PrimaryButton label={action.busy ? t.loading : t.sendCode} disabled={action.busy || !schoolEmail(email)} onPress={send}/></View>}
   </View>;
 }
 

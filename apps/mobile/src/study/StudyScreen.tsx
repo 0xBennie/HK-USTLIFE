@@ -166,7 +166,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
       {sameRange&&calendar!.undated_tasks.length?<View style={{gap:10}}><Text style={{paddingHorizontal:4,fontSize:15,fontWeight:'700',color:colors.text}}>{t.undated}</Text>{calendar!.undated_tasks.map(i=>renderItem(i,n++))}</View>:null}
     </>:null}
     {view==='courses'?<>
-      {!courses.length&&!loading?<EmptyState icon="library" title={zh?'还没有课程':'No courses yet'} body={zh?'登录学校账号后自动同步，也可以手动添加。':'Sync with your HKUST account, or add one.'} action={zh?'添加课程':'Add course'} onAction={()=>setEditor({kind:'course'})}/>:null}
+      {!courses.length&&!loading?<EmptyState icon="library" title={zh?'还没有课程':'No courses yet'} body={zh?'连接 Canvas 后自动同步，也可以手动添加。':'Connect Canvas to sync, or add one.'} action={zh?'添加课程':'Add course'} onAction={()=>setEditor({kind:'course'})}/>:null}
       <ListGroup>{courses.map(c=><ListRow key={c.id} icon="book-open" tile={courseColor(courses,c.id)} title={c.code||c.title} subtitle={c.code?c.title:c.description||undefined} value={`${items.filter(i=>i.course_id===c.id).length}`} chevron onPress={()=>{setCourseId(c.id);setView('all');}}/>)}</ListGroup>
       {courseId===null&&courses.length?<Text style={{paddingHorizontal:16,fontSize:12,color:colors.muted}}>{t.manual}</Text>:null}
     </>:null}
