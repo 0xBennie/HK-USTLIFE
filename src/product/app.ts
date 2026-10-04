@@ -1,4 +1,5 @@
 import {createAffairsStore} from './affairs/store.js';
+import {syncOfficialTemplates} from './affairs/official-templates.js';
 import {registerAffairsRoutes} from './affairs/routes.js';
 import {createReconnections} from './social/reconnections.js';
 import {registerReconnectionRoutes} from './social/reconnection-routes.js';
@@ -55,6 +56,7 @@ export function createProductApp(options: { dataDir: string; now?: () => number;
   });
   const learning = createLearningStore(db,now);
   const affairs = createAffairsStore(db,now);
+  syncOfficialTemplates(affairs, now);
   const calendars = createCalendarStore(db,now);
   const directory = createDirectoryStore(db,now);
   const wall=createWallStore(db,now);
