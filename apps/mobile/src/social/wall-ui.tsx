@@ -2,7 +2,7 @@
 import {Image,Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import type {WallPost,WallTopic} from '../../../../src/product/social/wall-types';
-import {PenIcon,usePenColors} from '../ui/Pen';
+import {PenIcon,TintChip,usePenColors} from '../ui/Pen';
 import {useAppearance} from '../ui/Appearance';
 import {dateTimeInZone,monthDayLabel} from '../study/dates';
 
@@ -33,7 +33,7 @@ export function StatusChip({status,zh}:{status:WallPost['status'];zh:boolean}){
  const c=usePenColors();if(status==='open')return null;const done=status==='resolved',col=done?'#2E9E5B':c.muted;
  return <View style={{flexDirection:'row',alignItems:'center',gap:4,paddingVertical:4,paddingHorizontal:10,borderRadius:99,backgroundColor:done?'#2E9E5B1F':c.fill}}><PenIcon name={done?'circle-check':'lock'} size={13} color={col}/><Text style={{fontSize:12,fontWeight:'700',color:col}}>{done?(zh?'已解决':'Solved'):(zh?'已结束':'Closed')}</Text></View>;
 }
-export function TopicPill({topic,zh}:{topic:WallTopic;zh:boolean}){const t=topicMeta[topic];return <View style={{paddingVertical:5,paddingHorizontal:11,borderRadius:99,backgroundColor:t.color+'1F'}}><Text style={{fontSize:12,fontWeight:'700',color:t.color}}>{zh?t.zh:t.en}</Text></View>;}
+export function TopicPill({topic,zh}:{topic:WallTopic;zh:boolean}){const t=topicMeta[topic];return <TintChip color={t.color} label={zh?t.zh:t.en} size={12} radius={99} padding={[5,11]}/>;}
 /** Pen "V6 / 校园墙" post card: who and when, topic, title, body, replies and status — nothing the server doesn’t have. */
 export function WallPostCard({post,zh,onOpen,cover,onAuthor}:{post:WallPost;zh:boolean;onOpen:()=>void;cover?:number;onAuthor?:()=>void}){
  const c=usePenColors(),{reduceMotion}=useAppearance(),topic=topicOf(post);

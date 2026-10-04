@@ -2,7 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {Linking,Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import {api,session} from '../runtime';
-import {CheckCircle,CircleButton,EmptyState,Hero,HeroActions,IconTile,LargeTitle,ListGroup,ListRow,Notice,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,TopBar,ViewAll,usePenColors} from '../ui/Pen';
+import {CheckCircle,CircleButton,EmptyState,Hero,HeroActions,IconTile,LargeTitle,ListGroup,ListRow,Notice,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,TintChip,TopBar,ViewAll,usePenColors} from '../ui/Pen';
 import type {Language} from '../strings';
 import type {Calendar,CalendarItem,Course,StudyItem} from './types';
 import type {ActivityNotification} from '../../../../src/product/social/types';
@@ -92,7 +92,7 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
     <View style={{flex:1,gap:4}}>
      <Text numberOfLines={2} style={{fontSize:16,lineHeight:22,fontWeight:'500',color:c.text}}>{t.title}</Text>
      <View style={{flexDirection:'row',alignItems:'center',gap:6}}>
-      {course?<View style={{paddingVertical:2,paddingHorizontal:7,borderRadius:6,backgroundColor:col+'1F'}}><Text style={{fontSize:11,fontWeight:'700',color:col}}>{course.code||course.title}</Text></View>:null}
+      {course?<TintChip color={col} label={course.code||course.title}/>:null}
       {'school_origin' in t?<><PenIcon name="graduation-cap" size={12} color={c.muted}/><Text style={{fontSize:12,color:c.muted}}>Canvas</Text></>:!course&&t.body?<Text numberOfLines={1} style={{flex:1,fontSize:12,color:c.muted}}>{t.body}</Text>:null}
      </View>
     </View>

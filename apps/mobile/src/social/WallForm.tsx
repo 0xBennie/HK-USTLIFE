@@ -3,7 +3,7 @@ import {writeReceipt,ensureReplayable,writeRejected,reviewRequired,type WriteRec
 import {useInputProtection} from '../navigation/InputProtection';
 import {useEffect,useRef,useState} from 'react';
 import {Alert,Pressable,Text,TextInput,View} from 'react-native';
-import {ListGroup,ListRow,Notice,PenIcon,usePenColors,CircleButton} from '../ui/Pen';
+import {ListGroup,ListRow,Notice,PenIcon,lighten,usePenColors,CircleButton} from '../ui/Pen';
 import {topicMeta} from './wall-ui';
 import {session} from '../runtime';
 import {ApiFailure} from '../api';
@@ -38,7 +38,7 @@ export function WallForm({initial,language,dark,onBack,onSaved}:{initial?:WallPo
    <Text style={{flex:1,textAlign:'center',fontSize:17,fontWeight:'700',color:c.text}}>{initial?(zh?'编辑帖子':'Edit post'):(zh?'发到校园墙':'Post to the wall')}</Text>
    <CircleButton variant="prominent" icon={pending.current?'rotate-cw':initial?'check':'arrow-up'} label={pending.current?(zh?'重试':'Retry'):initial?(zh?'保存':'Save'):(zh?'发布':'Post')} disabled={busy||reviewOnly||!title.trim()||!body.trim()} onPress={()=>void save()}/>
   </View>
-  {!initial?<View style={{flexDirection:'row',gap:8}}>{(['question','buddy','market','share'] as const).map(t=>{const m=topicMeta[t],on=topic===t;return <Pressable key={t} accessibilityRole="button" accessibilityState={{selected:on}} disabled={frozen} onPress={()=>setTopic(t)} style={{flex:1,alignItems:'center',gap:6,paddingVertical:12,borderRadius:20,backgroundColor:on?m.color+'1F':c.surface,borderWidth:0,boxShadow:on?undefined:'0 4px 14px #1B35660D'}}><PenIcon name={m.icon} size={22} color={on?m.color:c.muted}/><Text style={{fontSize:13,fontWeight:'700',color:on?m.color:c.text}}>{zh?m.zh:m.en}</Text></Pressable>;})}</View>:null}
+  {!initial?<View style={{flexDirection:'row',gap:8}}>{(['question','buddy','market','share'] as const).map(t=>{const m=topicMeta[t],on=topic===t;return <Pressable key={t} accessibilityRole="button" accessibilityState={{selected:on}} disabled={frozen} onPress={()=>setTopic(t)} style={{flex:1,alignItems:'center',gap:6,paddingVertical:12,borderRadius:20,backgroundColor:on?m.color+'1F':c.surface,borderWidth:0,boxShadow:on?undefined:'0 4px 14px #1B35660D'}}><PenIcon name={m.icon} size={22} color={on?(dark?lighten(m.color,0.5):m.color):c.muted}/><Text style={{fontSize:13,fontWeight:'700',color:on?(dark?lighten(m.color,0.5):m.color):c.text}}>{zh?m.zh:m.en}</Text></Pressable>;})}</View>:null}
   <View style={{gap:8,padding:18,minHeight:240,borderRadius:28,backgroundColor:c.surface,borderWidth:1,borderColor:c.glassBorder}}>
    <TextInput accessibilityLabel={zh?'帖子标题':'Post title'} value={title} onChangeText={setTitle} maxLength={160} editable={!frozen} placeholder={ph[topic][0]} placeholderTextColor={c.tertiary} style={{fontSize:20,lineHeight:27,fontWeight:'700',color:c.text}}/>
    <TextInput accessibilityLabel={zh?'帖子正文':'Post body'} value={body} onChangeText={setBody} maxLength={5000} editable={!frozen} multiline placeholder={ph[topic][1]} placeholderTextColor={c.tertiary} style={{flex:1,minHeight:150,fontSize:16,lineHeight:24,color:c.text,textAlignVertical:'top'}}/>

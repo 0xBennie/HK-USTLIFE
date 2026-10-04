@@ -6,7 +6,7 @@ import {useSceneFocus} from '../navigation/TabScene';
 import {useCallback,useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {AppState,Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
-import {EmptyState,FilterPill,Notice,PenIcon,PillRow,Skeleton,Stagger,ViewAll,usePenColors,GlassChips} from '../ui/Pen';
+import {EmptyState,FilterPill,Notice,PenIcon,PillRow,Skeleton,Stagger,ViewAll,lighten,usePenColors,GlassChips} from '../ui/Pen';
 import {WallPostCard,topicMeta,topicOf} from './wall-ui';
 import {api,session} from '../runtime';
 import {palette,styles} from '../theme';
@@ -49,7 +49,7 @@ export function WallScreen({language,dark,initialId,onDismissTarget,onNavigate,o
  return <View style={{gap:16}}>
   <View style={{flexDirection:'row',justifyContent:'space-between'}}>
    {[...(['question','buddy','market','share'] as const).map(t=>({key:t,icon:topicMeta[t].icon,color:topicMeta[t].color,label:zh?topicMeta[t].zh:topicMeta[t].en,on:topicFilter===t,press:()=>{feel.select();pickTopic(topicFilter===t?'':t);}})),{key:'act',icon:'calendar-heart',color:'#56647D',label:zh?'活动':'Events',on:false,press:()=>{feel.tap();onActivities();}}].map(b=><Pressable key={b.key} accessibilityRole="button" accessibilityState={{selected:b.on}} onPress={b.press} style={({pressed})=>({alignItems:'center',gap:7,width:68,transform:[{scale:pressed?0.94:1}]})}>
-    <View style={{width:56,height:56,borderRadius:28,alignItems:'center',justifyContent:'center',backgroundColor:b.on?b.color:c.surface,borderWidth:1,borderColor:b.on?b.color:c.glassBorder,boxShadow:b.on?`0 8px 18px ${b.color}55`:'0 4px 14px #1B35660F'}}><PenIcon name={b.icon} size={23} strokeWidth={2.2} color={b.on?'#FFFFFF':b.color}/></View>
+    <View style={{width:56,height:56,borderRadius:28,alignItems:'center',justifyContent:'center',backgroundColor:b.on?b.color:c.surface,borderWidth:1,borderColor:b.on?b.color:c.glassBorder,boxShadow:b.on?`0 8px 18px ${b.color}55`:'0 4px 14px #1B35660F'}}><PenIcon name={b.icon} size={23} strokeWidth={2.2} color={b.on?'#FFFFFF':dark?lighten(b.color,0.5):b.color}/></View>
     <Text style={{fontSize:12,fontWeight:b.on?'800':'600',color:b.on?b.color:c.text}}>{b.label}</Text>
    </Pressable>)}
   </View>

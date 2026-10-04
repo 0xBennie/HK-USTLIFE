@@ -235,6 +235,15 @@ export function Surface({children,onPress,style,padding=16,label}:{children:Reac
 }
 /** Colored icon tile used in rows and cards. */
 /** Round icon tile: pale tint of the colour with the glyph in full colour (Pen V4 Row). */
+/** A colour used as a label on its own tint. Dark mode lifts the label to white (as IconTile does) because course
+ * and topic colours are too dark to read on dark surfaces. */
+/** Mixes a hex colour towards white; used to keep identity colours legible on dark surfaces. */
+export const lighten=(hex:string,amount:number)=>'#'+[1,3,5].map(i=>{const v=parseInt(hex.slice(i,i+2),16);return Math.round(v+(255-v)*amount).toString(16).padStart(2,'0');}).join('');
+export const useTint=(color:string)=>{const dark=useColorScheme()==='dark',hex=color.slice(0,7);return {bg:hex+(dark?'38':'1F'),fg:dark?'#FFFFFFE6':hex};};
+export function TintChip({color,label,size=11,radius=6,padding=[2,7]}:{color:string;label:string;size?:number;radius?:number;padding?:[number,number]}){
+ const t=useTint(color);
+ return <View style={{paddingVertical:padding[0],paddingHorizontal:padding[1],borderRadius:radius,backgroundColor:t.bg}}><Text style={{fontSize:size,fontWeight:'700',color:t.fg}}>{label}</Text></View>;
+}
 export function IconTile({icon,color,size=30}:{icon:PenIconName;color:string;size?:number}){
  const dark=useColorScheme()==='dark';
  return <View style={{width:size,height:size,borderRadius:size/2,backgroundColor:color.slice(0,7)+(dark?'38':'1F'),alignItems:'center',justifyContent:'center'}}><PenIcon name={icon} size={size*0.5} strokeWidth={2.2} color={dark?'#FFFFFFE6':color.slice(0,7)}/></View>;

@@ -7,7 +7,7 @@ import { SourceScreen } from './SourceScreen';
 import { ImportScreen } from './ImportScreen';
 import { useCallback,useEffect,useRef,useState,useSyncExternalStore } from 'react';
 import { ActionSheetIOS,Alert,Linking,Pressable,Text,View } from 'react-native';
-import {CheckCircle,CircleButton,EmptyState,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Segmented,Skeleton,Stagger,Surface} from '../ui/Pen';
+import {CheckCircle,CircleButton,EmptyState,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Segmented,Skeleton,Stagger,Surface,TintChip} from '../ui/Pen';
 import {WeekGrid} from './WeekGrid';
 import {TodayHome,courseColor} from './TodayHome';
 import { session } from '../runtime';
@@ -124,7 +124,7 @@ export function StudyScreen({name,onMe,language,dark,onActivity,onPost,onCampus,
         <View style={{flex:1,gap:3}}>
           <Text numberOfLines={2} style={{fontSize:16,lineHeight:22,fontWeight:'500',color:done||cancelled?colors.muted:colors.text,textDecorationLine:done||cancelled?'line-through':'none'}}>{item.title}</Text>
           <View style={{flexDirection:'row',alignItems:'center',gap:6,flexWrap:'wrap'}}>
-            {linked?<View style={{paddingVertical:2,paddingHorizontal:7,borderRadius:6,backgroundColor:col+'1F'}}><Text style={{fontSize:11,fontWeight:'700',color:col}}>{linked.code||linked.title}</Text></View>:null}
+            {linked?<TintChip color={col} label={linked.code||linked.title}/>:null}
             {school?<Text style={{fontSize:12,fontWeight:'600',color:colors.accent}}>{school.provider==='sis'?'SIS':'Canvas'}{school.stale?(zh?' · 待更新':' · stale'):''}</Text>:'import_origin' in item?<Text style={{fontSize:12,color:colors.muted}}>{item.import_origin.source_name}</Text>:null}
             {item.kind==='event'&&item.location?<Text numberOfLines={1} style={{fontSize:12,color:colors.muted}}>{item.location}</Text>:null}
             {cancelled?<Text style={{fontSize:12,fontWeight:'600',color:colors.danger}}>{t.cancelled}</Text>:null}

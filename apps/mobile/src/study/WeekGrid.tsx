@@ -1,7 +1,7 @@
 // Pen "V6 / 本周课表" (QkyT2): weekday tiles lined up with the grid columns, hourly grid with course blocks, red
 // now line. Events that overlap on a day merge into one block ("2 项" + names) that opens that day's schedule.
 import {useEffect,useState} from 'react';
-import {Pressable,Text,View} from 'react-native';
+import {Pressable,Text,View,useColorScheme} from 'react-native';
 import {usePenColors} from '../ui/Pen';
 import {feel} from '../ui/feel';
 import type {CalendarItem} from './types';
@@ -22,7 +22,7 @@ function clusters(events:Timed[],zone:string){
 }
 
 export function WeekGrid({days,today,zone,zh,colorOf,codeOf,onOpen,onDay}:{days:Day[];today:string;zone:string;zh:boolean;colorOf:(courseId:string|null|undefined)=>string;codeOf:(item:CalendarItem)=>string;onOpen:(item:CalendarItem)=>void;onDay:(date:string)=>void}){
- const c=usePenColors();
+ const c=usePenColors(),dark=useColorScheme()==='dark';
  const [width,setWidth]=useState(0),[now,setNow]=useState(Date.now());
  useEffect(()=>{const t=setInterval(()=>setNow(Date.now()),60000);return()=>clearInterval(t);},[]);
  const weekend=days.filter(d=>{const wd=new Date(d.date+'T00:00:00Z').getUTCDay();return wd===0||wd===6;});
@@ -48,10 +48,10 @@ export function WeekGrid({days,today,zone,zh,colorOf,codeOf,onOpen,onDay}:{days:
        <Text numberOfLines={1} style={{fontSize:10,lineHeight:13,fontWeight:'800',color:c.accent}}>{label}</Text>
        {height>30?<Text numberOfLines={Math.max(1,Math.floor((height-23)/12))} style={{fontSize:9,lineHeight:12,color:c.accent,opacity:0.8}}>{names.join(zh?'、':', ')}</Text>:null}
       </Pressable>;}
-     const e=run.events[0],tint=colorOf(e.course_id),cancelled=e.status==='cancelled';
-     return <Pressable key={e.id} accessibilityRole="button" accessibilityLabel={`${e.title} ${e.location??''}`} onPress={()=>onOpen(e)} style={({pressed})=>({position:'absolute',left,top,width,height,borderRadius:10,borderCurve:'continuous',padding:5,overflow:'hidden',backgroundColor:tint+(cancelled?'0F':'24'),borderLeftWidth:3,borderLeftColor:tint,opacity:pressed?0.7:cancelled?0.5:1})}>
-      <Text numberOfLines={2} style={{fontSize:10,lineHeight:13,fontWeight:'800',color:tint,textDecorationLine:cancelled?'line-through':'none'}}>{codeOf(e)}</Text>
-      {height>44&&e.location?<Text numberOfLines={1} style={{fontSize:9,color:tint,opacity:0.8}}>{e.location.split(/[·,]/)[0]}</Text>:null}
+     const e=run.events[0],tint=colorOf(e.course_id),ink=dark?'#FFFFFFE6':tint,cancelled=e.status==='cancelled';
+     return <Pressable key={e.id} accessibilityRole="button" accessibilityLabel={`${e.title} ${e.location??''}`} onPress={()=>onOpen(e)} style={({pressed})=>({position:'absolute',left,top,width,height,borderRadius:10,borderCurve:'continuous',padding:5,overflow:'hidden',backgroundColor:tint+(cancelled?'0F':dark?'38':'24'),borderLeftWidth:3,borderLeftColor:tint,opacity:pressed?0.7:cancelled?0.5:1})}>
+      <Text numberOfLines={2} style={{fontSize:10,lineHeight:13,fontWeight:'800',color:ink,textDecorationLine:cancelled?'line-through':'none'}}>{codeOf(e)}</Text>
+      {height>44&&e.location?<Text numberOfLines={1} style={{fontSize:9,color:ink,opacity:0.8}}>{e.location.split(/[·,]/)[0]}</Text>:null}
      </Pressable>;})):null}
     {col&&todayIndex>=0&&nowH>=h0&&nowH<=h1?<View pointerEvents="none" style={{position:'absolute',left:LABEL,right:0,top:(nowH-h0)*HOUR+6,height:2,backgroundColor:c.red+'66'}}>
      <View style={{position:'absolute',left:todayIndex*col,width:col,height:2,backgroundColor:c.red}}/>
