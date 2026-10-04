@@ -343,11 +343,11 @@ export function ViewAll({label,onPress}:{label:string;onPress:()=>void}){
 /** V4 aurora backdrop: four misty colour fields, Skia-blurred, drifting slowly (static when Reduce Motion is on). */
 export function Aurora(){
  const dark=useColorScheme()==='dark',{reduceMotion}=useAppearance(),{width,height}=useWindowDimensions();
- const blobs:[number,number,number,string][]=dark?[[0.18,0.06,0.62,'#1C2A44'],[0.85,0.14,0.55,'#1A2636'],[0.1,0.62,0.55,'#141D2E'],[0.9,0.9,0.6,'#2A2420']]:[[0.18,0.06,0.62,'#D3DFF2'],[0.85,0.14,0.55,'#DCE6F3'],[0.1,0.62,0.55,'#E2E8F3'],[0.9,0.9,0.6,'#EFE7DA']];
+ const blobs:[number,number,number,string][]=dark?[[0.18,0.06,0.62,'#15213A'],[0.85,0.14,0.55,'#121B2C'],[0.1,0.62,0.55,'#0E1524'],[0.9,0.9,0.6,'#101828']]:[[0.18,0.06,0.62,'#D3DFF2'],[0.85,0.14,0.55,'#DCE6F3'],[0.1,0.62,0.55,'#E2E8F3'],[0.9,0.9,0.6,'#EFE7DA']];
  const t=useSharedValue(0);
  useEffect(()=>{if(reduceMotion){t.value=0;return;}t.value=withRepeat(withTiming(1,{duration:24000,easing:Easing.inOut(Easing.sin)}),-1,true);},[reduceMotion]);
  return <Canvas pointerEvents="none" style={{position:'absolute',top:0,left:0,width,height}}>
-  <SkRect x={0} y={0} width={width} height={height} color={dark?'#07090D':'#F2F4F7'}/>
+  <SkRect x={0} y={0} width={width} height={height} color={dark?'#05070B':'#F2F4F7'}/>
   <Group>
    <Blur blur={70}/>
    {blobs.map(([x,y,r,col],i)=><AuroraBlob key={i} t={t} i={i} cx={x*width} cy={y*height} r={r*width*0.8} color={col}/>)}
