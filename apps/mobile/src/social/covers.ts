@@ -18,7 +18,8 @@ export const languageLabel=(values:Activity['languages'],zh:boolean)=>values.map
 const hk=(instant:string)=>dateTimeInZone(instant,'Asia/Hong_Kong');
 const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 /** Pen card meta: "10.05 16:00" (Hong Kong time). */
-export const cardDateTime=(instant:string)=>{const v=hk(instant);return `${v.slice(5,7)}.${v.slice(8,10)} ${v.slice(11)}`;};
+/** "10 月 5 日 16:00" (Pen "19 / Joined and saved", "V6 / 我的收藏"). */
+export const cardDateTime=(instant:string,zh=true)=>{const v=hk(instant);return zh?`${Number(v.slice(5,7))} 月 ${Number(v.slice(8,10))} 日 ${v.slice(11)}`:`${Number(v.slice(8,10))} ${months[Number(v.slice(5,7))-1]} ${v.slice(11)}`;};
 /** Pen detail row: "10 月 5 日 · 16:00–17:00"; spans across days keep both dates. */
 export function dateRange(start:string,end:string,zh:boolean){
  const a=hk(start),b=hk(end),day=(v:string)=>zh?`${Number(v.slice(5,7))} 月 ${Number(v.slice(8,10))} 日`:`${months[Number(v.slice(5,7))-1]} ${Number(v.slice(8,10))}`;

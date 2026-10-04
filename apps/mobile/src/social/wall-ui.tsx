@@ -4,7 +4,7 @@ import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import type {WallPost,WallTopic} from '../../../../src/product/social/wall-types';
 import {PenIcon,usePenColors} from '../ui/Pen';
 import {useAppearance} from '../ui/Appearance';
-import {dateTimeInZone} from '../study/dates';
+import {dateTimeInZone,monthDayLabel} from '../study/dates';
 
 export const topicMeta:Record<WallTopic,{zh:string;en:string;icon:string;color:string;from:string;to:string}>={
  question:{zh:'提问',en:'Ask',icon:'circle-question-mark',color:'#24467F',from:'#3D63A6',to:'#24467F'},
@@ -25,7 +25,7 @@ export function GradientAvatar({name,size=40}:{name:string;size?:number}){
 export function relativeTime(iso:string,zh:boolean){
  const m=Math.max(0,Math.round((Date.now()-Date.parse(iso))/60000));
  if(m<1)return zh?'刚刚':'now';if(m<60)return zh?`${m} 分钟前`:`${m}m`;const h=Math.round(m/60);if(h<24)return zh?`${h} 小时前`:`${h}h`;
- const d=Math.round(h/24);return d<7?(zh?`${d} 天前`:`${d}d`):dateTimeInZone(iso,'Asia/Hong_Kong').slice(5,10);
+ const d=Math.round(h/24);return d<7?(zh?`${d} 天前`:`${d}d`):monthDayLabel(dateTimeInZone(iso,'Asia/Hong_Kong'),zh);
 }
 export const visibilityText=(v:WallPost['visibility'],zh:boolean)=>v==='members'?(zh?'仅同学可见':'Classmates only'):(zh?'所有人可见':'Everyone');
 /** Resolved = green check, closed = grey lock (Pen "V6 / 帖子详情" · 其他状态). Open posts show nothing. */

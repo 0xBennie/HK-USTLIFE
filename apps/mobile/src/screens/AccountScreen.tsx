@@ -18,6 +18,7 @@ import type {Activity} from '../../../../src/product/social/types';
 import {activityCover,cardDateTime} from '../social/covers';
 import {participationLabel} from '../social/shared';
 import {dueWithinWeek} from '../study/dates';
+import {feel} from '../ui/feel';
 
 type Props = { language: Language; dark: boolean };
 function useAction(language: Language) {
@@ -97,7 +98,7 @@ export function LoginScreen({ language }: Props) {
 
 type MePage='home'|'profile'|'reminders'|'school'|'activities'|'saved'|'ai';
 // Pen "18 / My account" (B7wsR): profile card, grouped rows with color tiles, account actions last.
-export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExit,onLanguage,onSafety,onActivity }: Props & { profile: Profile;exitBusy:boolean;exitError:unknown;onExit:(kind:AccountExitKind)=>void;onLanguage:()=>void;onSafety:()=>void;onActivity:(id:string)=>void }) {
+export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExit,onLanguage,onSafety,onActivity,onCampus }: Props & { profile: Profile;exitBusy:boolean;exitError:unknown;onExit:(kind:AccountExitKind)=>void;onLanguage:()=>void;onSafety:()=>void;onActivity:(id:string)=>void;onCampus:(target:{kind:'place'|'route';id:string})=>void }) {
   const t = strings[language], c = usePenColors(), zh=language==='zh';
   const [page,setPage]=useState<MePage>('home');
   const action = useAction(language);
@@ -105,14 +106,14 @@ export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExi
   usePageTop(page);
   const [stats,setStats]=useState<{joined:number;saved:number;week:number;linked:'school'|'canvas'|null}|null>(null);
   useEffect(()=>{if(page!=='home')return;let live=true;
-    Promise.all([session.request<{items:unknown[]}>('/activities?limit=50&mine=participating'),session.request<{items:unknown[]}>('/activities?limit=50&mine=saved'),session.request<{items:{kind:string;status?:string;due_at?:string|null;due_date?:string|null}[]}>('/study/items?limit=100'),session.request<{connections:{provider:string;state:string}[]}>('/school/records?limit=1').catch(()=>({connections:[]}))])
-     .then(([a,b,items,school])=>{if(live)setStats({joined:a.items.length,saved:b.items.length,week:dueWithinWeek(items.items),linked:school.connections.some(x=>x.provider==='sis'&&(x.state==='connected'||x.state==='partial'))?'school':school.connections.some(x=>x.provider==='canvas'&&(x.state==='connected'||x.state==='partial'))?'canvas':null});}).catch(()=>{});
+    Promise.all([session.request<{items:unknown[]}>('/activities?limit=50&mine=participating'),session.request<{items:unknown[]}>('/activities?limit=50&mine=saved'),session.request<{items:{kind:string;status?:string;due_at?:string|null;due_date?:string|null}[]}>('/study/items?limit=100'),session.request<{connections:{provider:string;state:string}[]}>('/school/records?limit=1').catch(()=>({connections:[]})),session.request<unknown[]>('/me/campus/bookmarks').catch(()=>[])])
+     .then(([a,b,items,school,marks])=>{if(live)setStats({joined:a.items.length,saved:b.items.length+marks.length,week:dueWithinWeek(items.items),linked:school.connections.some(x=>x.provider==='sis'&&(x.state==='connected'||x.state==='partial'))?'school':school.connections.some(x=>x.provider==='canvas'&&(x.state==='connected'||x.state==='partial'))?'canvas':null});}).catch(()=>{});
     return()=>{live=false;};},[page]);
   if(page==='ai')return <DataApiScreen zh={zh} onBack={()=>setPage('home')}/>;
   if(page==='profile')return <ProfileEditor profile={profile} language={language} onBack={()=>setPage('home')}/>;
   if(page==='school')return <SchoolSourcesScreen language={language} dark={dark} onBack={()=>setPage('home')}/>;
   if(page==='reminders')return <View style={{gap:18}}><PageHeader onBack={()=>setPage('home')} backLabel={zh?'我的':'Me'} title={zh?'自动提醒':'Reminders'}/><ReminderSettings language={language} dark={dark}/></View>;
-  if(page==='activities'||page==='saved')return <MyActivities language={language} mode={page==='activities'?'participating':'saved'} onBack={()=>setPage('home')} onActivity={onActivity}/>;
+  if(page==='activities'||page==='saved')return <MyActivities language={language} mode={page==='activities'?'participating':'saved'} onBack={()=>setPage('home')} onActivity={onActivity} onCampus={onCampus}/>;
   const shownName=profile.display_name.trim()||profile.email.split('@')[0];
   const initials=[...shownName].slice(0,2).join('').toUpperCase();
   return <View style={{gap:22}}>
@@ -150,6 +151,8 @@ export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExi
     <Text style={{textAlign:'center',fontSize:12,color:c.muted}}>{t.privacy}</Text>
   </View>;
 }
+// Pen "V6 / 你的校园名片" (r3fvkB): only what the server lets you change (your name); the school email is locked.
+// Saving returns to Me, where the new name is the feedback.
 function ProfileEditor({profile,language,onBack}:{profile:Profile;language:Language;onBack:()=>void}){
   const t=strings[language],zh=language==='zh',c=usePenColors();
   const [name,setName]=useState(profile.display_name);
@@ -157,29 +160,44 @@ function ProfileEditor({profile,language,onBack}:{profile:Profile;language:Langu
   const protect=useNavigationProtection(protectionFor(name!==profile.display_name,action.busy,false),zh);
   return <View style={{gap:18}}>
     <PageHeader onBack={()=>protect(onBack)} backLabel={zh?'我的':'Me'} title={zh?'你的校园名片':'Your profile'} subtitle={zh?'公开资料由你选择，学号和课表始终私密。':'You choose what is public. Student ID and timetable stay private.'}/>
-    <FormGroup footer={t.schoolBody}>
+    <FormGroup footer={zh?'学校邮箱用来登录，不能改。':'Your school email is how you sign in; it can’t be changed.'}>
       <FormField label={t.name} value={name} onChangeText={setName} maxLength={80} editable={!action.busy}/>
       <FormField label={t.email} value={profile.email} onChangeText={()=>{}} editable={false}/>
     </FormGroup>
-    {action.message?<Notice tone={action.failed?'error':'success'} text={action.message}/>:null}
-    <View style={{flexDirection:'row'}}><PrimaryButton label={action.busy?t.loading:t.save} disabled={action.busy||!name.trim()||name===profile.display_name} onPress={() => action.run(async () => { await session.updateProfile({ display_name: name, language }); action.setMessage(t.saved); })}/></View>
+    {action.failed&&action.message?<Notice tone="error" text={action.message}/>:null}
+    <View style={{flexDirection:'row'}}><PrimaryButton label={action.busy?t.loading:t.save} disabled={action.busy||!name.trim()||name===profile.display_name} onPress={() => action.run(async () => { await session.updateProfile({ display_name: name, language }); if(action.isCurrent()){feel.success();onBack();} })}/></View>
   </View>;
 }
-function MyActivities({language,mode,onBack,onActivity}:{language:Language;mode:'participating'|'saved';onBack:()=>void;onActivity:(id:string)=>void}){
+// Pen "V6 / 我的收藏（活动、地点与路线）" (UemvP): saved activities plus saved campus places and shuttle routes, which
+// open in Campus; "我的参与" uses the same cards, and an activity that has ended says so.
+type Saved={key:string;kind:'place'|'route';id:string;title:string;subtitle:string;icon:string;tile:string};
+function MyActivities({language,mode,onBack,onActivity,onCampus}:{language:Language;mode:'participating'|'saved';onBack:()=>void;onActivity:(id:string)=>void;onCampus:(target:{kind:'place'|'route';id:string})=>void}){
   const zh=language==='zh',c=usePenColors();
-  const [items,setItems]=useState<Activity[]|null>(null),[hosted,setHosted]=useState<Activity[]>([]),[error,setError]=useState('');
-  useEffect(()=>{let live=true;Promise.all([session.request<{items:Activity[]}>(`/activities?limit=50&mine=${mode}`),mode==='participating'?session.request<{items:Activity[]}>('/activities?limit=50&mine=organized'):Promise.resolve({items:[]})]).then(([a,b])=>{if(live){setItems(a.items);setHosted(b.items);}}).catch(()=>{if(live)setError(zh?'暂时无法读取，请稍后重试。':'Could not load. Try again later.');});return()=>{live=false;};},[mode]);
-  const row=(a:Activity)=>{const p=a.mine?.participation;return <Surface key={a.id} padding={12} onPress={()=>onActivity(a.id)} label={a.title}><View style={{flexDirection:'row',alignItems:'center',gap:12}}>
+  const [items,setItems]=useState<Activity[]|null>(null),[hosted,setHosted]=useState<Activity[]>([]),[saved,setSaved]=useState<Saved[]>([]),[error,setError]=useState('');
+  useEffect(()=>{let live=true;
+    Promise.all([session.request<{items:Activity[]}>(`/activities?limit=50&mine=${mode}`),mode==='participating'?session.request<{items:Activity[]}>('/activities?limit=50&mine=organized'):Promise.resolve({items:[]})]).then(([a,b])=>{if(live){setItems(a.items);setHosted(b.items);}}).catch(()=>{if(live)setError(zh?'暂时打不开，请检查网络后重试。':'Couldn’t load. Check your connection and try again.');});
+    if(mode==='saved')void Promise.all([session.request<{target_kind:string;target_id:string}[]>('/me/campus/bookmarks'),session.request<{id:string;name:{zh:string;en:string};location:{zh:string;en:string};category:string}[]>('/campus/places'),session.request<{routes:{id:string;name:{zh:string;en:string}}[]}>('/transport/routes')]).then(([marks,places,catalog])=>{if(!live)return;
+      setSaved(marks.flatMap<Saved>(m=>{
+        if(m.target_kind==='place'){const p=places.find(x=>x.id===m.target_id);return p?[{key:'p'+p.id,kind:'place',id:p.id,title:p.name[language],subtitle:`${zh?'地点':'Place'} · ${p.location[language]}`,icon:p.category==='study'?'book-open':p.category==='shop'?'shopping-bag':'package',tile:p.category==='study'?c.indigo:p.category==='shop'?'#A9824C':c.orange}]:[];}
+        if(m.target_kind==='shuttle'){const r=catalog.routes.find(x=>x.id===m.target_id);return r?[{key:'r'+r.id,kind:'route',id:r.id,title:r.name[language],subtitle:zh?'校巴路线':'Shuttle route',icon:'bus',tile:'#4F6F8C'}]:[];}
+        return [];
+      }));
+    }).catch(()=>{});
+    return()=>{live=false;};},[mode]);
+  const row=(a:Activity)=>{const p=a.mine?.participation;const chip=a.ended?{text:zh?'已结束':'Ended',color:c.gray}:p?{text:participationLabel(p.status,zh).replace('报名','').slice(0,6)||participationLabel(p.status,zh),color:p.status==='confirmed'?c.green:p.status==='waitlisted'?c.orange:c.gray}:a.mine?.is_organizer?{text:zh?'组织者':'Organizer',color:c.accent}:null;
+   return <Surface key={a.id} padding={12} onPress={()=>onActivity(a.id)} label={a.title}><View style={{flexDirection:'row',alignItems:'center',gap:12}}>
     <Image source={activityCover(a)} style={{width:56,height:56,borderRadius:12}}/>
-    <View style={{flex:1,gap:3}}><Text numberOfLines={1} style={{fontSize:16,fontWeight:'600',color:c.text}}>{a.title}</Text><Text style={{fontSize:13,color:c.muted}}>{cardDateTime(a.starts_at)} · {a.location}</Text></View>
-    {p?<View style={{paddingVertical:4,paddingHorizontal:9,borderRadius:99,backgroundColor:(p.status==='confirmed'?c.green:p.status==='waitlisted'?c.orange:c.gray)+'1F'}}><Text style={{fontSize:12,fontWeight:'600',color:p.status==='confirmed'?c.green:p.status==='waitlisted'?c.orange:c.gray}}>{participationLabel(p.status,zh).replace('报名','').slice(0,6)||participationLabel(p.status,zh)}</Text></View>:a.mine?.is_organizer?<View style={{paddingVertical:4,paddingHorizontal:9,borderRadius:99,backgroundColor:c.tint}}><Text style={{fontSize:12,fontWeight:'600',color:c.accent}}>{zh?'我发起':'Host'}</Text></View>:null}
+    <View style={{flex:1,gap:3}}><Text numberOfLines={1} style={{fontSize:16,fontWeight:'600',color:c.text}}>{a.title}</Text><Text numberOfLines={1} style={{fontSize:13,color:c.muted}}>{cardDateTime(a.starts_at,zh)} · {a.location}</Text></View>
+    {chip?<View style={{paddingVertical:4,paddingHorizontal:9,borderRadius:99,backgroundColor:chip.color+'1F'}}><Text style={{fontSize:12,fontWeight:'600',color:chip.color}}>{chip.text}</Text></View>:null}
   </View></Surface>;};
+  const nothing=items&&!items.length&&!hosted.length&&!saved.length;
   return <View style={{gap:18}}>
     <PageHeader onBack={onBack} backLabel={zh?'我的':'Me'} title={mode==='participating'?(zh?'我的参与':'My activities'):(zh?'我的收藏':'Saved')}/>
     {error?<Notice tone="error" text={error}/>:null}
     {items===null&&!error?<><Skeleton/><Skeleton/></>:null}
-    {items&&!items.length&&!hosted.length?<EmptyState icon={mode==='saved'?'bookmark':'ticket'} title={mode==='saved'?(zh?'还没有收藏':'Nothing saved'):(zh?'还没有参与活动':'No activities yet')} body={zh?'去「发现」看看大家在做什么。':'See what people are doing in Discover.'}/>:null}
-    {items?.length?<Section title={mode==='participating'?(zh?'参加的':'Joined'):undefined}>{items.map(row)}</Section>:null}
+    {nothing?<EmptyState icon={mode==='saved'?'bookmark':'ticket'} title={mode==='saved'?(zh?'还没有收藏':'Nothing saved'):(zh?'还没有参与活动':'No activities yet')} body={zh?'去「校园墙 → 活动」看看大家在做什么。':'See what people are doing in Wall → Activities.'}/>:null}
+    {items?.length?<Section title={mode==='participating'?(zh?'参加的':'Joined'):(zh?'活动':'Activities')}>{items.map(row)}</Section>:null}
     {hosted.length?<Section title={zh?'我发起的':'Hosted'}>{hosted.map(row)}</Section>:null}
+    {saved.length?<Section title={zh?'地点与路线':'Places & routes'}><ListGroup>{saved.map(x=><ListRow key={x.key} icon={x.icon} tile={x.tile} title={x.title} subtitle={x.subtitle} chevron onPress={()=>onCampus({kind:x.kind,id:x.id})}/>)}</ListGroup><Text style={{paddingHorizontal:4,fontSize:12,color:c.muted}}>{zh?'点地点或路线会打开「校园」里的那一页。':'Places and routes open in Campus.'}</Text></Section>:null}
   </View>;
 }

@@ -1,5 +1,5 @@
 import {useSceneFocus} from '../navigation/TabScene';
-import {dateTimeInZone} from '../study/dates';
+import {dateTimeInZone,monthDayLabel} from '../study/dates';
 import {useSceneNavigation} from '../navigation/InputProtection';
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {Linking,Text,TextInput,View} from 'react-native';
@@ -38,7 +38,7 @@ export function DirectoryScreen({language,onBack,initialCategory,initialId}:{lan
      <Text selectable style={{fontSize:16,lineHeight:24,color:c.text}}>{selected.published_hours[language]}</Text>
      <Text style={{fontSize:12,color:c.muted}}>{zh?'现在是否开放、有没有位置：未知，请以现场为准。':'Open now / availability: unknown — check on site.'}</Text>
     </Surface>
-    <Surface style={{gap:8}}><View style={{flexDirection:'row',alignItems:'center',gap:10}}><IconTile icon={icon} color={col}/><Text style={{fontSize:16,fontWeight:'600',color:c.text}}>{zh?'这里可以做什么':'What it’s for'}</Text></View><Text selectable style={{fontSize:15,lineHeight:23,color:c.muted}}>{selected.description[language]}</Text><Text style={{fontSize:12,color:c.tertiary}}>{zh?'最近核对':'Last checked'} {dateTimeInZone(selected.source.retrieved_at,'Asia/Hong_Kong').slice(0,10)}</Text></Surface>
+    <Surface style={{gap:8}}><View style={{flexDirection:'row',alignItems:'center',gap:10}}><IconTile icon={icon} color={col}/><Text style={{fontSize:16,fontWeight:'600',color:c.text}}>{zh?'这里可以做什么':'What it’s for'}</Text></View><Text selectable style={{fontSize:15,lineHeight:23,color:c.muted}}>{selected.description[language]}</Text><Text style={{fontSize:12,color:c.tertiary}}>{zh?'最近核对':'Last checked'} {monthDayLabel(dateTimeInZone(selected.source.retrieved_at,'Asia/Hong_Kong'),zh)}</Text></Surface>
     <TargetActions key={selected.id} target={{target_kind:'place',target_id:selected.id}} language={language} dark={false} onChanged={()=>void load()}/>
    </>}
   </View>;

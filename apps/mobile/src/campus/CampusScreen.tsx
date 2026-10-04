@@ -1,5 +1,5 @@
 import {PlainField} from '../ui/Pen';
-import {dateTimeInZone} from '../study/dates';
+import {dateTimeInZone,monthDayLabel} from '../study/dates';
 import {DepartureBoard} from './DepartureBoard';
 import {usePageTop} from '../navigation/TabScene';
 import {AcademicsScreen,BookingScreen,ClubsScreen,GradesScreen,HallScreen,ServicesScreen,TimeMatchScreen} from '../life/LifeScreens';
@@ -38,10 +38,13 @@ const hkDate=()=>new Date(Date.now()+8*3600e3).toISOString().slice(0,10);
 const stopName=(s:string)=>s.replace(/\s*\((?:see|please)[^)]*\)\s*/i,' ').trim();
 /** Same wording as the 校园 departure card: minutes under 90, otherwise hours. */
 const waitText=(m:number,zh:boolean)=>m<=0?(zh?'即将开出':'Now'):m<=90?(zh?`${m} 分钟后`:`in ${m} min`):(zh?`约 ${Math.floor(m/60)} 小时后`:`in ~${Math.floor(m/60)} h`);
-export function CampusScreen({language,dark,name,onMe,onPost,onWall}:{language:Language;dark:boolean;name?:string;onMe?:()=>void;onPost?:(id:string)=>void;onWall?:()=>void}) {
+export type CampusTarget={kind:'place'|'route';id:string;rev:number};
+export function CampusScreen({language,dark,name,onMe,onPost,onWall,initialTarget}:{language:Language;dark:boolean;name?:string;onMe?:()=>void;onPost?:(id:string)=>void;onWall?:()=>void;initialTarget?:CampusTarget|null}) {
  const zh=language==='zh',c=usePenColors(),sceneActive=useSceneFocus(),navigate=useSceneNavigation(zh);
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [page,setPage]=useState<Page>({kind:'home'});
+ // Opened from Me → 我的收藏: show the saved place or route (Pen "V6 / 我的收藏").
+ useEffect(()=>{if(initialTarget)setPage(initialTarget.kind==='place'?{kind:'directory',placeId:initialTarget.id}:{kind:'route',id:initialTarget.id});},[initialTarget?.rev]);
  const [catalog,setCatalog]=useState<Catalog|null>(null),[places,setPlaces]=useState<Place[]>([]),[marks,setMarks]=useState<{target_kind:string;target_id:string}[]>([]),[affairs,setAffairs]=useState<Affair[]>([]);
  const [routeId,setRouteId]=useState<string|null>(null),[departures,setDepartures]=useState<ShuttleDepartures|null>(null),[nextDay,setNextDay]=useState<{date:string;time:string}|null>(null),[live,setLive]=useState<LiveOption[]|null>(null);
  const [error,setError]=useState(false),[q,setQ]=useState(''),[revision,setRevision]=useState(0),[searching,setSearching]=useState(false);
@@ -179,7 +182,7 @@ function RouteDetail({id,language,dark,onBack}:{id:string;language:Language;dark
    <ListGroup header={zh?'全部公布时刻':'Published times'}><View style={{padding:14,flexDirection:'row',flexWrap:'wrap',gap:8}}>{d.timetable.map(t=><View key={t.scheduled_at} style={{paddingVertical:5,paddingHorizontal:10,borderRadius:8,backgroundColor:c.fill}}><Text style={{fontSize:14,color:c.text,fontVariant:['tabular-nums']}}>{t.local_time}</Text></View>)}</View></ListGroup>
    <ListGroup>
     <ListRow icon="map-pin" tile={c.accent} title={zh?'上客点':'Boarding point'} subtitle={zh?'站点说明与官方地图':'Official boarding maps'} chevron onPress={()=>void Linking.openURL(d.source.url)}/>
-    <ListRow icon="info" tile={c.gray} title={zh?'数据来源与更新时间':'Source & freshness'} subtitle={`${zh?'核对于':'Checked'} ${dateTimeInZone(d.source.retrieved_at,'Asia/Hong_Kong').slice(0,10)} · ${d.route.valid_from} — ${d.route.valid_to}`} chevron onPress={()=>void Linking.openURL(d.source.url)}/>
+    <ListRow icon="info" tile={c.gray} title={zh?'数据来源与更新时间':'Source & freshness'} subtitle={`${zh?'核对于':'Checked'} ${monthDayLabel(dateTimeInZone(d.source.retrieved_at,'Asia/Hong_Kong'),zh)} · ${zh?'有效期':'Valid'} ${monthDayLabel(d.route.valid_from,zh)} – ${monthDayLabel(d.route.valid_to,zh)}`} chevron onPress={()=>void Linking.openURL(d.source.url)}/>
    </ListGroup>
    <Text style={{paddingHorizontal:16,fontSize:12,lineHeight:17,color:c.muted}}>{zh?'上车需出示校方认可的证件或二维码；本 App 不能代替乘车验证。':'Show school-recognized ID or QR when boarding; this app is not a boarding pass.'}</Text>
    <TargetActions key={id} target={{target_kind:'shuttle',target_id:id}} language={language} dark={dark}/>

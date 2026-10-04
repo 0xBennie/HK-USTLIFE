@@ -29,3 +29,5 @@ export function dueWithinWeek(items:{kind:string;status?:string;due_at?:string|n
  const end=now+7*864e5;
  return items.filter(i=>{if(i.kind!=='task'||i.status!=='open')return false;const at=i.due_at?Date.parse(i.due_at):i.due_date?Date.parse(`${i.due_date}T23:59:00+08:00`):NaN;return at>=now&&at<=end;}).length;
 }
+/** "2026-10-03" → "10 月 3 日" / "3 Oct" (the year is left out; these are near dates). */
+export function monthDayLabel(date:string,zh:boolean){return zh?`${Number(date.slice(5,7))} 月 ${Number(date.slice(8,10))} 日`:new Date(date.slice(0,10)+'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'});}

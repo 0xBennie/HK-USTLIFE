@@ -9,7 +9,7 @@ import {ReminderSettings} from './src/reminders/ReminderControls';
 import {GovernanceScreen} from './src/social/GovernanceScreen';
 import {CommunityScreen,type DiscoveryTarget} from './src/social/CommunityScreen';
 import {InboxScreen} from './src/social/InboxScreen';
-import { CampusScreen } from './src/campus/CampusScreen';
+import { CampusScreen, type CampusTarget } from './src/campus/CampusScreen';
 import './global.css';
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AppState, ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Pressable, ScrollView, Text, useColorScheme, View } from 'react-native';
@@ -69,6 +69,7 @@ function CampusApp() {
     const owner=state.profile?.id??null;
     confirmNavigation(guards.status(scene),language==='zh',()=>{if((session.snapshot().profile?.id??null)===owner)proceed();});
   }
+  const [campusTarget,setCampusTarget]=useState<CampusTarget|null>(null);
   const openActivity=(id:string)=>guardedOpen(2,()=>{setTargetRevision(v=>v+1);setActivityTarget({id,kind:'activity',owner:state.profile?.id??null,returnTab:tab===0||tab===3?tab:undefined});setTab(2);});
   const openPost=(id:string)=>guardedOpen(2,()=>{setTargetRevision(v=>v+1);setActivityTarget({id,kind:'post',owner:state.profile?.id??null,returnTab:tab===0||tab===3?tab:undefined});setTab(2);});
   const dark = useColorScheme() === 'dark';
@@ -130,11 +131,11 @@ function CampusApp() {
       {[0,1,2,3,4].map(index=><InputProtectionContext.Provider key={index} value={{guards,scene:index}}><TabScene active={tab===index} pageRef={value=>{pages.current[index]=value;}} contentContainerStyle={styles.page} overlay={overlays[index]}>
         {index === 4 ? state.status === 'loading' ? <View style={styles.stack}><ActivityIndicator color={colors.accent} /><Text style={{ color: colors.text }}>{t.loading}</Text></View>
           : state.status === 'error' ? <Notice tone="error" text={t.errors[state.error ?? ''] ?? t.network} action={t.retry} onAction={() => void session.restore()}/>
-          : state.profile ? safetyOpen?<GovernanceScreen key={state.profile.id} language={language} dark={dark} onBack={()=>setSafetyOpen(false)}/>:<ProfileScreen key={state.profile.id} profile={state.profile} language={language} dark={dark} exitBusy={exitState.busy} exitError={exitState.error} onExit={requestAccountExit} onLanguage={()=>setLanguage(language==='zh'?'en':'zh')} onSafety={()=>guardedOpen(4,()=>setSafetyOpen(true))} onActivity={openActivity}/>
+          : state.profile ? safetyOpen?<GovernanceScreen key={state.profile.id} language={language} dark={dark} onBack={()=>setSafetyOpen(false)}/>:<ProfileScreen key={state.profile.id} profile={state.profile} language={language} dark={dark} exitBusy={exitState.busy} exitError={exitState.error} onExit={requestAccountExit} onLanguage={()=>setLanguage(language==='zh'?'en':'zh')} onSafety={()=>guardedOpen(4,()=>setSafetyOpen(true))} onActivity={openActivity} onCampus={t=>guardedOpen(1,()=>{setCampusTarget({...t,rev:Date.now()});setTab(1);})}/>
           : null
           : index === 0 ? state.profile ? <StudyScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost} onCampus={()=>setTab(1)} onInbox={()=>setTab(3)} initialReminder={studyTarget?.owner===state.profile.id?studyTarget:null} />
           : null
-          : index === 1 ? <CampusScreen key={state.profile?.id} language={language} dark={dark} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onPost={openPost} onWall={()=>setTab(2)}/>
+          : index === 1 ? <CampusScreen key={state.profile?.id} initialTarget={campusTarget} language={language} dark={dark} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onPost={openPost} onWall={()=>setTab(2)}/>
           : index === 2 ? <CommunityScreen key={`${state.profile?.id}:${targetRevision}`} language={language} dark={dark} initialTarget={activityTarget?.owner===(state.profile?.id??null)?activityTarget:null} name={state.profile?.display_name||state.profile?.email} onMe={()=>setTab(4)} onDismissTarget={()=>{const target=activityTarget;setActivityTarget(null);if(target?.owner===(state.profile?.id??null)&&target.returnTab!==undefined)setTab(target.returnTab);}} onNavigate={scrollToTop}/>
           : state.profile ? <InboxScreen key={state.profile.id} name={state.profile.display_name||state.profile.email} onMe={()=>setTab(4)} language={language} dark={dark} onActivity={openActivity} onPost={openPost}/>
           : null}
