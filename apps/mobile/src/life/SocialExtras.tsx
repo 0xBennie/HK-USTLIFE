@@ -77,7 +77,8 @@ export function DataApiScreen({zh,onBack}:Base){
   <Section title={zh?'我的连接':'Connections'}>
    {tokens===null?<Skeleton height={72} radius={28}/>:tokens.length?<ListGroup>{tokens.map(t=><ListRow key={t.id} icon="bot" tile="#24467F" title={t.name} subtitle={`${zh?'只读':'Read-only'} · ${when(t.last_used_at)}`} value={zh?'撤销':'Revoke'} valueColor={c.red} onPress={()=>revoke(t)}/>)}</ListGroup>:<Surface><Text style={{fontSize:15,color:c.muted}}>{zh?'还没有连接。点下面新建一个。':'No connections yet.'}</Text></Surface>}
   </Section>
-  <PrimaryButton label={zh?'新建连接':'New connection'} onPress={ask}/>
+  {/* Pen V5 / 交互 · AI 钥匙: while a fresh key is shown, sharing it is the only primary action. */}
+  {fresh?null:<PrimaryButton label={zh?'新建连接':'New connection'} onPress={ask}/>}
   <Section title={zh?'上手教程':'Get started'}><ListGroup>
    <ListRow icon="message-square-text" tile="#56647D" title={zh?'5 个好用的提问':'5 great prompts'} subtitle={zh?'"帮我排一下这周的复习时间"':'"Plan my revision this week"'} chevron onPress={()=>Alert.alert(zh?'5 个好用的提问':'Prompts',zh?'1. 我这周有哪些截止？\n2. 下一班去坑口的车几点？\n3. 帮我把 Lab 5 拆成三步\n4. 周三下午哪里有空研讨室？\n5. 把今天的安排读给我听':'1. What’s due this week?\n2. Next bus to Hang Hau?\n3. Split Lab 5 into steps\n4. Free study rooms Wed pm?\n5. Read me today’s plan')}/>
    <ListRow icon="code" tile="#4F6F8C" title={zh?'开发者接口':'Developer endpoints'} subtitle={endpoints.map(e=>e[0]).join(' · ')} chevron onPress={()=>Alert.alert(zh?'开发者接口（只读）':'Endpoints (read-only)',`${base}\n\n`+endpoints.map(([p,d])=>`GET ${p}  ${d}`).join('\n')+`\n\nAuthorization: Bearer ustl_…`)}/>

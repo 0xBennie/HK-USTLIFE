@@ -23,3 +23,9 @@ export function parseHongKongInput(value:string):string|null {
 }
 // Retry identity, not an authentication credential. Keep it until the draft changes.
 export const newWriteKey = () => `write-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+
+/** Open tasks due from now through the next 7 days (date-only deadlines count as 23:59 HKT). Shared by 我的 and 学业 so both show the same number. */
+export function dueWithinWeek(items:{kind:string;status?:string;due_at?:string|null;due_date?:string|null}[],now=Date.now()){
+ const end=now+7*864e5;
+ return items.filter(i=>{if(i.kind!=='task'||i.status!=='open')return false;const at=i.due_at?Date.parse(i.due_at):i.due_date?Date.parse(`${i.due_date}T23:59:00+08:00`):NaN;return at>=now&&at<=end;}).length;
+}

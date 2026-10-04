@@ -8,7 +8,7 @@ import {session,api} from '../runtime';
 import {EmptyState,GlassChips,Hero,HeroActions,ListGroup,ListRow,Notice,PenIcon,PrimaryButton,SearchField,Section,Skeleton,Surface,usePenColors} from '../ui/Pen';
 import {feel} from '../ui/feel';
 import {Grid,LifeTop,Pill} from './kit';
-import {dateTimeInZone} from '../study/dates';
+import {dateTimeInZone,dueWithinWeek} from '../study/dates';
 import type {Course,StudyItem} from '../study/types';
 type Base={zh:boolean;onBack:()=>void};
 // Pen V3 / 社团 hero image.
@@ -25,13 +25,13 @@ export function AcademicsScreen({zh,onBack,onGrades,onTimeMatch,onSchool}:Base&{
  const [courses,setCourses]=useState<Course[]|null>(null),[due,setDue]=useState<number|null>(null),[canvas,setCanvas]=useState('');
  useEffect(()=>{let live=true;
   session.request<{items:Course[]}>('/study/courses?limit=100').then(r=>{if(live)setCourses(r.items);}).catch(()=>{if(live)setCourses([]);});
-  session.request<{items:StudyItem[]}>('/study/items?limit=100').then(r=>{const end=Date.now()+7*864e5;if(live)setDue(r.items.filter(i=>i.kind==='task'&&i.status==='open'&&i.due_at&&Date.parse(i.due_at)<=end&&Date.parse(i.due_at)>=Date.now()-864e5).length);}).catch(()=>{});
+  session.request<{items:StudyItem[]}>('/study/items?limit=100').then(r=>{if(live)setDue(dueWithinWeek(r.items));}).catch(()=>{});
   session.request<{state:string;provider:string}[]>('/school/connections').then(r=>{if(live)setCanvas(r.find(x=>x.provider==='canvas')?.state??'');}).catch(()=>{});
   return()=>{live=false;};},[]);
  const week=termWeek(),linked=canvas==='connected'||canvas==='partial';
  return <View style={{gap:18}}>
   <LifeTop zh={zh} title={zh?'学业':'Academics'} onBack={onBack}/>
-  <Hero label={zh?TERM.label.zh:TERM.label.en} value={String(week)} unit={zh?`/ ${TERM.weeks} 周`:`/ ${TERM.weeks} wks`} chip={courses===null?undefined:(zh?`${courses.length} 门课 · 本周 ${due??'–'} 项截止`:`${courses.length} courses · ${due??'–'} due this week`)} chipIcon="book-open"/>
+  <Hero label={zh?TERM.label.zh:TERM.label.en} value={String(week)} unit={zh?`/ ${TERM.weeks} 周`:`/ ${TERM.weeks} wks`} chip={courses===null?undefined:(zh?`${courses.length} 门课 · 7 天内 ${due??'–'} 项截止`:`${courses.length} courses · ${due??'–'} due in 7 days`)} chipIcon="book-open"/>
   <View style={{height:6,borderRadius:3,backgroundColor:c.fill,overflow:'hidden'}}><View style={{width:`${week/TERM.weeks*100}%`,height:6,borderRadius:3,backgroundColor:'#24467F'}}/></View>
   <ListGroup>
    <ListRow icon="circle-check" tile="#E5484D" title={zh?'Canvas 作业':'Canvas assignments'} subtitle={linked?(zh?'已连接 · 自动进入「今天」':'Connected · flows into Today'):(zh?'粘贴 Canvas 令牌即可自动同步':'Paste a Canvas token to sync')} value={linked?(zh?'已连接':'On'):(zh?'连接':'Connect')} valueColor={linked?'#2E9E5B':'#24467F'} chevron onPress={onSchool}/>
@@ -151,7 +151,8 @@ export function ClubsScreen({zh,onBack}:Base){
  </View>;
 }
 
-const PRESETS=[30,45,60];
+// Pen V5 / 宿舍服务（未计时）and（计时中）.
+const PRESETS=[30,45,60],DEFAULT_WASH=45;
 export function HallScreen({zh,onBack}:Base){
  const c=usePenColors();
  const [until,setUntil]=useState<number|null>(null),[tick,setTick]=useState(Date.now());
@@ -169,13 +170,12 @@ export function HallScreen({zh,onBack}:Base){
  async function cancel(){await Notifications.cancelScheduledNotificationAsync('campus.local.laundry').catch(()=>{});setUntil(null);feel.tap();}
  return <View style={{gap:18}}>
   <LifeTop zh={zh} title={zh?'宿舍服务':'Hall services'} onBack={onBack}/>
-  <Hero label={zh?'洗衣计时':'Laundry timer'} value={left===null?'–':String(left)} unit={zh?'分钟':'min'} chip={left===null?(zh?'放好衣服，点一下开始计时':'Start when the machine starts'):left===0?(zh?'洗好了，去取吧':'Done — go collect'):(zh?`${hk(new Date(until!).toISOString()).slice(11)} 洗好 · 到时推送提醒`:`Done at ${hk(new Date(until!).toISOString()).slice(11)}`)} chipIcon="timer"/>
+  <Hero label={zh?'洗衣计时':'Laundry timer'} value={left===null?String(DEFAULT_WASH):String(left)} valueColor={left===null?c.muted:undefined} unit={zh?'分钟':'min'} chip={left===null?(zh?'放好衣服，选时长开始计时':'Pick a time to start'):left===0?(zh?'洗好了，去取吧':'Done — go collect'):(zh?`${hk(new Date(until!).toISOString()).slice(11)} 洗好 · 到时推送提醒`:`Done at ${hk(new Date(until!).toISOString()).slice(11)}`)} chipIcon="timer"/>
   {until?<HeroActions><PrimaryButton tone="soft" label={zh?'取消计时':'Cancel'} onPress={()=>void cancel()}/></HeroActions>
-   :<View style={{flexDirection:'row',gap:10}}>{PRESETS.map((m,i)=><View key={m} style={{flex:1}}><PrimaryButton tone={i===0?'accent':'soft'} label={zh?`${m} 分钟`:`${m} min`} onPress={()=>void start(m)}/></View>)}</View>}
+   :<View style={{flexDirection:'row',gap:10}}>{PRESETS.map(m=><View key={m} style={{flex:1}}><PrimaryButton tone={m===DEFAULT_WASH?'accent':'soft'} label={zh?`${m} 分钟`:`${m} min`} onPress={()=>void start(m)}/></View>)}</View>}
   <ListGroup>
    <ListRow icon="wrench" tile="#D98A1C" title={zh?'宿舍报修与住宿事务':'Hall repairs & housing'} subtitle={zh?'学生住宿官方网站':'Official student housing site'} chevron onPress={()=>void Linking.openURL('https://sao.hkust.edu.hk/')}/>
   </ListGroup>
-  <Text style={{textAlign:'center',fontSize:12,color:c.muted}}>{zh?'洗衣机实时状态需要宿舍系统开放接口；计时提醒在本机运行。':'Live machine status needs the hall system; the timer runs on this phone.'}</Text>
  </View>;
 }
 
