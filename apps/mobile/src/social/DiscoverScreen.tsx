@@ -116,6 +116,7 @@ export function DiscoverScreen({language,dark,initialId,onDismissTarget,onNaviga
     </View>
    </View>)}
   </View>:null}
-  {items.length?<Text style={[styles.caption,{fontSize:12,textAlign:'center',color:c.muted}]}>{zh?'示例内容 · 不代表真实开放的活动':'Sample content · Not real open activities'}</Text>:null}
+  {/* The MVP backend marks every activity as demo data (Activity.is_demo); say so only when the list shows such items. */}
+  {items.some(a=>a.is_demo)?<Text style={[styles.caption,{fontSize:12,textAlign:'center',color:c.muted}]}>{zh?'示例内容 · 不代表真实开放的活动':'Sample content · Not real open activities'}</Text>:null}
  </View>;
 }
