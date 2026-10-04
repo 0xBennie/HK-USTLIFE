@@ -66886,7 +66886,7 @@
       "id": "ivz0E",
       "x": 440,
       "y": 26700,
-      "name": "V3 / 学业",
+      "name": "V5 / 学业（真实数据）",
       "clip": true,
       "width": 393,
       "height": 1080,
@@ -67070,7 +67070,7 @@
                           "id": "RDV8p",
                           "name": "/ 16 周",
                           "fill": "$g-ink",
-                          "content": "/ 16 周",
+                          "content": "/ 13 周",
                           "fontFamily": "Noto Sans SC",
                           "fontSize": 22,
                           "fontWeight": "600"
@@ -67090,7 +67090,7 @@
                       "fill": "$g-muted"
                     },
                     "MI4Rp": {
-                      "content": "累计 GPA 3.62 · 本学期 18 学分"
+                      "content": "3 门课 · 本周 5 项截止"
                     }
                   }
                 }
@@ -67190,13 +67190,13 @@
                       "fill": "#2E9E5B"
                     },
                     "WWO2Y": {
-                      "content": "我的成绩"
+                      "content": "Canvas 作业"
                     },
                     "c7wmJ": {
-                      "content": "上学期 5 门 · 新成绩出了会通知你"
+                      "content": "粘贴 Canvas 令牌即可自动同步"
                     },
                     "BMpJq": {
-                      "content": "新",
+                      "content": "连接",
                       "fill": "$g-green"
                     }
                   }
@@ -67220,13 +67220,14 @@
                       "fill": "#E5484D"
                     },
                     "WWO2Y": {
-                      "content": "我的考试"
+                      "content": "成绩分布"
                     },
                     "c7wmJ": {
-                      "content": "期中 3 场 · 最近：10 月 14 日"
+                      "content": "同学匿名上报 · 满 10 人才显示"
                     },
                     "BMpJq": {
-                      "enabled": false
+                      "enabled": false,
+                      "content": ""
                     }
                   }
                 },
@@ -67249,13 +67250,13 @@
                       "fill": "#D98A1C"
                     },
                     "WWO2Y": {
-                      "content": "我的候补"
+                      "content": "和同学找共同空闲"
                     },
                     "c7wmJ": {
-                      "content": "COMP 3311 · 第 3 位（昨天第 7 位）"
+                      "content": "只比对空闲时段，不共享课表"
                     },
                     "BMpJq": {
-                      "content": "↑4",
+                      "content": "",
                       "fill": "$g-green"
                     }
                   }
@@ -67275,13 +67276,14 @@
                       "fill": "#24467F"
                     },
                     "WWO2Y": {
-                      "content": "成绩计算器"
+                      "content": "成绩与考试（SIS）"
                     },
                     "c7wmJ": {
-                      "content": "目标 GPA 3.7 需要的成绩"
+                      "content": "学校开放 SIS 授权后自动同步"
                     },
                     "BMpJq": {
-                      "enabled": false
+                      "enabled": false,
+                      "content": "待批准"
                     }
                   }
                 }
@@ -67307,7 +67309,7 @@
                   "fill": "$g-ink",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "最近成绩",
+                  "content": "我的课程",
                   "fontFamily": "Noto Sans SC",
                   "fontSize": 20,
                   "fontWeight": "700"
@@ -67396,13 +67398,13 @@
                       ]
                     },
                     "WWO2Y": {
-                      "content": "COMP 1021"
+                      "content": "MATH 2411"
                     },
                     "c7wmJ": {
-                      "content": "Introduction to CS"
+                      "content": "Applied Statistics"
                     },
                     "BMpJq": {
-                      "content": "A",
+                      "content": "",
                       "fill": "$g-ink"
                     }
                   }
@@ -67434,13 +67436,13 @@
                       ]
                     },
                     "WWO2Y": {
-                      "content": "MATH 1013"
+                      "content": "HUMA 1000"
                     },
                     "c7wmJ": {
-                      "content": "Calculus IB"
+                      "content": "Humanities"
                     },
                     "BMpJq": {
-                      "content": "A-",
+                      "content": "",
                       "fill": "$g-ink"
                     }
                   }
@@ -67468,13 +67470,13 @@
                       ]
                     },
                     "WWO2Y": {
-                      "content": "LANG 1002"
+                      "content": "COMP 2011"
                     },
                     "c7wmJ": {
-                      "content": "English for Uni"
+                      "content": "Programming with C++"
                     },
                     "BMpJq": {
-                      "content": "B+",
+                      "content": "",
                       "fill": "$g-ink"
                     }
                   }
@@ -68480,7 +68482,7 @@
       "id": "acWzf",
       "x": 1320,
       "y": 26700,
-      "name": "V3 / 预约场地",
+      "name": "V5 / 预约场地（官方系统）",
       "clip": true,
       "width": 393,
       "height": 977,
@@ -68613,639 +68615,204 @@
             },
             {
               "type": "frame",
-              "id": "a1RwFs",
-              "name": "Hero",
+              "id": "Pdb2S",
+              "name": "Official card",
               "width": "fill_container",
-              "layout": "vertical",
-              "gap": 8,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "z48dwi",
-                  "name": "现在可以订",
-                  "fill": "$g-muted",
-                  "content": "现在可以订",
-                  "fontFamily": "Noto Sans SC",
-                  "fontSize": 18,
-                  "fontWeight": "500"
-                },
-                {
-                  "type": "frame",
-                  "id": "F0JLo1",
-                  "name": "Value",
-                  "gap": 6,
-                  "alignItems": "end",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "vvlj8",
-                      "name": "12",
-                      "fill": "$g-ink",
-                      "content": "12",
-                      "fontFamily": "Noto Sans SC",
-                      "fontSize": 68,
-                      "fontWeight": "700",
-                      "letterSpacing": -3
-                    },
-                    {
-                      "type": "frame",
-                      "id": "A75hS",
-                      "name": "Unit pad",
-                      "padding": [
-                        0,
-                        0,
-                        14,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Uwly4",
-                          "name": "个空位",
-                          "fill": "$g-ink",
-                          "content": "个空位",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 22,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "id": "w5LS86",
-                  "type": "ref",
-                  "ref": "tKPYZ",
-                  "name": "Chip",
-                  "descendants": {
-                    "nk5IS": {
-                      "icon": "bell-ring",
-                      "fill": "$g-muted"
-                    },
-                    "MI4Rp": {
-                      "content": "有空位时会第一时间通知你"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "imbO3",
-              "name": "Chips",
-              "width": "fill_container",
-              "gap": 8,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "xB8gV",
-                  "name": "Chip 全部",
-                  "fill": "$g-ink",
-                  "cornerRadius": 99,
-                  "padding": [
-                    9,
-                    15
-                  ],
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "XRnnf",
-                      "name": "全部",
-                      "fill": "$g-on-ink",
-                      "content": "全部",
-                      "fontFamily": "Noto Sans SC",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "H7iWBC",
-                  "name": "Chip 图书馆研讨室",
-                  "fill": "$g-glass-strong",
-                  "cornerRadius": 99,
-                  "stroke": "#FFFFFFCC",
-                  "strokeWidth": 1,
-                  "padding": [
-                    9,
-                    15
-                  ],
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "gDyVv",
-                      "name": "图书馆研讨室",
-                      "fill": "$g-ink",
-                      "content": "图书馆研讨室",
-                      "fontFamily": "Noto Sans SC",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "DaMXM",
-                  "name": "Chip 羽毛球",
-                  "fill": "$g-glass-strong",
-                  "cornerRadius": 99,
-                  "stroke": "#FFFFFFCC",
-                  "strokeWidth": 1,
-                  "padding": [
-                    9,
-                    15
-                  ],
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "H0D1mo",
-                      "name": "羽毛球",
-                      "fill": "$g-ink",
-                      "content": "羽毛球",
-                      "fontFamily": "Noto Sans SC",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "kpsl6",
-                  "name": "Chip 健身室",
-                  "fill": "$g-glass-strong",
-                  "cornerRadius": 99,
-                  "stroke": "#FFFFFFCC",
-                  "strokeWidth": 1,
-                  "padding": [
-                    9,
-                    15
-                  ],
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "Y058Lr",
-                      "name": "健身室",
-                      "fill": "$g-ink",
-                      "content": "健身室",
-                      "fontFamily": "Noto Sans SC",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "AHo8e",
-                  "name": "Chip 琴房",
-                  "fill": "$g-glass-strong",
-                  "cornerRadius": 99,
-                  "stroke": "#FFFFFFCC",
-                  "strokeWidth": 1,
-                  "padding": [
-                    9,
-                    15
-                  ],
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "ZnJqz",
-                      "name": "琴房",
-                      "fill": "$g-ink",
-                      "content": "琴房",
-                      "fontFamily": "Noto Sans SC",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "Zjxo7",
-              "name": "Section 我的收藏",
-              "width": "fill_container",
-              "padding": [
-                4,
-                4,
-                0,
-                4
-              ],
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "LpktN",
-                  "name": "我的收藏",
-                  "fill": "$g-ink",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "我的收藏",
-                  "fontFamily": "Noto Sans SC",
-                  "fontSize": 20,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "CUUrp",
-              "name": "Favs",
-              "width": "fill_container",
-              "gap": 12,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "oXhGv",
-                  "name": "Fav 研讨室 LG3",
-                  "clip": true,
-                  "width": "fill_container",
-                  "fill": "$g-glass",
-                  "cornerRadius": 24,
-                  "stroke": {
-                    "type": "gradient",
-                    "gradientType": "linear",
-                    "enabled": true,
-                    "rotation": 180,
-                    "size": {
-                      "height": 1
-                    },
-                    "colors": [
-                      {
-                        "color": "#FFFFFFF2",
-                        "position": 0
-                      },
-                      {
-                        "color": "#FFFFFF40",
-                        "position": 1
-                      }
-                    ]
-                  },
-                  "strokeWidth": 1,
-                  "effect": [
-                    {
-                      "type": "background_blur",
-                      "radius": 28
-                    },
-                    {
-                      "type": "shadow",
-                      "shadowType": "outer",
-                      "color": "#0000000F",
-                      "offset": {
-                        "x": 0,
-                        "y": 10
-                      },
-                      "blur": 30
-                    },
-                    {
-                      "type": "shadow",
-                      "shadowType": "inner",
-                      "color": "#FFFFFFB3",
-                      "offset": {
-                        "x": 0,
-                        "y": 1
-                      }
-                    }
-                  ],
-                  "layout": "vertical",
-                  "gap": 14,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "k2l4S",
-                      "name": "I",
-                      "width": 44,
-                      "height": 44,
-                      "fill": "#56647D",
-                      "cornerRadius": 22,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "tvP3h",
-                          "name": "i",
-                          "width": 20,
-                          "height": 20,
-                          "icon": "users",
-                          "library": "lucide",
-                          "fill": "#FFFFFF"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "UC3fN",
-                      "name": "t",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "XcSvk",
-                          "name": "研讨室 LG3",
-                          "fill": "$g-ink",
-                          "content": "研讨室 LG3",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 16,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "ChfWj",
-                          "name": "今天 3 个时段",
-                          "fill": "$g-green",
-                          "content": "今天 3 个时段",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "QCTI5",
-                  "name": "Fav 羽毛球场",
-                  "clip": true,
-                  "width": "fill_container",
-                  "fill": "$g-glass",
-                  "cornerRadius": 24,
-                  "stroke": {
-                    "type": "gradient",
-                    "gradientType": "linear",
-                    "enabled": true,
-                    "rotation": 180,
-                    "size": {
-                      "height": 1
-                    },
-                    "colors": [
-                      {
-                        "color": "#FFFFFFF2",
-                        "position": 0
-                      },
-                      {
-                        "color": "#FFFFFF40",
-                        "position": 1
-                      }
-                    ]
-                  },
-                  "strokeWidth": 1,
-                  "effect": [
-                    {
-                      "type": "background_blur",
-                      "radius": 28
-                    },
-                    {
-                      "type": "shadow",
-                      "shadowType": "outer",
-                      "color": "#0000000F",
-                      "offset": {
-                        "x": 0,
-                        "y": 10
-                      },
-                      "blur": 30
-                    },
-                    {
-                      "type": "shadow",
-                      "shadowType": "inner",
-                      "color": "#FFFFFFB3",
-                      "offset": {
-                        "x": 0,
-                        "y": 1
-                      }
-                    }
-                  ],
-                  "layout": "vertical",
-                  "gap": 14,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "e1vWta",
-                      "name": "I",
-                      "width": 44,
-                      "height": 44,
-                      "fill": "#2E9E5B",
-                      "cornerRadius": 22,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "rjScZ",
-                          "name": "i",
-                          "width": 20,
-                          "height": 20,
-                          "icon": "feather",
-                          "library": "lucide",
-                          "fill": "#FFFFFF"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "di2e7",
-                      "name": "t",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Nim6k",
-                          "name": "羽毛球场",
-                          "fill": "$g-ink",
-                          "content": "羽毛球场",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 16,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "y19Eo",
-                          "name": "19:00 有 ",
-                          "fill": "$g-green",
-                          "content": "19:00 有 1 场",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "H4Tg23",
-              "name": "Section 今天的空位",
-              "width": "fill_container",
-              "padding": [
-                4,
-                4,
-                0,
-                4
-              ],
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "ZIykK",
-                  "name": "今天的空位",
-                  "fill": "$g-ink",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "今天的空位",
-                  "fontFamily": "Noto Sans SC",
-                  "fontSize": 20,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "q3jF9D",
-              "name": "Slots",
-              "clip": true,
-              "width": "fill_container",
-              "fill": "$g-glass",
+              "fill": "$g-content",
               "cornerRadius": 28,
-              "stroke": {
-                "type": "gradient",
-                "gradientType": "linear",
-                "enabled": true,
-                "rotation": 180,
-                "size": {
-                  "height": 1
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#1B356614",
+                "offset": {
+                  "x": 0,
+                  "y": 10
                 },
-                "colors": [
-                  {
-                    "color": "#FFFFFFF2",
-                    "position": 0
-                  },
-                  {
-                    "color": "#FFFFFF40",
-                    "position": 1
-                  }
-                ]
+                "blur": 30
               },
-              "strokeWidth": 1,
-              "effect": [
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 18,
+              "children": [
                 {
-                  "type": "background_blur",
-                  "radius": 28
+                  "type": "frame",
+                  "id": "v6o5KP",
+                  "name": "h",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "dtdM0",
+                      "name": "ic",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#24467F1F",
+                      "cornerRadius": 20,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "UtpaJ",
+                          "name": "i",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "calendar-plus",
+                          "library": "lucide",
+                          "fill": "#24467F"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "u4HaSD",
+                      "name": "c",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RHyfm",
+                          "name": "t",
+                          "fill": "$g-ink",
+                          "content": "HKUST 官方预约系统",
+                          "fontFamily": "Inter",
+                          "fontSize": 17,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "OH5t8",
+                          "name": "s",
+                          "fill": "$g-muted",
+                          "content": "booking.hkust.edu.hk · 用学校账号登录",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000000F",
-                  "offset": {
-                    "x": 0,
-                    "y": 10
-                  },
-                  "blur": 30
+                  "type": "text",
+                  "id": "Q1l0r",
+                  "name": "p",
+                  "fill": "$g-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "预约在学校系统完成（需要 HKUST 登录）。这里一步打开，订好后可以到校园墙约人。",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
                 },
                 {
-                  "type": "shadow",
-                  "shadowType": "inner",
-                  "color": "#FFFFFFB3",
-                  "offset": {
-                    "x": 0,
-                    "y": 1
+                  "id": "PdWf3",
+                  "type": "ref",
+                  "ref": "KTr25",
+                  "name": "Open",
+                  "width": "fill_container",
+                  "descendants": {
+                    "Z81bWT": {
+                      "content": "打开官方预约"
+                    }
                   }
                 }
-              ],
+              ]
+            },
+            {
+              "type": "text",
+              "id": "N2yRpZ",
+              "name": "sec",
+              "fill": "$g-ink",
+              "content": "按类型",
+              "fontFamily": "Inter",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "gkIsb",
+              "name": "Types",
+              "width": "fill_container",
+              "fill": "$g-content",
+              "cornerRadius": 28,
               "layout": "vertical",
               "children": [
                 {
-                  "id": "Y8JCX",
+                  "id": "t22gpP",
                   "type": "ref",
                   "ref": "s1Jb8y",
-                  "name": "Row 研讨室 LG3-04",
+                  "name": "Row 图书馆研讨室",
                   "width": "fill_container",
-                  "stroke": "$g-line",
-                  "strokeWidth": {
-                    "bottom": 0.5
-                  },
                   "descendants": {
                     "cxtsS": {
-                      "fill": "#56647D1F"
+                      "fill": "#24467F1F"
                     },
                     "HIbgz": {
-                      "icon": "door-open",
-                      "fill": "#56647D"
+                      "icon": "users",
+                      "fill": "#24467F"
                     },
                     "WWO2Y": {
-                      "content": "研讨室 LG3-04"
+                      "content": "图书馆研讨室"
                     },
                     "c7wmJ": {
-                      "content": "14:00–16:00 · 6 人"
+                      "content": "小组讨论室"
                     },
                     "BMpJq": {
-                      "content": "预约",
-                      "fill": "$g-ink"
+                      "content": ""
                     }
                   }
                 },
                 {
-                  "id": "G13ar",
+                  "id": "UEWIy",
                   "type": "ref",
                   "ref": "s1Jb8y",
-                  "name": "Row 羽毛球场 3",
+                  "name": "Row 运动场地",
                   "width": "fill_container",
-                  "stroke": "$g-line",
-                  "strokeWidth": {
-                    "bottom": 0.5
-                  },
                   "descendants": {
                     "cxtsS": {
-                      "fill": "#2E9E5B1F"
+                      "fill": "#2E7D551F"
                     },
                     "HIbgz": {
                       "icon": "feather",
-                      "fill": "#2E9E5B"
+                      "fill": "#2E7D55"
                     },
                     "WWO2Y": {
-                      "content": "羽毛球场 3"
+                      "content": "运动场地"
                     },
                     "c7wmJ": {
-                      "content": "19:00–20:00"
+                      "content": "羽毛球、壁球、网球"
                     },
                     "BMpJq": {
-                      "content": "预约",
-                      "fill": "$g-ink"
+                      "content": ""
                     }
                   }
                 },
                 {
-                  "id": "EbYUp",
+                  "id": "oRtvF",
                   "type": "ref",
                   "ref": "s1Jb8y",
-                  "name": "Row 健身室",
+                  "name": "Row 琴房与活动室",
                   "width": "fill_container",
                   "descendants": {
                     "cxtsS": {
-                      "fill": "#D98A1C1F"
+                      "fill": "#7A5C8E1F"
                     },
                     "HIbgz": {
-                      "icon": "dumbbell",
-                      "fill": "#D98A1C"
+                      "icon": "music",
+                      "fill": "#7A5C8E"
                     },
                     "WWO2Y": {
-                      "content": "健身室"
+                      "content": "琴房与活动室"
                     },
                     "c7wmJ": {
-                      "content": "全天开放 · 现场排队"
+                      "content": "学生中心"
                     },
                     "BMpJq": {
-                      "enabled": false
+                      "content": ""
                     }
                   }
                 }
@@ -70108,7 +69675,7 @@
                       "id": "V4g4x",
                       "name": "推荐",
                       "fill": "$g-on-ink",
-                      "content": "推荐",
+                      "content": "全部",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 14,
                       "fontWeight": "600"
@@ -70133,7 +69700,7 @@
                       "id": "C4xPwk",
                       "name": "学术",
                       "fill": "$g-ink",
-                      "content": "学术",
+                      "content": "运动",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 14,
                       "fontWeight": "600"
@@ -70158,7 +69725,7 @@
                       "id": "iJBKE",
                       "name": "运动",
                       "fill": "$g-ink",
-                      "content": "运动",
+                      "content": "文化",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 14,
                       "fontWeight": "600"
@@ -70183,7 +69750,7 @@
                       "id": "t8vb8",
                       "name": "文化",
                       "fill": "$g-ink",
-                      "content": "文化",
+                      "content": "兴趣",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 14,
                       "fontWeight": "600"
@@ -70208,7 +69775,32 @@
                       "id": "UC6mh",
                       "name": "工程",
                       "fill": "$g-ink",
-                      "content": "工程",
+                      "content": "院系",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bUfAP",
+                  "name": "Chip 舍堂",
+                  "fill": "$g-glass-strong",
+                  "cornerRadius": 99,
+                  "stroke": "#FFFFFFCC",
+                  "strokeWidth": 1,
+                  "padding": [
+                    9,
+                    15
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "lFqv3",
+                      "name": "工程",
+                      "fill": "$g-ink",
+                      "content": "舍堂",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 14,
                       "fontWeight": "600"
@@ -70272,7 +69864,7 @@
                       "id": "fFuKX",
                       "name": "本周有活动",
                       "fill": "#0B0B0C",
-                      "content": "本周有活动",
+                      "content": "最多人关注",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 13,
                       "fontWeight": "600"
@@ -70291,7 +69883,7 @@
                       "id": "FjfRc",
                       "name": "摄影学会",
                       "fill": "#FFFFFF",
-                      "content": "摄影学会",
+                      "content": "The Band Society",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 26,
                       "fontWeight": "700"
@@ -70301,7 +69893,7 @@
                       "id": "d2vAhg",
                       "name": "周六西贡外拍 ·",
                       "fill": "#FFFFFFD9",
-                      "content": "周六西贡外拍 · 新手欢迎 · 132 位成员",
+                      "content": "文化艺术 · 128 人关注",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 14,
                       "fontWeight": "normal"
@@ -70369,7 +69961,7 @@
                   "id": "WGxAJ",
                   "type": "ref",
                   "ref": "s1Jb8y",
-                  "name": "Row 会计学生会",
+                  "name": "Row AIESEC",
                   "width": "fill_container",
                   "stroke": "$g-line",
                   "strokeWidth": {
@@ -70377,17 +69969,17 @@
                   },
                   "descendants": {
                     "cxtsS": {
-                      "fill": "#24467F1F"
+                      "fill": "#D98A1C1F"
                     },
                     "HIbgz": {
-                      "icon": "calculator",
-                      "fill": "#24467F"
+                      "icon": "sparkles",
+                      "fill": "#D98A1C"
                     },
                     "WWO2Y": {
-                      "content": "会计学生会"
+                      "content": "AIESEC"
                     },
                     "c7wmJ": {
-                      "content": "学术 · 商学院 · 院系"
+                      "content": "兴趣与信仰 · 0 人关注"
                     },
                     "BMpJq": {
                       "content": "关注",
@@ -70399,7 +69991,7 @@
                   "id": "gc5jl",
                   "type": "ref",
                   "ref": "s1Jb8y",
-                  "name": "Row 航空队 Aero Team",
+                  "name": "Row Accounting Students’ Society",
                   "width": "fill_container",
                   "stroke": "$g-line",
                   "strokeWidth": {
@@ -70407,17 +69999,17 @@
                   },
                   "descendants": {
                     "cxtsS": {
-                      "fill": "#56647D1F"
+                      "fill": "#24467F1F"
                     },
                     "HIbgz": {
-                      "icon": "plane",
-                      "fill": "#56647D"
+                      "icon": "book-open",
+                      "fill": "#24467F"
                     },
                     "WWO2Y": {
-                      "content": "航空队 Aero Team"
+                      "content": "Accounting Students’ Society"
                     },
                     "c7wmJ": {
-                      "content": "竞赛 · 工程"
+                      "content": "系会 · 0 人关注"
                     },
                     "BMpJq": {
                       "content": "关注",
@@ -70429,7 +70021,7 @@
                   "id": "jrKaF",
                   "type": "ref",
                   "ref": "s1Jb8y",
-                  "name": "Row 射箭会",
+                  "name": "Row Archery Club",
                   "width": "fill_container",
                   "stroke": "$g-line",
                   "strokeWidth": {
@@ -70437,17 +70029,17 @@
                   },
                   "descendants": {
                     "cxtsS": {
-                      "fill": "#E5484D1F"
+                      "fill": "#2E7D551F"
                     },
                     "HIbgz": {
-                      "icon": "target",
-                      "fill": "#E5484D"
+                      "icon": "dumbbell",
+                      "fill": "#2E7D55"
                     },
                     "WWO2Y": {
-                      "content": "射箭会"
+                      "content": "Archery Club"
                     },
                     "c7wmJ": {
-                      "content": "运动 · 竞赛"
+                      "content": "运动 · 1 人关注"
                     },
                     "BMpJq": {
                       "content": "已关注",
@@ -70459,21 +70051,21 @@
                   "id": "wweiS",
                   "type": "ref",
                   "ref": "s1Jb8y",
-                  "name": "Row 乐队协会",
+                  "name": "Row Art Club",
                   "width": "fill_container",
                   "descendants": {
                     "cxtsS": {
-                      "fill": "#D98A1C1F"
+                      "fill": "#7A5C8E1F"
                     },
                     "HIbgz": {
-                      "icon": "music",
-                      "fill": "#D98A1C"
+                      "icon": "palette",
+                      "fill": "#7A5C8E"
                     },
                     "WWO2Y": {
-                      "content": "乐队协会"
+                      "content": "Art Club"
                     },
                     "c7wmJ": {
-                      "content": "文化 · 演出"
+                      "content": "文化艺术 · 0 人关注"
                     },
                     "BMpJq": {
                       "content": "关注",
@@ -70492,7 +70084,7 @@
       "id": "rbykj",
       "x": 880,
       "y": 28300,
-      "name": "V3 / 宿舍服务",
+      "name": "V5 / 宿舍服务（洗衣计时）",
       "clip": true,
       "width": 393,
       "height": 975,
@@ -70637,7 +70229,7 @@
                   "id": "pARMf",
                   "name": "Hall V ·",
                   "fill": "$g-muted",
-                  "content": "Hall V · 3 楼洗衣房",
+                  "content": "洗衣计时",
                   "fontFamily": "Noto Sans SC",
                   "fontSize": 18,
                   "fontWeight": "500"
@@ -70654,7 +70246,7 @@
                       "id": "x4uJP",
                       "name": "2",
                       "fill": "$g-ink",
-                      "content": "2",
+                      "content": "45",
                       "fontFamily": "Noto Sans SC",
                       "fontSize": 68,
                       "fontWeight": "700",
@@ -70676,7 +70268,7 @@
                           "id": "OAHDU",
                           "name": "台空闲",
                           "fill": "$g-ink",
-                          "content": "台空闲",
+                          "content": "分钟",
                           "fontFamily": "Noto Sans SC",
                           "fontSize": 22,
                           "fontWeight": "600"
@@ -70696,601 +70288,9 @@
                       "fill": "$g-green"
                     },
                     "MI4Rp": {
-                      "content": "你的 4 号机还有 12 分钟"
+                      "content": "19:33 洗好 · 到时推送提醒"
                     }
                   }
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "WfUZQ",
-              "name": "Machines",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 12,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "ri5Xv",
-                  "name": "r",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "e44DB",
-                      "name": "M1",
-                      "clip": true,
-                      "width": "fill_container",
-                      "fill": "$g-glass",
-                      "cornerRadius": 22,
-                      "stroke": {
-                        "type": "gradient",
-                        "gradientType": "linear",
-                        "enabled": true,
-                        "rotation": 180,
-                        "size": {
-                          "height": 1
-                        },
-                        "colors": [
-                          {
-                            "color": "#FFFFFFF2",
-                            "position": 0
-                          },
-                          {
-                            "color": "#FFFFFF40",
-                            "position": 1
-                          }
-                        ]
-                      },
-                      "strokeWidth": 1,
-                      "effect": [
-                        {
-                          "type": "background_blur",
-                          "radius": 28
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "outer",
-                          "color": "#0000000F",
-                          "offset": {
-                            "x": 0,
-                            "y": 10
-                          },
-                          "blur": 30
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "inner",
-                          "color": "#FFFFFFB3",
-                          "offset": {
-                            "x": 0,
-                            "y": 1
-                          }
-                        }
-                      ],
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "n3hs0",
-                          "name": "Drum",
-                          "width": 46,
-                          "height": 46,
-                          "cornerRadius": 23,
-                          "stroke": "#2E9E5B",
-                          "strokeWidth": 4,
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "YBFJj",
-                              "name": "1",
-                              "fill": "$g-ink",
-                              "content": "1",
-                              "fontFamily": "Noto Sans SC",
-                              "fontSize": 16,
-                              "fontWeight": "700"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "J7J1XC",
-                          "name": "空闲",
-                          "fill": "#2E9E5B",
-                          "content": "空闲",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "YkML6",
-                      "name": "M2",
-                      "clip": true,
-                      "width": "fill_container",
-                      "fill": "$g-glass",
-                      "cornerRadius": 22,
-                      "stroke": {
-                        "type": "gradient",
-                        "gradientType": "linear",
-                        "enabled": true,
-                        "rotation": 180,
-                        "size": {
-                          "height": 1
-                        },
-                        "colors": [
-                          {
-                            "color": "#FFFFFFF2",
-                            "position": 0
-                          },
-                          {
-                            "color": "#FFFFFF40",
-                            "position": 1
-                          }
-                        ]
-                      },
-                      "strokeWidth": 1,
-                      "effect": [
-                        {
-                          "type": "background_blur",
-                          "radius": 28
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "outer",
-                          "color": "#0000000F",
-                          "offset": {
-                            "x": 0,
-                            "y": 10
-                          },
-                          "blur": 30
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "inner",
-                          "color": "#FFFFFFB3",
-                          "offset": {
-                            "x": 0,
-                            "y": 1
-                          }
-                        }
-                      ],
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "WoSMM",
-                          "name": "Drum",
-                          "width": 46,
-                          "height": 46,
-                          "cornerRadius": 23,
-                          "stroke": "#D98A1C",
-                          "strokeWidth": 4,
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "ZJ1yL",
-                              "name": "2",
-                              "fill": "$g-ink",
-                              "content": "2",
-                              "fontFamily": "Noto Sans SC",
-                              "fontSize": 16,
-                              "fontWeight": "700"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "zUbtX",
-                          "name": "18 分钟",
-                          "fill": "#D98A1C",
-                          "content": "18 分钟",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "TVwAH",
-                      "name": "M3",
-                      "clip": true,
-                      "width": "fill_container",
-                      "fill": "$g-glass",
-                      "cornerRadius": 22,
-                      "stroke": {
-                        "type": "gradient",
-                        "gradientType": "linear",
-                        "enabled": true,
-                        "rotation": 180,
-                        "size": {
-                          "height": 1
-                        },
-                        "colors": [
-                          {
-                            "color": "#FFFFFFF2",
-                            "position": 0
-                          },
-                          {
-                            "color": "#FFFFFF40",
-                            "position": 1
-                          }
-                        ]
-                      },
-                      "strokeWidth": 1,
-                      "effect": [
-                        {
-                          "type": "background_blur",
-                          "radius": 28
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "outer",
-                          "color": "#0000000F",
-                          "offset": {
-                            "x": 0,
-                            "y": 10
-                          },
-                          "blur": 30
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "inner",
-                          "color": "#FFFFFFB3",
-                          "offset": {
-                            "x": 0,
-                            "y": 1
-                          }
-                        }
-                      ],
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "Em443",
-                          "name": "Drum",
-                          "width": 46,
-                          "height": 46,
-                          "cornerRadius": 23,
-                          "stroke": "#2E9E5B",
-                          "strokeWidth": 4,
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "r0eFQB",
-                              "name": "3",
-                              "fill": "$g-ink",
-                              "content": "3",
-                              "fontFamily": "Noto Sans SC",
-                              "fontSize": 16,
-                              "fontWeight": "700"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "FP16J",
-                          "name": "空闲",
-                          "fill": "#2E9E5B",
-                          "content": "空闲",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "KNP2k",
-                  "name": "r",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "o9RHT8",
-                      "name": "M4",
-                      "clip": true,
-                      "width": "fill_container",
-                      "fill": "$g-glass",
-                      "cornerRadius": 22,
-                      "stroke": {
-                        "type": "gradient",
-                        "gradientType": "linear",
-                        "enabled": true,
-                        "rotation": 180,
-                        "size": {
-                          "height": 1
-                        },
-                        "colors": [
-                          {
-                            "color": "#FFFFFFF2",
-                            "position": 0
-                          },
-                          {
-                            "color": "#FFFFFF40",
-                            "position": 1
-                          }
-                        ]
-                      },
-                      "strokeWidth": 1,
-                      "effect": [
-                        {
-                          "type": "background_blur",
-                          "radius": 28
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "outer",
-                          "color": "#0000000F",
-                          "offset": {
-                            "x": 0,
-                            "y": 10
-                          },
-                          "blur": 30
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "inner",
-                          "color": "#FFFFFFB3",
-                          "offset": {
-                            "x": 0,
-                            "y": 1
-                          }
-                        }
-                      ],
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "PPxdK",
-                          "name": "Drum",
-                          "width": 46,
-                          "height": 46,
-                          "cornerRadius": 23,
-                          "stroke": "#24467F",
-                          "strokeWidth": 4,
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "iqgIJ",
-                              "name": "4",
-                              "fill": "$g-ink",
-                              "content": "4",
-                              "fontFamily": "Noto Sans SC",
-                              "fontSize": 16,
-                              "fontWeight": "700"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "RI9HH",
-                          "name": "12 分钟 · ",
-                          "fill": "#24467F",
-                          "content": "12 分钟 · 你的",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "b0vKOC",
-                      "name": "M5",
-                      "clip": true,
-                      "width": "fill_container",
-                      "fill": "$g-glass",
-                      "cornerRadius": 22,
-                      "stroke": {
-                        "type": "gradient",
-                        "gradientType": "linear",
-                        "enabled": true,
-                        "rotation": 180,
-                        "size": {
-                          "height": 1
-                        },
-                        "colors": [
-                          {
-                            "color": "#FFFFFFF2",
-                            "position": 0
-                          },
-                          {
-                            "color": "#FFFFFF40",
-                            "position": 1
-                          }
-                        ]
-                      },
-                      "strokeWidth": 1,
-                      "effect": [
-                        {
-                          "type": "background_blur",
-                          "radius": 28
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "outer",
-                          "color": "#0000000F",
-                          "offset": {
-                            "x": 0,
-                            "y": 10
-                          },
-                          "blur": 30
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "inner",
-                          "color": "#FFFFFFB3",
-                          "offset": {
-                            "x": 0,
-                            "y": 1
-                          }
-                        }
-                      ],
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "PZSMo",
-                          "name": "Drum",
-                          "width": 46,
-                          "height": 46,
-                          "cornerRadius": 23,
-                          "stroke": "#E5484D",
-                          "strokeWidth": 4,
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "vbf1O",
-                              "name": "5",
-                              "fill": "$g-ink",
-                              "content": "5",
-                              "fontFamily": "Noto Sans SC",
-                              "fontSize": 16,
-                              "fontWeight": "700"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "CdBTe",
-                          "name": "故障",
-                          "fill": "#E5484D",
-                          "content": "故障",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "Nb5K0",
-                      "name": "M6",
-                      "clip": true,
-                      "width": "fill_container",
-                      "fill": "$g-glass",
-                      "cornerRadius": 22,
-                      "stroke": {
-                        "type": "gradient",
-                        "gradientType": "linear",
-                        "enabled": true,
-                        "rotation": 180,
-                        "size": {
-                          "height": 1
-                        },
-                        "colors": [
-                          {
-                            "color": "#FFFFFFF2",
-                            "position": 0
-                          },
-                          {
-                            "color": "#FFFFFF40",
-                            "position": 1
-                          }
-                        ]
-                      },
-                      "strokeWidth": 1,
-                      "effect": [
-                        {
-                          "type": "background_blur",
-                          "radius": 28
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "outer",
-                          "color": "#0000000F",
-                          "offset": {
-                            "x": 0,
-                            "y": 10
-                          },
-                          "blur": 30
-                        },
-                        {
-                          "type": "shadow",
-                          "shadowType": "inner",
-                          "color": "#FFFFFFB3",
-                          "offset": {
-                            "x": 0,
-                            "y": 1
-                          }
-                        }
-                      ],
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "l0yXO",
-                          "name": "Drum",
-                          "width": 46,
-                          "height": 46,
-                          "cornerRadius": 23,
-                          "stroke": "#D98A1C",
-                          "strokeWidth": 4,
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "ShdOy",
-                              "name": "6",
-                              "fill": "$g-ink",
-                              "content": "6",
-                              "fontFamily": "Noto Sans SC",
-                              "fontSize": 16,
-                              "fontWeight": "700"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "FjBLU",
-                          "name": "35 分钟",
-                          "fill": "#D98A1C",
-                          "content": "35 分钟",
-                          "fontFamily": "Noto Sans SC",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    }
-                  ]
                 }
               ]
             },
@@ -71309,7 +70309,7 @@
                   "width": "fill_container",
                   "descendants": {
                     "dQzbI": {
-                      "content": "好了提醒我"
+                      "content": "30 分钟"
                     }
                   }
                 },
@@ -71321,7 +70321,7 @@
                   "width": "fill_container",
                   "descendants": {
                     "siEp5": {
-                      "content": "预约下一台"
+                      "content": "45 分钟"
                     }
                   }
                 }
@@ -71383,65 +70383,6 @@
               "layout": "vertical",
               "children": [
                 {
-                  "id": "QtAxd",
-                  "type": "ref",
-                  "ref": "s1Jb8y",
-                  "name": "Row 宿舍候补",
-                  "width": "fill_container",
-                  "stroke": "$g-line",
-                  "strokeWidth": {
-                    "bottom": 0.5
-                  },
-                  "descendants": {
-                    "cxtsS": {
-                      "fill": "#56647D1F"
-                    },
-                    "HIbgz": {
-                      "icon": "bed-double",
-                      "fill": "#56647D"
-                    },
-                    "WWO2Y": {
-                      "content": "宿舍候补"
-                    },
-                    "c7wmJ": {
-                      "content": "第 14 位 · 上周第 21 位"
-                    },
-                    "BMpJq": {
-                      "enabled": false
-                    }
-                  }
-                },
-                {
-                  "id": "hadIu",
-                  "type": "ref",
-                  "ref": "s1Jb8y",
-                  "name": "Row 空调充值",
-                  "width": "fill_container",
-                  "stroke": "$g-line",
-                  "strokeWidth": {
-                    "bottom": 0.5
-                  },
-                  "descendants": {
-                    "cxtsS": {
-                      "fill": "#4F6F8C1F"
-                    },
-                    "HIbgz": {
-                      "icon": "air-vent",
-                      "fill": "#4F6F8C"
-                    },
-                    "WWO2Y": {
-                      "content": "空调充值"
-                    },
-                    "c7wmJ": {
-                      "content": "余额 HK$ 38 · 预计还能用 4 天"
-                    },
-                    "BMpJq": {
-                      "content": "充值",
-                      "fill": "$g-ink"
-                    }
-                  }
-                },
-                {
                   "id": "hGRms",
                   "type": "ref",
                   "ref": "s1Jb8y",
@@ -71456,13 +70397,14 @@
                       "fill": "#D98A1C"
                     },
                     "WWO2Y": {
-                      "content": "报修"
+                      "content": "宿舍报修与住宿事务"
                     },
                     "c7wmJ": {
-                      "content": "提交与查看进度"
+                      "content": "学生住宿官方网站"
                     },
                     "BMpJq": {
-                      "enabled": false
+                      "enabled": false,
+                      "content": ""
                     }
                   }
                 }
@@ -81451,6 +80393,51 @@
                   "fontFamily": "Inter",
                   "fontSize": 15,
                   "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "LsouB",
+                  "name": "Weather chip",
+                  "fill": "$g-content",
+                  "cornerRadius": 99,
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "kotmL",
+                      "name": "i",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "#24467F"
+                    },
+                    {
+                      "type": "text",
+                      "id": "XomJb",
+                      "name": "t",
+                      "fill": "$g-ink",
+                      "content": "29° 多云",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "caZ8k",
+                      "name": "s",
+                      "fill": "$g-muted",
+                      "content": "西貢 · 天文台",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
                 }
               ]
             },
@@ -83241,7 +82228,7 @@
                       "fill": "#FFFFFFCC",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "绿色小巴 · 坑口站",
+                      "content": "绿色小巴 · 科大北站 → 坑口站",
                       "fontFamily": "Inter",
                       "fontSize": 14,
                       "fontWeight": "500"
@@ -83296,7 +82283,7 @@
                       "fill": "#FFFFFFCC",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "九巴 · 宝林",
+                      "content": "九巴 · 科大北 → 宝林",
                       "fontFamily": "Inter",
                       "fontSize": 14,
                       "fontWeight": "500"
@@ -85733,11 +84720,88 @@
                   "type": "text",
                   "id": "H3jm2",
                   "name": "v",
-                  "fill": "$g-muted",
-                  "content": "待批准",
+                  "fill": "#24467F",
+                  "content": "连接",
                   "fontFamily": "Inter",
                   "fontSize": 14,
-                  "fontWeight": "normal"
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BKVtF",
+              "name": "Row Outlook 日历",
+              "width": "fill_container",
+              "gap": 14,
+              "padding": [
+                14,
+                18
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vA31G",
+                  "name": "tile",
+                  "width": 40,
+                  "height": 40,
+                  "fill": "#24467F1F",
+                  "cornerRadius": 20,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "JZcTw",
+                      "name": "i",
+                      "width": 19,
+                      "height": 19,
+                      "icon": "calendar-range",
+                      "library": "lucide",
+                      "fill": "#24467F"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IPml7",
+                  "name": "c",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GqDGX",
+                      "name": "t",
+                      "fill": "$g-ink",
+                      "content": "Outlook 日历",
+                      "fontFamily": "Inter",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "xMHTy",
+                      "name": "s",
+                      "fill": "$g-muted",
+                      "content": "粘贴发布链接，学校会议和日程自动同步",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "CWrFr",
+                  "name": "v",
+                  "fill": "#24467F",
+                  "content": "连接",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "700"
                 }
               ]
             },
@@ -85799,7 +84863,7 @@
                       "id": "NLP3f",
                       "name": "s",
                       "fill": "$g-muted",
-                      "content": "从邮件里提取截止和通知",
+                      "content": "需要学校开放 Microsoft 365 授权",
                       "fontFamily": "Inter",
                       "fontSize": 13,
                       "fontWeight": "normal"
@@ -86326,6 +85390,520 @@
           "fontFamily": "Inter",
           "fontSize": 12,
           "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "pD6xT",
+      "x": 6825,
+      "y": 25200,
+      "name": "V5 / 交互 · 截止滑动与 AI 钥匙",
+      "width": 420,
+      "height": 620,
+      "fill": "$g-bg",
+      "layout": "vertical",
+      "gap": 16,
+      "padding": 24,
+      "children": [
+        {
+          "type": "text",
+          "id": "YXvZV",
+          "name": "h",
+          "fill": "$g-ink",
+          "content": "截止行：右滑完成 · 左滑推迟一天",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "700"
+        },
+        {
+          "type": "frame",
+          "id": "ccKBq",
+          "name": "Swipe left",
+          "clip": true,
+          "width": "fill_container",
+          "height": 64,
+          "fill": "$g-content",
+          "cornerRadius": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "pULqt",
+              "name": "action",
+              "width": 96,
+              "height": "fill_container",
+              "fill": "#2E9E5B",
+              "layout": "vertical",
+              "gap": 3,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "hqfcf",
+                  "name": "i",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "check",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "ntZgq",
+                  "name": "l",
+                  "fill": "#FFFFFF",
+                  "content": "完成",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mL8U9",
+              "name": "row",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 12,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "t4Lca",
+                  "name": "check",
+                  "fill": "#00000000",
+                  "width": 22,
+                  "height": 22,
+                  "stroke": "#D98A1C",
+                  "strokeWidth": 2
+                },
+                {
+                  "type": "text",
+                  "id": "wM2E7",
+                  "name": "t",
+                  "fill": "$g-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Lab 4: Recursion",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "ZSj6u",
+                  "name": "d",
+                  "fill": "#D98A1C",
+                  "content": "23:59",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "PANq0",
+          "name": "Swipe right",
+          "clip": true,
+          "width": "fill_container",
+          "height": 64,
+          "fill": "$g-content",
+          "cornerRadius": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "WXFjT",
+              "name": "row",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 12,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "f3tn47",
+                  "name": "check",
+                  "fill": "#00000000",
+                  "width": 22,
+                  "height": 22,
+                  "stroke": "#D98A1C",
+                  "strokeWidth": 2
+                },
+                {
+                  "type": "text",
+                  "id": "ldhsT",
+                  "name": "t",
+                  "fill": "$g-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Lab 4: Recursion",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "DRWHP",
+                  "name": "d",
+                  "fill": "#D98A1C",
+                  "content": "23:59",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "YdnvJ",
+              "name": "action",
+              "width": 96,
+              "height": "fill_container",
+              "fill": "#D98A1C",
+              "layout": "vertical",
+              "gap": 3,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "I66hf4",
+                  "name": "i",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "calendar-arrow-up",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "e7CU7G",
+                  "name": "l",
+                  "fill": "#FFFFFF",
+                  "content": "推迟一天",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "TpTtt",
+          "name": "h2",
+          "fill": "$g-ink",
+          "content": "AI 钥匙：只显示一次",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "700"
+        },
+        {
+          "type": "frame",
+          "id": "uM8LR",
+          "name": "Key card",
+          "width": "fill_container",
+          "fill": "$g-content",
+          "cornerRadius": 28,
+          "stroke": "#2E9E5B",
+          "strokeWidth": 1.5,
+          "layout": "vertical",
+          "gap": 10,
+          "padding": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "Uh5jO",
+              "name": "h",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "c1xWQ",
+                  "name": "i",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "key-round",
+                  "library": "lucide",
+                  "fill": "#2E9E5B"
+                },
+                {
+                  "type": "text",
+                  "id": "J5ME3",
+                  "name": "t",
+                  "fill": "$g-ink",
+                  "content": "「Claude」的钥匙",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hx4Ka",
+              "name": "code",
+              "width": "fill_container",
+              "fill": "#76768017",
+              "cornerRadius": 12,
+              "padding": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ty0sS",
+                  "name": "c",
+                  "fill": "$g-ink",
+                  "content": "ustl_8fK2…Qw",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "DShuv",
+              "name": "w",
+              "fill": "#D98A1C",
+              "content": "只显示这一次。关掉后无法再看到，请现在复制。",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "qQAF0",
+              "name": "btns",
+              "width": "fill_container",
+              "gap": 10,
+              "children": [
+                {
+                  "id": "ev9FW",
+                  "type": "ref",
+                  "ref": "I7aO0",
+                  "name": "Copy",
+                  "width": "fill_container",
+                  "descendants": {
+                    "ZQ4Ek": {
+                      "content": "复制 / 分享"
+                    }
+                  }
+                },
+                {
+                  "id": "B4o40f",
+                  "type": "ref",
+                  "ref": "KTr25",
+                  "name": "Done",
+                  "width": "fill_container",
+                  "descendants": {
+                    "Z81bWT": {
+                      "content": "我已保存"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "jsgCE",
+      "x": 5850,
+      "y": 25200,
+      "name": "V5 / 出发看板 · 实时行状态",
+      "width": 393,
+      "fill": "$g-bg",
+      "layout": "vertical",
+      "gap": 16,
+      "padding": 20,
+      "children": [
+        {
+          "type": "text",
+          "id": "DQCdI",
+          "name": "title",
+          "fill": "#7A7A80",
+          "content": "实时行：站名和终点来自运营方数据；无预测时显示运营方原文提示",
+          "fontFamily": "Noto Sans SC",
+          "fontSize": 13,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "f0iOs",
+          "name": "Board",
+          "width": "fill_container",
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 150,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#2C5291",
+                "position": 0
+              },
+              {
+                "color": "#142A52",
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 30,
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "hj7k5",
+              "name": "Live 91M 钻石山",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Jef1Z",
+                  "name": "badge",
+                  "fill": "#E5484D",
+                  "cornerRadius": 8,
+                  "padding": [
+                    4,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LdLQY",
+                      "name": "c",
+                      "fill": "#FFFFFF",
+                      "content": "91M",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Vxzkc",
+                  "name": "n",
+                  "fill": "#FFFFFFCC",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "九巴 · 科大南 → 钻石山站",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "DwZNN",
+                  "name": "m",
+                  "fill": "#FFFFFF",
+                  "content": "17 分钟",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "t8JE1A",
+              "name": "Live 91P 无预测",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "j2WBO",
+                  "name": "badge",
+                  "fill": "#E5484D",
+                  "cornerRadius": 8,
+                  "padding": [
+                    4,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "TH0rQ",
+                      "name": "c",
+                      "fill": "#FFFFFF",
+                      "content": "91P",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "G76W3",
+                  "name": "name+message",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LRKNh",
+                      "name": "n",
+                      "fill": "#FFFFFFCC",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "九巴 · 科大南 → 坪石 / 彩虹站",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "laHsp",
+                      "name": "message",
+                      "fill": "#FFFFFF80",
+                      "content": "服务只限于星期一至五 (公众假期除外)",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "bKGkS",
+                  "name": "m",
+                  "fill": "#FFFFFF80",
+                  "content": "暂无预测",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
         }
       ]
     }
