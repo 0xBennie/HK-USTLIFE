@@ -112,7 +112,7 @@ export function CampusScreen({language,dark,onLogin,name,onMe,onPost,onWall}:{la
     label={first?(zh?'下一班':'Next'):nextDay?(zh?`${formatDay(nextDay.date,zh)}首班`:`${formatDay(nextDay.date,zh)} first`):(zh?'暂无班次':'No departures')}
     time={first?first.local_time:nextDay?nextDay.time:null} minutes={first?minutesUntil(first.scheduled_at):nextDay?Math.max(0,Math.round((Date.parse(`${nextDay.date}T${nextDay.time}:00+08:00`)-Date.now())/60000)):null}
     later={(departures?.upcoming??[]).slice(1,5).map(d=>d.local_time)} note={!first?(zh?'今天校巴已停运，可坐下方小巴或巴士。':'No more shuttles today — try a bus below.'):undefined}
-    live={live===null?null:live.map(l=>({code:l.code,operator:l.operator,name:`${l.operator==='gmb'?(zh?'绿色小巴':'Minibus'):(zh?'九巴':'KMB')} · ${l.gate[language]}`,minutes:l.minutes}))}
+    live={live===null?null:live.map(l=>({code:l.code,operator:l.operator,name:`${l.operator==='gmb'?(zh?'绿色小巴':'Minibus'):(zh?'九巴':'KMB')} · ${l.gate[language]}`,minutes:l.minutes,message:l.message?(l.message[language]||l.message.zh||l.message.en):undefined}))}
     onOpen={()=>go({kind:'route',id:route.id})} onRoutes={()=>go({kind:'routes'})} onBuses={()=>go({kind:'transit'})}/></Stagger>:<Skeleton height={300} radius={30}/>}
    <Text style={{paddingHorizontal:4,fontSize:12,color:c.muted}}>{zh?'校巴为公布时刻表；巴士和小巴为运营方实时预测。':'Shuttles follow published timetables; buses show operator live predictions.'}</Text>
   </Section>

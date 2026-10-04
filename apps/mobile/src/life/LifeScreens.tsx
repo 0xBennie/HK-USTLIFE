@@ -2,7 +2,7 @@
 // "V3 / 一起时间" (Kphqs), "V3 / 社团与组织" (jYEm4), "V3 / 宿舍服务" (rbykj), "V3 / 校园服务" (InJbr) — V5 Liquid Glass.
 // All data is real: our API (/grades, /me/time-groups, /clubs, /study/*) or the official HKUST site via deep link.
 import {useEffect,useMemo,useState} from 'react';
-import {Alert,Image,Linking,Pressable,Share,Text,View} from 'react-native';
+import {ActionSheetIOS,Alert,Image,Linking,Pressable,Share,Text,View} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import {session,api} from '../runtime';
 import {EmptyState,GlassChips,Hero,HeroActions,ListGroup,ListRow,Notice,PenIcon,PrimaryButton,SearchField,Section,Skeleton,Surface,usePenColors} from '../ui/Pen';
@@ -11,7 +11,8 @@ import {Grid,LifeTop,Pill} from './kit';
 import {dateTimeInZone} from '../study/dates';
 import type {Course,StudyItem} from '../study/types';
 type Base={zh:boolean;onBack:()=>void};
-const covers={photo:require('../../assets/covers/1741699428083-ddb73b95d1b6.jpg')};
+// Pen V3 / 社团 hero image.
+const covers={clubs:require('../../assets/covers/1763890965393-1cea435581ab.jpg')};
 const BOOKING='https://booking.hkust.edu.hk/';
 const hk=(iso:string)=>dateTimeInZone(iso,'Asia/Hong_Kong');
 // 2026–27 Fall teaching weeks counted from Mon 31 Aug 2026 (13 teaching weeks).
@@ -44,7 +45,14 @@ export function AcademicsScreen({zh,onBack,onGrades,onTimeMatch,onSchool}:Base&{
  </View>;
 }
 
-const GRADE_TERMS=['2025-26 Fall','2025-26 Spring','2026-27 Fall'];
+/** Last four terms whose grades are already out (Fall → mid-January, Spring → June), newest first. */
+function gradeTerms(now=new Date()){
+ const out:string[]=[],y=now.getFullYear(),m=now.getMonth()+1;
+ // Start from the latest released term: Spring of y-1/y once June arrives, otherwise Fall of y-1/y after mid-January.
+ let term:{start:number;fall:boolean}=m>=6?{start:y-1,fall:false}:m>=2?{start:y-1,fall:true}:{start:y-2,fall:false};
+ while(out.length<4){out.push(`${term.start}-${String((term.start+1)%100).padStart(2,'0')} ${term.fall?'Fall':'Spring'}`);term=term.fall?{start:term.start-1,fall:false}:{start:term.start,fall:true};}
+ return out;
+}
 const GRADES=['A+','A','A-','B+','B','B-','C+','C','C-','D','F'];
 type CourseStat={course:string;sample:number;enough:boolean;a_share:number|null};
 type Dist={course:string;sample:number;enough:boolean;bars:{grade:string;share:number}[]|null};
@@ -54,8 +62,10 @@ export function GradesScreen({zh,onBack}:Base){
  useEffect(()=>{const t=setTimeout(()=>{void api.request<CourseStat[]>(`/grades?q=${encodeURIComponent(q.trim())}`).then(r=>{setList(r);setError('');setPick(p=>p&&r.some(x=>x.course===p)?p:r[0]?.course??null);}).catch(()=>setError(err(zh)));},250);return()=>clearTimeout(t);},[q,rev]);
  useEffect(()=>{if(!pick){setDist(null);return;}void api.request<Dist>(`/grades/${encodeURIComponent(pick)}`).then(setDist).catch(()=>setDist(null));},[pick,rev]);
  const save=(course:string,grade:string,term:string)=>void session.request('/me/grades',{method:'POST',body:{course,term,grade}}).then(()=>{feel.success();setPick(course.toUpperCase().replace(/^([A-Z]{4})\s?/,'$1 '));setRev(v=>v+1);Alert.alert(zh?'谢谢！':'Thanks!',zh?'你的成绩已匿名计入。':'Saved anonymously.');}).catch(()=>Alert.alert(zh?'保存失败，请检查课程代码。':'Could not save.'));
- const contribute=()=>{if(!session.snapshot().profile){Alert.alert(zh?'登录后才能贡献':'Sign in first');return;}Alert.prompt(zh?'贡献一门课的成绩':'Share a grade',zh?'匿名保存，满 10 人后才公开。格式：COMP 2011 A-':'Anonymous. Format: COMP 2011 A-',[{text:zh?'取消':'Cancel',style:'cancel'},{text:zh?'下一步':'Next',onPress:(v?:string)=>{const m=/^\s*([A-Za-z]{4}\s?\d{4}[A-Za-z]?)\s+([ABCDFabcdf][+-]?)\s*$/.exec(v??'');if(!m||!GRADES.includes(m[2].toUpperCase())){Alert.alert(zh?'格式不对':'Invalid',zh?'例如：COMP 2011 A-':'e.g. COMP 2011 A-');return;}
-  Alert.alert(zh?'哪个学期？':'Which term?',undefined,[...GRADE_TERMS.map(t=>({text:t,onPress:()=>save(m[1],m[2].toUpperCase(),t)})),{text:zh?'取消':'Cancel',style:'cancel' as const}]);}}],'plain-text','COMP 2011 ');};
+ // Three short native steps (course → grade → term) so nobody has to remember an input format.
+ const sheet=(title:string,options:string[],done:(i:number)=>void)=>ActionSheetIOS.showActionSheetWithOptions({title,options:[...options,zh?'取消':'Cancel'],cancelButtonIndex:options.length},i=>{if(i<options.length)done(i);});
+ const contribute=()=>{if(!session.snapshot().profile){Alert.alert(zh?'登录后才能贡献':'Sign in first');return;}Alert.prompt(zh?'哪门课？':'Which course?',zh?'匿名保存，满 10 人后才公开。':'Saved anonymously; shown at n ≥ 10.',[{text:zh?'取消':'Cancel',style:'cancel'},{text:zh?'下一步':'Next',onPress:(v?:string)=>{const m=/^\s*([A-Za-z]{4})\s?(\d{4}[A-Za-z]?)\s*$/.exec(v??'');if(!m){Alert.alert(zh?'课程代码不对':'Invalid course code',zh?'例如：COMP 2011':'e.g. COMP 2011');return;}const course=`${m[1].toUpperCase()} ${m[2].toUpperCase()}`;
+  sheet(zh?`${course} · 你的成绩`:`${course} · your grade`,GRADES,g=>{const terms=gradeTerms();sheet(zh?'哪个学期？':'Which term?',terms,t=>save(course,GRADES[g],terms[t]));});}}],'plain-text',pick??(q.trim().toUpperCase()||''));};
  const aShare=dist?.bars?dist.bars.slice(0,3).reduce((s,b)=>s+b.share,0):0;
  return <View style={{gap:16}}>
   <LifeTop zh={zh} title={zh?'成绩分布':'Grade distribution'} onBack={onBack} right={{icon:'plus',label:zh?'贡献成绩':'Share a grade',onPress:contribute}}/>
@@ -114,28 +124,30 @@ export function TimeMatchScreen({zh,onBack}:Base){
  </View>;
 }
 
-type Club={id:string;name:string;category:string;tags:string;url:string|null;followers:number;following:boolean};
-const clubIcon:Record<string,[string,string]>={academic:['book-open','#24467F'],sport:['dumbbell','#2E7D55'],culture:['palette','#7A5C8E'],engineering:['cpu','#4F6F8C'],service:['heart-handshake','#D98A1C']};
+type Club={id:string;name:string;category:string;tags:string;url:string|null;summary:string;followers:number;following:boolean};
+const clubIcon:Record<string,[string,string]>={sport:['dumbbell','#2E7D55'],culture:['palette','#7A5C8E'],interest:['sparkles','#D98A1C'],school:['graduation-cap','#24467F'],department:['book-open','#24467F'],house:['house','#4F6F8C']};
+// Chip value → HKUSTSU categories it covers.
+const CLUB_FILTER:Record<string,string[]>={sport:['sport'],culture:['culture'],interest:['interest'],faculty:['school','department'],house:['house']};
 export function ClubsScreen({zh,onBack}:Base){
  const c=usePenColors();
  const [q,setQ]=useState(''),[cat,setCat]=useState('all'),[clubs,setClubs]=useState<Club[]|null>(null);
  useEffect(()=>{void (session.snapshot().profile?session:api).request<Club[]>('/clubs').then(setClubs).catch(()=>setClubs([]));},[]);
  const toggle=(x:Club)=>{if(!session.snapshot().profile){Alert.alert(zh?'登录后关注':'Sign in to follow');return;}feel.select();setClubs(l=>l?.map(y=>y.id===x.id?{...y,following:!y.following,followers:y.followers+(y.following?-1:1)}:y)??null);void session.request<Club>(`/me/clubs/${x.id}`,{method:'PUT',body:{following:!x.following}}).then(n=>setClubs(l=>l?.map(y=>y.id===n.id?n:y)??null)).catch(()=>setClubs(l=>l?.map(y=>y.id===x.id?x:y)??null));};
- const list=(clubs??[]).filter(x=>(cat==='all'||x.category===cat)&&`${x.name}${x.tags}`.toLowerCase().includes(q.trim().toLowerCase()));
+ const list=(clubs??[]).filter(x=>(cat==='all'||CLUB_FILTER[cat]?.includes(x.category))&&`${x.name}${x.tags}`.toLowerCase().includes(q.trim().toLowerCase()));
  const top=[...(clubs??[])].sort((a,b)=>b.followers-a.followers)[0];
  return <View style={{gap:16}}>
   <LifeTop zh={zh} title={zh?'社团与组织':'Clubs'} onBack={onBack}/>
   <SearchField value={q} onChangeText={setQ} placeholder={zh?'搜索社团或标签':'Search clubs or tags'}/>
-  <GlassChips label={zh?'分类':'Category'} value={cat} onChange={setCat} items={[{value:'all',label:zh?'全部':'All'},{value:'academic',label:zh?'学术':'Academic'},{value:'sport',label:zh?'运动':'Sport'},{value:'culture',label:zh?'文化':'Culture'},{value:'engineering',label:zh?'工程':'Engineering'}]}/>
-  {top&&cat==='all'&&!q?<View style={{height:170,borderRadius:28,overflow:'hidden'}}>
-   <Image source={covers.photo} resizeMode="cover" style={{position:'absolute',width:'100%',height:'100%'}}/>
+  <GlassChips label={zh?'分类':'Category'} value={cat} onChange={setCat} items={[{value:'all',label:zh?'全部':'All'},{value:'sport',label:zh?'运动':'Sport'},{value:'culture',label:zh?'文化':'Arts'},{value:'interest',label:zh?'兴趣':'Interest'},{value:'faculty',label:zh?'院系':'Faculty'},{value:'house',label:zh?'舍堂':'Halls'}]}/>
+  {top&&top.followers>0&&cat==='all'&&!q?<View style={{height:170,borderRadius:28,overflow:'hidden'}}>
+   <Image source={covers.clubs} resizeMode="cover" style={{position:'absolute',width:'100%',height:'100%'}}/>
    <View style={{flex:1,justifyContent:'space-between',padding:16,backgroundColor:'#00000040'}}>
     <View style={{alignSelf:'flex-start',paddingVertical:4,paddingHorizontal:10,borderRadius:99,backgroundColor:'#FFFFFFE6'}}><Text style={{fontSize:12,fontWeight:'700',color:'#0B0B0C'}}>{zh?'最多人关注':'Most followed'}</Text></View>
     <View><Text style={{fontSize:22,fontWeight:'800',color:'#FFFFFF'}}>{top.name}</Text><Text style={{fontSize:13,color:'#FFFFFFD9'}}>{top.tags} · {zh?`${top.followers} 人关注`:`${top.followers} followers`}</Text></View>
    </View>
   </View>:null}
-  {clubs===null?<Skeleton height={200} radius={28}/>:<ListGroup>{list.map(x=>{const [icon,col]=clubIcon[x.category]??['users','#56647D'];return <ListRow key={x.id} icon={icon} tile={col} title={x.name} subtitle={`${x.tags} · ${zh?`${x.followers} 人关注`:`${x.followers} followers`}`} accessory={<Pressable accessibilityRole="button" onPress={()=>toggle(x)} hitSlop={8} style={{paddingVertical:6,paddingHorizontal:12,borderRadius:99,backgroundColor:x.following?'#2E9E5B1F':c.fill}}><Text style={{fontSize:13,fontWeight:'700',color:x.following?'#2E9E5B':c.text}}>{x.following?(zh?'已关注':'Following'):(zh?'关注':'Follow')}</Text></Pressable>}/>;})}</ListGroup>}
-  <Text style={{textAlign:'center',fontSize:12,color:c.muted}}>{zh?'首批收录的社团；社团负责人认证后可自行更新活动。':'Initial list; verified club leads can update their pages.'}</Text>
+  {clubs===null?<Skeleton height={200} radius={28}/>:<ListGroup>{list.map(x=>{const [icon,col]=clubIcon[x.category]??['users','#56647D'];return <ListRow key={x.id} icon={icon} tile={col} onPress={x.url?()=>void Linking.openURL(x.url!):undefined} title={x.name} subtitle={`${x.tags} · ${zh?`${x.followers} 人关注`:`${x.followers} followers`}`} accessory={<Pressable accessibilityRole="button" onPress={()=>toggle(x)} hitSlop={8} style={{paddingVertical:6,paddingHorizontal:12,borderRadius:99,backgroundColor:x.following?'#2E9E5B1F':c.fill}}><Text style={{fontSize:13,fontWeight:'700',color:x.following?'#2E9E5B':c.text}}>{x.following?(zh?'已关注':'Following'):(zh?'关注':'Follow')}</Text></Pressable>}/>;})}</ListGroup>}
+  <Text style={{textAlign:'center',fontSize:12,color:c.muted}}>{zh?`科大学生会登记的 ${clubs?.length??''} 个社团 · 点按查看官方页面`:`${clubs?.length??''} HKUSTSU societies · tap for the official page`}</Text>
  </View>;
 }
 

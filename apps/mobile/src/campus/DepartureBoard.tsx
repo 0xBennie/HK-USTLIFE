@@ -8,7 +8,7 @@ import {PenIcon} from '../ui/Pen';
 import {useAppearance} from '../ui/Appearance';
 
 const AnimatedCircle=Reanimated.createAnimatedComponent(Circle);
-export type LiveRow={code:string;operator:'gmb'|'kmb';name:string;minutes:number|null};
+export type LiveRow={code:string;operator:'gmb'|'kmb';name:string;minutes:number|null;message?:string};
 
 function Flap({ch}:{ch:string}){
  return <View style={{width:40,height:58,borderRadius:10,borderCurve:'continuous',backgroundColor:'#FFFFFF1A',borderWidth:1,borderColor:'#FFFFFF14',alignItems:'center',justifyContent:'center',overflow:'hidden'}}>
@@ -59,7 +59,7 @@ export function DepartureBoard({zh,title,label,time,minutes,later,live,note,onOp
    <View style={{height:1,backgroundColor:'#FFFFFF1F'}}/>
    {live===null?<Text style={{fontSize:13,color:'#FFFFFF99'}}>{zh?'正在查询闸口实时巴士…':'Checking live buses…'}</Text>:live.length?live.map((l,i)=><View key={l.code+i} style={{flexDirection:'row',alignItems:'center',gap:10}}>
     <View style={{paddingVertical:4,paddingHorizontal:8,borderRadius:8,backgroundColor:l.operator==='gmb'?'#2E9E5B':'#E5484D'}}><Text style={{fontSize:12,fontWeight:'800',color:'#FFFFFF'}}>{l.code}</Text></View>
-    <Text numberOfLines={1} style={{flex:1,fontSize:14,fontWeight:'500',color:'#FFFFFFCC'}}>{l.name}</Text>
+    <View style={{flex:1}}><Text numberOfLines={1} style={{fontSize:14,fontWeight:'500',color:'#FFFFFFCC'}}>{l.name}</Text>{l.minutes===null&&l.message?<Text numberOfLines={1} style={{fontSize:12,color:'#FFFFFF80'}}>{l.message}</Text>:null}</View>
     <Text style={{fontSize:15,fontWeight:'700',color:l.minutes===null?'#FFFFFF80':'#FFFFFF',fontVariant:['tabular-nums']}}>{l.minutes===null?(zh?'暂无预测':'No ETA'):l.minutes===0?(zh?'即将到站':'Due'):zh?`${l.minutes} 分钟`:`${l.minutes} min`}</Text>
    </View>):<Text style={{fontSize:13,color:'#FFFFFF99'}}>{zh?'这个方向暂时没有实时巴士。':'No live buses this way.'}</Text>}
    <View style={{flexDirection:'row',justifyContent:'flex-end'}}>{link(zh?'九巴与绿色小巴':'All buses',onBuses)}</View>

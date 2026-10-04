@@ -40,9 +40,9 @@ it('hides grade distributions until at least ten students reported',async()=>{
 });
 
 it('follows clubs and RSVPs to employer talks for the signed-in student only',async()=>{
- const list=(await call('GET','/clubs',a)).json().data;expect(list.length).toBeGreaterThan(3);
- const f=(await call('PUT','/me/clubs/photo',a,{following:true})).json().data;expect(f).toMatchObject({following:true,followers:1});
- expect((await call('GET','/clubs',b)).json().data.find((c:{id:string})=>c.id==='photo')).toMatchObject({following:false,followers:1});
+ const list=(await call('GET','/clubs',a)).json().data;expect(list.length).toBeGreaterThan(60);expect(list.find((c:{id:string})=>c.id==='su-72')).toMatchObject({category:'department',url:'https://hkustsu.hkust.edu.hk/societies/about/72'});
+ const f=(await call('PUT','/me/clubs/su-72',a,{following:true})).json().data;expect(f).toMatchObject({following:true,followers:1});
+ expect((await call('GET','/clubs',b)).json().data.find((c:{id:string})=>c.id==='su-72')).toMatchObject({following:false,followers:1});
  const t=(await call('PUT','/me/talks/nova-talk',a,{going:true})).json().data;expect(t).toMatchObject({rsvp:true,going:1});
  expect((await call('GET','/employers/nova',a)).json().data).toMatchObject({sample:true,jobs:[{id:'nova-intern'},{id:'nova-grad'}]});
 });

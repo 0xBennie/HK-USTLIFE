@@ -5,6 +5,7 @@ import { randomInt, randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
 import { z } from 'zod';
 import { ApiError } from '../errors.js';
+import { clubsData } from './clubs-data.js';
 
 export const GRADES = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F'] as const;
 export const MIN_SAMPLE = 10;
@@ -85,9 +86,16 @@ export function createLifeStore(db: DatabaseSync, now: () => number, busy: Busy)
     return { course: c, sample: total, enough: true, bars: GRADES.map(g => ({ grade: g, share: Math.round(Number(rows.find(r => r.grade === g)?.n ?? 0) / total * 1000) / 10 })) };
   }
   /* ---------- clubs ---------- */
+  // Keep the directory in step with the HKUST Students' Union snapshot; follows survive, removed societies drop out.
+  (function syncClubs() {
+    const upsert = db.prepare("INSERT INTO clubs(id,name,category,tags,url,summary,source) VALUES (?,?,?,?,?,?,'hkustsu') ON CONFLICT(id) DO UPDATE SET name=excluded.name,category=excluded.category,tags=excluded.tags,url=excluded.url,summary=excluded.summary");
+    for (const c of clubsData.clubs) upsert.run(c.id, c.name, c.category, c.tags, c.url, c.summary);
+    const ids = new Set<string>(clubsData.clubs.map(c => c.id));
+    for (const row of db.prepare("SELECT id FROM clubs WHERE source='hkustsu'").all() as { id: string }[]) if (!ids.has(row.id)) db.prepare('DELETE FROM clubs WHERE id=?').run(row.id);
+  })();
   function clubs(user: string | null, category?: string) {
     return (db.prepare('SELECT c.*,(SELECT COUNT(*) FROM club_follows f WHERE f.club_id=c.id) AS followers,(SELECT 1 FROM club_follows f WHERE f.club_id=c.id AND f.user_id=?) AS mine FROM clubs c WHERE (? IS NULL OR c.category=?) ORDER BY followers DESC,c.name').all(user ?? '', category ?? null, category ?? null) as Record<string, unknown>[])
-      .map(c => ({ id: String(c.id), name: String(c.name), category: String(c.category), tags: String(c.tags), url: c.url ? String(c.url) : null, followers: Number(c.followers), following: c.mine === 1 }));
+      .map(c => ({ id: String(c.id), name: String(c.name), category: String(c.category), tags: String(c.tags), url: c.url ? String(c.url) : null, summary: String(c.summary ?? ''), followers: Number(c.followers), following: c.mine === 1 }));
   }
   function follow(user: string, id: string, on: boolean) {
     if (!db.prepare('SELECT 1 FROM clubs WHERE id=?').get(id)) throw new ApiError(404, 'CLUB_NOT_FOUND', 'Club not found.');

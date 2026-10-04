@@ -15,7 +15,7 @@
     "hkust-life-mcp": "dist/index.js"
   },
   "scripts": {
-    "api": "CAMPUS_MODE=local-development tsx src/product/main.ts",
+    "api": "NODE_USE_ENV_PROXY=1 CAMPUS_MODE=local-development tsx src/product/main.ts",
     "api:seed": "CAMPUS_MODE=local-development tsx src/product/seed-cli.ts",
     "mobile": "npm --workspace @campus/mobile run start",
     "build": "npm run build:hub",

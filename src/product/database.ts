@@ -349,6 +349,12 @@ const migrations = [{ version: 1, sql: `
   source_id TEXT NOT NULL REFERENCES calendar_sources(id) ON DELETE CASCADE,
   url TEXT NOT NULL, last_success_at INTEGER, last_error TEXT, created_at INTEGER NOT NULL
  );
+` }, { version: 23, sql: `
+ -- Replace the placeholder clubs with the HKUST Students' Union directory (rows are synced from life/clubs-data.ts).
+ DROP TABLE club_follows;
+ DROP TABLE clubs;
+ CREATE TABLE clubs (id TEXT PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', url TEXT, summary TEXT NOT NULL DEFAULT '', source TEXT NOT NULL DEFAULT 'hkustsu');
+ CREATE TABLE club_follows (club_id TEXT NOT NULL REFERENCES clubs(id) ON DELETE CASCADE, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, created_at INTEGER NOT NULL, PRIMARY KEY(club_id,user_id));
 ` }];
 
 export function transaction<T>(db: DatabaseSync, action: () => T): T {

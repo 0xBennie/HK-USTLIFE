@@ -16,8 +16,9 @@ export async function refreshWidget(){
   let rideLabel='下一班 · 坑口',rideTime='—',liveLabel='';
   try{
    const routes=await api.request<{routes:{id:string;direction:string;name:{zh:string}}[]}>('/transport/routes');
-   const r=routes.routes.find(x=>/坑口/.test(x.name.zh))??routes.routes[0];
-   if(r){const d=await api.request<{upcoming:{local_time:string}[]}>(`/transport/routes/${r.id}/departures`);rideLabel=`下一班 · ${(r.name.zh.split('→').pop()??'').trim()}`;rideTime=d.upcoming[0]?.local_time??'明早';}
+   // Same default as the campus board: the shuttle leaving HKUST for Hang Hau.
+   const r=routes.routes.find(x=>/→\s*坑口/.test(x.name.zh));
+   if(r){const d=await api.request<{upcoming:{local_time:string}[]}>(`/transport/routes/${r.id}/departures`);rideLabel=`下一班 · ${(r.name.zh.split('→').pop()??'').trim()}`;rideTime=d.upcoming[0]?.local_time??'今天停运';}
   }catch{}
   TodayWidget.updateSnapshot({due:tasks.length,firstDue:first?first.title.split(/[:：]/)[0]:'',firstDueAt:first?.due_at?hk(first.due_at).slice(11):'今天',overdue:'',rideLabel,rideTime,liveLabel,updated:hk(now).slice(11)});
  }catch{/* widget is best-effort; the app works without it */}

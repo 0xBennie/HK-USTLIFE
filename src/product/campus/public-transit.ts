@@ -42,7 +42,7 @@ export function createPublicTransit(options:{now?:()=>number;fetch?:typeof fetch
   const operation=Promise.resolve().then(async()=>{
    try {
     // All URLs originate from closed operator templates and validated IDs, never user URLs.
-    const response=await fetcher(url,{signal:AbortSignal.timeout(3000),redirect:'error',headers:{Accept:'application/json'}});
+    const response=await fetcher(url,{signal:AbortSignal.timeout(8000),redirect:'error',headers:{Accept:'application/json'}});
     if(!response.ok||!response.body)throw new Error('Operator unavailable');
     if(Number(response.headers.get('content-length'))>5_000_000){await response.body.cancel();throw new Error('Operator response too large');}
     const reader=response.body.getReader(),parts:Uint8Array[]=[];let length=0;
