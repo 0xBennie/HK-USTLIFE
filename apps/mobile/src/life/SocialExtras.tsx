@@ -87,7 +87,7 @@ export function DataApiScreen({zh,onBack}:Base){
 }
 
 type Employer={id:string;name:string;tagline:string;verified:boolean;sample:boolean;quote:string|null;quote_by:string|null;jobs:{id:string;title:string;detail:string;apply_url:string}[];talks:{id:string;title:string;venue:string;starts_at:string;going:number;rsvp:boolean}[]};
-export function CompanyScreen({zh,onBack,id='nova'}:Base&{id?:string}){
+export function CompanyScreen({zh,onBack,id}:Base&{id:string}){
  const c=usePenColors();
  const [co,setCo]=useState<Employer|null>(null),[error,setError]=useState(false);
  useEffect(()=>{void (session.snapshot().profile?session:api).request<Employer>(`/employers/${id}`).then(setCo).catch(()=>setError(true));},[id]);
