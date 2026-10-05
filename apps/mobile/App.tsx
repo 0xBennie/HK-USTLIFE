@@ -21,7 +21,8 @@ import { Aurora, FloatingTabBar, ListGroup, ListRow, Notice, type PenIconName } 
 import { SceneOverlayStore, useOverlayPresent } from './src/navigation/SceneOverlay';
 import { StatusBar } from 'expo-status-bar';
 import { session,reminders } from './src/runtime';
-import { LoginScreen, ProfileScreen } from './src/screens/AccountScreen';
+import { ProfileScreen } from './src/screens/AccountScreen';
+import { ConnectStep, WelcomeLogin } from './src/screens/LoginFlow';
 import { strings, type Language } from './src/strings';
 import { palette, styles } from './src/theme';
 import { StudyScreen } from './src/study/StudyScreen';
@@ -34,6 +35,10 @@ function CampusApp() {
   const state = useSyncExternalStore(session.subscribe, session.snapshot);
   const [language, setLanguage] = useState<Language>('zh');
   const [tab, setTab] = useState(0);
+  // Set by the sign-in sheet just before the session starts, so the connect step shows once, right after signing in.
+  const [justSignedIn, setJustSignedIn] = useState(false);
+  // Every sign-in starts on Today, not on whichever tab the previous account left open.
+  useEffect(() => { if (!state.profile) { setJustSignedIn(false); setTab(0); } }, [state.profile?.id]);
   // Pen "Component / Tab bar" lucide glyphs.
   const icons:PenIconName[]=['calendar-days','map','messages-square','inbox','user-round'];
   const insets=useSafeAreaInsets();
@@ -104,17 +109,22 @@ function CampusApp() {
     return()=>subscription.remove();
   },[state.status,state.profile?.id]);
   useEffect(() => { if (state.profile) setLanguage(state.profile.language); }, [state.profile?.id]);
-  // Pen "V6 / 登录入口（学校邮箱）" (Nlb7d): signing in with a school email is the only way in; the tabs always have a student.
+  // Pen "V6 / 登录 · 欢迎页（学校邮箱）" (E3oiE): signing in with a school email is the only way in; the tabs always have a student.
+  if (!state.profile && state.status !== 'loading' && state.status !== 'error') return <WelcomeLogin language={language} onSignedIn={() => setJustSignedIn(true)}/>;
   if (!state.profile) return <SafeAreaView edges={['left','right']} style={[styles.flex, { backgroundColor: colors.background }]}>
     <StatusBar style={dark ? 'light' : 'dark'} />
     <Aurora/>
     <KeyboardAvoidingView behavior="padding" style={styles.flex}>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.page, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }]}>
         {state.status === 'loading' ? <View style={[styles.stack,{paddingTop:120,alignItems:'center'}]}><ActivityIndicator color={colors.accent} /></View>
-          : state.status === 'error' ? <Notice tone="error" text={t.errors[state.error ?? ''] ?? t.network} action={t.retry} onAction={() => void session.restore()}/>
-          : <LoginScreen language={language} dark={dark}/>}
+          : <Notice tone="error" text={t.errors[state.error ?? ''] ?? t.network} action={t.retry} onAction={() => void session.restore()}/>}
       </ScrollView>
     </KeyboardAvoidingView>
+  </SafeAreaView>;
+  // Pen "V6 / 登录后 · 连接学校数据" (n26RV): right after signing in, before the tabs.
+  if (justSignedIn) return <SafeAreaView edges={['left','right']} style={[styles.flex, { backgroundColor: colors.background }]}>
+    <StatusBar style={dark ? 'light' : 'dark'} />
+    <KeyboardAvoidingView behavior="padding" style={styles.flex}><ConnectStep language={language} dark={dark} onDone={() => setJustSignedIn(false)}/></KeyboardAvoidingView>
   </SafeAreaView>;
   return <SafeAreaView edges={['left','right']} style={[styles.flex, { backgroundColor: colors.background }]}>
     <StatusBar style={dark ? 'light' : 'dark'} />

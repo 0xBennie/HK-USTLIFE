@@ -21,7 +21,7 @@ import {dueWithinWeek} from '../study/dates';
 import {feel} from '../ui/feel';
 
 type Props = { language: Language; dark: boolean };
-function useAction(language: Language) {
+export function useAction(language: Language) {
   const [busy, setBusy] = useState(false);
   const locked=useRef(false),alive=useRef(true);
   useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
@@ -35,65 +35,6 @@ function useAction(language: Language) {
     finally { locked.current=false;if(alive.current)setBusy(false); }
   }
   return { busy, message, failed, run, isCurrent:()=>alive.current, setMessage:(value:string)=>{if(alive.current)setMessage(value);} };
-}
-
-// Pen "V6 / 登录入口（学校邮箱）" (Nlb7d): a school email is the only way in; the first sign-in registers the
-// account. The code step says where the code went (the server reports a local development inbox when no real
-// email is sent) and when it can be requested again.
-const schoolEmail=(v:string)=>/@(connect\.)?ust\.hk$/i.test(v.trim())||(__DEV__&&/@example\.test$/i.test(v.trim()));
-type Challenge={id:string;expiresAt:string;localInbox:boolean};
-export function LoginScreen({ language }: Props) {
-  const t = strings[language], c = usePenColors(), zh=language==='zh';
-  const [email, setEmail] = useState('');
-  const [challenge, setChallenge] = useState<Challenge|null>(null);
-  const [code, setCode] = useState('');
-  const [wait, setWait] = useState(0);
-  useEffect(()=>{if(!wait)return;const timer=setTimeout(()=>setWait(w=>Math.max(0,w-1)),1000);return()=>clearTimeout(timer);},[wait]);
-  const action = useAction(language);
-  const send = () => action.run(async () => {
-    const result = await api.request<{ challenge_id: string; expires_at: string; delivery?: string; retry_after_seconds?: number }>('/auth/email/challenges', { method: 'POST', body: { email: email.trim() } });
-    if(action.isCurrent()){setChallenge({id:result.challenge_id,expiresAt:result.expires_at,localInbox:result.delivery==='local_development_inbox'});setCode('');setWait(result.retry_after_seconds??60);}
-  });
-  const minutes=challenge?Math.max(1,Math.round((Date.parse(challenge.expiresAt)-Date.now())/60000)):0;
-  const row=(icon:string,title:string,body:string)=><View style={{flexDirection:'row',alignItems:'center',gap:12,paddingVertical:14,borderBottomWidth:0.5,borderBottomColor:c.border}}>
-    <View style={{flex:1,gap:3}}><Text style={{fontSize:16,lineHeight:23,color:c.text}}>{title}</Text><Text style={{fontSize:13,lineHeight:19,color:c.muted}}>{body}</Text></View>
-    <PenIcon name={icon} size={20} color={c.accent}/>
-  </View>;
-  const field=(label:string,input:React.ReactNode,footer?:string)=><View style={{gap:6}}>
-    <Text style={{fontSize:13,fontWeight:'600',color:c.muted}}>{label}</Text>
-    <View style={{height:52,justifyContent:'center',paddingHorizontal:16,borderRadius:16,borderCurve:'continuous',borderWidth:1,borderColor:c.border,backgroundColor:c.surface}}>{input}</View>
-    {footer?<Text style={{fontSize:12,lineHeight:17,color:c.muted}}>{footer}</Text>:null}
-  </View>;
-  const input={fontSize:17,color:c.text,padding:0};
-  return <View style={{gap:16}}>
-    <View style={{gap:5}}>
-      <Text style={{fontSize:12,lineHeight:17,fontWeight:'600',color:c.accent}}>USTLIFE · HKUST</Text>
-      <Text accessibilityRole="header" style={{fontSize:32,lineHeight:46,fontWeight:'700',color:c.text}}>{zh?'大学生活，\n从容一点。':'Campus life,\na little calmer.'}</Text>
-      <Text style={{fontSize:15,lineHeight:22,color:c.muted}}>{zh?'截止、课表、校巴和活动，都在一个地方。':'Deadlines, classes, shuttles and plans in one place.'}</Text>
-    </View>
-    <View style={{gap:8}}>
-      <Text style={{fontSize:19,lineHeight:28,fontWeight:'600',color:c.text}}>{zh?'从今天开始':'Start today'}</Text>
-      <View>
-        {row('calendar-days',zh?'截止不再漏':'Never miss a deadline',zh?'今天要交什么，一眼看到':'See what is due today at a glance')}
-        {row('map',zh?'下一班车几点':'When is the next ride',zh?'校巴时刻表和小巴实时到站':'Shuttle timetables and live minibuses')}
-        {row('users',zh?'找人一起做点小事':'Do small things together',zh?'自习、散步、复习小组，想参加再参加':'Study, walk or review together — only if you want')}
-      </View>
-    </View>
-    {field(t.email,<TextInput accessibilityLabel={t.email} value={email} onChangeText={setEmail} editable={!challenge&&!action.busy} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} textContentType="emailAddress" placeholder="name@connect.ust.hk" placeholderTextColor={c.tertiary} style={[input,challenge?{color:c.muted}:null]}/>,challenge?undefined:(zh?'只接受 @connect.ust.hk 和 @ust.hk。第一次登录会自动注册。':'HKUST emails only (@connect.ust.hk, @ust.hk). Your first sign-in creates the account.'))}
-    {challenge?field(zh?'验证码':'Code',<TextInput accessibilityLabel={zh?'六位验证码':'Six-digit code'} value={code} onChangeText={v=>setCode(v.replace(/\D/g,''))} editable={!action.busy} keyboardType="number-pad" textContentType="oneTimeCode" maxLength={6} autoFocus placeholder={zh?'六位验证码':'Six-digit code'} placeholderTextColor={c.tertiary} style={[input,{fontVariant:['tabular-nums']}]}/>,
-      challenge.localInbox?(zh?'开发版不会发真实邮件，验证码在本机开发收件箱里。':'Development build: no real email is sent; the code is in the local development inbox.'):(zh?`验证码已发到 ${email.trim()}，${minutes} 分钟内有效。`:`Code sent to ${email.trim()}; valid for ${minutes} min.`)):null}
-    {action.message?<Notice tone="error" text={action.message}/>:null}
-    {challenge?<View style={{gap:14}}>
-      <View style={{flexDirection:'row'}}><PrimaryButton label={action.busy?t.loading:t.signIn} disabled={action.busy||code.length!==6} onPress={() => action.run(async () => {
-        const result = await api.request<{ access_token: string }>('/auth/email/verify', { method: 'POST', body: { challenge_id: challenge.id, code } });
-        if(action.isCurrent())await session.signIn(result.access_token);
-      })}/></View>
-      <View style={{flexDirection:'row',justifyContent:'center',gap:24}}>
-        <Pressable accessibilityRole="button" accessibilityState={{disabled:action.busy||wait>0}} disabled={action.busy||wait>0} hitSlop={8} onPress={send}><Text style={{fontSize:15,fontWeight:'600',color:wait>0?c.muted:c.accent,fontVariant:['tabular-nums']}}>{wait>0?(zh?`重新获取 · ${wait} 秒`:`Resend · ${wait}s`):t.resend}</Text></Pressable>
-        <Pressable accessibilityRole="button" disabled={action.busy} hitSlop={8} onPress={() => {setChallenge(null);setCode('');action.setMessage('');}}><Text style={{fontSize:15,fontWeight:'600',color:c.accent}}>{t.changeEmail}</Text></Pressable>
-      </View>
-    </View>:<View style={{flexDirection:'row'}}><PrimaryButton label={action.busy ? t.loading : t.sendCode} disabled={action.busy || !schoolEmail(email)} onPress={send}/></View>}
-  </View>;
 }
 
 type MePage='home'|'profile'|'reminders'|'school'|'activities'|'saved'|'ai';

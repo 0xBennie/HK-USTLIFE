@@ -2,7 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {Linking,Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import {api,session} from '../runtime';
-import {CheckCircle,CircleButton,EmptyState,Hero,HeroActions,IconTile,LargeTitle,ListGroup,ListRow,Notice,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,TintChip,TopBar,ViewAll,usePenColors} from '../ui/Pen';
+import {CheckCircle,CircleButton,EmptyState,Hero,HeroActions,LargeTitle,ListGroup,ListRow,Notice,PenIcon,Section,Skeleton,Stagger,Surface,TintChip,TopBar,ViewAll,usePenColors} from '../ui/Pen';
 import type {Language} from '../strings';
 import type {Calendar,CalendarItem,Course,StudyItem} from './types';
 import type {ActivityNotification} from '../../../../src/product/social/types';
@@ -13,7 +13,7 @@ const weatherIcon=(en?:string)=>!en?'cloud':/thunder/i.test(en)?'cloud-lightning
 import ReanimatedSwipeable,{type SwipeableMethods} from 'react-native-gesture-handler/ReanimatedSwipeable';
 import {feel} from '../ui/feel';
 
-// Pen board "V2 / 今天 / 今日简报" (jV0eP); signed in without school data: "V2 / 今天 / 已登录未连接（真实能力）" (vmgSM).
+// Pen board "V2 / 今天 / 今日简报" (jV0eP); an empty day without school data: "V6 / 今天 · 空的一天（还没连接学校数据）" (AcEVz).
 type Task=Extract<StudyItem,{kind:'task'}>;
 const courseColors=['#24467F','#4F6F8C','#56647D','#2E7D55','#6B6F8E','#A9824C','#34506B'];
 export const courseColor=(courses:Course[],id:string|null|undefined)=>{const i=courses.findIndex(c=>c.id===id);return i<0?'#8E8E93':courseColors[i%courseColors.length];};
@@ -75,7 +75,6 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
  const next=upcoming[0];
  const startsIn=next?Math.round((Date.parse(next.starts_at!)-now)/60000):0;
  const schoolLinked=(calendar?.school_connections??[]).some(s=>s.state==='connected'||s.state==='partial');
- const nothing=!loading&&!tasks.length&&!events.length&&courses.length===0;
  const wd=new Date(today+'T00:00:00Z').getUTCDay();
  const dateLine=zh?`${Number(today.slice(5,7))} 月 ${Number(today.slice(8))} 日 · 星期${zhDay[wd]}`:new Date(today+'T00:00:00Z').toLocaleDateString('en-HK',{weekday:'long',month:'short',day:'numeric',timeZone:'UTC'});
  const summary=[upcoming.length?(zh?`还有 ${upcoming.length} 节课`:`${upcoming.length} classes left`):null,dueToday.length?(zh?`${dueToday.length} 项今天截止`:`${dueToday.length} due today`):null,overdue.length?(zh?`${overdue.length} 项逾期`:`${overdue.length} overdue`):null].filter(Boolean).join(zh?'，':', ');
@@ -127,7 +126,6 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
  const nextLabel=next?`${startsIn<=0?(zh?'正在上课':'Now'):hk(next.starts_at!).slice(11)} · ${next.title}`:upcoming.length===0&&events.length?(zh?'今天的课都上完了':'Classes done for today'):(zh?'今天没有课':'No classes today');
  return <View style={{gap:24}}>
   <TopBar name={name} onAvatar={onMe} title={dateLine} right={<CircleButton icon="plus" label={zh?'添加截止或安排':'Add a deadline or plan'} onPress={onAdd}/>}/>
-  {nothing&&!schoolLinked?<FirstUse zh={zh} onSchool={onSchool} onAdd={onAdd}/>:<>
   <Stagger index={0}><View style={{gap:6,paddingHorizontal:4}}>
    <Text accessibilityRole="header" style={{fontSize:32,lineHeight:40,fontWeight:'700',letterSpacing:-0.6,color:c.text}}>{greeting}</Text>
    <Text style={{fontSize:15,lineHeight:21,color:c.muted}}>{brief}</Text>
@@ -165,7 +163,7 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
     {doneRecent.length?<Pressable accessibilityRole="button" onPress={()=>setShowDone(!showDone)} style={{flexDirection:'row',alignItems:'center',gap:8,padding:14,paddingHorizontal:18,borderTopWidth:0.5,borderTopColor:c.border}}><PenIcon name="circle-check" size={16} color={c.green}/><Text style={{flex:1,fontSize:14,color:c.muted}}>{zh?`今天完成了 ${doneRecent.length} 项`:`${doneRecent.length} done today`}</Text><PenIcon name={showDone?'chevron-up':'chevron-down'} size={16} color={c.tertiary}/></Pressable>:null}
     {showDone?doneRecent.map(t=><View key={t.id} style={{flexDirection:'row',alignItems:'center',gap:12,paddingLeft:16,paddingVertical:8}}><CheckCircle checked disabled={busy} label={zh?`重新打开 ${t.title}`:`Reopen ${t.title}`} onPress={()=>onToggle(t)}/><Text style={{flex:1,fontSize:15,color:c.muted,textDecorationLine:'line-through'}}>{t.title}</Text></View>):null}
     <View style={{borderTopWidth:0.5,borderTopColor:c.border}}><ViewAll label={zh?'查看全部':'View all'} onPress={()=>onManage('all')}/></View>
-   </View>:<Surface><EmptyState icon="calendar-check" title={zh?'还没有截止':'No deadlines yet'} body={zh?'登录学校账号后，Canvas 作业会自动出现。':'Sign in with HKUST and Canvas deadlines appear here.'} action={zh?'添加一项':'Add one'} onAction={onAdd}/></Surface>}
+   </View>:<Surface><EmptyState icon="calendar-check" title={zh?'还没有截止':'No deadlines yet'} body={schoolLinked?undefined:(zh?'连接 Canvas 后，作业截止会自动出现。':'Connect Canvas and assignment deadlines appear here.')} action={zh?'自己添加一项':'Add one myself'} onAction={onAdd}/></Surface>}
   </Section>
   {notes.length?<Section title={zh?'需要你处理':'Needs you'} link={zh?'全部':'All'} onLink={onInbox}>
    <ListGroup>{notes.map(m=>{const n=notificationText(m,zh);return <ListRow key={m.id} icon={n.icon[0]} tile={n.icon[1]} title={n.subject||n.title} subtitle={n.subject?n.title:undefined} chevron onPress={()=>m.activity?onActivity(m.activity.id):m.post?onPost(m.post.id):undefined}/>;})}</ListGroup>
@@ -175,7 +173,6 @@ export function TodayHome({name,onMe,language,courses,items,calendar,loading,err
    <ListRow icon="bus" tile={c.teal} title={ride?`${ride.name}${ride.time?` · ${ride.time}`:''}`:(zh?'选一条常坐的路线':'Pick your usual route')} subtitle={ride?(ride.time?(zh?'校巴时刻表 · 点开看实时小巴':'Shuttle timetable · live buses inside'):(zh?'今天没有校巴 · 看看小巴和巴士':'No shuttle today · see buses')):(zh?'下一班车会显示在这里':'Your next ride shows here')} chevron onPress={onCampus}/>
    {!schoolLinked?<ListRow icon="graduation-cap" tile="#24467F" title={zh?'连接 Canvas 和学校日历':'Connect Canvas & calendar'} subtitle={zh?'粘贴令牌或日历链接，截止和课程自动进来':'Paste a token or calendar link; deadlines and classes flow in'} chevron onPress={onSchool}/>:null}
   </ListGroup>
-  </>}
  </View>;
 }
 /** Soft aurora fill (Plasma card): pale course colour washing into mint and white. */
@@ -185,23 +182,6 @@ function Aurora({color}:{color:string}){
   <LinearGradient id={id} x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#F4F4F6"/><Stop offset="0.45" stopColor={color} stopOpacity={0.28}/><Stop offset="1" stopColor="#CFE3D8"/></LinearGradient>
   <LinearGradient id={id+'v'} x1="0" y1="0" x2="0" y2="1"><Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.55}/><Stop offset="1" stopColor="#FFFFFF" stopOpacity={0}/></LinearGradient>
  </Defs><Rect width="100%" height="100%" fill={`url(#${id})`}/><Rect width="100%" height="100%" fill={`url(#${id}v)`}/></Svg>;
-}
-/** Pen V2 / 今天 / 已登录未连接（真实能力）: only claims what works today. */
-function FirstUse({zh,onSchool,onAdd}:{zh:boolean;onSchool:()=>void;onAdd:()=>void}){
- const c=usePenColors();
- const src=(icon:string,col:string,t:string,s:string,badge:string,live:boolean)=><View style={{flexDirection:'row',alignItems:'center',gap:12,padding:14,borderRadius:16,backgroundColor:c.background}}><IconTile icon={icon} color={col} size={36}/><View style={{flex:1,gap:2}}><Text style={{fontSize:16,fontWeight:'600',color:c.text}}>{t}</Text><Text style={{fontSize:12,color:c.muted}}>{s}</Text></View><View style={{paddingVertical:4,paddingHorizontal:9,borderRadius:99,backgroundColor:(live?c.green:c.orange)+'1F'}}><Text style={{fontSize:12,fontWeight:'600',color:live?c.green:c.orange}}>{badge}</Text></View></View>;
- return <Stagger index={0}><View style={{gap:16}}>
-  <View style={{backgroundColor:c.surface,borderRadius:22,padding:18,gap:12,boxShadow:'0 6px 20px #00000014'}}>
-   <Text style={{fontSize:22,lineHeight:30,fontWeight:'700',color:c.text}}>{(zh?'连接一次，今天的事都在这里':'Connect once. Your day in one place.')}</Text>
-   <Text style={{fontSize:15,lineHeight:22,color:c.muted}}>{(zh?'连接 Canvas 和学校日历后，作业、截止和课程会自动同步。':'Connect Canvas and your school calendar and deadlines and classes sync automatically.')}</Text>
-   {src('calendar-days','#56647D',zh?'学校日历':'School calendar',zh?'Outlook、Google、iCloud · 课程和会议自动进来':'Outlook, Google, iCloud · classes and meetings',zh?'可用':'Ready',true)}
-   {src('graduation-cap','#24467F',zh?'Canvas 作业与截止':'Canvas deadlines',zh?'粘贴 Canvas 令牌 · 截止日期自动进来':'Paste a Canvas token · due dates flow in',zh?'可用':'Ready',true)}
-   {src('mail','#0078D4',zh?'课表、成绩、学校邮箱':'Timetable, grades, mail',zh?'SIS 与 Microsoft 365 需要学校授权':'SIS and Microsoft 365 need HKUST approval',zh?'待学校开放':'Awaiting HKUST',false)}
-   <View style={{flexDirection:'row'}}><PrimaryButton label={(zh?'连接 Canvas 和日历':'Connect Canvas & calendar')} onPress={onSchool}/></View>
-   <Pressable onPress={onAdd} style={{alignItems:'center',padding:6}}><Text style={{fontSize:15,fontWeight:'600',color:c.accent}}>{(zh?'先自己添加一项':'Add one myself')}</Text></Pressable>
-  </View>
-  <Surface><View style={{flexDirection:'row',alignItems:'center',gap:12}}><IconTile icon="lock" color={c.indigo}/><View style={{flex:1,gap:2}}><Text style={{fontSize:15,fontWeight:'600',color:c.text}}>{zh?'你的数据由你控制':'You control your data'}</Text><Text style={{fontSize:12,lineHeight:17,color:c.muted}}>{zh?'Canvas 令牌加密保存，只用来读取作业；随时在「学校连接」里断开并删除':'Your Canvas token is encrypted and only reads assignments; disconnect and delete it any time'}</Text></View></View></Surface>
- </View></Stagger>;
 }
 
 
