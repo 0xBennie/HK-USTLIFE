@@ -21,7 +21,7 @@ export function ReminderPicker({value,onChange,language,disabled=false}:{value:n
 export function ReminderSettings({language,dark}:{language:Language;dark:boolean}){
  const state=useSyncExternalStore(reminders.subscribe,reminders.snapshot),zh=language==='zh',c=palette[dark?'dark':'light'];
  const text=state.phase==='ready'?(zh?`本机已安排 ${state.scheduled} 条提醒`:`${state.scheduled} reminders scheduled on this device`):state.phase==='syncing'?(zh?'正在核对本机提醒…':'Checking device reminders…'):state.phase==='denied'?(zh?'通知尚未获准，学习和活动功能仍可使用。':'Notifications are not allowed. Study and activities still work.'):state.phase==='error'?(state.cleanupPending?(zh?'提醒清理失败，旧提醒可能仍存在。请重试。':'Cleanup failed. Old reminders may remain. Please retry.'):state.stale?(zh?'暂时无法更新，保留了上次提醒；可能尚未反映最新改期。':'Could not refresh. Previous reminders remain and may not reflect recent changes.'):(zh?'本次同步未完成，已清除旧提醒。联网后重试。':'Sync did not complete. Old reminders were cleared. Reconnect and retry.')):(zh?'本机提醒未开启':'Device reminders are off');
- // Pen board "V3 / 自动提醒设置" in V5 style. Only implemented capabilities get real switches; the rest is labelled "即将推出".
+ // Pen "V5 / 自动提醒（当前可用）" (xZUzJ). Only implemented capabilities get real switches; the rest is labelled "即将推出".
  const pc=usePenColors(),busy=state.phase==='syncing';
  const owner=useSyncExternalStore(session.subscribe,session.snapshot).profile?.id;
  const [brief,setBrief]=useState(false);

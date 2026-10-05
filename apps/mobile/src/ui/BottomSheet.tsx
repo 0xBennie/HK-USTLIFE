@@ -1,5 +1,6 @@
 // Pen V6 sheet (e.g. "V6 / 确认报名（面板）"): a content-height panel over a dimmed screen, so the primary
 // action at the bottom is always visible (an iOS pageSheet opens half-height and would hide it).
+// Motion follows "V6 / 底部面板 · 拖动与减少动态（交互说明）" (TBMCw).
 import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {Animated,Easing,Keyboard,LayoutAnimation,Modal,PanResponder,Pressable,StyleSheet,View,useWindowDimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -12,6 +13,8 @@ export function BottomSheet({visible,onClose,closeLabel,header,children}:{visibl
  const [mounted,setMounted]=useState(visible);
  const shift=useRef(new Animated.Value(height)).current,shade=useRef(new Animated.Value(0)).current;
  const close=useRef(onClose);close.current=onClose;
+ // Read at gesture time: the pan handlers are created once, and Reduce Motion can change while the sheet exists.
+ const motion=useRef(reduceMotion);motion.current=reduceMotion;
  // The sheet rides on top of the keyboard (the report form has a text field).
  const [kb,setKb]=useState(0);
  useEffect(()=>{
@@ -22,15 +25,18 @@ export function BottomSheet({visible,onClose,closeLabel,header,children}:{visibl
  useEffect(()=>{
   if(visible){shift.setValue(reduceMotion?0:height);shade.setValue(0);setMounted(true);}
   else if(mounted){
-   Animated.parallel([Animated.timing(shade,{toValue:0,duration:180,useNativeDriver:true}),Animated.timing(shift,{toValue:reduceMotion?0:height,duration:reduceMotion?0:220,easing:Easing.in(Easing.cubic),useNativeDriver:true})]).start(()=>setMounted(false));
+   // With Reduce Motion the panel doesn't move (a dragged panel stays where the finger left it) while the dim fades.
+   Animated.parallel([Animated.timing(shade,{toValue:0,duration:180,useNativeDriver:true}),...(reduceMotion?[]:[Animated.timing(shift,{toValue:height,duration:220,easing:Easing.in(Easing.cubic),useNativeDriver:true})])]).start(()=>setMounted(false));
   }
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[visible]);
+ // Not far enough to close, or the system took the gesture: back in place — no spring with Reduce Motion.
+ const settle=()=>{if(motion.current)shift.setValue(0);else Animated.spring(shift,{toValue:0,damping:30,stiffness:280,useNativeDriver:true}).start();};
  const pan=useRef(PanResponder.create({
   onMoveShouldSetPanResponder:(_,g)=>g.dy>6&&Math.abs(g.dy)>Math.abs(g.dx),
   onPanResponderMove:(_,g)=>shift.setValue(Math.max(0,g.dy)),
-  onPanResponderRelease:(_,g)=>{if(g.dy>110||g.vy>1.1)close.current();else Animated.spring(shift,{toValue:0,damping:30,stiffness:280,useNativeDriver:true}).start();},
-  onPanResponderTerminate:()=>{Animated.spring(shift,{toValue:0,useNativeDriver:true}).start();},
+  onPanResponderRelease:(_,g)=>{if(g.dy>110||g.vy>1.1)close.current();else settle();},
+  onPanResponderTerminate:()=>settle(),
  })).current;
  // Animate in only once the modal is on screen, so the native driver has mounted views to move.
  // (On the iOS Simulator RN divides native animation time by the simulator's drag coefficient,

@@ -97,7 +97,7 @@ export function LoginScreen({ language }: Props) {
 }
 
 type MePage='home'|'profile'|'reminders'|'school'|'activities'|'saved'|'ai';
-// Pen "18 / My account" (B7wsR): profile card, grouped rows with color tiles, account actions last.
+// Pen "V3 / 我的" (OsfrE): profile card, grouped rows with color tiles, account actions last.
 export function ProfileScreen({ profile, language, dark,exitBusy,exitError,onExit,onLanguage,onSafety,onActivity,onCampus }: Props & { profile: Profile;exitBusy:boolean;exitError:unknown;onExit:(kind:AccountExitKind)=>void;onLanguage:(language:Language)=>void;onSafety:()=>void;onActivity:(id:string)=>void;onCampus:(target:{kind:'place'|'route';id:string})=>void }) {
   const t = strings[language], c = usePenColors(), zh=language==='zh';
   const [page,setPage]=useState<MePage>('home');

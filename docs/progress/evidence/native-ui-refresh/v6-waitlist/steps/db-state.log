@@ -1,0 +1,20 @@
+15:22:16 01-full-not-joined — 已满，未报名：加入候补 + 加入日历/提醒 — DB: not joined | no preferences
+15:22:29 02-saved-only — 未报名时点「加入日历」：只保存日程，不报名 — DB: not joined | bookmarked=0 calendar_saved=1 remind_minutes=null
+15:22:51 03-join-sheet — 确认加入候补面板：日历已保存，开关显示「已经在你的日历里」 — DB: not joined | bookmarked=0 calendar_saved=1 remind_minutes=null
+15:23:14 04-waitlisted-in-calendar — 加入候补后：候补第 1 位，日历与提醒按钮仍在 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=null
+15:23:37 05-waitlisted-calendar-removed — 候补中单独取消日历：仍是候补第 1 位 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=0 remind_minutes=null
+15:24:10 06-waitlisted-reminder-30 — 候补中设提前 30 分钟提醒（同时重新加入日历）：仍是候补第 1 位 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:25:45 07-device-reminders-on — 我的 → 提醒：本机已安排 3 条（含测试活动的 30 分钟提醒） — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:25:51 08-device-reminders-off — 关掉「截止与日程提醒」：本机提醒未开启 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:27:06 08-device-reminders-off — 关掉「截止与日程提醒」：本机已安排 0 条，提醒未开启 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:27:32 09-detail-device-off — 本机提醒关着：活动页提示「本机提醒没开，到时不会通知你」+ 开启 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:27:57 10-detail-device-recovered — 点「开启」后：本机提醒恢复，提示消失 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:30:38 11-notification-delivered — 15:30 本机弹出「Campus · 日程提醒」通知（取自 15:30 当时的截图） — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:31:07 12-detail-denied — 系统通知被关：活动页提示「系统通知被关了，到时不会通知你」+ 去设置 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:31:51 13-open-settings — 点「去设置」：打开本 App 的系统通知设置 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:32:21 14-detail-allowed-again — 系统通知重新允许后回到 App：提示消失 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:34:10 15-detail-sync-error — API 断开时回到前台、同步失败：活动页提示「本机提醒没同步上，到时可能不会通知你」+ 重试 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:34:31 16-detail-sync-recovered — API 恢复后点「重试」：同步成功，提示消失 — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:34:50 17-withdraw-waitlist-dialog — 退出候补弹窗：说明会失去候补位置（第 1 位） — DB: waitlisted queue_order=2 version=1 position=1 | bookmarked=0 calendar_saved=1 remind_minutes=30
+15:35:14 18-after-withdraw — 确认退出候补后：回到「已满 · 加入候补」，日历与提醒已清除 — DB: withdrawn queue_order=2 version=2 | bookmarked=0 calendar_saved=0 remind_minutes=null
+15:44:27 19-withdraw-confirmed-dialog — 已报名活动的退出弹窗：说明会释放名额（只看不退） — DB: withdrawn queue_order=2 version=2 | bookmarked=0 calendar_saved=0 remind_minutes=null

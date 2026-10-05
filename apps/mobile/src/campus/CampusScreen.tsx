@@ -24,7 +24,7 @@ import type {ShuttleRoute,ShuttleDepartures} from '../../../../src/product/campu
 import type {directoryData} from '../../../../src/product/campus/directory-data';
 import {CircleButton,EmptyState,Hero,HeroActions,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PrimaryButton,Section,Skeleton,Stagger,Surface,TopBar,ViewAll,usePenColors,GlassChips,ProgressRing} from '../ui/Pen';
 
-// Pen board "V2 / 校园 / 我的下一班" (gWkUE): search, my next ride with live alternatives, affairs, saved, campus life.
+// Pen board "V2 / 校园 / 我的下一班" (gWkUE) with the "V4 / 校园 · 发车看板" (nQ3Ls) cards: search, my next ride with live alternatives, affairs, saved, campus life.
 type Catalog={routes:ShuttleRoute[];freshness:string;refresh_due_at:string};
 type Place=typeof directoryData[number]&{version:number;freshness:string};
 type Affair={id:string;template:{title:{zh:string;en:string};steps:{id:string;text:{zh:string;en:string}}[]};step_checks:Record<string,boolean>;personal_due:{kind:'date';date:string}|{kind:'time';at:string}|null;requires_review:boolean};
@@ -43,7 +43,7 @@ export function CampusScreen({language,dark,name,onMe,onPost,onWall,initialTarge
  const zh=language==='zh',c=usePenColors(),sceneActive=useSceneFocus(),navigate=useSceneNavigation(zh);
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;
  const [page,setPage]=useState<Page>({kind:'home'});
- // Opened from Me → 我的收藏: show the saved place or route (Pen "V6 / 我的收藏").
+ // Opened from Me → 我的收藏: show the saved place or route (Pen "V6 / 我的收藏（活动、地点与路线）" UemvP).
  useEffect(()=>{if(initialTarget)setPage(initialTarget.kind==='place'?{kind:'directory',placeId:initialTarget.id}:{kind:'route',id:initialTarget.id});},[initialTarget?.rev]);
  const [catalog,setCatalog]=useState<Catalog|null>(null),[places,setPlaces]=useState<Place[]>([]),[marks,setMarks]=useState<{target_kind:string;target_id:string}[]>([]),[affairs,setAffairs]=useState<Affair[]>([]);
  const [routeId,setRouteId]=useState<string|null>(null),[departures,setDepartures]=useState<ShuttleDepartures|null>(null),[nextDay,setNextDay]=useState<{date:string;time:string}|null>(null),[live,setLive]=useState<LiveOption[]|null>(null);

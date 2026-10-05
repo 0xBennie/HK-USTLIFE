@@ -4,6 +4,7 @@ import {z} from 'zod';
 import {transaction} from '../database.js';
 import {ApiError} from '../errors.js';
 import {templateSchema,createSchema,patchSchema,acceptSchema,privateSchema,type Template,type PrivateFields} from './schemas.js';
+import type {AffairDetail,AffairDiffField} from './types.js';
 
 type Row={id:string;owner_id:string;template_id:string;accepted_revision:number;payload:string;version:number;archived:number;created_at:number;updated_at:number;reported_at:number|null;outcome_recorded_at:number|null};
 type Header={id:string;current_revision:number;retired_at:number|null};
@@ -39,10 +40,10 @@ export function createAffairsStore(db:DatabaseSync,now:()=>number){
  function retire(id:string,reviewer:string){z.string().trim().min(1).parse(reviewer);if(!header(id))fail(404,'NOT_FOUND','Template not found.');db.prepare('UPDATE affair_templates SET retired_at=?,retired_by=? WHERE id=?').run(now(),reviewer,id);}
  function raw(owner:string,id:string){const r=db.prepare('SELECT * FROM affair_instances WHERE owner_id=? AND id=?').get(owner,id) as Row|undefined;if(!r)return fail(404,'NOT_FOUND','Private record not found.');return r;}
  function diff(old:Template,next:Template){
-  const fields=['title','summary','conditions','materials','deadline','sources','steps'] as const;
+  const fields:AffairDiffField[]=['title','summary','conditions','materials','deadline','sources','steps'];
   return fields.filter(k=>!same(old[k],next[k])).map(field=>({field,old:old[field],new:next[field]}));
  }
- function get(owner:string,id:string){
+ function get(owner:string,id:string):AffairDetail{
   const r=raw(owner,id),h=header(r.template_id)!,old=revision(r.template_id,r.accepted_revision),latest=revision(r.template_id,h.current_revision);
   return {...privateFields(r.payload),id:r.id,version:r.version,template_id:r.template_id,accepted_revision:r.accepted_revision,current_revision:h.current_revision,
    reported_at:r.reported_at===null?null:new Date(r.reported_at).toISOString(),outcome_recorded_at:r.outcome_recorded_at===null?null:new Date(r.outcome_recorded_at).toISOString(),created_at:new Date(r.created_at).toISOString(),updated_at:new Date(r.updated_at).toISOString(),template:display(old),current_template:display(latest),retired:h.retired_at!==null,

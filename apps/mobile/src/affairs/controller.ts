@@ -1,7 +1,7 @@
 import {ApiFailure,type RequestOptions} from '../api';
 import {protectionFor} from '../navigation/protection';
-import type {createAffairsStore} from '../../../../src/product/affairs/store';
-export type AffairDetail=ReturnType<ReturnType<typeof createAffairsStore>['get']>;
+import type {AffairDetail} from '../../../../src/product/affairs/types';
+export type {AffairDetail};
 export type AffairPatch=Partial<Pick<AffairDetail,'label'|'note'|'step_checks'|'submission'|'self_reported_outcome'|'archived'|'personal_due'|'calendar_saved'|'remind_minutes'>>;
 type Phase='idle'|'loading'|'ready'|'dirty'|'saving'|'uncertain'|'review'|'error'|'gone';
 type State={phase:Phase;value:AffairDetail|null;draft:AffairPatch;error:unknown};

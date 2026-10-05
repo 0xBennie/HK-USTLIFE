@@ -5,7 +5,7 @@ import type {Language} from '../strings';
 import {DiscoverScreen} from './DiscoverScreen';
 import {WallScreen} from './WallScreen';
 export type DiscoveryTarget={kind:'activity'|'post';id:string};
-// Pen boards "V3 / 校园墙" (wall-first tab) and "V3 / 发现" (activities, entered from the 活动 topic).
+// Pen "V6 / 校园墙" (ddOiF) is the tab; its 活动 topic opens "V6 / 全部活动（按日期分组）" (H4f7id).
 export function CommunityScreen({language,dark,initialTarget,onDismissTarget,onNavigate,name,onMe}:{language:Language;dark:boolean;initialTarget:DiscoveryTarget|null;onDismissTarget:()=>void;onNavigate:()=>void;name?:string;onMe?:()=>void}){
  const zh=language==='zh',c=usePenColors();
  const [nested,setNested]=useState(initialTarget!==null);

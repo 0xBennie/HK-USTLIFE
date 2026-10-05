@@ -72,7 +72,7 @@ export function StudyForm({editor,courses,language,dark,onSaved,onBack}:{editor:
       else if(failure.error)throw failure.error;
     } catch(e) { if(alive.current)setError(e instanceof ApiFailure?(e.code==='VERSION_CONFLICT'?t.conflict:e.status===400?t.invalid:t.saveError):t.invalid); }
   }
-  // Pen board "V5 / 添加截止" (Q5QFX): title card, course / due / reminder rows, quick due chips, notes, one prominent save.
+  // Pen board "V3 / 添加截止（弹出面板）" (Q5QFX): title card, course / due / reminder rows, quick due chips, notes, one prominent save.
   const zh=language==='zh',c=usePenColors();
   const kindTitle=editor.kind==='task'?(zh?'截止':'deadline'):t[editor.kind];
   const today=hongKongInput(new Date().toISOString()).slice(0,10);

@@ -7,7 +7,7 @@ import type {PublicRoute,TransitArrivals,TransitCatalog,TransitStops} from '../.
 import {visibleTransitArrivals} from './transit-state';
 import {EmptyState,FilterPill,ListGroup,ListRow,Notice,PageHeader,PenIcon,PillRow,Skeleton,Stagger,usePenColors,GlassChips,SearchField} from '../ui/Pen';
 const hkTime=(s:string)=>new Date(s).toLocaleTimeString('en-GB',{timeZone:'Asia/Hong_Kong',hour:'2-digit',minute:'2-digit',hour12:false});
-// Pen "public-transit" / "transit-detail" boards: route → boarding stop → live arrivals.
+// Pen "public-transit / 离开校园" (fpXlD) and "transit-detail / 到站预测" (SMNyM): route → boarding stop → live arrivals.
 export function PublicTransitScreen({language,onBack,initial}:{language:Language;dark:boolean;onBack:()=>void;initial?:{routeId:string;sequence:number}}) {
  const sceneActive=useSceneFocus();
  const zh=language==='zh',c=usePenColors();

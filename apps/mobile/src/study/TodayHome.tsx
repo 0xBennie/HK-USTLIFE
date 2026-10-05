@@ -13,7 +13,7 @@ const weatherIcon=(en?:string)=>!en?'cloud':/thunder/i.test(en)?'cloud-lightning
 import ReanimatedSwipeable,{type SwipeableMethods} from 'react-native-gesture-handler/ReanimatedSwipeable';
 import {feel} from '../ui/feel';
 
-// Pen board "V2 / 今天 / 今日简报" (jV0eP) and "第一次使用" (TCURr).
+// Pen board "V2 / 今天 / 今日简报" (jV0eP); signed in without school data: "V2 / 今天 / 已登录未连接（真实能力）" (vmgSM).
 type Task=Extract<StudyItem,{kind:'task'}>;
 const courseColors=['#24467F','#4F6F8C','#56647D','#2E7D55','#6B6F8E','#A9824C','#34506B'];
 export const courseColor=(courses:Course[],id:string|null|undefined)=>{const i=courses.findIndex(c=>c.id===id);return i<0?'#8E8E93':courseColors[i%courseColors.length];};

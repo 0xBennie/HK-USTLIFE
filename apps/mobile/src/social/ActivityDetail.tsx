@@ -4,7 +4,7 @@ import {useInputProtection} from '../navigation/InputProtection';
 import {useSceneFocus} from '../navigation/TabScene';
 import {SafetyActions} from './SafetyActions';
 import {useCallback,useEffect,useMemo,useRef,useState,useSyncExternalStore} from 'react';
-import {ActionSheetIOS,Alert,AppState,Image,Pressable,Share,Text,TextInput,View} from 'react-native';
+import {ActionSheetIOS,Alert,AppState,Image,Linking,Pressable,Share,Text,TextInput,View} from 'react-native';
 import Svg,{Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useSceneBottomBar} from '../navigation/SceneOverlay';
@@ -12,7 +12,7 @@ import {BottomBar,CircleButton,GlassCapsule,InitialAvatar,ListGroup,ListRow,Noti
 import {GradientAvatar} from './wall-ui';
 import {feel} from '../ui/feel';
 import {activityCover,dateRange,interactionLabel} from './covers';
-import {session} from '../runtime';
+import {reminders,session} from '../runtime';
 import {ApiFailure} from '../api';
 import type {Language} from '../strings';
 import type {Activity,ActivityComment,Participation} from '../../../../src/product/social/types';
@@ -49,7 +49,7 @@ export function ActivityDetail({id,language,dark,onBack,onNavigate}:{id:string;l
   catch(e){if(!alive.current)return;if(writeRejected(e))pending.current=null;setReviewOnly(reviewRequired(e));setError(socialError(e,language));}finally{lock.current=false;if(alive.current)setBusy(false);}
  }
  const act=(suffix:string,method:string,body:unknown,after?:()=>void)=>{if(lock.current||pending.current)return;void perform({path:`/activities/${id}${suffix}`,method,...writeReceipt(body,newWriteKey()),after});};
- const confirm=(title:string,body:string,action:()=>void)=>Alert.alert(title,body,[{text:zh?'返回':'Back',style:'cancel'},{text:zh?'确认':'Confirm',style:'destructive',onPress:action}]);
+ const confirm=(title:string,body:string,action:()=>void,label?:string)=>Alert.alert(title,body,[{text:zh?'返回':'Back',style:'cancel'},{text:label??(zh?'确认':'Confirm'),style:'destructive',onPress:action}]);
  const frozen=busy||pending.current!==null||joinPending;
  async function more(){if(cursor===null||frozen)return;setBusy(true);try{const m=await session.request<{items:ActivityComment[];next_cursor:number|null}>(`/activities/${id}/comments?cursor=${cursor}`);setComments(old=>[...old,...m.items.filter(x=>!old.some(y=>y.id===x.id))]);setCursor(m.next_cursor);}catch(e){setError(socialError(e,language,'read'));}finally{setBusy(false);}}
  const mine=activity?.mine,part=mine?.participation,participating=part&&['confirmed','waitlisted'].includes(part.status);
@@ -57,10 +57,13 @@ export function ActivityDetail({id,language,dark,onBack,onNavigate}:{id:string;l
  const reconnect=(peer:{id:string;display_name:string})=>protectInput(()=>{setRecontact(peer);onNavigate();});
  const prefs=(changes:object)=>act('/preferences','PUT',{bookmarked:mine?.bookmarked??false,calendar_saved:mine?.calendar_saved??false,remind_minutes:mine?.remind_minutes??null,...changes});
  const canJoin=!!activity&&!mine?.is_organizer&&!participating&&activity.status==='open'&&!activity.started;
- const withdraw=()=>confirm(zh?(part?.status==='waitlisted'?'退出候补？':'退出活动？'):'Withdraw?',zh?'退出将释放名额，并移除你保存的活动日程及提醒设置。':'This releases your place and removes your saved activity schedule and reminder setting.',()=>act('/withdraw','POST',{participation_version:part!.version}));
+ // Pen "V6 / 退出确认（报名与候补）" (fEcT9): say what is lost — the place, or the place in the queue.
+ const withdraw=()=>{const queue=part?.status==='waitlisted',n=part?.waitlist_position;confirm(zh?(queue?'退出候补？':'退出活动？'):(queue?'Leave the waitlist?':'Withdraw?'),queue?(zh?`你会失去现在的候补位置${n?`（第 ${n} 位）`:''}，并移除你保存的活动日程及提醒设置。`:`You lose your place in the queue${n?` (#${n})`:''}, and your saved activity schedule and reminder setting are removed.`):(zh?'退出将释放名额，并移除你保存的活动日程及提醒设置。':'This releases your place and removes your saved activity schedule and reminder setting.'),()=>act('/withdraw','POST',{participation_version:part!.version}),zh?(queue?'退出候补':'退出报名'):(queue?'Leave waitlist':'Withdraw'));};
  // Reminders need the activity in the personal calendar (server rule), so picking a time also saves it there.
- const reminderLabel=(m:number|null|undefined)=>m==null?(zh?'提醒':'Remind me'):m===0?(zh?'开始时提醒':'At start'):zh?`提前 ${m} 分钟`:`${m} min before`;
- const pickReminder=()=>{const values=[null,0,10,30,60] as const;ActionSheetIOS.showActionSheetWithOptions({title:zh?'什么时候提醒你？':'When should we remind you?',options:[...values.map(v=>v===null?(zh?'不提醒':'No reminder'):reminderLabel(v)),zh?'取消':'Cancel'],cancelButtonIndex:values.length},i=>{if(i<values.length){feel.select();const v=values[i];prefs(v===null?{remind_minutes:null}:{calendar_saved:true,remind_minutes:v});}});};
+ const pickReminder=()=>{const values=[null,0,10,30,60] as const;ActionSheetIOS.showActionSheetWithOptions({title:zh?'什么时候提醒你？':'When should we remind you?',options:[...values.map(v=>v===null?(zh?'不提醒':'No reminder'):reminderLabel(v,zh)),zh?'取消':'Cancel'],cancelButtonIndex:values.length},i=>{if(i<values.length){feel.select();const v=values[i];prefs(v===null?{remind_minutes:null}:{calendar_saved:true,remind_minutes:v});}});};
+ // Pen "V6 / 报名卡 · 候补与只加入日历" (X9umEe): the calendar entry and reminder are the student's own and change
+ // by themselves (PUT /preferences only) — the signup and the place in the waitlist stay as they are.
+ const plan=<MyPlan zh={zh} calendar={!!mine?.calendar_saved} minutes={mine?.remind_minutes} disabled={frozen} onCalendar={()=>prefs(mine?.calendar_saved?{calendar_saved:false,remind_minutes:null}:{calendar_saved:true})} onReminder={pickReminder}/>;
  const reconnectOpen=!!activity&&Date.parse(activity.ends_at)+7*864e5>Date.now();
  // Comments close when the activity ends or is cancelled (server rule COMMENTS_CLOSED).
  const commentsOpen=!!activity&&!!profile&&!activity.ended&&activity.status!=='cancelled';
@@ -119,7 +122,8 @@ export function ActivityDetail({id,language,dark,onBack,onNavigate}:{id:string;l
   {error?<Notice tone="error" text={error} action={reviewOnly?(zh?'返回列表核对':'Back to check'):pending.current?(busy?undefined:(zh?'再试一次':'Try again')):frozen?undefined:(zh?'重新读取':'Reload')} onAction={()=>reviewOnly?protectInput(onBack):pending.current?void perform():void load()}/>:null}
   {joinPending?<View style={{padding:16,borderRadius:14,backgroundColor:c.tint}}><Text accessibilityRole="alert" style={{fontSize:15,lineHeight:22,color:c.text}}>{joinState.phase==='submitting'?(zh?'正在核对报名结果…':'Checking your signup…'):(zh?'有一笔报名结果尚未确认。':'One signup result is still unconfirmed.')}</Text></View>:null}
   {activity?<>
-   {/* Pen "V6 / 活动详情（报名卡）" (Czib6): tags, title, host, date tile, place, one state-driven registration card. */}
+   {/* Pen "V6 / 活动详情（报名卡）" (Czib6): tags, title, host, date tile, place, one state-driven registration card.
+       Card states: "V6 / 报名卡 · 其他状态" (BExSK), "· 发起人与其他状态" (RyOui), "· 候补与只加入日历" (X9umEe), "· 本机能否提醒" (dY9tt). */}
    <View style={{paddingHorizontal:4,gap:8}}>
     <View style={{flexDirection:'row',flexWrap:'wrap',gap:6}}>
      {activity.kind==='study'?<Chip label={zh?'学习组队':'Study group'}/>:null}
@@ -146,25 +150,25 @@ export function ActivityDetail({id,language,dark,onBack,onNavigate}:{id:string;l
      {!activity.started?<FillButton label={zh?'修改时间与地点':'Edit time and place'} disabled={frozen} onPress={()=>setEditing(true)}/>:null}
     </>:part?.status==='confirmed'?<>
      <Status icon="check" color={c.green} title={zh?'你已报名':'You are in'} sub={zh?`${hhmm(activity.starts_at)} 开始；有变化会第一时间通知你`:`Starts ${hhmm(activity.starts_at)}; we will tell you about any change`}/>
-     <View style={{flexDirection:'row',gap:10}}>
-      <SoftButton icon={mine?.calendar_saved?'calendar-check':'calendar-plus'} label={mine?.calendar_saved?(zh?'已在日历':'In calendar'):(zh?'加入日历':'Add to calendar')} active={!!mine?.calendar_saved} disabled={frozen} onPress={()=>prefs(mine?.calendar_saved?{calendar_saved:false,remind_minutes:null}:{calendar_saved:true})}/>
-      <SoftButton icon={mine?.remind_minutes==null?'bell':'bell-ring'} label={reminderLabel(mine?.remind_minutes)} active={mine?.remind_minutes!=null} disabled={frozen} onPress={pickReminder}/>
-     </View>
+     {plan}
      <QuietLink label={zh?'不能来了？退出报名':'Can’t make it? Withdraw'} disabled={frozen} onPress={withdraw}/>
     </>:part?.status==='waitlisted'?<>
      <Status icon="hourglass" color={c.orange} title={zh?`候补第 ${part.waitlist_position??'–'} 位`:`Waitlist #${part.waitlist_position??'–'}`} sub={zh?'有人退出会自动递补，并通知你':'You move up automatically when someone leaves'}/>
+     {plan}
      <QuietLink label={zh?'不想等了？退出候补':'Leave the waitlist'} disabled={frozen} onPress={withdraw}/>
     </>:activity.started?<Status icon="clock" color={c.muted} title={zh?'进行中':'In progress'} sub={zh?'报名已结束':'Signups have ended'}/>
-    :activity.status==='closed'?<Status icon="pause" color={c.muted} title={zh?'暂停报名':'Signups paused'} sub={zh?'发起人暂时关闭了报名':'The host has paused signups'}/>
+    :activity.status==='closed'?<><Status icon="pause" color={c.muted} title={zh?'暂停报名':'Signups paused'} sub={zh?'发起人暂时关闭了报名':'The host has paused signups'}/>{plan}</>
     :canJoin&&activity.counts.confirmed>=activity.capacity?<>
      <Status icon="users" color={c.muted} title={zh?'已满':'Full'} sub={zh?'可以加入候补，有人退出会按顺序递补并通知你':'Join the waitlist; places are offered in order'}/>
      <PrimaryButton label={zh?'加入候补':'Join waitlist'} disabled={frozen} onPress={()=>{joinController.review(activity);setJoinVisible(true);}}/>
+     {plan}
     </>:canJoin?<>
      <View style={{gap:2}}>
       <Text style={{fontSize:17,fontWeight:'700',color:c.text}}>{zh?`还剩 ${activity.capacity-activity.counts.confirmed} 个名额 · ${costText(activity.cost_minor,zh)}`:`${activity.capacity-activity.counts.confirmed} places left · ${costText(activity.cost_minor,zh)}`}</Text>
       <Text style={{fontSize:13,color:c.muted}}>{activity.cost_minor?(zh?'费用仅作说明，App 不收款；报名后可随时退出':'Cost is informational; you can withdraw any time'):(zh?'报名后可随时退出；有变化会通知你':'You can withdraw any time; we will tell you about changes')}</Text>
      </View>
      <PrimaryButton label={zh?'报名':'Join'} disabled={frozen} onPress={()=>{joinController.review(activity);setJoinVisible(true);}}/>
+     {plan}
     </>:<Status icon="info" color={c.muted} title={zh?'暂时不能报名':'Not open'} sub={zh?'稍后再来看看':'Check back later'}/>}
    </RegistrationCard>
    <View style={{paddingHorizontal:4}}>
@@ -216,6 +220,29 @@ function Status({icon,color,title,sub}:{icon:PenIconName;color:string;title:stri
 function SoftButton({icon,label,active,disabled,onPress}:{icon:PenIconName;label:string;active:boolean;disabled?:boolean;onPress:()=>void}){const c=usePenColors();return <Pressable accessibilityRole="button" accessibilityState={{disabled,selected:active}} disabled={disabled} onPress={()=>{feel.select();onPress();}} style={({pressed})=>({flex:1,height:42,borderRadius:21,flexDirection:'row',gap:6,alignItems:'center',justifyContent:'center',backgroundColor:active?c.accent+'1F':c.fill,opacity:disabled?0.5:pressed?0.7:1})}>
  <PenIcon name={icon} size={16} color={active?c.accent:c.text}/><Text numberOfLines={1} style={{fontSize:14,fontWeight:'600',color:active?c.accent:c.text}}>{label}</Text>
 </Pressable>;}
+const reminderLabel=(m:number|null|undefined,zh:boolean)=>m==null?(zh?'提醒':'Remind me'):m===0?(zh?'开始时提醒':'At start'):zh?`提前 ${m} 分钟`:`${m} min before`;
+/** Pen "V6 / 报名卡 · 本机能否提醒" (dY9tt): a saved reminder is not a delivered one. When this device can't notify,
+ *  say so with the one fix (turn on, Settings, retry); while a sync runs the last settled state stays, so it doesn't flicker. */
+function MyPlan({zh,calendar,minutes,disabled,onCalendar,onReminder}:{zh:boolean;calendar:boolean;minutes:number|null|undefined;disabled:boolean;onCalendar:()=>void;onReminder:()=>void}){
+ const c=usePenColors(),device=useSyncExternalStore(reminders.subscribe,reminders.snapshot),settled=useRef(device.phase);
+ if(device.phase!=='syncing')settled.current=device.phase;
+ const phase=settled.current;
+ const issue:{icon:PenIconName;text:string;action:string;run:()=>void}|null=minutes==null?null
+  :phase==='disabled'?{icon:'bell-off',text:zh?'本机提醒没开，到时不会通知你':'Reminders are off on this device, so you won’t be notified',action:zh?'开启':'Turn on',run:()=>void reminders.refresh('enable')}
+  :phase==='denied'?{icon:'bell-off',text:zh?'系统通知被关了，到时不会通知你':'Notifications are off in Settings, so you won’t be notified',action:zh?'去设置':'Settings',run:()=>void Linking.openSettings()}
+  :phase==='error'?{icon:'circle-alert',text:zh?'本机提醒没同步上，到时可能不会通知你':'Reminders didn’t sync on this device, so you may not be notified',action:zh?'重试':'Retry',run:()=>void reminders.refresh('sync')}:null;
+ return <>
+  <View style={{flexDirection:'row',gap:10}}>
+   <SoftButton icon={calendar?'calendar-check':'calendar-plus'} label={calendar?(zh?'已在日历':'In calendar'):(zh?'加入日历':'Add to calendar')} active={calendar} disabled={disabled} onPress={onCalendar}/>
+   <SoftButton icon={minutes==null?'bell':'bell-ring'} label={reminderLabel(minutes,zh)} active={minutes!=null} disabled={disabled} onPress={onReminder}/>
+  </View>
+  {issue?<View accessibilityRole="alert" style={{flexDirection:'row',alignItems:'center',gap:8,paddingVertical:10,paddingHorizontal:12,borderRadius:12,backgroundColor:c.orange+'1A'}}>
+   <PenIcon name={issue.icon} size={16} color={c.orange}/>
+   <Text style={{flex:1,fontSize:13,lineHeight:18,fontWeight:'500',color:c.text}}>{issue.text}</Text>
+   <Pressable accessibilityRole="button" hitSlop={10} onPress={()=>{feel.tap();issue.run();}} style={({pressed})=>({opacity:pressed?0.6:1})}><Text style={{fontSize:13,fontWeight:'600',color:c.accent}}>{issue.action}</Text></Pressable>
+  </View>:null}
+ </>;
+}
 function QuietLink({label,onPress,disabled,small}:{label:string;onPress:()=>void;disabled?:boolean;small?:boolean}){const c=usePenColors();return <Pressable accessibilityRole="button" disabled={disabled} hitSlop={small?12:8} onPress={onPress} style={{alignSelf:'flex-start'}}><Text style={{fontSize:small?12:13,fontWeight:'500',color:c.muted}}>{label}</Text></Pressable>;}
 /** Pen "想再一起" capsule: 46pt, system fill, 15/600 — the quiet second action inside a card. */
 function FillButton({label,onPress,disabled}:{label:string;onPress:()=>void;disabled?:boolean}){const c=usePenColors();return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={()=>{feel.tap();onPress();}} style={({pressed})=>({height:46,borderRadius:23,alignItems:'center',justifyContent:'center',paddingHorizontal:18,backgroundColor:c.fill,opacity:disabled?0.4:pressed?0.7:1})}><Text numberOfLines={1} style={{fontSize:15,fontWeight:'600',color:c.text}}>{label}</Text></Pressable>;}

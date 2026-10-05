@@ -104,7 +104,7 @@ function CampusApp() {
     return()=>subscription.remove();
   },[state.status,state.profile?.id]);
   useEffect(() => { if (state.profile) setLanguage(state.profile.language); }, [state.profile?.id]);
-  // Pen V5 / 登录入口（学校邮箱）: signing in with a school email is the only way in; the tabs always have a student.
+  // Pen "V6 / 登录入口（学校邮箱）" (Nlb7d): signing in with a school email is the only way in; the tabs always have a student.
   if (!state.profile) return <SafeAreaView edges={['left','right']} style={[styles.flex, { backgroundColor: colors.background }]}>
     <StatusBar style={dark ? 'light' : 'dark'} />
     <Aurora/>

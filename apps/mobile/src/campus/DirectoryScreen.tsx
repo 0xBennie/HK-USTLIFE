@@ -10,7 +10,7 @@ import {TargetActions,type CampusTarget} from './TargetActions';
 import {EmptyState,FilterPill,IconTile,ListGroup,ListRow,Notice,PageHeader,PenIcon,PillRow,Skeleton,Stagger,Surface,usePenColors,GlassChips,SearchField} from '../ui/Pen';
 type Entry=typeof directoryData[number]&{version:number;freshness:string};
 const meta=(cat:string,c:ReturnType<typeof usePenColors>):[string,string]=>cat==='study'?['library',c.indigo]:cat==='shop'?['shopping-bag','#A9824C']:['life-buoy',c.accent];
-// Pen "directory" / "place" boards in the V2 list style.
+// Pen "directory / 校园生活" (DzQxm) and "14 / Place detail" (d7WFL), in the V2 list style.
 export function DirectoryScreen({language,onBack,initialCategory,initialId}:{language:Language;dark:boolean;onBack:()=>void;initialCategory?:string;initialId?:string}) {
  const sceneActive=useSceneFocus();
  const profile=useSyncExternalStore(session.subscribe,session.snapshot).profile;

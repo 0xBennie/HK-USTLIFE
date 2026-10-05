@@ -1,5 +1,5 @@
-// Native implementations of Pen boards "V3 / 学业" (ivz0E), "V3 / 成绩分布" (c1QOeO), "V3 / 预约场地" (acWzf),
-// "V3 / 一起时间" (Kphqs), "V3 / 社团与组织" (jYEm4), "V3 / 宿舍服务" (rbykj), "V3 / 校园服务" (InJbr) — V5 Liquid Glass.
+// Native implementations of Pen boards "V5 / 学业（真实数据）" (ivz0E), "V3 / 成绩分布" (c1QOeO), "V5 / 预约场地（官方系统）" (acWzf),
+// "V3 / 找共同空闲" (Kphqs), "V3 / 社团" (jYEm4), "V5 / 宿舍服务" (k2Old, rbykj), "V3 / 校园服务" (InJbr) — V5 Liquid Glass.
 // All data is real: our API (/grades, /me/time-groups, /clubs, /study/*) or the official HKUST site via deep link.
 import {useEffect,useMemo,useState} from 'react';
 import {ActionSheetIOS,Alert,Image,Linking,Pressable,Share,Text,View} from 'react-native';
@@ -164,7 +164,7 @@ export function ClubsScreen({zh,onBack}:Base){
  </View>;
 }
 
-// Pen V5 / 宿舍服务（未计时）and（计时中）.
+// Pen "V5 / 宿舍服务（未计时）" (k2Old) and "（计时中）" (rbykj).
 const PRESETS=[30,45,60],DEFAULT_WASH=45;
 export function HallScreen({zh,onBack}:Base){
  const c=usePenColors();

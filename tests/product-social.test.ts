@@ -136,6 +136,23 @@ it('places a withdrawn and rejoining user at the back of the FIFO waitlist',asyn
  await call('POST',`/activities/${x.id}/withdraw`,{participation_version:1},a);
  expect((await detail(x.id,c)).mine.participation.status).toBe('confirmed');expect((await detail(x.id,b)).mine.participation).toMatchObject({status:'waitlisted',waitlist_position:1});
 });
+it('changes calendar and reminder for waitlisted and not-joined users without touching signup, queue or FIFO',async()=>{
+ const signIn=async(email:string)=>{const ch=(await call('POST','/auth/email/challenges',{email},'')).json().data;const {code}=JSON.parse(readFileSync(join(dir,'mail',ch.challenge_id+'.json'),'utf8'));return (await call('POST','/auth/email/verify',{challenge_id:ch.challenge_id,code},'')).json().data.access_token as string;};
+ const c=await signIn('c@example.test'),d=await signIn('d@example.test');
+ const x=await create();await call('POST',`/activities/${x.id}/join`,{activity_version:1},a);
+ await call('POST',`/activities/${x.id}/join`,{activity_version:1,save_calendar:true},b);await call('POST',`/activities/${x.id}/join`,{activity_version:1},c);
+ const queued=(await detail(x.id,b)).mine.participation;expect(queued).toMatchObject({status:'waitlisted',waitlist_position:1});
+ for(const prefs of [{bookmarked:false,calendar_saved:false,remind_minutes:null},{bookmarked:false,calendar_saved:true,remind_minutes:30},{bookmarked:true,calendar_saved:false,remind_minutes:null}]){
+  const r=await call('PUT',`/activities/${x.id}/preferences`,prefs,b);expect(r.statusCode,r.body).toBe(200);
+  expect(r.json().data.mine).toMatchObject({...prefs,participation:queued});
+ }
+ const saved=await call('PUT',`/activities/${x.id}/preferences`,{bookmarked:false,calendar_saved:true,remind_minutes:10},d);
+ expect(saved.json().data.mine).toMatchObject({participation:null,calendar_saved:true,remind_minutes:10});
+ expect((await day(d))[0]).toMatchObject({remind_minutes:10,activity_origin:{id:x.id,participation:'not_joined'}});
+ expect((await detail(x.id)).counts).toMatchObject({confirmed:1,waitlisted:2});
+ await call('POST',`/activities/${x.id}/withdraw`,{participation_version:1},a);
+ expect((await detail(x.id,b)).mine.participation.status).toBe('confirmed');expect((await detail(x.id,c)).mine.participation).toMatchObject({status:'waitlisted',waitlist_position:1});
+});
 
 it('keeps reconnection intent private across authenticated API users until both consent after the event',async()=>{
  const event=await create({capacity:2,starts_at:'2026-10-03T00:10:00Z',ends_at:'2026-10-03T00:20:00Z'});const joined=await call('POST',`/activities/${event.id}/join`,{activity_version:event.version},a);expect(joined.statusCode,joined.body).toBe(200);
