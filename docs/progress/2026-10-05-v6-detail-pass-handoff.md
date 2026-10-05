@@ -50,3 +50,10 @@ real notifications), `OsfrE` (「语言」 row).
 2. User: 「推」 to merge `claude/native-ui-refresh` into `feat/hkust-life-mcp`.
 3. Remaining V3/V5-era boards without V6 versions (campus sub-pages, reminders settings) are visually consistent but
    could get V6 boards in a later pass.
+
+## 回执：Codex 协作单（CLAUDE-CODEX-COORDINATION.md）
+
+- 最新提交：见本分支 `git log`（本节写入时为 3d87333 之后的 PRD 更新提交）。主线 `feat/hkust-life-mcp` 未改动，合并等用户「推」。
+- Pen：本轮 V6 画板在 Pen 应用中，尚未保存入库（V6-01）。批准依据：Luma 1–7 画板经用户批准；之后的 V6 画板按用户 10-05「不需要经过我的确认，自己检查就可以了」的指示自检后实现。
+- QA 发现：V6-02 不再适用（2026-10-04 起必须先用学校邮箱登录，没有游客状态，相关 onLogin 分支已删除）；V6-03、V6-04 与两项低优先问题尚未修，已列入 PRD v3.0 第 12 节「第二步」。
+- 需求：PRD 升到 v3.0（每条需求增加「现状」列、写入已确认决策、重排推进顺序）；[实现状态核对](../product/2026-10-05-prd-gap-audit.md)晚间从严复核，A03/A05/L04/C03/E01/E03/E04/G01/N01 由「已做」改为「部分」。需求优先级仍以 PMO 与用户确认为准。
